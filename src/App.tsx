@@ -2,14 +2,22 @@ import { createSignal } from "solid-js";
 import logo from "./assets/logo.svg";
 import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
+import { createStore } from "solid-js/store";
+import {open} from "@tauri-apps/plugin-dialog"
+import { appDataDir } from "@tauri-apps/api/path";
+
+
 
 function App() {
     const [greetMsg, setGreetMsg] = createSignal("");
-    const [name, setName] = createSignal("");
-
+    const [person, setPerson] = createStore({
+        name: "",
+        age: 0
+    })
+    appDataDir().then(res => console.log(res))
     async function greet() {
         // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-        setGreetMsg(await invoke("greet", { name: name() }));
+        setGreetMsg(await invoke("greet", { name: person.name, num: person.age }));
     }
 
     return (
@@ -39,10 +47,22 @@ function App() {
             >
                 <input
                     id="greet-input"
-                    onChange={(e) => setName(e.currentTarget.value)}
+                    onChange={(e) => setPerson({name: e.target.value})}
                     placeholder="Enter a name..."
                 />
+                <input
+                    id="greet-input"
+                    onChange={(e) => setPerson({age: Number(e.target.value)})}
+                    placeholder="Enter a number..."
+                    type="number"
+                />
                 <button type="submit">Greet</button>
+                <button type="button" onclick={async () => {
+                    await open()
+                }}
+                >
+                    ASK
+                    </button>
             </form>
 
             <p>{greetMsg()}</p>
