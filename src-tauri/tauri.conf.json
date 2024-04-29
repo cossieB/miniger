@@ -1,7 +1,7 @@
 {
   "productName": "miniger",
   "version": "0.0.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.miniger.dev",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -11,8 +11,7 @@
   "app": {"windows": [
       {
         "title": "miniger",
-        "width": 800,
-        "height": 600
+        "maximized": true
       }
     ],
     "security": {

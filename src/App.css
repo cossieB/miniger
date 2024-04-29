@@ -1,7 +1,34 @@
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        @apply bg-slate-800;
+
+    }
 }
 
-.logo.solid:hover {
-  filter: drop-shadow(0 0 2em #2f5d90);
+/* width */
+::-webkit-scrollbar {
+    width: var(--scrollbarWidth);
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #2c3e50;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

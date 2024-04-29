@@ -17,7 +17,11 @@
     "shell:allow-open",
     "fs:default",
     "dialog:allow-open",
+    "dialog:allow-save",
     "fs:write-files",
-    "sql:default"
+    "sql:allow-close",
+    "sql:allow-execute",
+    "sql:allow-load",
+    "sql:allow-select"
   ]
 }

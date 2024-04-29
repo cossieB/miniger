@@ -1,7 +1,17 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
-
-import "./styles.css";
+import "./App.css";
 import App from "./App";
+import { Route, Router } from "@solidjs/router";
 
-render(() => <App />, document.getElementById("root") as HTMLElement);
+render(() => (
+    <Router root={App}>
+        <Route path="/">
+            <Route component={() => <p>Index</p>} />
+            <Route path="/movies" component={() => <p>Movies</p>} />
+            <Route path="/actors" component={() => <p>Actors</p>} />
+            <Route path="/genres" component={() => <p>Genres</p>} />
+            <Route path="/studios" component={() => <p>Studios</p>} />
+        </Route>
+    </Router>
+), document.getElementById("root") as HTMLElement);
