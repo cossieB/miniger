@@ -11,7 +11,9 @@
   "app": {"windows": [
       {
         "title": "miniger",
-        "maximized": true
+        "height": 720,
+        "width": 1280,
+        "dragDropEnabled": false
       }
     ],
     "security": {
@@ -27,6 +29,14 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
+    ],
+    "resources": [
+      "./schema.sql"
     ]
+  },
+  "plugins": {
+    "fs": {
+      "scope": ["$APPDATA/*", "$APP/*", "$DESKTOP/*", "$RESOURCE/*"]
+    }
   }
 }

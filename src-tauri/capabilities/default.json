@@ -15,10 +15,13 @@
     "menu:default",
     "tray:default",
     "shell:allow-open",
-    "fs:default",
+    {
+      "identifier": "fs:read-files",
+      "allow": [{"path": "$DESKTOP/**"}, {"path": "$APP/**"}, {"path": "$RESOURCE/**"}]
+    },
+    "fs:write-files",
     "dialog:allow-open",
     "dialog:allow-save",
-    "fs:write-files",
     "sql:allow-close",
     "sql:allow-execute",
     "sql:allow-load",

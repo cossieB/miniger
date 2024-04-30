@@ -2,10 +2,26 @@ import { createStore } from "solid-js/store";
 import Database from "@tauri-apps/plugin-sql";
 import { Nav } from "./components/Nav";
 import { TopBar } from "./components/TopBar";
-import { JSXElement } from "solid-js";
+import { JSXElement, createEffect, createResource } from "solid-js";
+import { resolveResource } from "@tauri-apps/api/path";
+import { readTextFile } from "@tauri-apps/plugin-fs";
+import { SidePanel } from "./SidePanel";
+
+const [db] = createResource(() => Database.load("sqlite:mngr.db"))
 
 function App(props: {children?: JSXElement}) {
-
+    createEffect(() => {
+        if (!db()) return;
+        (async function () {
+            try {
+                const script = await readTextFile(await resolveResource("./schema.sql"));
+                db()!.execute(script)
+            } catch (error) {
+                console.error(error)
+            }
+        })()
+    })
+    
     return (
         <div class="h-screen w-screen text-white">
             <TopBar />
@@ -31,10 +47,4 @@ async function getFilms() {
     return (await db.select("SELECT * FROM film") as {path: string, filename: string, release_date: Date}[])
 }
 
-function SidePanel() {
-    return (
-        <section class="bg-gray-800 flex-1 basis-14">
-        </section>
-    )
-}
 
