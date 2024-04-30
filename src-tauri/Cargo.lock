@@ -2243,6 +2243,7 @@ checksum = "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
 name = "miniger"
 version = "0.0.0"
 dependencies = [
+ "playzer",
  "serde",
  "serde_json",
  "tauri",
@@ -2832,6 +2833,14 @@ name = "pkg-config"
 version = "0.3.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d231b230927b5e4ad203db57bbcbee2802f6bce620b1e4a9024a07d94e2907ec"
+
+[[package]]
+name = "playzer"
+version = "0.4.0"
+dependencies = [
+ "rand 0.8.5",
+ "regex",
+]
 
 [[package]]
 name = "plist"
