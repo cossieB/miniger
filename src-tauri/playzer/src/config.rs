@@ -1,4 +1,4 @@
-use crate::format;
+use crate::format::{self, Format};
 
 #[derive(Debug, PartialEq)]
 pub struct Config {
@@ -9,14 +9,11 @@ pub struct Config {
     output_format: format::Format,
 }
 impl Config {
-    pub fn new(playlist: String, output_format: &str, keep_duplicates: bool, shuffle: bool) -> Result<Config, String> {
+    pub fn new(playlist: String, output_format: Option<Format>, keep_duplicates: bool, shuffle: bool) -> Result<Config, String> {
 
         let format = format::Format::get_format(&playlist)?;
 
-        let output_format = format::Format::get_format_from_ext(&output_format).unwrap_or_else(|_| {
-            println!("Unrecognized output format (2nd argument). Defaulting to original playlist format");
-            format.clone()
-        });
+        let output_format = output_format.unwrap_or(format.clone());
 
         Ok(Config {
             playlist,

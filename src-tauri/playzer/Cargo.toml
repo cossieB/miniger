@@ -9,4 +9,5 @@ license = "MIT"
 [dependencies]
 rand = "0.8.5"
 regex = "1.10.4"
+serde = "1.0.200"
 

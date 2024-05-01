@@ -1,14 +1,28 @@
-use super::PlaylistReaderWriter;
+use crate::{reader_writer::PlaylistReaderWriter, FileInfo};
 use crate::config;
 use std::{
     collections::HashSet,
-    fs,
+    fs, path::Path,
 };
 
 pub struct M3UReaderWriter;
 
 impl PlaylistReaderWriter for M3UReaderWriter {
-    fn read_file(&self, config: &config::Config) -> (Vec<String>, HashSet<String>) {
+    fn read_file(&self, config: &config::Config) -> Vec<FileInfo> {
+        let file = fs::read_to_string(config.playlist()).expect("Error while reading playlist");
+        let mut list = Vec::with_capacity(1000);
+        for line in file.lines() {
+            if line.starts_with('#') {
+                continue;
+            }
+            list.push({FileInfo{
+                path: line.to_string(),
+                title: Path::new(&line).file_name().unwrap().to_os_string().into_string().unwrap()
+            }});
+        }
+        return list;
+    }
+    fn process_file(&self, config: &config::Config) -> (Vec<String>, HashSet<String>) {
         let mut set = HashSet::new();
         let file = fs::read_to_string(config.playlist()).expect("Error while reading playlist");
         let mut list = Vec::with_capacity(1000);
