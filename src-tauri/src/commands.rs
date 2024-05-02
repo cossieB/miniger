@@ -1,6 +1,6 @@
 use std::{collections::HashSet, path::Path};
 
-use playzer::{config, reader_writer, FileInfo};
+use playzer::{format, reader_writer, FileInfo};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -10,20 +10,29 @@ pub fn greet(name: &str, num: i32) -> String {
 
 #[tauri::command]
 pub fn read_playlist(playlist: &str) -> Result<Vec<FileInfo>, String> {
-    let config = config::Config::new(playlist.to_string(), None, true, false)?;
-    let reader = reader_writer::get_reader_writer(&config.format());
-    let playlist = reader.read_file(&config);
+    let format = format::Format::get_format(playlist)?;
+    let reader = reader_writer::get_reader_writer(&format);
+    let playlist = reader.read_file(&playlist);
     return Ok(playlist);
 }
 #[tauri::command]
 pub fn cleanup_playlist(playlist: Vec<FileInfo>) -> Vec<FileInfo> {
     let mut set = HashSet::new();
     playlist
-    .into_iter()
-    .filter(|info| {
+        .into_iter()
+        .filter(|info| {
             let exists = Path::new(info.path()).exists();
             let is_new = set.insert(info.path().to_string());
-            return  exists && is_new;
+            return exists && is_new;
         })
         .collect()
+}
+
+#[tauri::command]
+pub fn save_playlist(path: String, files: Vec<FileInfo>) -> Result<(), String> {
+    let format = format::Format::get_format(&path)?;
+    let writer = reader_writer::get_reader_writer(&format);
+    let files: Vec<String> = files.into_iter().map(|f| f.path().to_string()).collect();
+    writer.write_file(&files, path)?;
+    Ok(())
 }

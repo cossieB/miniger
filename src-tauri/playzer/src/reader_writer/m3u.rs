@@ -8,8 +8,8 @@ use std::{
 pub struct M3UReaderWriter;
 
 impl PlaylistReaderWriter for M3UReaderWriter {
-    fn read_file(&self, config: &config::Config) -> Vec<FileInfo> {
-        let file = fs::read_to_string(config.playlist()).expect("Error while reading playlist");
+    fn read_file(&self, path: &str) -> Vec<FileInfo> {
+        let file = fs::read_to_string(path).expect("Error while reading playlist");
         let mut list = Vec::with_capacity(1000);
         for line in file.lines() {
             if line.starts_with('#') || line.starts_with('\u{feff}') {
@@ -35,8 +35,7 @@ impl PlaylistReaderWriter for M3UReaderWriter {
         }
         (list, set)
     }
-    fn write_file(&self, files: &Vec<String>, config: &config::Config) -> Result<String, &'static str> {
-        let path = self.generate_new_filename(&config);
+    fn write_file(&self, files: &Vec<String>, path: String) -> Result<String, &'static str> {
         let mut contents = String::new();
         files.iter().for_each(|file| {
             contents.push_str(file);

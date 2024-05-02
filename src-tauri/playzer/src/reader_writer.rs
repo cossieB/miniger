@@ -13,24 +13,14 @@ use std::collections::HashSet;
 use crate::{config, file_exists, format::Format, FileInfo};
 
 pub trait PlaylistReaderWriter {
-    fn read_file(&self, config: &config::Config) -> Vec<FileInfo>;
+    fn read_file(&self, path: &str) -> Vec<FileInfo>;
     fn process_file(&self, config: &config::Config) -> (Vec<String>, HashSet<String>);
     fn write_file(
         &self,
         files: &Vec<String>,
-        config: &config::Config,
+        path: String
     ) -> Result<String, &'static str>;
 
-    fn write(
-        &self,
-        files: &mut Vec<String>,
-        config: &config::Config,
-    ) -> Result<String, &'static str> {
-        if config.shuffle() {
-            crate::shuffle(files);
-        };
-        self.write_file(files, config)
-    }
     fn generate_new_filename(&self, config: &config::Config) -> String {
         let name = crate::get_filename(config.playlist());
         let extension = Format::get_extension(config.output_format());

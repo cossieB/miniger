@@ -11,8 +11,8 @@ use std::{
 pub struct PLSReaderWriter;
 
 impl PlaylistReaderWriter for PLSReaderWriter {
-        fn read_file(&self, config: &config::Config) -> Vec<FileInfo> {
-        let file = fs::read_to_string(config.playlist()).expect("Error while reading playlist");
+    fn read_file(&self, path: &str) -> Vec<FileInfo> {
+        let file = fs::read_to_string(path).expect("Error while reading playlist");
         let mut list = Vec::with_capacity(1000);
         let re = Regex::new(r#"File\d+\s*=\s*(.+)"#).unwrap();
         for line in file.lines() {
@@ -41,8 +41,7 @@ impl PlaylistReaderWriter for PLSReaderWriter {
         (list, set)
     }
 
-    fn write_file(&self, files: &Vec<String>, config: &config::Config) -> Result<String, &'static str>  {
-        let path = self.generate_new_filename(&config);
+    fn write_file(&self, files: &Vec<String>, path: String) -> Result<String, &'static str>  {
         let mut contents = String::from("[playlist]\n");
         for (i, file) in files.iter().enumerate() {
             contents.push_str(&format!("File{}={file}\n", i+1));

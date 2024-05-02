@@ -8,8 +8,8 @@ use std::{collections::HashSet, fs};
 pub struct ASXReaderWriter;
 
 impl PlaylistReaderWriter for ASXReaderWriter {
-    fn read_file(&self, config: &config::Config) -> Vec<FileInfo> {
-        let file = fs::read_to_string(config.playlist()).expect("Error while reading playlist");
+    fn read_file(&self, path: &str) -> Vec<FileInfo> {
+        let file = fs::read_to_string(path).expect("Error while reading playlist");
         let mut list = Vec::with_capacity(1000);
         let re = Regex::new(r#"href\s*=\s*"(.+?)""#).unwrap();
         for line in file.lines() {
@@ -38,8 +38,7 @@ impl PlaylistReaderWriter for ASXReaderWriter {
         (list, set)
     }
 
-    fn write_file(&self, files: &Vec<String>, config: &config::Config) -> Result<String, &'static str> {
-        let path = self.generate_new_filename(&config);
+    fn write_file(&self, files: &Vec<String>, path: String) -> Result<String, &'static str> {
         let mut contents = String::from("<ASX version = \"3.0\">\n");
         files.iter().for_each(|file| {
             contents.push_str(&format!("<Entry><Ref href = \"{file}\"/></Entry>\n"));

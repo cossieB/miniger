@@ -22,19 +22,19 @@ fn file_exists(path: &str) -> bool {
     path.exists()
 }
 
-fn shuffle<T: Clone>(arr: &mut Vec<T>) {
-    use rand::Rng;
-    let mut i = arr.len() - 1;
-    while i > 0 {
-        let mut rng = rand::thread_rng();
-        let j = rng.gen_range(0..i);
-        ( arr[i], arr[j] ) = ( arr[j].clone(), arr[i].clone() );
-        i -= 1;
-    };
-}
+// fn shuffle<T: Clone>(arr: &mut Vec<T>) {
+//     use rand::Rng;
+//     let mut i = arr.len() - 1;
+//     while i > 0 {
+//         let mut rng = rand::thread_rng();
+//         let j = rng.gen_range(0..i);
+//         ( arr[i], arr[j] ) = ( arr[j].clone(), arr[i].clone() );
+//         i -= 1;
+//     };
+// }
 
 fn get_filename(path: &str) -> String {
-    let re = regex::Regex::new(r"(^(?:\.(?:/|\\))?[^\.]+)(?:\.\w+)?$").unwrap(); //see tests filename_tests() below to figure out what this regex does
+    let re = regex::Regex::new(r"(^(?:\.(?:/|\\))?[^\.]+)(?:\.\w+)?$").unwrap(); 
     extract_regex(path, &re).unwrap_or("playzer_generated".to_owned())
 }
 

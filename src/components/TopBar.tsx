@@ -1,6 +1,6 @@
 import { useNavigate } from "@solidjs/router";
-import { BackArrow, Eraser, ForwardArrow, House, PlayListSvg } from "../icons";
-import { open } from "@tauri-apps/plugin-dialog"
+import { BackArrow, BroomSvg, ForwardArrow, House, PlayListSvg, SaveSvg } from "../icons";
+import { open, save } from "@tauri-apps/plugin-dialog"
 import { invoke } from "@tauri-apps/api/core";
 import { setState, state } from "../state";
 
@@ -36,11 +36,41 @@ export function TopBar() {
                         }, 5000)
                     }
                 }} />
-            <Eraser
+            <BroomSvg
                 onclick={async () => {
-                    const filtered: any = await invoke('cleanup_playlist', {playlist: state.sidePanel.list})
+                    const filtered: any = await invoke('cleanup_playlist', { playlist: state.sidePanel.list })
                     setState('sidePanel', 'list', filtered)
-                }} />
+                }}
+            />
+            <SaveSvg
+                class="mr-5"
+                classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
+                onclick={async () => {
+                    if (state.sidePanel.list.length == 0) return;
+                    try {
+                        const path = await save({
+                            title: "Save playlist",
+                            filters: [{
+                                name: "Winamp Playlist",
+                                extensions: ["m3u", "m3u8"],
+                            }, {
+                                name: "Windows Media Playlist",
+                                extensions: ["asx"],
+                            }, {
+                                name: "Playlist",
+                                extensions: ["pls"],
+                            }, {
+                                name: "MPC Playlist",
+                                extensions: ["mpcpl"],
+                            }]
+                        })
+                        if (path)
+                        await invoke('save_playlist', {path, files: state.sidePanel.list})
+                    } catch (error) {
+                        setState('status', error as string)
+                    }
+                }}
+            />
         </nav>
     );
 }
