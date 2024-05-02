@@ -1,5 +1,5 @@
 import { useNavigate } from "@solidjs/router";
-import { BackArrow, ForwardArrow, House, PlayListSvg } from "../icons";
+import { BackArrow, Eraser, ForwardArrow, House, PlayListSvg } from "../icons";
 import { open } from "@tauri-apps/plugin-dialog"
 import { invoke } from "@tauri-apps/api/core";
 import { setState, state } from "../state";
@@ -11,8 +11,9 @@ export function TopBar() {
             <House onclick={() => navigate("/")} />
             <BackArrow onclick={() => navigate(-1)} />
             <ForwardArrow onclick={() => navigate(1)} />
+
             <PlayListSvg
-                class="ml-auto mr-5"
+                class="ml-auto"
                 onclick={async () => {
                     const selection = await open({
                         title: "Select a playlist",
@@ -27,13 +28,18 @@ export function TopBar() {
                             playlist: selection.path
                         })
                         setState('sidePanel', 'list', t)
-                    } 
+                    }
                     catch (error) {
                         setState('status', error as string);
                         setTimeout(() => {
                             setState('status', "")
                         }, 5000)
                     }
+                }} />
+            <Eraser
+                onclick={async () => {
+                    const filtered: any = await invoke('cleanup_playlist', {playlist: state.sidePanel.list})
+                    setState('sidePanel', 'list', filtered)
                 }} />
         </nav>
     );

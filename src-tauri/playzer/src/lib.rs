@@ -11,6 +11,12 @@ pub struct FileInfo {
     path: String
 }
 
+impl FileInfo {
+    pub fn path(&self) -> &str {
+        &self.path
+    }
+}
+
 fn file_exists(path: &str) -> bool {
     let path = path::Path::new(path);
     path.exists()

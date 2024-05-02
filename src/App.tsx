@@ -4,7 +4,7 @@ import { BottomBar, TopBar } from "./components/TopBar";
 import { JSXElement, createEffect, createResource, onCleanup, onMount } from "solid-js";
 import { resolveResource } from "@tauri-apps/api/path";
 import { readTextFile } from "@tauri-apps/plugin-fs";
-import { SidePanel } from "./SidePanel";
+import { SidePanel } from "./sidePanel/SidePanel";
 import { setState, state } from "./state";
 
 const [db] = createResource(() => Database.load("sqlite:mngr.db"))
