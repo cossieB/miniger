@@ -27,7 +27,8 @@ export function TopBar() {
                             playlist: selection.path
                         })
                         setState('sidePanel', 'list', t)
-                    } catch (error) {
+                    } 
+                    catch (error) {
                         setState('status', error as string);
                         setTimeout(() => {
                             setState('status', "")

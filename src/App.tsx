@@ -25,7 +25,10 @@ function App(props: { children?: JSXElement }) {
     function handleKeyup(e: KeyboardEvent) {
         e.preventDefault();
         if (e.key == 'Delete') {
-            setState('sidePanel', 'list', prev => prev.filter((_item, i) => !state.sidePanel.selections.has(i)))
+            setState('sidePanel', prev => ({
+                list: prev.list.filter((_item, i) => !state.sidePanel.selections.has(i)),
+                lastSelection: 0
+            }))
             state.sidePanel.selections.clear()
         }
     }
