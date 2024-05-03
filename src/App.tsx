@@ -4,10 +4,10 @@ import { BottomBar, TopBar } from "./components/TopBar";
 import { JSXElement, createEffect, createResource, onCleanup, onMount } from "solid-js";
 import { resolveResource } from "@tauri-apps/api/path";
 import { readTextFile } from "@tauri-apps/plugin-fs";
-import { SidePanel } from "./sidePanel/SidePanel";
+import { SidePanel } from "./components/sidePanel/SidePanel";
 import { setState, state } from "./state";
 
-const [db] = createResource(() => Database.load("sqlite:mngr.db"))
+export const [db] = createResource(() => Database.load("sqlite:mngr.db"))
 
 function App(props: { children?: JSXElement }) {
     createEffect(() => {
@@ -30,6 +30,11 @@ function App(props: { children?: JSXElement }) {
                 lastSelection: 0
             }))
             state.sidePanel.selections.clear()
+        }
+        if (e.key == "a" && e.ctrlKey) {
+            for (let i = 0; i < state.sidePanel.list.length; i++) {
+                state.sidePanel.selections.add(i)
+            }
         }
     }
     onMount(() => {

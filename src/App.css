@@ -12,6 +12,10 @@
     }
 }
 
+* {
+    user-select: none;
+}
+
 /* width */
 ::-webkit-scrollbar {
     width: var(--scrollbarWidth);

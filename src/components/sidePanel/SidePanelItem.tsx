@@ -1,5 +1,5 @@
 import { Accessor } from "solid-js";
-import { setState, state } from "../state";
+import { setState, state } from "../../state";
 
 type P = {
     path: (typeof state)['sidePanel']['list'][number];
@@ -8,24 +8,37 @@ type P = {
 export function SidePanelItem(props: P) {
     const isSelected = () => state.sidePanel.selections.has(props.i());
     const isLastDraggedOver = () => state.sidePanel.lastDraggedOver === props.i();
+    const isLastSelected = () => state.sidePanel.lastSelection === props.i();
     return (
         <li
-            class={"text-ellipsis text-nowrap overflow-hidden p-1 cursor-default hover:bg-slate-700 "}
-            classList={{ "!bg-slate-500": isSelected(), "mt-8": isLastDraggedOver() }}
-            draggable="true"
+            class={"text-ellipsis text-nowrap overflow-hidden p-1 cursor-default [&:not(:last-child):hover]:bg-slate-700"}
+            classList={{ "!bg-slate-500": isSelected(), "mt-8": isLastDraggedOver(), 'outline-dashed outline-1': isLastSelected()}}
+            draggable={props.i() !== state.sidePanel.list.length}
+            data-i={props.i()}
             onClick={e => {
                 e.preventDefault();
-                if (!e.ctrlKey) {
-                    state.sidePanel.selections.clear();
+                if (props.i() === state.sidePanel.list.length) return
+
+                if (e.ctrlKey) {
+                    if (isSelected()) {
+                        state.sidePanel.selections.delete(props.i());
+                    }
+                    else {
+                        state.sidePanel.selections.add(props.i())
+                    }
                 }
-                if (e.shiftKey) {
+                else if (e.shiftKey) {
                     const [min, max] = [Math.min(props.i(), state.sidePanel.lastSelection), Math.max(props.i(), state.sidePanel.lastSelection)];
                     for (let i = min; i <= max; i++) {
                         state.sidePanel.selections.add(i);
                     }
+                    setState('sidePanel', 'lastSelection', props.i());
                 }
-                state.sidePanel.selections.add(props.i());
-                setState('sidePanel', 'lastSelection', props.i());
+                else {
+                    state.sidePanel.selections.clear();
+                    state.sidePanel.selections.add(props.i());
+                    setState('sidePanel', 'lastSelection', props.i());
+                }
             }}
             ondragover={e => {
                 e.preventDefault();

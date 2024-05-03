@@ -7,7 +7,7 @@ export const [state, setState] = createStore({
     sidePanel: {
         list: [] as {title: string, path: string}[],
         selections: new ReactiveSet<number>(),
-        lastSelection: 0,
+        lastSelection: -1,
         lastDraggedOver: -1,
     }
 })

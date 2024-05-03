@@ -1,8 +1,9 @@
 import { useNavigate } from "@solidjs/router";
-import { BackArrow, BroomSvg, ForwardArrow, House, PlayListSvg, SaveSvg } from "../icons";
+import { AddToDatabaseSvg, BackArrow, BroomSvg, ForwardArrow, House, PlayListSvg, SaveSvg } from "../icons";
 import { open, save } from "@tauri-apps/plugin-dialog"
 import { invoke } from "@tauri-apps/api/core";
 import { setState, state } from "../state";
+import { db } from "../App";
 
 export function TopBar() {
     const navigate = useNavigate();
@@ -42,6 +43,20 @@ export function TopBar() {
                     setState('sidePanel', 'list', filtered)
                 }}
             />
+            <AddToDatabaseSvg
+                onclick={async () => {
+                    try {
+                        db()?.select("BEGIN")
+                        for (const item of state.sidePanel.list)
+                            await db()?.execute("INSERT into film (title, path) VALUES ($1, $2) ON CONFLICT (path) DO NOTHING", [item.title, item.path])    
+                        db()?.select("COMMIT")
+                    } 
+                    catch (error) {
+                        console.error(error)
+                        db()?.select("ROLLBACK")
+                    }
+                }}
+            />
             <SaveSvg
                 class="mr-5"
                 classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
@@ -65,7 +80,7 @@ export function TopBar() {
                             }]
                         })
                         if (path)
-                        await invoke('save_playlist', {path, files: state.sidePanel.list})
+                            await invoke('save_playlist', { path, files: state.sidePanel.list })
                     } catch (error) {
                         setState('status', error as string)
                     }
