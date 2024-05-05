@@ -3,7 +3,7 @@ import { AddToDatabaseSvg, BackArrow, BroomSvg, ForwardArrow, House, PlayListSvg
 import { open, save } from "@tauri-apps/plugin-dialog"
 import { invoke } from "@tauri-apps/api/core";
 import { setState, state } from "../state";
-import { db } from "../App";
+import { db } from "../";
 
 export function TopBar() {
     const navigate = useNavigate();

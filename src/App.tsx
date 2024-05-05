@@ -1,13 +1,11 @@
-import Database from "@tauri-apps/plugin-sql";
 import { Nav } from "./components/Nav";
 import { BottomBar, TopBar } from "./components/TopBar";
-import { JSXElement, createEffect, createResource, onCleanup, onMount } from "solid-js";
+import { JSXElement, createEffect, onCleanup, onMount } from "solid-js";
 import { resolveResource } from "@tauri-apps/api/path";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import { SidePanel } from "./components/sidePanel/SidePanel";
 import { setState, state } from "./state";
-
-export const [db] = createResource(() => Database.load("sqlite:mngr.db"))
+import { db } from ".";
 
 function App(props: { children?: JSXElement }) {
     createEffect(() => {
@@ -27,7 +25,7 @@ function App(props: { children?: JSXElement }) {
         if (e.key == 'Delete') {
             setState('sidePanel', prev => ({
                 list: prev.list.filter((_item, i) => !state.sidePanel.selections.has(i)),
-                lastSelection: 0
+                lastSelection: -1
             }))
             state.sidePanel.selections.clear()
         }
@@ -49,7 +47,7 @@ function App(props: { children?: JSXElement }) {
             <TopBar />
             <div class="w-screen flex" style={{height: "calc(100vh - 4rem"}}>
                 <Nav />
-                <main class="basis-96 flex-[2] bg-slate-900">
+                <main class="basis-96 flex-[2] overflow-hidden bg-slate-900">
                     {props.children}
                 </main>
                 <SidePanel />
@@ -60,9 +58,3 @@ function App(props: { children?: JSXElement }) {
 }
 
 export default App;
-
-
-async function getFilms() {
-    const db = await Database.load("sqlite:mngr.db");
-    return (await db.select("SELECT * FROM film") as { path: string, title: string, release_date: Date }[])
-}

@@ -7,7 +7,7 @@ false && clickOutside
 export function SidePanel() {
     return (
         <section
-            class="bg-gray-800 flex-1 basis-14 overflow-x-hidden select-none"
+            class="bg-gray-800 flex-1 basis-14 overflow-x-hidden select-none shrink-0"
             use:clickOutside={() => {
                 state.sidePanel.selections.clear();
                 setState('sidePanel', 'lastSelection', -1)

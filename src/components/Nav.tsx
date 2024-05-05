@@ -3,7 +3,7 @@ import { JSX } from "solid-js/web/types/jsx.js";
 
 export function Nav() {
     return (
-        <nav class="top-0 left-0 h-full w-52 bg-slate-700 text-orange-50">
+        <nav class="top-0 left-0 h-full w-52 bg-slate-700 text-orange-50 shrink-0">
             <ul>
                 <NavLink href="/movies">Movies </NavLink>
                 <NavLink href="/actors">Actors </NavLink>
