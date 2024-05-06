@@ -3,7 +3,7 @@ import { render } from "solid-js/web";
 import "./App.css";
 import App from "./App";
 import { Route, Router } from "@solidjs/router";
-import { Movies } from "./components/routes/Movies";
+import { Movies } from "./routes/Movies";
 import Database from "@tauri-apps/plugin-sql";
 import { createResource } from "solid-js";
 

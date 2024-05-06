@@ -16,14 +16,14 @@ export default function GridTable(props: P) {
     return (
         <div class='ag-theme-alpine-dark h-full' >
 
-        <AgGridSolid
-            rowData={props.data}
-            columnDefs={props.columnDefs}
-            class="ag-theme-alpine-dark"
-            ref={ref!}
-            defaultColDef={columnDefaults}
-            animateRows
+            <AgGridSolid
+                rowData={props.data}
+                columnDefs={props.columnDefs}
+                class="ag-theme-alpine-dark"
+                ref={ref!}
+                defaultColDef={columnDefaults}
+                animateRows
             />
-            </div>
+        </div>
     )
 }
