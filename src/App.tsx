@@ -1,11 +1,12 @@
 import { Nav } from "./components/Nav";
-import { BottomBar, TopBar } from "./components/TopBar";
+import { TopBar } from "./components/TopBar/TopBar";
 import { JSXElement, createEffect, onCleanup, onMount } from "solid-js";
 import { resolveResource } from "@tauri-apps/api/path";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import { SidePanel } from "./components/sidePanel/SidePanel";
 import { setState, state } from "./state";
 import { db } from ".";
+import { BottomBar } from "./components/BottomBar";
 
 function App(props: { children?: JSXElement }) {
     createEffect(() => {
