@@ -36,3 +36,11 @@ pub fn save_playlist(path: String, files: Vec<FileInfo>) -> Result<(), String> {
     writer.write_file(&files, path)?;
     Ok(())
 }
+
+#[tauri::command]
+pub fn get_inaccessible(playlist: Vec<FileInfo>) -> Vec<FileInfo> {
+    playlist
+        .into_iter()
+        .filter(|f| !Path::new(f.path()).exists())
+        .collect()
+}

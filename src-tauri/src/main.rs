@@ -13,7 +13,8 @@ fn main() {
             commands::greet,
             commands::read_playlist,
             commands::cleanup_playlist,
-            commands::save_playlist
+            commands::save_playlist,
+            commands::get_inaccessible
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

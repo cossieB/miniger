@@ -6,6 +6,7 @@ import { Route, Router } from "@solidjs/router";
 import { Movies } from "./routes/Movies";
 import Database from "@tauri-apps/plugin-sql";
 import { createResource } from "solid-js";
+import Inaccessible from "./routes/Inaccessible";
 
 export const [db] = createResource(() => Database.load("sqlite:mngr.db"))
 
@@ -20,6 +21,7 @@ render(() => (
         <Route path="/actors" component={() => <p>Actors</p>} />
         <Route path="/genres" component={() => <p>Genres</p>} />
         <Route path="/studios" component={() => <p>Studios</p>} />
+        <Route path="/inaccessible" component={Inaccessible} />
     </Router>
 ), document.getElementById("root") as HTMLElement);
 

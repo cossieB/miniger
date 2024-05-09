@@ -11,7 +11,7 @@ const columnDefaults: AgGridSolidProps['defaultColDef'] = {
 
 export default function GridTable<T>(props: P<T>) {
     let ref: AgGridSolidRef
-
+    
     return (
         <div id='gridContainer' class='ag-theme-alpine-dark h-full' >
 
