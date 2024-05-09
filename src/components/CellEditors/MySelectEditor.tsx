@@ -2,8 +2,8 @@ import { action, revalidate, useAction } from "@solidjs/router";
 import { For, createResource } from "solid-js";
 import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
 import Database from "@tauri-apps/plugin-sql";
-import { ChangeEvent } from "../lib/solidTypes";
-import { getStudios } from "../data";
+import { ChangeEvent } from "../../lib/solidTypes";
+import { getStudios } from "../../data";
 
 const updateStudio = action(async (filmId: number, studioId: number | null) => {
     studioId === -1 && (studioId = null);

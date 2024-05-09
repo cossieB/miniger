@@ -1,11 +1,11 @@
 import { action, revalidate, useAction } from "@solidjs/router"
 import { Suspense, createMemo, createResource } from "solid-js"
 import GridTable from "../components/Table"
-import { getActorFilms, getActors, getFilms } from "../data"
+import { getActorFilms, getFilms } from "../data"
 import Database from "@tauri-apps/plugin-sql"
-import { MySelectEditor } from "../components/MySelectEditor"
+import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
 import { Actor } from "../datatypes"
-import { ActorSelector, actors } from "../components/ActorSelector"
+import { ActorSelector, actors } from "../components/CellEditors/ActorCellEditor/ActorSelector"
 
 const updateTag = action(async (filmId: string, tags: string[]) => {
     const db = await Database.load("sqlite:mngr.db");
@@ -23,9 +23,21 @@ const updateTag = action(async (filmId: string, tags: string[]) => {
     }
 }, 'updateTagAction')
 
-export const addActor = action(async (name: string) => {
+export const addActor = action(async (name: string, filmId?: string) => {
     const db = await Database.load("sqlite:mngr.db");
-    return await db.select<[Actor]>("INSERT INTO actor (name) VALUES ($1) RETURNING *", [name]);
+    try {
+        await db.select("BEGIN")
+        const actor = (await db.select<[Actor]>("INSERT INTO actor (name) VALUES ($1) RETURNING *", [name]))[0];
+        if (filmId) {
+            await db.select("INSERT INTO actor_film (actor_id, film_id) VALUES ($1, $2) ", [actor.actor_id, filmId])
+        }
+        await db.select("COMMIT")
+        return actor
+
+    } catch (error) {
+        console.error(error);
+        await db.select("ROLLBACK")
+    }
 })
 
 

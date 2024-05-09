@@ -47,7 +47,7 @@ function App(props: { children?: JSXElement }) {
             <TopBar />
             <div class="w-screen flex" style={{height: "calc(100vh - 4rem"}}>
                 <Nav />
-                <main class="basis-96 flex-[2] overflow-hidden bg-slate-900">
+                <main class="basis-96 flex-[3] overflow-hidden bg-slate-900">
                     {props.children}
                 </main>
                 <SidePanel />
