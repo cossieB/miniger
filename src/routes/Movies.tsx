@@ -7,8 +7,8 @@ import { Actor } from "../datatypes"
 import { ActorSelector, actors } from "../components/CellEditors/ActorCellEditor/ActorSelector"
 import { updateTag } from "../api/actions"
 
+export const [films, {refetch: refetchFilms}] = createResource(async () => getFilms())
 export function Movies() {
-    const [films] = createResource(async () => getFilms())
     const [actorsFilms] = createResource(async () => getActorFilms())
 
     const map = createMemo(() => {

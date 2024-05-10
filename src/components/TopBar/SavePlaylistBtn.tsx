@@ -5,7 +5,6 @@ import { setState, state } from "../../state";
 
 export function SavePlaylistBtn() {
     return <SaveSvg
-        class="mr-5"
         classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
         onclick={async () => {
             if (state.sidePanel.list.length == 0) return;

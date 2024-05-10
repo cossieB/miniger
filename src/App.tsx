@@ -8,7 +8,6 @@ import { setState, state } from "./state";
 import { db } from ".";
 import { BottomBar } from "./components/BottomBar";
 
-
 function App(props: { children?: JSXElement }) {
     createEffect(() => {
         if (!db()) return;

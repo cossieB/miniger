@@ -52,14 +52,14 @@ pub fn load_directory(path: String) -> Result<Vec<FileInfo>, AppError> {
     let dir = Path::new(&path);
     let files = fs::read_dir(dir)?;
     let file_info = files
-    .into_iter()
-    .filter_map(|file| {
-        match file {
-            Ok(entry) => Some(FileInfo::new(entry.file_name().into_string().unwrap(), entry.path().to_str().unwrap().to_string())),
-            Err(_) => None
-        }
-    })
-    .collect();
+        .into_iter()
+        .filter_map(|file| match file {
+            Ok(entry) => Some(FileInfo::new(
+                entry.file_name().into_string().unwrap(),
+                entry.path().to_str().unwrap().to_string(),
+            )),
+            Err(_) => None,
+        })
+        .collect();
     Ok(file_info)
 }
-
