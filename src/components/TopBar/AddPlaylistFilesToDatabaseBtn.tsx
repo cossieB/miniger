@@ -4,7 +4,9 @@ import { db } from "../..";
 
 export function AddPlaylistFilesToDatabaseBtn() {
     return <AddToDatabaseSvg
+    classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
         onclick={async () => {
+            if (state.sidePanel.list.length == 0) return
             try {
                 db()?.select("BEGIN");
                 for (const item of state.sidePanel.list)

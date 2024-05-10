@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod commands;
+mod error;
 
 fn main() {
     tauri::Builder::default()
@@ -14,7 +15,8 @@ fn main() {
             commands::read_playlist,
             commands::cleanup_playlist,
             commands::save_playlist,
-            commands::get_inaccessible
+            commands::get_inaccessible,
+            commands::load_directory
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

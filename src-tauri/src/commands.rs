@@ -1,6 +1,8 @@
-use std::{collections::HashSet, path::Path};
+use std::{collections::HashSet, fs, path::Path};
 
 use playzer::{format, reader_writer, FileInfo};
+
+use crate::error::AppError;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -44,3 +46,20 @@ pub fn get_inaccessible(playlist: Vec<FileInfo>) -> Vec<FileInfo> {
         .filter(|f| !Path::new(f.path()).exists())
         .collect()
 }
+
+#[tauri::command]
+pub fn load_directory(path: String) -> Result<Vec<FileInfo>, AppError> {
+    let dir = Path::new(&path);
+    let files = fs::read_dir(dir)?;
+    let file_info = files
+    .into_iter()
+    .filter_map(|file| {
+        match file {
+            Ok(entry) => Some(FileInfo::new(entry.file_name().into_string().unwrap(), entry.path().to_str().unwrap().to_string())),
+            Err(_) => None
+        }
+    })
+    .collect();
+    Ok(file_info)
+}
+

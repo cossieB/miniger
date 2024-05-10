@@ -12,6 +12,15 @@ pub struct FileInfo {
 }
 
 impl FileInfo {
+    pub fn new(title: String, path: String) -> Self {
+        Self {
+            title,
+            path
+        }
+    }
+}
+
+impl FileInfo {
     pub fn path(&self) -> &str {
         &self.path
     }
