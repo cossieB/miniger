@@ -1,6 +1,6 @@
 import { cache } from "@solidjs/router"
 import Database from "@tauri-apps/plugin-sql"
-import { Film, Studio, Actor, FilmTag, ActorFilm } from "./datatypes"
+import { Film, Studio, Actor, FilmTag, ActorFilm } from "../datatypes"
 
 export const getFilms = cache(async () => {
     const db = await Database.load("sqlite:mngr.db")

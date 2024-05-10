@@ -1,7 +1,7 @@
 import { For, createResource, createSignal, onMount } from "solid-js";
 import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
 import { Actor } from "../../../datatypes";
-import { getActors } from "../../../data";
+import { getActors } from "../../../api/data";
 import { ActorItem } from "./ActorItem";
 import { SubmitBtn } from "./SubmitBtn";
 import { AddActorToDatabaseBtn } from "./AddActorToDatabaseBtn";

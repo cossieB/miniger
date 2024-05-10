@@ -4,8 +4,6 @@ import { LoadPlaylistBtn } from "./LoadPlaylistBtn";
 import { SavePlaylistBtn } from "./SavePlaylistBtn";
 import { AddPlaylistFilesToDatabaseBtn } from "./AddPlaylistFilesToDatabaseBtn";
 import { CleanPlaylistBtn } from "./CleanPlaylistBtn";
-import { invoke } from "@tauri-apps/api/core";
-import Database from "@tauri-apps/plugin-sql";
 
 export function TopBar() {
     const navigate = useNavigate();
@@ -26,16 +24,4 @@ export function TopBar() {
             <SavePlaylistBtn />
         </nav>
     );
-}
-
-function SearchInaccessible() {
-    return <BugSvg
-        class="ml-auto"
-        onclick={async () => {
-            const db = await Database.load("sqlite:mngr.db");
-            const films = await db.select("SELECT title, path FROM film")
-            const res = await invoke('get_inaccessible', { playlist: films });
-            console.log(res)
-        }}
-    />
 }
