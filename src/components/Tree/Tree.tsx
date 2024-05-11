@@ -10,7 +10,6 @@ export function Tree() {
                     <Node label="Inaccessible" href="/movies/inaccessible" />
                 </Node>
                 <Node label="Actors" href="/actors" />
-                <Node label="Genres" href="/genres" />
                 <Node label="Studios" href="/studios" />
             </ul>
         </nav>

@@ -7,6 +7,8 @@ import { Movies } from "./routes/Movies";
 import Database from "@tauri-apps/plugin-sql";
 import { createResource } from "solid-js";
 import Inaccessible from "./routes/Inaccessible";
+import Actors from "./routes/Actors";
+import Studios from "./routes/Studios";
 
 export const [db] = createResource(() => Database.load("sqlite:mngr.db"))
 
@@ -18,9 +20,8 @@ render(() => (
             const result =  await db.select("SELECT * FROM film");
             return result;
         }} />
-        <Route path="/actors" component={() => <p>Actors</p>} />
-        <Route path="/genres" component={() => <p>Genres</p>} />
-        <Route path="/studios" component={() => <p>Studios</p>} />
+        <Route path="/actors" component={Actors} />
+        <Route path="/studios" component={Studios} />
         <Route path="/movies/inaccessible" component={Inaccessible} />
     </Router>
 ), document.getElementById("root") as HTMLElement);
