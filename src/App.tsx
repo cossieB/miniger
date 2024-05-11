@@ -7,6 +7,7 @@ import { SidePanel } from "./components/sidePanel/SidePanel";
 import { setState, state } from "./state";
 import { db } from ".";
 import { BottomBar } from "./components/BottomBar";
+import { Tree } from "./components/Tree/Tree";
 
 function App(props: { children?: JSXElement }) {
     createEffect(() => {
@@ -47,7 +48,8 @@ function App(props: { children?: JSXElement }) {
         <div class="h-screen w-screen text-white">
             <TopBar />
             <div class="w-screen flex" style={{height: "calc(100vh - 4rem"}}>
-                <Nav />
+                <Tree />
+                {/* <Nav /> */}
                 <main class="basis-96 flex-[3] overflow-hidden bg-slate-900">
                     {props.children}
                 </main>

@@ -21,7 +21,7 @@ render(() => (
         <Route path="/actors" component={() => <p>Actors</p>} />
         <Route path="/genres" component={() => <p>Genres</p>} />
         <Route path="/studios" component={() => <p>Studios</p>} />
-        <Route path="/inaccessible" component={Inaccessible} />
+        <Route path="/movies/inaccessible" component={Inaccessible} />
     </Router>
 ), document.getElementById("root") as HTMLElement);
 
