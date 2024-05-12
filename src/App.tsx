@@ -1,4 +1,3 @@
-import { Nav } from "./components/Nav";
 import { TopBar } from "./components/TopBar/TopBar";
 import { JSXElement, createEffect, onCleanup, onMount } from "solid-js";
 import { resolveResource } from "@tauri-apps/api/path";

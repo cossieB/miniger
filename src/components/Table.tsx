@@ -20,7 +20,7 @@ export default function GridTable<T>(props: P<T>) {
                 columnDefs={props.columnDefs}
                 class="ag-theme-alpine-dark"
                 ref={ref!}
-                defaultColDef={columnDefaults}
+                defaultColDef={props.defaultColDef}
                 animateRows
             />
         </div>
