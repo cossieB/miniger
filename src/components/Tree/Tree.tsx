@@ -1,13 +1,25 @@
-import { A } from "@solidjs/router"
-import { Accessor, JSX, JSXElement, Show, createSignal, onMount } from "solid-js"
+import { A, cache, createAsync } from "@solidjs/router"
+import Database from "@tauri-apps/plugin-sql"
+import { Accessor, For, JSX, JSXElement, Show, createSignal, onMount } from "solid-js"
+
+const getTags = cache(async () => {
+    const db = await Database.load("sqlite:mngr.db")
+    return await db.select<{ tag: string }[]>("SELECT DISTINCT tag FROM film_tag ORDER BY tag ASC")
+}, 'getTags')
 
 export function Tree() {
+    const tags = createAsync(() => getTags(), { initialValue: [] })
     return (
-        <nav class="top-0 left-0 h-full w-52 bg-slate-700 text-orange-50 shrink-0">
+        <nav class="top-0 left-0 h-full w-52 bg-slate-700 text-orange-50 shrink-0 overflow-y-auto">
             <ul id="tree-root">
                 <Node label="Movies" href="/movies">
                     <Node label="All Movies" href="/movies" />
                     <Node label="Inaccessible" href="/movies/inaccessible" />
+                    <Node label="Tags" href="/movies/tags">
+                        <For each={tags()}>
+                            {tag => <Node label={tag.tag} href={`/movies/tags/${tag.tag}`} />}
+                        </For>
+                    </Node>
                 </Node>
                 <Node label="Actors" href="/actors" />
                 <Node label="Studios" href="/studios" />

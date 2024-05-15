@@ -6,6 +6,7 @@ import { AddPlaylistFilesToDatabaseBtn } from "./AddPlaylistFilesToDatabaseBtn";
 import { CleanPlaylistBtn } from "./CleanPlaylistBtn";
 import { AddDirectoryBtn } from "./AddDirectoryBtn";
 import { ClearPlaylistBtn } from "./ClearPlaylistBtn";
+import { AddToPlaylist } from "./AddToPlaylist";
 
 export function TopBar() {
     const navigate = useNavigate();
@@ -17,7 +18,7 @@ export function TopBar() {
             <ForwardArrow onclick={() => navigate(1)} />
 
             {/* Center Part */}
-
+            <AddToPlaylist />
 
             {/* Right Part */}
             <LoadPlaylistBtn />
@@ -29,4 +30,3 @@ export function TopBar() {
         </nav>
     );
 }
-

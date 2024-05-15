@@ -11,10 +11,17 @@ const columnDefaults: AgGridSolidProps['defaultColDef'] = {
 
 export default function GridTable<T>(props: P<T>) {
     let ref: AgGridSolidRef
-    
-    return (
-        <div id='gridContainer' class='ag-theme-alpine-dark h-full' >
 
+    return (
+        <div
+            id='gridContainer'
+            class='ag-theme-alpine-dark h-full relative'
+            onContextMenu={(e) => {
+                e.preventDefault();
+                return false
+            }}
+          
+        >
             <AgGridSolid
                 rowData={props.rowData}
                 columnDefs={props.columnDefs}
