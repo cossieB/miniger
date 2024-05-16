@@ -1,5 +1,5 @@
-import { useAction } from "@solidjs/router"
-import { Show, Suspense, createMemo, createResource } from "solid-js"
+import { useAction, useNavigate } from "@solidjs/router"
+import { For, Show, Suspense, createMemo, createResource } from "solid-js"
 import { getActorFilms, getFilms } from "../api/data"
 import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
 import { Actor } from "../datatypes"
@@ -14,6 +14,7 @@ import { setState, state } from "../state"
 export const [films, { refetch: refetchFilms }] = createResource(async () => getFilms())
 
 export function Movies() {
+    const navigate = useNavigate()
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
         x: 0,
@@ -21,6 +22,7 @@ export function Movies() {
         close() {
             setContextMenu('isOpen', false)
         },
+        data: {} as NonNullable<ReturnType<typeof data>>[number]
     })
     const [actorsFilms] = createResource(async () => getActorFilms())
 
@@ -45,16 +47,6 @@ export function Movies() {
 
     const updateTagAction = useAction(updateTag)
 
-    function add() {
-        const selection = gridApi.getSelectedRows()
-        if (selection.length == 0) return
-        const mapped = selection.map(m => ({
-            title: m.title,
-            path: m.path,
-        }))
-        state.sidePanel.push(mapped)
-    }
-
     return (
         <Suspense fallback={<p>Loading Database</p>}>
             <div
@@ -77,6 +69,14 @@ export function Movies() {
                         }))
                         setState('mainPanel', 'selectedItems', mapped)
                     }}
+                    onCellContextMenu={params => {
+                        setContextMenu({
+                            isOpen: true,
+                            x: (params.event as MouseEvent).clientX,
+                            y: (params.event as MouseEvent).clientY,
+                            data: params.data
+                        })
+                    }}
                     columnDefs={[{
                         field: 'title',
                         filter: true,
@@ -86,13 +86,7 @@ export function Movies() {
                         editable: true,
                         headerName: "Studio",
                         cellEditor: MySelectEditor,
-                        onCellContextMenu: params => {
-                            setContextMenu({
-                                isOpen: true,
-                                x: (params.event as MouseEvent).clientX,
-                                y: (params.event as MouseEvent).clientY,
-                            })
-                        }
+
                     }, {
                         field: "actors",
                         valueFormatter: (params: any) => params.value.map((x: any) => x.name).join(", "),
@@ -101,13 +95,6 @@ export function Movies() {
                         cellEditor: ActorSelector,
                         cellEditorPopup: true,
                         cellEditorPopupPosition: "under",
-                        onCellContextMenu: params => {
-                            setContextMenu({
-                                isOpen: true,
-                                x: (params.event as MouseEvent).clientX,
-                                y: (params.event as MouseEvent).clientY,
-                            })
-                        }
                     }, {
                         field: "release_date",
                         headerName: "Release Date"
@@ -125,12 +112,40 @@ export function Movies() {
                     <ContextMenu close={contextMenu.close} pos={{ x: contextMenu.x, y: contextMenu.y }} >
                         <ContextMenu.Item
                             onClick={() => {
-                                add();
-                                contextMenu.close();
+                                state.sidePanel.push([{
+                                    path: contextMenu.data.path,
+                                    title: contextMenu.data.title
+                                }])
                             }}
                         >
                             Add To Playlist
                         </ContextMenu.Item>
+                        <Show when={(contextMenu.data.tags?.split(", ").length ?? 0) > 0}>
+                            <ContextMenu.SubMenu label="More From Genre" >
+                                <For each={contextMenu.data.tags?.split(", ")}>
+                                    {tag =>
+                                        <ContextMenu.Item
+                                            onClick={() => navigate(`movies/tags/${tag}`)}
+                                        >
+                                            {tag}
+                                        </ContextMenu.Item>
+                                    }
+                                </For>
+                            </ContextMenu.SubMenu>
+                        </Show>
+                        <Show when={contextMenu.data.actors.length > 0}>
+                            <ContextMenu.SubMenu label="More From Actor" >
+                                <For each={contextMenu.data.actors}>
+                                    {actor =>
+                                        <ContextMenu.Item
+                                            onClick={() => navigate(`movies/actor/${actor.actor_id}`)}
+                                        >
+                                            {actor.name}
+                                        </ContextMenu.Item>
+                                    }
+                                </For>
+                            </ContextMenu.SubMenu>
+                        </Show>
                     </ContextMenu>
                 </Show>
             </div>
