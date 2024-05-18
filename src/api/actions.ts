@@ -10,7 +10,6 @@ export const updateTag = action(async (filmId: string, tags: string[]) => {
         for (const tag of tags)
             await db.select("INSERT INTO film_tag (film_id, tag) VALUES ($1, $2)", [filmId, tag.toLowerCase()])
         await db.select("COMMIT")
-        await revalidate([])
     }
     catch (error) {
         console.error(error)

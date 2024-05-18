@@ -1,20 +1,30 @@
-import { useAction, useNavigate } from "@solidjs/router"
-import { For, Show, Suspense, createMemo, createResource } from "solid-js"
-import { getActorFilms, getFilms } from "../api/data"
-import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
-import { Actor } from "../datatypes"
-import { ActorSelector, actors } from "../components/CellEditors/ActorCellEditor/ActorSelector"
-import { updateTag } from "../api/actions"
-import { ContextMenu } from "../components/ContextMenu"
+import { RouteSectionProps, createAsync, useAction, useParams } from "@solidjs/router"
+import { For, Resource, Show, Suspense, createMemo, createResource } from "solid-js"
+import { getActorFilms, getFilms, getFilmsByTag } from "../../api/data"
+import { MySelectEditor } from "../../components/CellEditors/MySelectEditor"
+import { Actor, Film } from "../../datatypes"
+import { ActorSelector, actors } from "../../components/CellEditors/ActorCellEditor/ActorSelector"
+import { updateTag } from "../../api/actions"
+import { ContextMenu } from "../../components/ContextMenu"
 import { createStore } from "solid-js/store"
 import { GridApi } from "ag-grid-community"
 import AgGridSolid from "ag-grid-solid"
-import { setState, state } from "../state"
+import { setState, state } from "../../state"
 
-export const [films, { refetch: refetchFilms }] = createResource(async () => getFilms())
+export function MoviesPage(props: RouteSectionProps<(Film & {studio_name: string | null, tags: string | null})[]>) {
+    const [films] = createResource(async () => getFilms());
+    
+    return <Movies films={films} />
+}
 
-export function Movies() {
-    const navigate = useNavigate()
+export function MoviePage() {
+    const params = useParams()
+    const [films] = createResource(() => params.tag, () => getFilmsByTag(params.tag))
+
+    return <Movies films={films} />
+}
+
+function Movies(props: {films: Resource<(Film & {studio_name: string | null, tags: string | null})[] | undefined>}) {
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
         x: 0,
@@ -24,7 +34,7 @@ export function Movies() {
         },
         data: {} as NonNullable<ReturnType<typeof data>>[number]
     })
-    const [actorsFilms] = createResource(async () => getActorFilms())
+    const actorsFilms = createAsync(async () => getActorFilms())
 
     let gridApi: GridApi
 
@@ -38,8 +48,8 @@ export function Movies() {
     })
 
     const data = createMemo(() => {
-        if (!films() || !actorsFilms()) return undefined;
-        return films()!.map(f => ({
+        if (!props.films() || !actorsFilms()) return undefined;
+        return props.films()!.map(f => ({
             ...f,
             actors: actorsFilms()!.filter(af => af.film_id === f.film_id).map(af => map().get(af.actor_id)!)
         }))
@@ -58,7 +68,7 @@ export function Movies() {
                 }}
             >
                 <AgGridSolid
-                    onGridReady={params => gridApi = params.api}
+                    onGridReady={params => (gridApi = params.api)}
                     rowSelection="multiple"
                     rowData={data()}
                     onSelectionChanged={() => {
@@ -124,11 +134,9 @@ export function Movies() {
                             <ContextMenu.SubMenu label="More From Genre" >
                                 <For each={contextMenu.data.tags?.split(", ")}>
                                     {tag =>
-                                        <ContextMenu.Item
-                                            onClick={() => navigate(`movies/tags/${tag}`)}
-                                        >
+                                        <ContextMenu.Link href={`movies/tags/${tag}`}>
                                             {tag}
-                                        </ContextMenu.Item>
+                                        </ContextMenu.Link>
                                     }
                                 </For>
                             </ContextMenu.SubMenu>
@@ -137,11 +145,9 @@ export function Movies() {
                             <ContextMenu.SubMenu label="More From Actor" >
                                 <For each={contextMenu.data.actors}>
                                     {actor =>
-                                        <ContextMenu.Item
-                                            onClick={() => navigate(`movies/actor/${actor.actor_id}`)}
-                                        >
+                                        <ContextMenu.Link href={`movies/actor/${actor.actor_id}`}>
                                             {actor.name}
-                                        </ContextMenu.Item>
+                                        </ContextMenu.Link>
                                     }
                                 </For>
                             </ContextMenu.SubMenu>
@@ -152,4 +158,3 @@ export function Movies() {
         </Suspense>
     )
 }
-

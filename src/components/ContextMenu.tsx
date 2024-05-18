@@ -1,6 +1,7 @@
-import { Accessor, JSX, Show, createContext, createEffect, createSignal, onMount, useContext } from "solid-js"
+import { Accessor, JSX, Show, createContext, createEffect, createSignal, onMount, splitProps, useContext } from "solid-js"
 import clickOutside from "../lib/clickOutside"
 import { Portal } from "solid-js/web"
+import { A } from "@solidjs/router"
 false && clickOutside
 
 type Props = {
@@ -62,7 +63,8 @@ function ContextSubMenu(props: { label: string, children: JSX.Element }) {
     const [y, setY] = createSignal(position.y)
     let ref: HTMLLIElement | undefined
 
-    createEffect(() => {console.log(ref?.getBoundingClientRect()?.top, ref?.offsetTop, ref?.clientTop)
+    createEffect(() => {
+        console.log(ref?.getBoundingClientRect()?.top, ref?.offsetTop, ref?.clientTop)
         if (ref) {
             setY(ref.getBoundingClientRect()?.top ?? 0)
         }
@@ -96,7 +98,6 @@ type ContextMenuProps = {
 } & JSX.HTMLAttributes<HTMLLIElement>
 
 function ContextMenuItem(props: ContextMenuProps) {
-    
     return (
         <li
             ref={props.ref}
@@ -109,5 +110,21 @@ function ContextMenuItem(props: ContextMenuProps) {
     )
 }
 
+function ContextMenuLink(props: JSX.HTMLAttributes<HTMLLIElement> & { href: string }) {
+    const [anchor, others] = splitProps(props, ['href'])
+    return (
+        <A href={anchor.href}>
+            <li
+                {...others}
+                ref={props.ref}
+                class="flex items-center justify-between h-8 p-2 hover:bg-slate-500"
+            >
+                {props.children}
+            </li>
+        </A>
+    )
+}
+
 ContextMenu.Item = ContextMenuItem
 ContextMenu.SubMenu = ContextSubMenu
+ContextMenu.Link = ContextMenuLink

@@ -1,16 +1,13 @@
-import { invoke } from "@tauri-apps/api/core";
 import Database from "@tauri-apps/plugin-sql";
-import { Suspense, createResource, onCleanup, onMount } from "solid-js";
+import { Suspense, onCleanup, onMount } from "solid-js";
 import AgGridSolid from "ag-grid-solid";
 import { GridApi } from "ag-grid-community";
 import { confirm } from "@tauri-apps/plugin-dialog";
+import { createAsync } from "@solidjs/router";
+import { getInaccessible } from "../../api/data";
 
 export default function Inaccessible() {
-    const [data, { refetch }] = createResource<{ title: string, path: string }[]>(async () => {
-        const db = await Database.load("sqlite:mngr.db");
-        const films = await db.select("SELECT title, path FROM film")
-        return await invoke('get_inaccessible', { playlist: films })
-    })
+    const data = createAsync(() => getInaccessible())
     let gridApi: GridApi<any>
 
     async function del() {
@@ -24,8 +21,8 @@ export default function Inaccessible() {
                 for (const film of selection) 
                     await db.select("DELETE FROM film WHERE path = $1", [film.path])
                 await db.select("COMMIT")
-                await refetch()
-            } catch (error) {
+            } 
+            catch (error) {
                 console.error(error)
                 await db.select("ROLLBACK")
             }
@@ -51,7 +48,7 @@ export default function Inaccessible() {
                     Delete Selected
                 </button>
                 <AgGridSolid
-                    onGridReady={params => gridApi = params.api}
+                    onGridReady={params => (gridApi = params.api)}
                     rowSelection="multiple"
                     onCellContextMenu={e => {
                         console.log(e)

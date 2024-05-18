@@ -15,7 +15,7 @@ export function Tree() {
                 <Node label="Movies" href="/movies">
                     <Node label="All Movies" href="/movies" />
                     <Node label="Inaccessible" href="/movies/inaccessible" />
-                    <Node label="Tags" href="/movies/tags">
+                    <Node label="Tags" href="/4">
                         <For each={tags()}>
                             {tag => <Node label={tag.tag} href={`/movies/tags/${tag.tag}`} />}
                         </For>

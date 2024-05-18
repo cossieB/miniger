@@ -1,7 +1,6 @@
 import { AddToDatabaseSvg } from "../../icons";
 import { state } from "../../state";
 import { db } from "../..";
-import { refetchFilms } from "../../routes/Movies";
 
 export function AddPlaylistFilesToDatabaseBtn() {
     return <AddToDatabaseSvg
@@ -14,7 +13,6 @@ export function AddPlaylistFilesToDatabaseBtn() {
                 for (const item of state.sidePanel.list)
                     await db()?.execute("INSERT into film (title, path) VALUES ($1, $2) ON CONFLICT (path) DO NOTHING", [item.title, item.path]);
                 await db()?.select("COMMIT");
-                await refetchFilms()
             }
             catch (error) {
                 console.error(error);
