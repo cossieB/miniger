@@ -58,7 +58,7 @@ function Movies(props: {films: Resource<(Film & {studio_name: string | null, tag
     const updateTagAction = useAction(updateTag)
 
     return (
-        <Suspense fallback={<p>Loading Database</p>}>
+        <Suspense>
             <div
                 id='gridContainer'
                 class='ag-theme-alpine-dark h-full relative'

@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS actor (
     name TEXT NOT NULL,
     dob TEXT,
     nationality TEXT,
-    gender TEXT(1),
+    gender TEXT,
     image TEXT
 );
 

@@ -1,6 +1,6 @@
 import { A, cache, createAsync } from "@solidjs/router"
 import Database from "@tauri-apps/plugin-sql"
-import { Accessor, For, JSX, JSXElement, Show, createSignal, onMount } from "solid-js"
+import { For, JSX, JSXElement, Show, createSignal, onMount } from "solid-js"
 
 const getTags = cache(async () => {
     const db = await Database.load("sqlite:mngr.db")
@@ -15,7 +15,7 @@ export function Tree() {
                 <Node label="Movies" href="/movies">
                     <Node label="All Movies" href="/movies" />
                     <Node label="Inaccessible" href="/movies/inaccessible" />
-                    <Node label="Tags" href="/4">
+                    <Node label="Tags" href="/movies">
                         <For each={tags()}>
                             {tag => <Node label={tag.tag} href={`/movies/tags/${tag.tag}`} />}
                         </For>
@@ -55,7 +55,6 @@ function Node(props: Props) {
     return (
         <>
             <A href={props.href}>
-
                 <li
                     class="w-full flex items-center h-8 tree-node hover:bg-orange-500"
                     ref={ref}
@@ -70,9 +69,7 @@ function Node(props: Props) {
                                 </svg>
                             </Icon>}
                     >
-                        <Icon
-                            onclick={() => setIsOpen(p => !p)}
-                        >
+                        <Icon onclick={() => setIsOpen(p => !p)}>
                             <svg classList={{ "rotate-90": isOpen() }} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
                             </svg>
