@@ -12,10 +12,6 @@ import { MySelectEditor } from "./CellEditors/MySelectEditor"
 import MoviesContextMenu from "./MoviesContextMenu"
 
 export function Movies(props: { films: Resource<(Film & { studio_name: string | null, tags: string | null })[] | undefined> }) {
-    const params = useParams()
-    const [films] = createResource(() => [params.tag, params.actor])
-
-    createEffect(() => films())
 
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
@@ -24,7 +20,8 @@ export function Movies(props: { films: Resource<(Film & { studio_name: string | 
         close() {
             setContextMenu('isOpen', false)
         },
-        data: {} as NonNullable<ReturnType<typeof data>>[number]
+        data: {} as NonNullable<ReturnType<typeof data>>[number],
+        selections : [] as NonNullable<ReturnType<typeof data>>[number][]
     })
     const [actorsFilms] = createResource(async () => getActorFilms())
 
@@ -76,7 +73,8 @@ export function Movies(props: { films: Resource<(Film & { studio_name: string | 
                             isOpen: true,
                             x: (params.event as MouseEvent).clientX,
                             y: (params.event as MouseEvent).clientY,
-                            data: params.data
+                            data: params.data,
+                            selections: gridApi.getSelectedRows(),
                         })
                     }}
                     columnDefs={[{

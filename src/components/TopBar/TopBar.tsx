@@ -1,5 +1,5 @@
 import { useNavigate } from "@solidjs/router";
-import { BackArrow, ForwardArrow, House } from "../../icons";
+import { BackArrow, ForwardArrow, House, ShuffleSvg } from "../../icons";
 import { LoadPlaylistBtn } from "./LoadPlaylistBtn";
 import { SavePlaylistBtn } from "./SavePlaylistBtn";
 import { AddPlaylistFilesToDatabaseBtn } from "./AddPlaylistFilesToDatabaseBtn";
@@ -8,6 +8,7 @@ import { AddDirectoryBtn } from "./AddDirectoryBtn";
 import { ClearPlaylistBtn } from "./ClearPlaylistBtn";
 import { AddToPlaylist } from "./AddToPlaylist";
 import { Breadcrumbs } from "../Breadcrumb";
+import { state } from "../../state";
 
 export function TopBar() {
     const navigate = useNavigate();
@@ -27,7 +28,17 @@ export function TopBar() {
             <CleanPlaylistBtn />
             <AddPlaylistFilesToDatabaseBtn />
             <SavePlaylistBtn />
+            <ShufflePlaylistBtn />
             <ClearPlaylistBtn />
         </nav>
     );
+}
+
+function ShufflePlaylistBtn() {
+    return (
+        <ShuffleSvg
+            classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
+            onClick={state.sidePanel.shuffle}
+        />
+    )
 }

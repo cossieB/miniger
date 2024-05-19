@@ -1,5 +1,6 @@
 import { ReactiveSet } from "@solid-primitives/set";
 import { createStore } from "solid-js/store";
+import shuffleArray from "./lib/shuffleArray";
 
 
 type FileInfo = {
@@ -22,6 +23,9 @@ export const [state, setState] = createStore({
         },
         clear: () => {
             setState('sidePanel', 'list', [])
+        },
+        shuffle: () => {
+            setState('sidePanel', 'list', prev => shuffleArray(prev))
         }
     },
     mainPanel: {

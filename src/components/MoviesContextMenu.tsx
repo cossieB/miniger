@@ -20,7 +20,8 @@ type P = {
             release_date: string | null;
             studio_name: string | null;
             tags: string | null;
-        };
+        },
+        selections: P['contextMenu']['data'][]
     }
 }
 
@@ -29,10 +30,7 @@ export default function MoviesContextMenu(props: P) {
         <ContextMenu close={props.contextMenu.close} pos={{ x: props.contextMenu.x, y: props.contextMenu.y }} >
             <ContextMenu.Item
                 onClick={() => {
-                    state.sidePanel.push([{
-                        path: props.contextMenu.data.path,
-                        title: props.contextMenu.data.title
-                    }])
+                    state.sidePanel.push(props.contextMenu.selections)
                 }}
             >
                 Add To Playlist
