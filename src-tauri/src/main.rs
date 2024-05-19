@@ -16,7 +16,8 @@ fn main() {
             commands::cleanup_playlist,
             commands::save_playlist,
             commands::get_inaccessible,
-            commands::load_directory
+            commands::load_directory,
+            commands::open_explorer
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

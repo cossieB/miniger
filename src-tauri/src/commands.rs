@@ -1,4 +1,4 @@
-use std::{collections::HashSet, fs, path::Path};
+use std::{collections::HashSet, fs, path::Path, process::Command};
 
 use playzer::{format, reader_writer, FileInfo};
 
@@ -62,4 +62,10 @@ pub fn load_directory(path: String) -> Result<Vec<FileInfo>, AppError> {
         })
         .collect();
     Ok(file_info)
+}
+
+#[tauri::command]
+pub fn open_explorer(path: String) -> Result<(), AppError> {
+    Command::new("explorer").args(["/select,", &path]).spawn()?;
+    Ok(())
 }

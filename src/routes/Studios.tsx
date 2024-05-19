@@ -1,10 +1,9 @@
-import { Suspense } from "solid-js";
+import { Suspense, createResource } from "solid-js";
 import GridTable from "../components/Table";
 import { getStudios } from "../api/data";
-import { createAsync } from "@solidjs/router";
 
 export default function Studios() {
-    const actors = createAsync(() => getStudios())
+    const [actors] = createResource(() => getStudios())
 
     return (
         <Suspense>

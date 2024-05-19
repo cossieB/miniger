@@ -1,5 +1,5 @@
-import { action, createAsync, revalidate, useAction } from "@solidjs/router";
-import { For } from "solid-js";
+import { action, revalidate, useAction } from "@solidjs/router";
+import { For, createResource } from "solid-js";
 import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
 import Database from "@tauri-apps/plugin-sql";
 import { ChangeEvent } from "../../lib/solidTypes";
@@ -19,7 +19,7 @@ const updateStudio = action(async (filmId: number, studioId: number | null) => {
 
 
 export function MySelectEditor(props: ICellEditorParams) {
-    const studios = createAsync(async () => getStudios())
+    const [studios] = createResource(async () => getStudios())
     const updateStudioAction = useAction(updateStudio);
 
     let value = props.value;

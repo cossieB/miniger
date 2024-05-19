@@ -65,7 +65,6 @@ function ContextSubMenu(props: { label: string, children: JSX.Element }) {
     let ref: HTMLLIElement | undefined
 
     createEffect(() => {
-        console.log(ref?.getBoundingClientRect()?.top, ref?.offsetTop, ref?.clientTop)
         if (ref) {
             setY(ref.getBoundingClientRect()?.top ?? 0)
         }

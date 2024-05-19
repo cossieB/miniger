@@ -1,13 +1,12 @@
 import Database from "@tauri-apps/plugin-sql";
-import { Suspense, onCleanup, onMount } from "solid-js";
+import { Suspense, createResource, onCleanup, onMount } from "solid-js";
 import AgGridSolid from "ag-grid-solid";
 import { GridApi } from "ag-grid-community";
 import { confirm } from "@tauri-apps/plugin-dialog";
-import { createAsync } from "@solidjs/router";
 import { getInaccessible } from "../../api/data";
 
 export default function Inaccessible() {
-    const data = createAsync(() => getInaccessible())
+    const [data] = createResource(() => getInaccessible())
     let gridApi: GridApi<any>
 
     async function del() {
