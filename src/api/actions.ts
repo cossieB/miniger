@@ -1,6 +1,6 @@
 import { action, revalidate } from "@solidjs/router";
 import Database from "@tauri-apps/plugin-sql";
-import { Actor } from "../datatypes";
+import { Actor, Studio } from "../datatypes";
 
 export const updateTag = action(async (filmId: string, tags: string[]) => {
     const db = await Database.load("sqlite:mngr.db");
@@ -32,4 +32,22 @@ export const addActor = action(async (name: string, filmId?: string) => {
         console.error(error);
         await db.select("ROLLBACK")
     }
+})
+
+export const updateFilmStudio = action(async (filmId: number, studioId: number | null) => {
+    if (studioId === -1)
+        studioId = null
+    const db = await Database.load("sqlite:mngr.db");
+    try {
+        await db.select("UPDATE film SET studio_id = $1 WHERE film_id = $2", [studioId, filmId]);
+        await revalidate([]);
+    }
+    catch (error) {
+        console.error(error);
+    }
+});
+
+export const createStudio = action(async (name: string) => {
+    const db = await Database.load("sqlite:mngr.db");
+    return await db.select("INSERT INTO studio (name) VALUES($1) RETURNING *", [name]) as [Studio]
 })

@@ -12,6 +12,8 @@ import Studios from "./routes/Studios";
 import { getActors, getFilms, getFilmsByActor, getFilmsByTag, getInaccessible, getStudios } from "./api/data";
 import { MoviesByTagPage } from "./routes/Movies/[tag]";
 import { MoviesByActorPage } from "./routes/Movies/[actor]";
+import 'ag-grid-community/styles/ag-grid.css'; // grid core CSS
+import "ag-grid-community/styles/ag-theme-alpine.css"; // optional theme
 
 export const [db] = createResource(() => Database.load("sqlite:mngr.db"))
 

@@ -1,7 +1,7 @@
-import { useParams, useAction } from "@solidjs/router"
+import { useAction, useIsRouting } from "@solidjs/router"
 import { GridApi } from "ag-grid-community"
 import AgGridSolid from "ag-grid-solid"
-import { Resource, createResource, createEffect, createMemo, Suspense, Show } from "solid-js"
+import { Resource, createResource, createMemo, Suspense, Show, createEffect } from "solid-js"
 import { createStore } from "solid-js/store"
 import { updateTag } from "../api/actions"
 import { getActorFilms } from "../api/data"
@@ -12,6 +12,12 @@ import { MySelectEditor } from "./CellEditors/MySelectEditor"
 import MoviesContextMenu from "./MoviesContextMenu"
 
 export function Movies(props: { films: Resource<(Film & { studio_name: string | null, tags: string | null })[] | undefined> }) {
+    const isRouting = useIsRouting()
+
+    createEffect(() => {
+        if (isRouting())
+            setContextMenu('isOpen', false)
+    })
 
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
@@ -86,6 +92,7 @@ export function Movies(props: { films: Resource<(Film & { studio_name: string | 
                         editable: true,
                         headerName: "Studio",
                         cellEditor: MySelectEditor,
+                        cellEditorPopup: true,                       
 
                     }, {
                         field: "actors",

@@ -1,6 +1,6 @@
 import { For, Show } from "solid-js";
 import { state } from "../state";
-import { ContextMenu } from "./ContextMenu";
+import { ContextMenu } from "./ContextMenu/ContextMenu";
 import { Actor } from "../datatypes";
 import { open, } from "@tauri-apps/plugin-shell";
 import { invoke } from "@tauri-apps/api/core";

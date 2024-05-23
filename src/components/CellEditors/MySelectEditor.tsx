@@ -1,54 +1,130 @@
-import { action, revalidate, useAction } from "@solidjs/router";
-import { For, createResource } from "solid-js";
+import { For, Setter, Show, createResource, createSignal, onMount } from "solid-js";
 import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
-import Database from "@tauri-apps/plugin-sql";
-import { ChangeEvent } from "../../lib/solidTypes";
 import { getStudios } from "../../api/data";
+import { CreateActorSvg } from "../../icons";
+import { createStudio, updateFilmStudio } from "../../api/actions";
+import { useAction } from "@solidjs/router";
+import { Studio } from "../../datatypes";
 
-const updateStudio = action(async (filmId: number, studioId: number | null) => {
-    studioId === -1 && (studioId = null);
-    const db = await Database.load("sqlite:mngr.db");
-    try {
-        await db.select("UPDATE film SET studio_id = $1 WHERE film_id = $2", [studioId, filmId]);
-        await revalidate([]);
-    }
-    catch (error) {
-        console.error(error);
-    }
-});
-
+export const [studios, { refetch: refetchStudios }] = createResource(async () => getStudios())
+const [addedStudios, setAddedStudios] = createSignal<Studio[]>([])
 
 export function MySelectEditor(props: ICellEditorParams) {
-    const [studios] = createResource(async () => getStudios())
-    const updateStudioAction = useAction(updateStudio);
+    const [input, setInput] = createSignal("")
+    const [value, setValue] = createSignal("")
+    const filtered = () => studios()?.filter(s => s.name.toLowerCase().includes(input().toLowerCase()))
 
-    let value = props.value;
-    let refInput: any;
+    let refInput!: HTMLInputElement;
 
     const api: ICellEditor = {
-        getValue: () => value
+        getValue: () => value()
     };
 
+    onMount(() => {
+        refInput.focus()
+    });
     (props as any).ref(api);
 
-    const onValueChanged = async (event: ChangeEvent<HTMLSelectElement>) => {
-        const id = Number(event.target.value);
-        await updateStudioAction(props.data.film_id, id);
-        value = studios()?.find(s => s.studio_id === id)?.name;
-        props.stopEditing();
-    };
     return (
-        <select
-            class="w-full h-full bg-slate-800"
-            ref={refInput}
-            onchange={onValueChanged}
-            value={props.data.studio_id ?? -1}
-        >
-            <option disabled>Studios</option>
-            <option value="-1">Unknown</option>
-            <For each={studios()!}>
-                {studio => <option value={studio.studio_id}> {studio.name} </option>}
-            </For>
-        </select>
+        <>
+            <input
+                type="text"
+                class="ag-input-field-input ag-text-field-input h-10"
+                oninput={e => setInput(e.target.value)}
+                value={input()}
+                ref={refInput}
+            />
+            <ul
+                id="studio-list"
+                class="w-full h-full bg-slate-800 max-h-[50vh] overflow-y-scroll"
+            >
+                <Option
+                    text="Unknown"
+                    value={-1}
+                    setInput={setValue}
+                    stopEditing={props.stopEditing}
+                    filmId={props.data.film_id}
+                />
+                <For each={filtered()}>
+                    {studio =>
+                        <Option
+                            text={studio.name}
+                            value={studio.studio_id}
+                            setInput={setValue}
+                            stopEditing={props.stopEditing}
+                            filmId={props.data.film_id}
+                        />}
+                </For>
+                <For each={addedStudios()?.filter(s => s.name.toLowerCase().includes(input().toLowerCase()))}>
+                    {studio =>
+                        <Option
+                            text={studio.name}
+                            value={studio.studio_id}
+                            setInput={setValue}
+                            stopEditing={props.stopEditing}
+                            filmId={props.data.film_id}
+                        />}
+                </For>
+                <Show when={input().length > 0}>
+                    <AddStudioBtn
+                        input={input()}
+                        stopEditing={() => {
+                            setValue(input())
+                            props.stopEditing()
+                        }}
+                        filmId={props.data.film_id}
+                    />
+                </Show>
+            </ul>
+        </>
     );
+}
+
+type Props = {
+    value: number
+    text: string
+    setInput: Setter<string>
+    stopEditing: () => void
+    filmId: number
+}
+
+function Option(props: Props) {
+    const updateStudioAction = useAction(updateFilmStudio)
+    return (
+        <li
+            class="hover:bg-slate-500 p-1"
+            onclick={async () => {
+                await updateStudioAction(props.filmId, props.value);
+                props.setInput(props.text == "Unknown" ? "" : props.text);
+                props.stopEditing();
+            }}
+        >
+            {props.text}
+        </li>
+    )
+}
+
+type P1 = {
+    input: string
+    stopEditing: () => void
+    filmId: number
+}
+
+function AddStudioBtn(props: P1) {
+    const updateStudioAction = useAction(updateFilmStudio)
+    const createStudioAction = useAction(createStudio)
+    return (
+        <button
+            type="button"
+            onclick={async () => {
+                const row = await createStudioAction(props.input)
+                setAddedStudios(p => [...p, ...row])
+                const studioId = row[0].studio_id
+                await updateStudioAction(props.filmId, studioId)
+                props.stopEditing();
+            }}
+        >
+            <CreateActorSvg />
+        </button>
+    )
 }
