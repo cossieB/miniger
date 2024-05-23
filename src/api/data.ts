@@ -91,3 +91,23 @@ export const getFilmsByActor = cache(async (actorId: number) => {
     WHERE actor_id = $1
     `, [actorId]) as (Film & {studio_name: string | null, tags: string | null})[]
 }, "filmsByActor")
+
+export const getFilmsByStudio = cache(async (studioId: number) => {
+    const db = await Database.load("sqlite:mngr.db")
+    return await db.select(`
+    WITH tq AS (
+        SELECT GROUP_CONCAT(tag, ', ') tags, film_id
+        FROM film_tag
+        GROUP BY film_id
+    )
+    
+    SELECT 
+        film.*, 
+        studio.name AS studio_name,
+        tags
+    FROM film
+    LEFT JOIN studio USING(studio_id)
+    LEFT JOIN tq USING(film_id)
+    WHERE studio_id = $1
+    `, [studioId]) as (Film & {studio_name: string | null, tags: string | null})[]    
+}, "filmsByStudio")

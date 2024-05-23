@@ -1,6 +1,7 @@
 import { A, cache } from "@solidjs/router"
 import Database from "@tauri-apps/plugin-sql"
 import { For, JSX, JSXElement, Show, createResource, createSignal, onMount } from "solid-js"
+import { getStudios } from "../../api/data"
 
 const getTags = cache(async () => {
     const db = await Database.load("sqlite:mngr.db")
@@ -9,6 +10,7 @@ const getTags = cache(async () => {
 
 export function Tree() {
     const [tags] = createResource(() => getTags(), { initialValue: [] })
+    const [studios] = createResource(() => getStudios(), {initialValue: []})
     return (
         <nav class="top-0 left-0 h-full w-52 bg-slate-700 text-orange-50 shrink-0 overflow-y-auto">
             <ul id="tree-root">
@@ -18,6 +20,11 @@ export function Tree() {
                     <Node label="Tags" href="/movies">
                         <For each={tags()}>
                             {tag => <Node label={tag.tag} href={`/movies/tags/${tag.tag}`} />}
+                        </For>
+                    </Node>
+                    <Node label="Studios" href="/movies">
+                        <For each={studios()}>
+                            {studio => <Node label={studio.name} href={`/movies/studios/${studio.studio_id}`} />}
                         </For>
                     </Node>
                 </Node>

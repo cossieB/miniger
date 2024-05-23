@@ -1,18 +1,27 @@
-import { useAction, useIsRouting } from "@solidjs/router"
+import { useAction, useIsRouting, useParams } from "@solidjs/router"
 import { GridApi } from "ag-grid-community"
 import AgGridSolid from "ag-grid-solid"
-import { Resource, createResource, createMemo, Suspense, Show, createEffect } from "solid-js"
+import { createResource, createMemo, Suspense, Show, createEffect } from "solid-js"
 import { createStore } from "solid-js/store"
 import { updateTag } from "../api/actions"
 import { getActorFilms } from "../api/data"
 import { Film, Actor } from "../datatypes"
 import { setState } from "../state"
-import { actors, ActorSelector } from "./CellEditors/ActorCellEditor/ActorSelector"
-import { MySelectEditor } from "./CellEditors/MySelectEditor"
-import MoviesContextMenu from "./MoviesContextMenu"
+import { actors, ActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSelector"
+import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
+import MoviesContextMenu from "../components/MoviesContextMenu"
 
-export function Movies(props: { films: Resource<(Film & { studio_name: string | null, tags: string | null })[] | undefined> }) {
+type Props = {
+    fetcher(): Promise<(Film & {
+        studio_name: string | null
+        tags: string | null
+    })[] | undefined>
+}
+
+export function Movies(props: Props) {
     const isRouting = useIsRouting()
+    const params = useParams()
+    const [films] = createResource(() => [params.tag, params.studioId, params.actorId], () => props.fetcher())
 
     createEffect(() => {
         if (isRouting())
@@ -43,8 +52,8 @@ export function Movies(props: { films: Resource<(Film & { studio_name: string | 
     })
 
     const data = createMemo(() => {
-        if (!props.films() || !actorsFilms()) return undefined;
-        return props.films()!.map(f => ({
+        if (!films() || !actorsFilms()) return undefined;
+        return films()!.map(f => ({
             ...f,
             actors: actorsFilms()!.filter(af => af.film_id === f.film_id).map(af => map().get(af.actor_id)!)
         }))

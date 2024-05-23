@@ -3,17 +3,15 @@ import { render } from "solid-js/web";
 import "./App.css";
 import App from "./App";
 import { Route, Router } from "@solidjs/router";
-import { MoviesPage } from "./routes/Movies/Movies";
 import Database from "@tauri-apps/plugin-sql";
 import { createResource } from "solid-js";
-import Inaccessible from "./routes/Movies/Inaccessible";
 import Actors from "./routes/Actors";
 import Studios from "./routes/Studios";
-import { getActors, getFilms, getFilmsByActor, getFilmsByTag, getInaccessible, getStudios } from "./api/data";
-import { MoviesByTagPage } from "./routes/Movies/[tag]";
-import { MoviesByActorPage } from "./routes/Movies/[actor]";
+import { getActors, getFilms, getFilmsByActor, getFilmsByStudio, getFilmsByTag, getInaccessible, getStudios } from "./api/data";
 import 'ag-grid-community/styles/ag-grid.css'; // grid core CSS
 import "ag-grid-community/styles/ag-theme-alpine.css"; // optional theme
+import { Movies } from "./routes/Movies";
+import Inaccessible from "./routes/Inaccessible";
 
 export const [db] = createResource(() => Database.load("sqlite:mngr.db"))
 
@@ -21,12 +19,29 @@ render(() => (
     <Router root={App}>
         <Route path="/" component={() => <p>Index</p>} />
         <Route path="/movies"  >
-            <Route path="/" component={MoviesPage} load={void getFilms} />
-            <Route path="/tags/:tag" component={MoviesByTagPage} load={(args) => getFilmsByTag(args.params.tag)} />
-            <Route path="/actors/:actorId" component={MoviesByActorPage} load={(args) => getFilmsByActor(Number(args.params.actorId))} />
+            <Route
+                path="/"
+                component={() => <Movies fetcher={() => getFilms()} />}
+                load={void getFilms}
+            />
+            <Route
+                path="/tags/:tag"
+                component={(props) => <Movies fetcher={() => getFilmsByTag(props.params.tag)} />}
+                load={(args) => getFilmsByTag(args.params.tag)}
+            />
+            <Route
+                path="/actors/:actorId"
+                component={props => <Movies fetcher={() => getFilmsByActor(Number(props.params.actorId))} />}
+                load={(args) => getFilmsByActor(Number(args.params.actorId))}
+            />
+            <Route
+                path="/studios/:studioId"
+                component={props => <Movies fetcher={() => getFilmsByStudio(Number(props.params.studioId))} />}
+                load={args => getFilmsByStudio(Number(args.params.studioId))}
+            />
         </Route>
         <Route path={["/actors", "/movies/actors"]} component={Actors} load={() => getActors()} />
-        <Route path="/studios" component={Studios} load={() => getStudios()} />
+        <Route path={["/studios", "/movies/studios"]} component={Studios} load={() => getStudios()} />
         <Route path="/movies/inaccessible" component={Inaccessible} load={() => getInaccessible()} />
     </Router>
 ), document.getElementById("root") as HTMLElement);

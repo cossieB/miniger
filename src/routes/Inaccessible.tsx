@@ -3,7 +3,7 @@ import { Suspense, createResource, onCleanup, onMount } from "solid-js";
 import AgGridSolid from "ag-grid-solid";
 import { GridApi } from "ag-grid-community";
 import { confirm } from "@tauri-apps/plugin-dialog";
-import { getInaccessible } from "../../api/data";
+import { getInaccessible } from "../api/data";
 
 export default function Inaccessible() {
     const [data] = createResource(() => getInaccessible())
