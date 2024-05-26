@@ -2,7 +2,7 @@ use std::{collections::HashSet, fs, path::Path, process::Command};
 
 use playzer::{format, reader_writer, FileInfo};
 
-use crate::error::AppError;
+use crate::{error::AppError, extensions::EXTENSIONS};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -54,10 +54,26 @@ pub fn load_directory(path: String) -> Result<Vec<FileInfo>, AppError> {
     let file_info = files
         .into_iter()
         .filter_map(|file| match file {
-            Ok(entry) => Some(FileInfo::new(
-                entry.file_name().into_string().unwrap(),
-                entry.path().to_str().unwrap().to_string(),
-            )),
+            Ok(entry) => {
+                if !entry.file_type().unwrap().is_file() {
+                    return None;
+                }
+                match entry.path().extension() {
+                    Some(ext) => {
+                        let ext = ext.to_str().unwrap_or_default();
+                        if EXTENSIONS.contains(&ext) {
+                            return Some(FileInfo::new(
+                                entry.file_name().into_string().unwrap(),
+                                entry.path().to_str().unwrap().to_string(),
+                            ))
+                        }
+                        else {
+                            return None
+                        }
+                    }
+                    None => return None
+                }
+            },
             Err(_) => None,
         })
         .collect();

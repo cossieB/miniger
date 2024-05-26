@@ -8,7 +8,7 @@ export function AddToPlaylist() {
     return (
         <Show when={!!match()}>
             <AddToPlaylistSvg
-                class="ml-auto"
+                classList={{ 'fill-zinc-500': state.mainPanel.selectedItems.length == 0 }}
                 title="Add to playlist"
                 onclick={() => {
                     state.sidePanel.push(state.mainPanel.selectedItems)

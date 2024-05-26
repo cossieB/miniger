@@ -1,11 +1,12 @@
 import { PlayListSvg } from "../../icons";
 import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
-import { setState } from "../../state";
+import { setState, state } from "../../state";
 
 export function LoadPlaylistBtn() {
     return <PlayListSvg
         class="ml-auto"
+        title="Load Playlist"
         onclick={async () => {
             const selection = await open({
                 title: "Select a playlist",
@@ -22,10 +23,7 @@ export function LoadPlaylistBtn() {
                 setState('sidePanel', 'list', t);
             }
             catch (error) {
-                setState('status', error as string);
-                setTimeout(() => {
-                    setState('status', "");
-                }, 5000);
+                state.status.setStatus(error as string)
             }
         }} />;
 }

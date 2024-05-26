@@ -57,8 +57,20 @@ export default function MoviesContextMenu(props: P) {
                     </For>
                 </ContextMenu.SubMenu>
             </Show>
+            <Show when={props.contextMenu.data.studio_id}>
+                <ContextMenu.Link href={`/movies/studios/${props.contextMenu.data.studio_id}`}>
+                    More From {props.contextMenu.data.studio_name}
+                </ContextMenu.Link>
+            </Show>
             <ContextMenu.Item
-                onClick={() => open(props.contextMenu.data.path)} >
+                onClick={async () => {
+                    try {
+                        await open(props.contextMenu.data.path)
+                    } catch (error) {
+                        console.error(error)
+                        state.status.setStatus("File Not Found")
+                    }
+                }} >
                 Open With Default Player
             </ContextMenu.Item>
             <ContextMenu.Item
@@ -66,7 +78,7 @@ export default function MoviesContextMenu(props: P) {
                     try {
                         await invoke("open_explorer", {
                             path: props.contextMenu.data.path,
-                        })      
+                        })
                     } catch (error) {
                         console.error(error)
                     }

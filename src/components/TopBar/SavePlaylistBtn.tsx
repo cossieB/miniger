@@ -5,6 +5,7 @@ import { setState, state } from "../../state";
 
 export function SavePlaylistBtn() {
     return <SaveSvg
+        title="Save Playlist"
         classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
         onclick={async () => {
             if (state.sidePanel.list.length == 0) return;
@@ -28,7 +29,8 @@ export function SavePlaylistBtn() {
                 if (path)
                     await invoke('save_playlist', { path, files: state.sidePanel.list });
             } catch (error) {
-                setState('status', error as string);
+                console.error(error);
+                setState('status', 'message', "Error saving playlist");
             }
         }} />;
 }

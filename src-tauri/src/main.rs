@@ -3,6 +3,7 @@
 
 mod commands;
 mod error;
+mod extensions;
 
 fn main() {
     tauri::Builder::default()

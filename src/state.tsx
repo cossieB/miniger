@@ -9,7 +9,23 @@ type FileInfo = {
 };
 
 export const [state, setState] = createStore({
-    status: "",
+    status: {
+        message: "",
+        timerId: -1,
+        setStatus: (status: string) => {
+            clearTimeout(state.status.timerId)
+            const timerId = setTimeout(() => {
+                setState('status', 'message', "")
+            }, 5000) 
+            setState({
+                status: {
+                    ...state.status,
+                    message: status,
+                    timerId
+                }
+            })
+        }
+    },
     sidePanel: {
         list: [] as FileInfo[],
         selections: new ReactiveSet<number>(),

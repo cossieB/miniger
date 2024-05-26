@@ -4,7 +4,7 @@ import { LoadPlaylistBtn } from "./LoadPlaylistBtn";
 import { SavePlaylistBtn } from "./SavePlaylistBtn";
 import { AddPlaylistFilesToDatabaseBtn } from "./AddPlaylistFilesToDatabaseBtn";
 import { CleanPlaylistBtn } from "./CleanPlaylistBtn";
-import { AddDirectoryBtn } from "./AddDirectoryBtn";
+import { AddDirectoryBtn, AddDirectoryToDatabase } from "./AddDirectoryBtn";
 import { ClearPlaylistBtn } from "./ClearPlaylistBtn";
 import { AddToPlaylist } from "./AddToPlaylist";
 import { Breadcrumbs } from "../Breadcrumb";
@@ -20,6 +20,7 @@ export function TopBar() {
             <Breadcrumbs />
 
             {/* Center Part */}
+            <AddDirectoryToDatabase />
             <AddToPlaylist />
 
             {/* Right Part */}
@@ -37,6 +38,7 @@ export function TopBar() {
 function ShufflePlaylistBtn() {
     return (
         <ShuffleSvg
+            title="Shuffle Playlist"
             classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
             onClick={state.sidePanel.shuffle}
         />
