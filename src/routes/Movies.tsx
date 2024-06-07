@@ -1,7 +1,7 @@
 import { useAction, useIsRouting, useParams } from "@solidjs/router"
 import { GridApi } from "ag-grid-community"
 import AgGridSolid from "ag-grid-solid"
-import { createResource, createMemo, Suspense, Show, createEffect } from "solid-js"
+import { createResource, createMemo, Suspense, Show, createEffect, on } from "solid-js"
 import { createStore } from "solid-js/store"
 import { updateTag } from "../api/actions"
 import { getActorFilms } from "../api/data"
@@ -10,6 +10,7 @@ import { setState } from "../state"
 import { actors, ActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSelector"
 import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
 import MoviesContextMenu from "../components/MoviesContextMenu"
+import { filmCache } from "../caches/films"
 
 type Props = {
     fetcher(): Promise<(Film & {
@@ -36,7 +37,7 @@ export function Movies(props: Props) {
             setContextMenu('isOpen', false)
         },
         data: {} as NonNullable<ReturnType<typeof data>>[number],
-        selections : [] as NonNullable<ReturnType<typeof data>>[number][]
+        selections: [] as NonNullable<ReturnType<typeof data>>[number][]
     })
     const [actorsFilms] = createResource(async () => getActorFilms())
 
@@ -58,6 +59,14 @@ export function Movies(props: Props) {
             actors: actorsFilms()!.filter(af => af.film_id === f.film_id).map(af => map().get(af.actor_id)!)
         }))
     })
+
+    createEffect(on(data, () => {
+        Promise.resolve().then(() => {
+            data()?.forEach(d => {
+                filmCache[d.path] ??= d
+            })
+        })
+    }))
 
     const updateTagAction = useAction(updateTag)
 
@@ -93,7 +102,7 @@ export function Movies(props: Props) {
                         editable: true,
                         headerName: "Studio",
                         cellEditor: MySelectEditor,
-                        cellEditorPopup: true,                       
+                        cellEditorPopup: true,
 
                     }, {
                         field: "actors",

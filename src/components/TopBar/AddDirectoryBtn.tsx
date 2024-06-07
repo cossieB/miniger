@@ -4,6 +4,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { PlaylistFile, setState, state } from "../../state";
 import Database from "@tauri-apps/plugin-sql";
 import { reload } from "@solidjs/router";
+import { filmCache } from "../../caches/films";
 
 export function AddDirectoryBtn() {
     return <AddFolderSvg
@@ -47,12 +48,16 @@ async function readDirectories() {
     for (const directory of directories) {
         const t: {title: string, path: string}[] = await invoke('load_directory', { path: directory });
         for (const file of t) {
+            const cached = filmCache[file.path]
+            if (!cached) 
             files.push({
                 ...file,
                 studio_name: "",
                 actors: [],
                 tags: ''
             })
+            else
+                files.push(cached)
         }
     }
     return files;
