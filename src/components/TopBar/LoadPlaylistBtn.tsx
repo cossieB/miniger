@@ -20,7 +20,13 @@ export function LoadPlaylistBtn() {
                 const t: { title: string; path: string; }[] = await invoke("read_playlist", {
                     playlist: selection.path
                 });
-                setState('sidePanel', 'list', t);
+                const v = t.map(x => ({
+                    ...x,
+                    studio_name: "",
+                    tags: "",
+                    actors: []
+                }))
+                setState('sidePanel', 'list', v);
             }
             catch (error) {
                 state.status.setStatus(error as string)

@@ -1,4 +1,4 @@
-import { JSX, Show, createEffect, createSignal } from "solid-js";
+import { JSX, Show, createEffect, createSignal, on } from "solid-js";
 import { ChevronRight } from "../../icons";
 import { useContextMenuContext } from "./useContextMenuContext";
 import { Menu } from "./Menu";
@@ -8,15 +8,26 @@ export function ContextSubMenu(props: { label: string; children: JSX.Element; })
     const [showMenu, setShowMenu] = createSignal(false);
     const position = useContextMenuContext();
     const [y, setY] = createSignal(position.y);
+    const [x, setX] = createSignal(position.width)
 
     let ref: HTMLLIElement | undefined;
     let timerId: number | undefined;
+    let sub: HTMLDivElement | undefined
 
     createEffect(() => {
         if (ref) {
             setY(ref.offsetTop);
         }
     });
+    createEffect(on(() => showMenu(),() => {
+        setX(position.width);
+        if (sub) {
+            const w = position.x + position.width + sub.clientLeft + sub.clientWidth;
+            if (w > window.innerWidth) {
+                setX( -position.width)
+            }
+        }
+    }))
 
     return (
         <>
@@ -40,8 +51,9 @@ export function ContextSubMenu(props: { label: string; children: JSX.Element; })
                 <ChevronRight />
                 <Show when={showMenu()}>
                     <Menu
-                        pos={{ x: position.width(), y: y() }}
+                        pos={{ x: x(), y: y() }}
                         close={() => setShowMenu(false)}
+                        ref={sub}
                     >
                         {props.children}
                     </Menu>

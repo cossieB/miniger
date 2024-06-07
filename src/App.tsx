@@ -44,7 +44,7 @@ function App(props: { children?: JSXElement }) {
     })
 
     return (
-        <div class="h-screen w-screen text-white">
+        <div oncontextmenu={e => e.preventDefault()} class="h-screen w-screen text-white">
             <TopBar />
             <div class="w-screen flex" style={{height: "calc(100vh - 4rem"}}>
                 <Tree />

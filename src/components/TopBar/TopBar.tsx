@@ -1,5 +1,5 @@
-import { useMatch, useNavigate } from "@solidjs/router";
-import { BackArrow, ForwardArrow, PlusSvg, ShuffleSvg } from "../../icons";
+import { useNavigate } from "@solidjs/router";
+import { BackArrow, ForwardArrow, ShuffleSvg } from "../../icons";
 import { LoadPlaylistBtn } from "./LoadPlaylistBtn";
 import { SavePlaylistBtn } from "./SavePlaylistBtn";
 import { AddPlaylistFilesToDatabaseBtn } from "./AddPlaylistFilesToDatabaseBtn";

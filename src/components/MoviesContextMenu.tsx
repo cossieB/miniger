@@ -13,7 +13,6 @@ type P = {
         close(): void;
         data: {
             actors: Actor[];
-            film_id: number;
             path: string;
             title: string;
             studio_id: number | null;
@@ -35,9 +34,17 @@ export default function MoviesContextMenu(props: P) {
             >
                 Add To Playlist
             </ContextMenu.Item>
-            <Show when={(props.contextMenu.data.tags?.split(", ").length ?? 0) > 0}>
+            <MoviesMenu data={props.contextMenu.data} />
+        </ContextMenu>
+    )
+}
+
+export function MoviesMenu(props: Pick<P['contextMenu'], 'data'>) {
+    return (
+        <>
+            <Show when={props.data.tags && props.data.tags.split(", ").length > 0}>
                 <ContextMenu.SubMenu label="More From Genre" >
-                    <For each={props.contextMenu.data.tags?.split(", ")}>
+                    <For each={props.data.tags?.split(", ")}>
                         {tag =>
                             <ContextMenu.Link href={`/movies/tags/${tag}`}>
                                 {tag}
@@ -46,9 +53,9 @@ export default function MoviesContextMenu(props: P) {
                     </For>
                 </ContextMenu.SubMenu>
             </Show>
-            <Show when={props.contextMenu.data.actors.length > 0}>
+            <Show when={props.data.actors.length > 0}>
                 <ContextMenu.SubMenu label="More From Actor" >
-                    <For each={props.contextMenu.data.actors}>
+                    <For each={props.data.actors}>
                         {actor =>
                             <ContextMenu.Link href={`/movies/actors/${actor.actor_id}`}>
                                 {actor.name}
@@ -57,15 +64,15 @@ export default function MoviesContextMenu(props: P) {
                     </For>
                 </ContextMenu.SubMenu>
             </Show>
-            <Show when={props.contextMenu.data.studio_id}>
-                <ContextMenu.Link href={`/movies/studios/${props.contextMenu.data.studio_id}`}>
-                    More From {props.contextMenu.data.studio_name}
+            <Show when={props.data.studio_id}>
+                <ContextMenu.Link href={`/movies/studios/${props.data.studio_id}`}>
+                    More From {props.data.studio_name}
                 </ContextMenu.Link>
             </Show>
             <ContextMenu.Item
                 onClick={async () => {
                     try {
-                        await open(props.contextMenu.data.path)
+                        await open(props.data.path)
                     } catch (error) {
                         console.error(error)
                         state.status.setStatus("File Not Found")
@@ -77,7 +84,7 @@ export default function MoviesContextMenu(props: P) {
                 onClick={async () => {
                     try {
                         await invoke("open_explorer", {
-                            path: props.contextMenu.data.path,
+                            path: props.data.path,
                         })
                     } catch (error) {
                         console.error(error)
@@ -86,7 +93,6 @@ export default function MoviesContextMenu(props: P) {
             >
                 Show In Explorer
             </ContextMenu.Item>
-        </ContextMenu>
-
+        </>
     )
 }

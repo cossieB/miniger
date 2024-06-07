@@ -1,10 +1,11 @@
-import { Accessor } from "solid-js";
+import { Accessor, JSX } from "solid-js";
 import { setState, state } from "../../state";
 
 type P = {
-    path: (typeof state)['sidePanel']['list'][number];
+    data: (typeof state)['sidePanel']['list'][number];
     i: Accessor<number>;
-};
+} & JSX.HTMLAttributes<HTMLLIElement>;
+
 export function SidePanelItem(props: P) {
     const isSelected = () => state.sidePanel.selections.has(props.i());
     const isLastDraggedOver = () => state.sidePanel.lastDraggedOver === props.i();
@@ -67,8 +68,9 @@ export function SidePanelItem(props: P) {
                 });
                 state.sidePanel.selections.clear();
             }}
+            {...props}
         >
-            {props.path.title}
+            {props.data.title}
         </li>
     );
 }

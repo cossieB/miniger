@@ -1,22 +1,16 @@
 import { AddFolderSvg } from "../../icons";
 import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
-import { setState, state } from "../../state";
+import { PlaylistFile, setState, state } from "../../state";
 import Database from "@tauri-apps/plugin-sql";
 import { reload } from "@solidjs/router";
 
-type FileInfo = {
-    title: string;
-    path: string;
-};
 export function AddDirectoryBtn() {
     return <AddFolderSvg
         title="Open Folder"
         onclick={async () => {
-            const directory = await open({ directory: true });
-            if (!directory) return;
-            const t: FileInfo[] = await invoke('load_directory', { path: directory });
-            setState('sidePanel', 'list', t);
+            const files = await readDirectories()
+            setState('sidePanel', 'list', files);
         }} />;
 }
 
@@ -26,14 +20,7 @@ export function AddDirectoryToDatabase() {
             title="Add Folder To Database"
             class="ml-auto"
             onClick={async () => {
-                const directories = await open({ directory: true, multiple: true });
-                if (directories == null) return;
-                const files: FileInfo[] = []
-                for (const directory of directories) {
-                    const t: FileInfo[] = await invoke('load_directory', { path: directory });
-                    files.push(...t);
-                }
-                console.log(files);
+                const files = await readDirectories()
                 const db = await Database.load("sqlite:mngr.db");
                 try {
                     await db.select("BEGIN")
@@ -51,4 +38,22 @@ export function AddDirectoryToDatabase() {
             }}
         />
     )
+}
+
+async function readDirectories() {
+    const directories = await open({ directory: true, multiple: true });
+    if (directories == null) return [];
+    const files: PlaylistFile[] = []
+    for (const directory of directories) {
+        const t: {title: string, path: string}[] = await invoke('load_directory', { path: directory });
+        for (const file of t) {
+            files.push({
+                ...file,
+                studio_name: "",
+                actors: [],
+                tags: ''
+            })
+        }
+    }
+    return files;
 }

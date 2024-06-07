@@ -24,10 +24,6 @@ export default function Studios() {
             <div
                 id='gridContainer'
                 class='ag-theme-alpine-dark h-full relative'
-                onContextMenu={(e) => {
-                    e.preventDefault();
-                    return false
-                }}
             >
                 <AgGridSolid
                     rowData={studios()}

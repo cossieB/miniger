@@ -47,7 +47,7 @@ export default function Inaccessible() {
                     Delete Selected
                 </button>
                 <AgGridSolid
-                    onGridReady={params => (gridApi = params.api)}
+                    onGridReady={params => ((gridApi as any) = params.api)}
                     rowSelection="multiple"
                     onCellContextMenu={e => {
                         console.log(e)

@@ -66,22 +66,14 @@ export function Movies(props: Props) {
             <div
                 id='gridContainer'
                 class='ag-theme-alpine-dark h-full relative'
-                onContextMenu={(e) => {
-                    e.preventDefault();
-                    return false
-                }}
             >
                 <AgGridSolid
-                    onGridReady={params => (gridApi = params.api)}
+                    onGridReady={params => ((gridApi as any) = params.api)}
                     rowSelection="multiple"
                     rowData={data()}
                     onSelectionChanged={() => {
                         const selection = gridApi.getSelectedRows()
-                        const mapped = selection.map(m => ({
-                            title: m.title,
-                            path: m.path,
-                        }))
-                        setState('mainPanel', 'selectedItems', mapped)
+                        setState('mainPanel', 'selectedItems', selection)
                     }}
                     onCellContextMenu={params => {
                         setContextMenu({

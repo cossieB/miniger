@@ -1,10 +1,11 @@
-import { Accessor, JSX, createContext, createSignal, onMount } from "solid-js"
+import { JSX, createContext, onMount } from "solid-js"
 import clickOutside from "../../lib/clickOutside"
 import { Portal } from "solid-js/web"
 import { ContextSubMenu } from "./ContextSubMenu"
 import { ContextMenuLink } from "./ContextMenuLink"
 import { ContextMenuItem } from "./ContextMenuItem"
 import { Menu } from "./Menu"
+import { createStore } from "solid-js/store"
 false && clickOutside
 
 export type Props = {
@@ -21,23 +22,35 @@ export type Props = {
 type Ctx = {
     x: number
     y: number
-    width: Accessor<number>
+    width: number
 }
 
 export const ContextMenuContext = createContext<Ctx | null>(null)
 
 export function ContextMenu(props: Props) {
     let ref!: HTMLDivElement
-    const [width, setWidth] = createSignal(0)
+    const [position, setPosition] = createStore({
+        x: props.pos.x,
+        y: props.pos.y,
+        width: 0
+    })
 
     onMount(() => {
-        setWidth(ref.clientWidth);
+        setPosition('width', ref.clientWidth);
+        if (props.pos.y + ref.clientHeight > window.innerHeight)
+            setPosition({
+                y: props.pos.y - ref.clientHeight,
+            })
+        if (props.pos.x + ref.clientWidth > window.innerWidth)
+            setPosition({
+                x: props.pos.x - ref.clientWidth,
+            })
     })
 
     return (
-        <ContextMenuContext.Provider value={{ ...props.pos, width }}>
+        <ContextMenuContext.Provider value={position}>
             <Portal mount={props.attach}>
-                <Menu ref={ref} {...props} />
+                <Menu ref={ref} {...props} pos={position} />
             </Portal>
         </ContextMenuContext.Provider>
     )

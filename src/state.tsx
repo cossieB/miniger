@@ -1,11 +1,14 @@
 import { ReactiveSet } from "@solid-primitives/set";
 import { createStore } from "solid-js/store";
 import shuffleArray from "./lib/shuffleArray";
+import { Actor } from "./datatypes";
 
-
-type FileInfo = {
+export type PlaylistFile = {
     title: string;
     path: string;
+    studio_name: string | null;
+    actors: Actor[],
+    tags: string | null;
 };
 
 export const [state, setState] = createStore({
@@ -27,14 +30,14 @@ export const [state, setState] = createStore({
         }
     },
     sidePanel: {
-        list: [] as FileInfo[],
+        list: [] as PlaylistFile[],
         selections: new ReactiveSet<number>(),
         lastSelection: -1,
         lastDraggedOver: -1,
-        push: (items: FileInfo[]) => {
+        push: (items: PlaylistFile[]) => {
             setState('sidePanel', 'list', prev => [...prev, ...items]);
         },
-        insertAt(index: number , items: FileInfo,)  {
+        insertAt(index: number , items: PlaylistFile,)  {
             setState('sidePanel', 'list', prev => prev.toSpliced(index, 0, items));
         },
         clear: () => {
@@ -45,7 +48,7 @@ export const [state, setState] = createStore({
         }
     },
     mainPanel: {
-        selectedItems: [] as FileInfo[],
+        selectedItems: [] as PlaylistFile[],
     }
 })
 
