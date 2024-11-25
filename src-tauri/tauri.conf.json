@@ -33,10 +33,5 @@
     "resources": [
       "./schema.sql"
     ]
-  },
-  "plugins": {
-    "fs": {
-      "scope": ["$APPDATA/*", "$APP/*", "$DESKTOP/*", "$RESOURCE/*"]
-    }
   }
 }
