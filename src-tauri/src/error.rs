@@ -16,7 +16,7 @@ impl Into<String> for AppError {
 impl From<fmt::Error> for AppError {
     fn from(value: fmt::Error) -> Self {
         AppError {
-            message: value.to_string()
+            message: value.to_string(),
         }
     }
 }
@@ -24,7 +24,7 @@ impl From<fmt::Error> for AppError {
 impl From<io::Error> for AppError {
     fn from(value: io::Error) -> Self {
         AppError {
-            message: value.to_string()
+            message: value.to_string(),
         }
     }
 }

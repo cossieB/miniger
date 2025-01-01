@@ -65,15 +65,14 @@ pub fn load_directory(path: String) -> Result<Vec<FileInfo>, AppError> {
                             return Some(FileInfo::new(
                                 entry.file_name().into_string().unwrap(),
                                 entry.path().to_str().unwrap().to_string(),
-                            ))
-                        }
-                        else {
-                            return None
+                            ));
+                        } else {
+                            return None;
                         }
                     }
-                    None => return None
+                    None => return None,
                 }
-            },
+            }
             Err(_) => None,
         })
         .collect();
