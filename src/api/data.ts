@@ -1,9 +1,9 @@
-import { cache } from "@solidjs/router"
+import { query } from "@solidjs/router"
 import Database from "@tauri-apps/plugin-sql"
 import { Film, Studio, Actor, FilmTag, ActorFilm } from "../datatypes"
 import { invoke } from "@tauri-apps/api/core"
 
-export const getFilms = cache(async () => {
+export const getFilms = query(async () => {
     const db = await Database.load("sqlite:mngr.db")
     return await db.select(`
     WITH tq AS (
@@ -22,33 +22,33 @@ export const getFilms = cache(async () => {
     `) as (Film & {studio_name: string | null, tags: string | null})[]
 }, 'films')
 
-export const getStudios = cache(async () => {
+export const getStudios = query(async () => {
     const db = await Database.load("sqlite:mngr.db")
     return await db.select("SELECT * FROM studio ORDER BY name ASC") as Studio[]
 }, 'studios')
 
-export const getActors = cache(async () => {
+export const getActors = query(async () => {
     const db = await Database.load("sqlite:mngr.db")
     return await db.select("SELECT * FROM actor") as Actor[]
 }, 'actors')
 
-export const getFilmTags = cache(async () => {
+export const getFilmTags = query(async () => {
     const db = await Database.load("sqlite:mngr.db")
     return await db.select("SELECT * FROM film_tag") as FilmTag[]
 }, 'tags')
 
-export const getActorFilms = cache(async () => {
+export const getActorFilms = query(async () => {
     const db = await Database.load("sqlite:mngr.db")
     return await db.select("SELECT * FROM actor_film") as ActorFilm[]
 }, 'appearances')
 
-export const getInaccessible = cache(async () => {
+export const getInaccessible = query(async () => {
     const db = await Database.load("sqlite:mngr.db");
     const films = await db.select("SELECT title, path FROM film")
     return await invoke('get_inaccessible', { playlist: films }) as { title: string, path: string }[]
 }, 'inaccessible')
 
-export const getFilmsByTag = cache(async (tag: string) => {
+export const getFilmsByTag = query(async (tag: string) => {
     const decoded = decodeURI(tag);
     const db = await Database.load("sqlite:mngr.db")
     return await db.select(`
@@ -71,7 +71,7 @@ export const getFilmsByTag = cache(async (tag: string) => {
     `, [decoded]) as (Film & {studio_name: string | null, tags: string | null})[]
 }, 'filmsByTag')
 
-export const getFilmsByActor = cache(async (actorId: number) => {
+export const getFilmsByActor = query(async (actorId: number) => {
     const db = await Database.load("sqlite:mngr.db")
     return await db.select(`
     WITH tq AS (
@@ -92,7 +92,7 @@ export const getFilmsByActor = cache(async (actorId: number) => {
     `, [actorId]) as (Film & {studio_name: string | null, tags: string | null})[]
 }, "filmsByActor")
 
-export const getFilmsByStudio = cache(async (studioId: number) => {
+export const getFilmsByStudio = query(async (studioId: number) => {
     const db = await Database.load("sqlite:mngr.db")
     return await db.select(`
     WITH tq AS (

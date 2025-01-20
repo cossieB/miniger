@@ -1,7 +1,7 @@
-import { useAction, useIsRouting, useParams } from "@solidjs/router"
+import { createAsync, useAction, useIsRouting } from "@solidjs/router"
 import { GridApi } from "ag-grid-community"
 import AgGridSolid from "ag-grid-solid"
-import { createResource, createMemo, Suspense, Show, createEffect, on } from "solid-js"
+import { createMemo, Suspense, Show, createEffect, on } from "solid-js"
 import { createStore } from "solid-js/store"
 import { updateTag } from "../api/actions"
 import { getActorFilms } from "../api/data"
@@ -21,8 +21,7 @@ type Props = {
 
 export function Movies(props: Props) {
     const isRouting = useIsRouting()
-    const params = useParams()
-    const [films] = createResource(() => [params.tag, params.studioId, params.actorId], () => props.fetcher())
+    const films = createAsync(() => props.fetcher())
 
     createEffect(() => {
         if (isRouting())
@@ -39,9 +38,9 @@ export function Movies(props: Props) {
         data: {} as NonNullable<ReturnType<typeof data>>[number],
         selections: [] as NonNullable<ReturnType<typeof data>>[number][]
     })
-    const [actorsFilms] = createResource(async () => getActorFilms())
+    const actorsFilms = createAsync(async () => getActorFilms())
 
-    let gridApi: GridApi
+    let gridApi!: GridApi
 
     const map = createMemo(() => {
         const m = new Map<number, Actor>()

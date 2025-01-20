@@ -1,18 +1,19 @@
 import Database from "@tauri-apps/plugin-sql";
-import { Suspense, createResource, onCleanup, onMount } from "solid-js";
+import { Suspense, onCleanup, onMount } from "solid-js";
 import AgGridSolid from "ag-grid-solid";
 import { GridApi } from "ag-grid-community";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { getInaccessible } from "../api/data";
+import { createAsync } from "@solidjs/router";
 
 export default function Inaccessible() {
-    const [data] = createResource(() => getInaccessible())
-    let gridApi: GridApi<any>
+    const data = createAsync(() => getInaccessible())
+    let gridApi!: GridApi<any>
 
     async function del() {
         const selection = gridApi.getSelectedRows()
         if (selection.length == 0) return
-        const confirmed = await confirm(`Delete ${selection.length} files?`);
+        const confirmed = await confirm(`Remove ${selection.length} file(s) from database?`);
         if (confirmed) {
             const db = await Database.load("sqlite:mngr.db")
             await db.select("BEGIN")

@@ -1,7 +1,7 @@
-import { Show, Suspense, createResource } from "solid-js";
+import { Show, Suspense } from "solid-js";
 import { getActors } from "../api/data";
 import { countryList } from "../countryList";
-import { action, useAction } from "@solidjs/router";
+import { action, createAsync, useAction } from "@solidjs/router";
 import Database from "@tauri-apps/plugin-sql";
 import { ContextMenu } from "../components/ContextMenu/ContextMenu";
 import { createStore } from "solid-js/store";
@@ -13,7 +13,7 @@ const updateActor = action(async (field: string, value: string, actorId: string)
 })
 
 export default function Actors() {
-    const [actors] = createResource(() => getActors())
+    const actors = createAsync(() => getActors())
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
         selectedId: -1,
