@@ -2,8 +2,7 @@ import { For, Setter, Show, createResource, createSignal, onMount } from "solid-
 import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
 import { getStudios } from "../../api/data";
 import { CreateActorSvg } from "../../icons";
-import { createStudio, updateFilmStudio } from "../../api/actions";
-import { useAction } from "@solidjs/router";
+import { createStudio, updateFilmStudio } from "../../api/mutations";
 import { Studio } from "../../datatypes";
 
 export const [studios, { refetch: refetchStudios }] = createResource(async () => getStudios())
@@ -89,12 +88,11 @@ type Props = {
 }
 
 function Option(props: Props) {
-    const updateStudioAction = useAction(updateFilmStudio)
     return (
         <li
             class="hover:bg-slate-500 p-1"
             onclick={async () => {
-                await updateStudioAction(props.filmId, props.value);
+                await updateFilmStudio(props.filmId, props.value);
                 props.setInput(props.text == "Unknown" ? "" : props.text);
                 props.stopEditing();
             }}
@@ -111,16 +109,15 @@ type P1 = {
 }
 
 function AddStudioBtn(props: P1) {
-    const updateStudioAction = useAction(updateFilmStudio)
-    const createStudioAction = useAction(createStudio)
+
     return (
         <button
             type="button"
             onclick={async () => {
-                const row = await createStudioAction(props.input)
+                const row = await createStudio(props.input)
                 setAddedStudios(p => [...p, ...row])
                 const studioId = row[0].studio_id
-                await updateStudioAction(props.filmId, studioId)
+                await updateFilmStudio(props.filmId, studioId)
                 props.stopEditing();
             }}
         >

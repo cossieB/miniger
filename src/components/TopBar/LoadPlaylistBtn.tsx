@@ -15,10 +15,11 @@ export function LoadPlaylistBtn() {
                     extensions: ["mpcpl", "asx", "m3u", "pls"]
                 }]
             });
+
             if (!selection) return;
             try {
                 const t: { title: string; path: string; }[] = await invoke("read_playlist", {
-                    playlist: selection.path
+                    playlist: selection
                 });
                 const v = t.map(x => ({
                     ...x,

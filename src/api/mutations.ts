@@ -1,8 +1,8 @@
-import { action, revalidate } from "@solidjs/router";
+import { revalidate } from "@solidjs/router";
 import Database from "@tauri-apps/plugin-sql";
 import { Actor, Studio } from "../datatypes";
 
-export const updateTag = action(async (filmId: string, tags: string[]) => {
+export async function updateTag (filmId: string, tags: string[]) {
     const db = await Database.load("sqlite:mngr.db");
     try {
         await db.select("BEGIN")
@@ -15,9 +15,9 @@ export const updateTag = action(async (filmId: string, tags: string[]) => {
         console.error(error)
         await db.select("ROLLBACK")
     }
-}, 'updateTagAction')
+}
 
-export const addActor = action(async (name: string, filmId?: string) => {
+export async function addActor (name: string, filmId?: string) {
     const db = await Database.load("sqlite:mngr.db");
     try {
         await db.select("BEGIN")
@@ -32,9 +32,9 @@ export const addActor = action(async (name: string, filmId?: string) => {
         console.error(error);
         await db.select("ROLLBACK")
     }
-})
+}
 
-export const updateFilmStudio = action(async (filmId: number, studioId: number | null) => {
+export async function updateFilmStudio (filmId: number, studioId: number | null) {
     if (studioId === -1)
         studioId = null
     const db = await Database.load("sqlite:mngr.db");
@@ -45,9 +45,9 @@ export const updateFilmStudio = action(async (filmId: number, studioId: number |
     catch (error) {
         console.error(error);
     }
-});
+}
 
-export const createStudio = action(async (name: string) => {
+export async function createStudio (name: string) {
     const db = await Database.load("sqlite:mngr.db");
     return await db.select("INSERT INTO studio (name) VALUES($1) RETURNING *", [name]) as [Studio]
-})
+}

@@ -1,16 +1,15 @@
-import { createAsync, useAction, useIsRouting } from "@solidjs/router"
+import { createAsync, useIsRouting } from "@solidjs/router"
 import { GridApi } from "ag-grid-community"
 import AgGridSolid from "ag-grid-solid"
-import { createMemo, Suspense, Show, createEffect, on } from "solid-js"
+import { createMemo, Suspense, Show, createEffect } from "solid-js"
 import { createStore } from "solid-js/store"
-import { updateTag } from "../api/actions"
-import { getActorFilms } from "../api/data"
+import { updateTag } from "../api/mutations"
+import { getActorFilms, getActors } from "../api/data"
 import { Film, Actor } from "../datatypes"
 import { setState } from "../state"
-import { actors, ActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSelector"
+import { ActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSelector"
 import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
 import MoviesContextMenu from "../components/MoviesContextMenu"
-import { filmCache } from "../caches/films"
 
 type Props = {
     fetcher(): Promise<(Film & {
@@ -21,7 +20,10 @@ type Props = {
 
 export function Movies(props: Props) {
     const isRouting = useIsRouting()
+    
     const films = createAsync(() => props.fetcher())
+    const actors = createAsync(() => getActors())
+    const actorsFilms = createAsync(async () => getActorFilms())
 
     createEffect(() => {
         if (isRouting())
@@ -38,7 +40,6 @@ export function Movies(props: Props) {
         data: {} as NonNullable<ReturnType<typeof data>>[number],
         selections: [] as NonNullable<ReturnType<typeof data>>[number][]
     })
-    const actorsFilms = createAsync(async () => getActorFilms())
 
     let gridApi!: GridApi
 
@@ -58,16 +59,6 @@ export function Movies(props: Props) {
             actors: actorsFilms()!.filter(af => af.film_id === f.film_id).map(af => map().get(af.actor_id)!)
         }))
     })
-
-    createEffect(on(data, () => {
-        Promise.resolve().then(() => {
-            data()?.forEach(d => {
-                filmCache[d.path] ??= d
-            })
-        })
-    }))
-
-    const updateTagAction = useAction(updateTag)
 
     return (
         <Suspense>
@@ -118,7 +109,7 @@ export function Movies(props: Props) {
                         field: "tags",
                         editable: true,
                         onCellValueChanged: async (params: any) => {
-                            updateTagAction(params.data.film_id, params.newValue.trim().split(/\s*[;,]\s*/))
+                            await updateTag(params.data.film_id, params.newValue.trim().split(/\s*[;,]\s*/))
                         }
                     }, {
                         field: "path"
