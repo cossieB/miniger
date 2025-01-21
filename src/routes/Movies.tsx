@@ -3,8 +3,7 @@ import { GridApi } from "ag-grid-community"
 import AgGridSolid from "ag-grid-solid"
 import { createMemo, Suspense, Show, createEffect } from "solid-js"
 import { createStore } from "solid-js/store"
-import { getActorFilms, getActors } from "../api/data"
-import { Film, Actor, DetailedFilm } from "../datatypes"
+import { Actor, DetailedFilm } from "../datatypes"
 import { setState } from "../state"
 import { ActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSelector"
 import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
@@ -19,8 +18,6 @@ export function Movies(props: Props) {
     const isRouting = useIsRouting()
 
     const films = createAsync(() => props.fetcher())
-    const actors = createAsync(() => getActors())
-    const actorsFilms = createAsync(async () => getActorFilms())
 
     createEffect(() => {
         if (isRouting())

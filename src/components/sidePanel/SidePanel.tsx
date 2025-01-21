@@ -48,7 +48,7 @@ export function SidePanel() {
                             }}
                         />}
                 </For>
-                <SidePanelItem data={{ path: "", title: "", actors: [], tags: "", studio_name: "" }} i={() => state.sidePanel.list.length} />
+                <SidePanelItem data={{ path: "", title: "", actors: [], tags: [], studio_name: "" }} i={() => state.sidePanel.list.length} />
             </ul>
             <Show when={contextMenu.isOpen}>
                 <ContextMenu close={contextMenu.close} pos={{ x: contextMenu.x, y: contextMenu.y }}>

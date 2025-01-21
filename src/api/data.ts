@@ -1,6 +1,6 @@
 import { query } from "@solidjs/router"
 import Database from "@tauri-apps/plugin-sql"
-import { Film, Studio, Actor, FilmTag, ActorFilm, DetailedFilm } from "../datatypes"
+import { Studio, Actor, FilmTag, ActorFilm, DetailedFilm } from "../datatypes"
 import { invoke } from "@tauri-apps/api/core"
 
 const db = await Database.load("sqlite:mngr.db");
@@ -156,7 +156,7 @@ export const getFilmByPath = query(async (path: string) => {
     FROM film
     LEFT JOIN studio USING(studio_id)
     LEFT JOIN tq USING(film_id)
-    LEFT JOIN aq USING (actor_id)
+    LEFT JOIN aq USING (film_id)
     WHERE path = $1
     `, [path]) as DetailedFilm[]
 }, 'filmByPath')
