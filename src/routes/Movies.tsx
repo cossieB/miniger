@@ -3,13 +3,13 @@ import { GridApi } from "ag-grid-community"
 import AgGridSolid from "ag-grid-solid"
 import { createMemo, Suspense, Show, createEffect } from "solid-js"
 import { createStore } from "solid-js/store"
-import { updateTag } from "../api/mutations"
 import { getActorFilms, getActors } from "../api/data"
 import { Film, Actor } from "../datatypes"
 import { setState } from "../state"
 import { ActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSelector"
 import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
 import MoviesContextMenu from "../components/MoviesContextMenu"
+import { updateTag } from "../api/mutations"
 
 type Props = {
     fetcher(): Promise<(Film & {
@@ -56,6 +56,7 @@ export function Movies(props: Props) {
         if (!films() || !actorsFilms()) return undefined;
         return films()!.map(f => ({
             ...f,
+            tags: f.tags?.split(",") ?? [],
             actors: actorsFilms()!.filter(af => af.film_id === f.film_id).map(af => map().get(af.actor_id)!)
         }))
     })
@@ -109,8 +110,9 @@ export function Movies(props: Props) {
                         field: "tags",
                         editable: true,
                         onCellValueChanged: async (params: any) => {
-                            await updateTag(params.data.film_id, params.newValue.trim().split(/\s*[;,]\s*/))
-                        }
+                            await updateTag(params.data.film_id, params.newValue)
+                        },
+                        valueParser: (params: any) => params.newValue.trim().split(/\s*[,;]\s*/)
                     }, {
                         field: "path"
                     }]}

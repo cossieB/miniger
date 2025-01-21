@@ -8,18 +8,20 @@ export type PlaylistFile = {
     path: string;
     studio_name: string | null;
     actors: Actor[],
-    tags: string | null;
+    tags: string[];
 };
 
 export const [state, setState] = createStore({
     status: {
         message: "",
         timerId: -1,
-        setStatus: (status: string) => {
+        setStatus: (status: string, autoFade = true) => {
             clearTimeout(state.status.timerId)
-            const timerId = setTimeout(() => {
-                setState('status', 'message', "")
-            }, 5000) 
+            let timerId = -1
+            if (autoFade)
+                timerId = setTimeout(() => {
+                    setState('status', 'message', "")
+                }, 5000)
             setState({
                 status: {
                     ...state.status,
@@ -37,7 +39,7 @@ export const [state, setState] = createStore({
         push: (items: PlaylistFile[]) => {
             setState('sidePanel', 'list', prev => [...prev, ...items]);
         },
-        insertAt(index: number , items: PlaylistFile,)  {
+        insertAt(index: number, items: PlaylistFile,) {
             setState('sidePanel', 'list', prev => prev.toSpliced(index, 0, items));
         },
         clear: () => {

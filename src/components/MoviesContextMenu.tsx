@@ -4,6 +4,7 @@ import { ContextMenu } from "./ContextMenu/ContextMenu";
 import { Actor } from "../datatypes";
 import { open, } from "@tauri-apps/plugin-shell";
 import { invoke } from "@tauri-apps/api/core";
+import { unwrap } from "solid-js/store";
 
 type P = {
     contextMenu: {
@@ -18,7 +19,7 @@ type P = {
             studio_id: number | null;
             release_date: string | null;
             studio_name: string | null;
-            tags: string | null;
+            tags: string[];
         },
         selections: P['contextMenu']['data'][]
     }
@@ -40,11 +41,13 @@ export default function MoviesContextMenu(props: P) {
 }
 
 export function MoviesMenu(props: Pick<P['contextMenu'], 'data'>) {
+    const tags = () => unwrap(props.data).tags;
+    const actors = () => unwrap(props.data).actors
     return (
         <>
-            <Show when={props.data.tags && props.data.tags.split(", ").length > 0}>
+            <Show when={tags().length > 0}>
                 <ContextMenu.SubMenu label="More From Genre" >
-                    <For each={props.data.tags?.split(", ")}>
+                    <For each={tags()}>
                         {tag =>
                             <ContextMenu.Link href={`/movies/tags/${tag}`}>
                                 {tag}
@@ -53,9 +56,9 @@ export function MoviesMenu(props: Pick<P['contextMenu'], 'data'>) {
                     </For>
                 </ContextMenu.SubMenu>
             </Show>
-            <Show when={props.data.actors.length > 0}>
+            <Show when={actors().length > 0}>
                 <ContextMenu.SubMenu label="More From Actor" >
-                    <For each={props.data.actors}>
+                    <For each={actors()}>
                         {actor =>
                             <ContextMenu.Link href={`/movies/actors/${actor.actor_id}`}>
                                 {actor.name}

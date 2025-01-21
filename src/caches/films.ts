@@ -8,5 +8,5 @@ export const filmCache: Record<string, {
     studio_id: number | null;
     release_date: string | null;
     studio_name: string | null;
-    tags: string | null;
+    tags: string[];
 }> = {}

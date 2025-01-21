@@ -24,7 +24,7 @@ export function LoadPlaylistBtn() {
                 const v = t.map(x => ({
                     ...x,
                     studio_name: "",
-                    tags: "",
+                    tags: [],
                     actors: []
                 }))
                 setState('sidePanel', 'list', v);

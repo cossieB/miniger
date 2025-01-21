@@ -19,6 +19,7 @@ export const getFilms = query(async () => {
     FROM film
     LEFT JOIN studio USING(studio_id)
     LEFT JOIN tq USING(film_id)
+    ORDER BY LOWER(title)
     `) as (Film & {studio_name: string | null, tags: string | null})[]
 }, 'films')
 
@@ -29,7 +30,7 @@ export const getStudios = query(async () => {
 
 export const getActors = query(async () => {
     const db = await Database.load("sqlite:mngr.db")
-    return await db.select("SELECT * FROM actor") as Actor[]
+    return await db.select("SELECT * FROM actor ORDER BY name") as Actor[]
 }, 'actors')
 
 export const getFilmTags = query(async () => {

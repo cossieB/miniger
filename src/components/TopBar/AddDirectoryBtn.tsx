@@ -54,7 +54,7 @@ async function readDirectories() {
                 ...file,
                 studio_name: "",
                 actors: [],
-                tags: ''
+                tags: []
             })
             else
                 files.push(cached)
