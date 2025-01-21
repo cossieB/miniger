@@ -4,7 +4,7 @@ import AgGridSolid from "ag-grid-solid"
 import { createMemo, Suspense, Show, createEffect } from "solid-js"
 import { createStore } from "solid-js/store"
 import { getActorFilms, getActors } from "../api/data"
-import { Film, Actor } from "../datatypes"
+import { Film, Actor, DetailedFilm } from "../datatypes"
 import { setState } from "../state"
 import { ActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSelector"
 import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
@@ -12,15 +12,12 @@ import MoviesContextMenu from "../components/MoviesContextMenu"
 import { updateTag } from "../api/mutations"
 
 type Props = {
-    fetcher(): Promise<(Film & {
-        studio_name: string | null
-        tags: string | null
-    })[] | undefined>
+    fetcher(): Promise<DetailedFilm[] | undefined>
 }
 
 export function Movies(props: Props) {
     const isRouting = useIsRouting()
-    
+
     const films = createAsync(() => props.fetcher())
     const actors = createAsync(() => getActors())
     const actorsFilms = createAsync(async () => getActorFilms())
@@ -37,27 +34,18 @@ export function Movies(props: Props) {
         close() {
             setContextMenu('isOpen', false)
         },
-        data: {} as NonNullable<ReturnType<typeof data>>[number],
-        selections: [] as NonNullable<ReturnType<typeof data>>[number][]
+        data: {} as NonNullable<ReturnType<typeof films>>[number],
+        selections: [] as NonNullable<ReturnType<typeof films>>[number][]
     })
 
     let gridApi!: GridApi
 
-    const map = createMemo(() => {
-        const m = new Map<number, Actor>()
-        if (!actors()) return m;
-        for (const actor of actors()!) {
-            m.set(actor.actor_id, actor)
-        }
-        return m
-    })
-
     const data = createMemo(() => {
-        if (!films() || !actorsFilms()) return undefined;
-        return films()!.map(f => ({
-            ...f,
-            tags: f.tags?.split(",") ?? [],
-            actors: actorsFilms()!.filter(af => af.film_id === f.film_id).map(af => map().get(af.actor_id)!)
+        if (!films()) return undefined
+        return films()!.map(film => ({
+            ...film,
+            tags: JSON.parse(film.tags as any) as string[],
+            actors: JSON.parse(film.actors as any) as Actor[],
         }))
     })
 

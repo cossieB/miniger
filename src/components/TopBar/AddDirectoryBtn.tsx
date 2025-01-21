@@ -5,6 +5,7 @@ import { PlaylistFile, setState, state } from "../../state";
 import Database from "@tauri-apps/plugin-sql";
 import { reload } from "@solidjs/router";
 import { filmCache } from "../../caches/films";
+import { getActorsByFilm, getFilmByPath } from "../../api/data";
 
 export function AddDirectoryBtn() {
     return <AddFolderSvg
@@ -31,7 +32,7 @@ export function AddDirectoryToDatabase() {
                     await db.select("COMMIT")
                     state.status.setStatus("Successfully added files")
                     reload()
-                } 
+                }
                 catch (error) {
                     console.log(error);
                     await db.select("ROLLBACK")
@@ -46,18 +47,24 @@ async function readDirectories() {
     if (directories == null) return [];
     const files: PlaylistFile[] = []
     for (const directory of directories) {
-        const t: {title: string, path: string}[] = await invoke('load_directory', { path: directory });
+        const t: { title: string, path: string }[] = await invoke('load_directory', { path: directory });
         for (const file of t) {
-            const cached = filmCache[file.path]
-            if (!cached) 
-            files.push({
-                ...file,
-                studio_name: "",
-                actors: [],
-                tags: []
-            })
-            else
-                files.push(cached)
+            const film = (await getFilmByPath(file.path)).at(0)
+            if (!film)
+                files.push({
+                    ...file,
+                    studio_name: "",
+                    actors: [],
+                    tags: []
+                })
+            else {
+                const actors = await getActorsByFilm(film.film_id)
+                files.push({
+                    ...film,
+                    tags: film.tags?.split(", ") ?? [],
+                    actors
+                })
+            }
         }
     }
     return files;
