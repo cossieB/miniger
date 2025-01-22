@@ -1,7 +1,7 @@
 import { PlayListSvg } from "../../icons";
 import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
-import { setState, state } from "../../state";
+import { state } from "../../state";
 
 export function LoadPlaylistBtn() {
     return <PlayListSvg
@@ -27,7 +27,7 @@ export function LoadPlaylistBtn() {
                     tags: [],
                     actors: []
                 }))
-                setState('sidePanel', 'list', v);
+                state.sidePanel.setFiles(v)
             }
             catch (error) {
                 state.status.setStatus(error as string)

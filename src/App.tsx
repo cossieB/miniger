@@ -3,10 +3,11 @@ import { JSXElement, createEffect, onCleanup, onMount } from "solid-js";
 import { resolveResource } from "@tauri-apps/api/path";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import { SidePanel } from "./components/sidePanel/SidePanel";
-import { setState, state } from "./state";
+import { state } from "./state";
 import { db } from ".";
 import { BottomBar } from "./components/BottomBar";
 import { Tree } from "./components/Tree/Tree";
+import Resizer from "./components/Resizer";
 
 function App(props: { children?: JSXElement }) {
     createEffect(() => {
@@ -24,11 +25,7 @@ function App(props: { children?: JSXElement }) {
     function handleKeyup(e: KeyboardEvent) {
         e.preventDefault();
         if (e.key == 'Delete') {
-            setState('sidePanel', prev => ({
-                list: prev.list.filter((_item, i) => !state.sidePanel.selections.has(i)),
-                lastSelection: -1
-            }))
-            state.sidePanel.selections.clear()
+            state.sidePanel.deleteSelections()
         }
         if (e.key == "a" && e.ctrlKey) {
             for (let i = 0; i < state.sidePanel.list.length; i++) {
@@ -38,20 +35,21 @@ function App(props: { children?: JSXElement }) {
     }
     onMount(() => {
         document.addEventListener('keyup', handleKeyup);
+        state.status.setStatus("SHIT")
     })
     onCleanup(() => {
         document.removeEventListener("keyup", handleKeyup);
     })
 
     return (
-        <div oncontextmenu={e => e.preventDefault()} class="h-screen w-screen text-white">
+        <div oncontextmenu={e => e.preventDefault()} class="h-screen w-screen text-white relative">
             <TopBar />
             <div class="w-screen flex" style={{height: "calc(100vh - 4rem"}}>
                 <Tree />
-                {/* <Nav /> */}
                 <main class="basis-96 flex-[3] overflow-hidden bg-slate-900">
                     {props.children}
                 </main>
+                <Resizer />
                 <SidePanel />
             </div>
             <BottomBar />

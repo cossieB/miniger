@@ -1,7 +1,7 @@
 import { SaveSvg } from "../../icons";
 import { save } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
-import { setState, state } from "../../state";
+import { state } from "../../state";
 
 export function SavePlaylistBtn() {
     return <SaveSvg
@@ -30,7 +30,7 @@ export function SavePlaylistBtn() {
                     await invoke('save_playlist', { path, files: state.sidePanel.list });
             } catch (error) {
                 console.error(error);
-                setState('status', 'message', "Error saving playlist");
+                state.status.setStatus("Error saving playlist")
             }
         }} />;
 }

@@ -2,8 +2,8 @@ import { revalidate } from "@solidjs/router";
 import Database from "@tauri-apps/plugin-sql";
 import { Actor, Studio } from "../datatypes";
 
+const db = await Database.load("sqlite:mngr.db");
 export async function updateTag (filmId: string, tags: string[]) {
-    const db = await Database.load("sqlite:mngr.db");
     try {
         await db.select("BEGIN")
         await db.select("DELETE FROM film_tag WHERE film_id = $1", [filmId])
@@ -17,8 +17,7 @@ export async function updateTag (filmId: string, tags: string[]) {
     }
 }
 
-export async function addActor (name: string, filmId?: string) {
-    const db = await Database.load("sqlite:mngr.db");
+export async function addActor (name: string, filmId?: string) {    
     try {
         await db.select("BEGIN")
         const actor = (await db.select<[Actor]>("INSERT INTO actor (name) VALUES ($1) RETURNING *", [name]))[0];
@@ -36,8 +35,7 @@ export async function addActor (name: string, filmId?: string) {
 
 export async function updateFilmStudio (filmId: number, studioId: number | null) {
     if (studioId === -1)
-        studioId = null
-    const db = await Database.load("sqlite:mngr.db");
+        studioId = null    
     try {
         await db.select("UPDATE film SET studio_id = $1 WHERE film_id = $2", [studioId, filmId]);
         await revalidate([]);
@@ -47,7 +45,10 @@ export async function updateFilmStudio (filmId: number, studioId: number | null)
     }
 }
 
-export async function createStudio (name: string) {
-    const db = await Database.load("sqlite:mngr.db");
+export async function createStudio (name: string) {    
     return await db.select("INSERT INTO studio (name) VALUES($1) RETURNING *", [name]) as [Studio]
+}
+
+export async function updateActor (field: string, value: string, actorId: string) {    
+    await db.select(`UPDATE actor SET ${field} = $1 WHERE actor_id = $2`, [value, actorId])
 }

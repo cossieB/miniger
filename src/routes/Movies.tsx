@@ -4,7 +4,7 @@ import AgGridSolid from "ag-grid-solid"
 import { createMemo, Suspense, Show, createEffect } from "solid-js"
 import { createStore } from "solid-js/store"
 import { Actor, DetailedFilm } from "../datatypes"
-import { setState } from "../state"
+import { state } from "../state"
 import { ActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSelector"
 import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
 import MoviesContextMenu from "../components/MoviesContextMenu"
@@ -58,7 +58,7 @@ export function Movies(props: Props) {
                     rowData={data()}
                     onSelectionChanged={() => {
                         const selection = gridApi.getSelectedRows()
-                        setState('mainPanel', 'selectedItems', selection)
+                        state.mainPanel.setSelectedItems(selection)
                     }}
                     onCellContextMenu={params => {
                         setContextMenu({

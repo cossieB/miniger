@@ -1,6 +1,6 @@
 import { BroomSvg } from "../../icons";
 import { invoke } from "@tauri-apps/api/core";
-import { setState, state } from "../../state";
+import { state } from "../../state";
 
 export function CleanPlaylistBtn() {
     return <BroomSvg
@@ -9,6 +9,6 @@ export function CleanPlaylistBtn() {
         onclick={async () => {
             if (state.sidePanel.list.length === 0) return
             const filtered: any = await invoke('cleanup_playlist', { playlist: state.sidePanel.list });
-            setState('sidePanel', 'list', filtered);
+            state.sidePanel.setFiles(filtered);
         }} />;
 }

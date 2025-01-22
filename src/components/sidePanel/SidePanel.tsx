@@ -1,5 +1,5 @@
 import { For, Show } from "solid-js";
-import { setState, state } from "../../state";
+import { state } from "../../state";
 import clickOutside from "../../lib/clickOutside";
 import { SidePanelItem } from "./SidePanelItem";
 import { ContextMenu } from "../ContextMenu/ContextMenu";
@@ -20,10 +20,7 @@ export function SidePanel() {
     return (
         <section
             class="bg-gray-800 flex-1 basis-14 overflow-x-hidden select-none shrink-0"
-            use:clickOutside={() => {
-                state.sidePanel.selections.clear();
-                setState('sidePanel', 'lastSelection', -1)
-            }}
+            use:clickOutside={state.sidePanel.clearSelections}
         >
             <ul 
                 class="overflow-y-auto overflow-x-hidden"

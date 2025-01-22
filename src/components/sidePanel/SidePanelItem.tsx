@@ -1,5 +1,5 @@
 import { Accessor, JSX } from "solid-js";
-import { setState, state } from "../../state";
+import { state } from "../../state";
 
 type P = {
     data: (typeof state)['sidePanel']['list'][number];
@@ -33,17 +33,17 @@ export function SidePanelItem(props: P) {
                     for (let i = min; i <= max; i++) {
                         state.sidePanel.selections.add(i);
                     }
-                    setState('sidePanel', 'lastSelection', props.i());
+                    state.sidePanel.setLastSelection(props.i());
                 }
                 else {
                     state.sidePanel.selections.clear();
                     state.sidePanel.selections.add(props.i());
-                    setState('sidePanel', 'lastSelection', props.i());
+                    state.sidePanel.setLastSelection(props.i());
                 }
             }}
             ondragover={e => {
                 e.preventDefault();
-                setState('sidePanel', 'lastDraggedOver', props.i());
+                state.sidePanel.setLastDraggedOver(props.i());
             }}
             ondragend={e => {
                 e.preventDefault();
@@ -59,13 +59,8 @@ export function SidePanelItem(props: P) {
                     if (state.sidePanel.selections.has(i)) continue;
                     newArr.push(state.sidePanel.list[i]);
                 }
-                setState({
-                    sidePanel: {
-                        ...state.sidePanel,
-                        list: newArr,
-                        lastDraggedOver: -1,
-                    }
-                });
+                state.sidePanel.setFiles(newArr);
+                state.sidePanel.setLastDraggedOver(-1)
                 state.sidePanel.selections.clear();
             }}
             {...props}

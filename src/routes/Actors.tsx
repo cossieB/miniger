@@ -1,16 +1,11 @@
 import { Show, Suspense } from "solid-js";
 import { getActors } from "../api/data";
 import { countryList } from "../countryList";
-import { action, createAsync, useAction } from "@solidjs/router";
-import Database from "@tauri-apps/plugin-sql";
+import { createAsync } from "@solidjs/router";
 import { ContextMenu } from "../components/ContextMenu/ContextMenu";
 import { createStore } from "solid-js/store";
 import AgGridSolid from "ag-grid-solid";
-
-const updateActor = action(async (field: string, value: string, actorId: string) => {
-    const db = await Database.load("sqlite:mngr.db");
-    await db.select(`UPDATE actor SET ${field} = $1 WHERE actor_id = $2`, [value, actorId])
-})
+import { updateActor } from "../api/mutations";
 
 export default function Actors() {
     const actors = createAsync(() => getActors())
@@ -19,7 +14,6 @@ export default function Actors() {
         selectedId: -1,
         pos: { x: 0, y: 0 },
     })
-    const updateActorAction = useAction(updateActor)
     return (
         <Suspense>
             <div
@@ -45,7 +39,7 @@ export default function Actors() {
                     defaultColDef={{
                         onCellValueChanged: params => {
                             if (!params.colDef.field) return;
-                            updateActorAction(params.colDef.field, params.newValue, params.data.actor_id)
+                            updateActor(params.colDef.field, params.newValue, params.data.actor_id)
                         },
                         editable: true
                     }}

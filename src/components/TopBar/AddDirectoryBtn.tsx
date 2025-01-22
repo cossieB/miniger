@@ -1,7 +1,7 @@
 import { AddFolderSvg } from "../../icons";
 import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
-import { PlaylistFile, setState, state } from "../../state";
+import { PlaylistFile, state } from "../../state";
 import Database from "@tauri-apps/plugin-sql";
 import { reload } from "@solidjs/router";
 import { getFilms } from "../../api/data";
@@ -12,7 +12,7 @@ export function AddDirectoryBtn() {
         title="Open Folder"
         onclick={async () => {
             const files = await readDirectories()
-            setState('sidePanel', 'list', files);
+            state.sidePanel.setFiles(files);
         }} />;
 }
 

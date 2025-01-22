@@ -11,11 +11,11 @@ export type PlaylistFile = {
     tags: string[];
 };
 
-export const [state, setState] = createStore({
+const [state, setState] = createStore({
     status: {
         message: "",
         timerId: -1,
-        setStatus: (status: string, autoFade = true) => {
+        setStatus: (status: string, autoFade = false) => {
             clearTimeout(state.status.timerId)
             let timerId = -1
             if (autoFade)
@@ -28,6 +28,12 @@ export const [state, setState] = createStore({
                     message: status,
                     timerId
                 }
+            })
+        },
+        clear: () => {
+            setState('status', {
+                message: "",
+                timerId: -1,
             })
         }
     },
@@ -47,10 +53,34 @@ export const [state, setState] = createStore({
         },
         shuffle: () => {
             setState('sidePanel', 'list', prev => shuffleArray(prev))
+        },
+        setFiles: (files: PlaylistFile[]) => {
+            setState('sidePanel', 'list', files)
+        },
+        deleteSelections: () => {
+            setState('sidePanel', prev => ({
+                list: prev.list.filter((_item, i) => !state.sidePanel.selections.has(i)),
+                lastSelection: -1
+            }))
+            state.sidePanel.selections.clear()
+        },
+        clearSelections: () => {
+            state.sidePanel.selections.clear();
+            setState('sidePanel', 'lastSelection', -1)
+        },
+        setLastSelection: (i: number) => {
+            setState('sidePanel', 'lastSelection', i)
+        },
+        setLastDraggedOver: (i: number) => {
+            setState('sidePanel', 'lastDraggedOver', i);
         }
     },
     mainPanel: {
         selectedItems: [] as PlaylistFile[],
+        setSelectedItems: (items: PlaylistFile[]) => {
+            setState('mainPanel', 'selectedItems', items)
+        }
     }
 })
 
+export {state}
