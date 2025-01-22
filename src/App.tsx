@@ -16,7 +16,7 @@ function App(props: { children?: JSXElement }) {
             try {
                 const script = await readTextFile(await resolveResource("./schema.sql"));
                 db()!.execute(script)
-            } 
+            }
             catch (error) {
                 console.error(error)
             }
@@ -35,26 +35,43 @@ function App(props: { children?: JSXElement }) {
     }
     onMount(() => {
         document.addEventListener('keyup', handleKeyup);
-        state.status.setStatus("SHIT")
+        window.addEventListener("resize", handleResize)
     })
     onCleanup(() => {
         document.removeEventListener("keyup", handleKeyup);
+        window.removeEventListener("resize", handleResize)
     })
 
     return (
-        <div oncontextmenu={e => e.preventDefault()} class="h-screen w-screen text-white relative">
+        <div oncontextmenu={e => e.preventDefault()} class="h-screen w-screen text-white">
             <TopBar />
-            <div class="w-screen flex" style={{height: "calc(100vh - 4rem"}}>
+            <div class="w-screen flex relative" style={{ height: "calc(100vh - 4rem" }}>
                 <Tree />
-                <main class="basis-96 flex-[3] overflow-hidden bg-slate-900">
+                <Resizer
+                    min={0}
+                    setDimension={state.tree.setWidth}
+                    length={state.tree.width}
+                    orientation="horizontal"
+                />
+                <main class="overflow-hidden bg-slate-900" style={{ width: state.mainPanel.width + "px" }}>
                     {props.children}
                 </main>
-                <Resizer />
+                <Resizer
+                    min={state.tree.width}
+                    setDimension={state.mainPanel.setWidth}
+                    length={state.mainPanel.width}
+                    orientation="horizontal"
+                />
                 <SidePanel />
             </div>
             <BottomBar />
         </div>
     );
+}
+
+function handleResize() {
+    const width = window.innerWidth - state.tree.width - 208
+    state.mainPanel.setWidth(width);
 }
 
 export default App;

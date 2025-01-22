@@ -19,7 +19,8 @@ export function SidePanel() {
     })
     return (
         <section
-            class="bg-gray-800 flex-1 basis-14 overflow-x-hidden select-none shrink-0"
+            class="bg-gray-800 overflow-x-hidden select-none shrink-0"
+            style={{width: window.innerWidth - state.mainPanel.width - state.tree.width + "px"}}
             use:clickOutside={state.sidePanel.clearSelections}
         >
             <ul 

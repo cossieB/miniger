@@ -42,6 +42,7 @@ const [state, setState] = createStore({
         selections: new ReactiveSet<number>(),
         lastSelection: -1,
         lastDraggedOver: -1,
+
         push: (items: PlaylistFile[]) => {
             setState('sidePanel', 'list', prev => [...prev, ...items]);
         },
@@ -73,12 +74,22 @@ const [state, setState] = createStore({
         },
         setLastDraggedOver: (i: number) => {
             setState('sidePanel', 'lastDraggedOver', i);
-        }
+        },
     },
     mainPanel: {
+        width: 800,
+        setWidth: (width: number) => {
+            setState('mainPanel', 'width', width)
+        },
         selectedItems: [] as PlaylistFile[],
         setSelectedItems: (items: PlaylistFile[]) => {
             setState('mainPanel', 'selectedItems', items)
+        }
+    },
+    tree: {
+        width: 208,
+        setWidth: (width: number) => {
+            setState('tree', 'width', width)
         }
     }
 })
