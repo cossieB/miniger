@@ -19,7 +19,7 @@ export default function Resizer(props: Props) {
     })
     return (
         <div
-            class="h-10 w-2 bg-orange-600 cursor-ew-resize absolute top-1/2 -translate-y-1/2 -translate-x-1/2 transition-[height] z-50"
+            class="h-10 w-2 bg-orange-600 cursor-ew-resize absolute top-1/2 -translate-y-1/2 -translate-x-1/2 transition-[height] z-50 rounded-sm"
             style={{
                 left: props.min + props.length + "px",
             }}

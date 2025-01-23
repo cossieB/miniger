@@ -2,6 +2,7 @@ import { PlayListSvg } from "../../icons";
 import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { state } from "../../state";
+import { getFilmCache, getFilmDetails } from "./getFilmDetails";
 
 export function LoadPlaylistBtn() {
     return <PlayListSvg
@@ -18,19 +19,16 @@ export function LoadPlaylistBtn() {
 
             if (!selection) return;
             try {
-                const t: { title: string; path: string; }[] = await invoke("read_playlist", {
+                const fileList: { title: string; path: string; }[] = await invoke("read_playlist", {
                     playlist: selection
                 });
-                const v = t.map(x => ({
-                    ...x,
-                    studio_name: "",
-                    tags: [],
-                    actors: []
-                }))
-                state.sidePanel.setFiles(v)
+                const cache = await getFilmCache()
+                const films = getFilmDetails(fileList, cache)
+                state.sidePanel.setFiles(films)
             }
             catch (error) {
                 state.status.setStatus(error as string)
             }
-        }} />;
+        }}
+    />;
 }

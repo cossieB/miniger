@@ -4,8 +4,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { PlaylistFile, state } from "../../state";
 import Database from "@tauri-apps/plugin-sql";
 import { reload } from "@solidjs/router";
-import { getFilms } from "../../api/data";
-import { DetailedFilm } from "../../datatypes";
+import { getFilmCache, getFilmDetails } from "./getFilmDetails";
 
 export function AddDirectoryBtn() {
     return <AddFolderSvg
@@ -47,32 +46,13 @@ async function readDirectories() {
     if (directories == null) return [];
     
     const files: PlaylistFile[] = []
-    const allFilms = await getFilms()
 
-    const map = allFilms.reduce((acc, film) => {
-        acc[film.path] = film
-        return acc
-    }, {} as {[path: string]: DetailedFilm})
+    const cache = await getFilmCache();
 
     for (const directory of directories) {
         const fileList: { title: string, path: string }[] = await invoke('load_directory', { path: directory });
-        for (const file of fileList) {
-            const film = map[file.path]
-            if (!film)
-                files.push({
-                    ...file,
-                    studio_name: "",
-                    actors: [],
-                    tags: []
-                })
-            else {
-                files.push({
-                    ...film,
-                    tags: JSON.parse(film.tags as any),
-                    actors: JSON.parse(film.actors as any),
-                })
-            }
-        }
+        const f = getFilmDetails(fileList, cache)
+        files.push(...f)
     }
     return files;
 }
