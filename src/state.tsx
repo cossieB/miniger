@@ -46,8 +46,8 @@ const [state, setState] = createStore({
         push: (items: PlaylistFile[]) => {
             setState('sidePanel', 'list', prev => [...prev, ...items]);
         },
-        insertAt(index: number, items: PlaylistFile,) {
-            setState('sidePanel', 'list', prev => prev.toSpliced(index, 0, items));
+        insertAt(index: number, items: PlaylistFile[],) {
+            setState('sidePanel', 'list', prev => prev.toSpliced(index, 0, ...items));
         },
         clear: () => {
             setState('sidePanel', 'list', [])

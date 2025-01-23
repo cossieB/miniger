@@ -4,7 +4,6 @@ import { PlaylistFile } from "../../state";
 
 export async function getFilmCache() {
     const allFilms = await getFilms();
-
     return allFilms.reduce((acc, film) => {
         acc[film.path] = film;
         return acc;
@@ -28,4 +27,9 @@ export function getFilmDetails(fileList: { path: string; title: string; }[], cac
             };
         }
     })
+}
+
+export async function processPlaylist(fileList: { path: string; title: string; }[]) {
+    const cache = await getFilmCache();
+    return getFilmDetails(fileList, cache);
 }

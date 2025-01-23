@@ -13,7 +13,7 @@
         "title": "miniger",
         "height": 720,
         "width": 1280,
-        "dragDropEnabled": false
+        "dragDropEnabled": true
       }
     ],
     "security": {

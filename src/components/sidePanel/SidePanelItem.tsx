@@ -1,4 +1,4 @@
-import { Accessor, JSX } from "solid-js";
+import { Accessor, JSX, splitProps } from "solid-js";
 import { state } from "../../state";
 
 type P = {
@@ -10,9 +10,11 @@ export function SidePanelItem(props: P) {
     const isSelected = () => state.sidePanel.selections.has(props.i());
     const isLastDraggedOver = () => state.sidePanel.lastDraggedOver === props.i();
     const isLastSelected = () => state.sidePanel.lastSelection === props.i();
+    const [_, attr] = splitProps(props, ['i', 'data']);
+
     return (
         <li
-            class={"text-ellipsis text-nowrap overflow-hidden p-1 cursor-default [&:not(:last-child):hover]:bg-slate-700"}
+            class={"text-ellipsis text-nowrap overflow-hidden p-1 cursor-default [&:not(:last-child):hover]:bg-slate-700 droppable"}
             classList={{ "!bg-slate-500": isSelected(), "mt-8": isLastDraggedOver(), 'outline-dashed outline-1': isLastSelected()}}
             draggable={props.i() !== state.sidePanel.list.length}
             data-i={props.i()}
@@ -63,7 +65,7 @@ export function SidePanelItem(props: P) {
                 state.sidePanel.setLastDraggedOver(-1)
                 state.sidePanel.selections.clear();
             }}
-            {...props}
+            {...attr}
         >
             {props.data.title}
         </li>
