@@ -1,31 +1,33 @@
-import { For, Setter, Show, createResource, createSignal, onMount } from "solid-js";
+import { For, Setter, Show, Suspense, createEffect, createSignal, on } from "solid-js";
 import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
 import { getStudios } from "../../api/data";
 import { CreateActorSvg } from "../../icons";
 import { createStudio, updateFilmStudio } from "../../api/mutations";
-import { Studio } from "../../datatypes";
-
-export const [studios, { refetch: refetchStudios }] = createResource(async () => getStudios())
-const [addedStudios, setAddedStudios] = createSignal<Studio[]>([])
+import { createAsync } from "@solidjs/router";
 
 export function MySelectEditor(props: ICellEditorParams) {
+    const studios = createAsync(() => getStudios())
+
     const [input, setInput] = createSignal("")
-    const [value, setValue] = createSignal("")
+    const [selectedStudio, setSelectedStudio] = createSignal({
+        name: "",
+        id: null as number | null
+    })
     const filtered = () => studios()?.filter(s => s.name.toLowerCase().includes(input().toLowerCase()))
 
     let refInput!: HTMLInputElement;
 
     const api: ICellEditor = {
-        getValue: () => value()
+        getValue: () => JSON.stringify(selectedStudio())
     };
 
-    onMount(() => {
+    createEffect(on(studios, () => {
         refInput.focus()
-    });
+    }));
     (props as any).ref(api);
 
     return (
-        <>
+        <Suspense>
             <input
                 type="text"
                 class="ag-input-field-input ag-text-field-input h-10"
@@ -39,8 +41,8 @@ export function MySelectEditor(props: ICellEditorParams) {
             >
                 <Option
                     text="Unknown"
-                    value={-1}
-                    setInput={setValue}
+                    value={null}
+                    setInput={setSelectedStudio}
                     stopEditing={props.stopEditing}
                     filmId={props.data.film_id}
                 />
@@ -49,17 +51,7 @@ export function MySelectEditor(props: ICellEditorParams) {
                         <Option
                             text={studio.name}
                             value={studio.studio_id}
-                            setInput={setValue}
-                            stopEditing={props.stopEditing}
-                            filmId={props.data.film_id}
-                        />}
-                </For>
-                <For each={addedStudios()?.filter(s => s.name.toLowerCase().includes(input().toLowerCase()))}>
-                    {studio =>
-                        <Option
-                            text={studio.name}
-                            value={studio.studio_id}
-                            setInput={setValue}
+                            setInput={setSelectedStudio}
                             stopEditing={props.stopEditing}
                             filmId={props.data.film_id}
                         />}
@@ -67,44 +59,54 @@ export function MySelectEditor(props: ICellEditorParams) {
                 <Show when={input().length > 0}>
                     <AddStudioBtn
                         input={input()}
-                        stopEditing={() => {
-                            setValue(input())
+                        stopEditing={(id: number) => {
+                            setSelectedStudio({
+                                name: input(),
+                                id
+                            })
                             props.stopEditing()
                         }}
                         filmId={props.data.film_id}
                     />
                 </Show>
             </ul>
-        </>
+        </Suspense>
     );
 }
 
 type Props = {
-    value: number
+    value: number | null
     text: string
-    setInput: Setter<string>
+    setInput: Setter<{
+        name: string;
+        id: number | null;
+    }>
     stopEditing: () => void
     filmId: number
 }
 
 function Option(props: Props) {
+    const studio = {
+        id: props.value,
+        name: props.text,
+    }
     return (
         <li
             class="hover:bg-slate-500 p-1"
             onclick={async () => {
-                await updateFilmStudio(props.filmId, props.value);
-                props.setInput(props.text == "Unknown" ? "" : props.text);
+                await updateFilmStudio(props.filmId, studio.id);
+                props.setInput(studio);
                 props.stopEditing();
             }}
         >
-            {props.text}
+            {studio.name}
         </li>
     )
 }
 
 type P1 = {
     input: string
-    stopEditing: () => void
+    stopEditing: (id: number) => void
     filmId: number
 }
 
@@ -115,10 +117,9 @@ function AddStudioBtn(props: P1) {
             type="button"
             onclick={async () => {
                 const row = await createStudio(props.input)
-                setAddedStudios(p => [...p, ...row])
                 const studioId = row[0].studio_id
                 await updateFilmStudio(props.filmId, studioId)
-                props.stopEditing();
+                props.stopEditing(studioId);
             }}
         >
             <CreateActorSvg />

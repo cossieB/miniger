@@ -43,6 +43,10 @@ export default function MoviesContextMenu(props: P) {
 export function MoviesMenu(props: Pick<P['contextMenu'], 'data'>) {
     const tags = () => unwrap(props.data).tags;
     const actors = () => unwrap(props.data).actors
+    const studio = () => ({
+        name: unwrap(props.data).studio_name,
+        id: unwrap(props.data).studio_id,
+    })
     return (
         <>
             <Show when={tags().length > 0}>
@@ -67,9 +71,9 @@ export function MoviesMenu(props: Pick<P['contextMenu'], 'data'>) {
                     </For>
                 </ContextMenu.SubMenu>
             </Show>
-            <Show when={props.data.studio_id}>
-                <ContextMenu.Link href={`/movies/studios/${props.data.studio_id}`}>
-                    More From {props.data.studio_name}
+            <Show when={studio().id}>
+                <ContextMenu.Link href={`/movies/studios/${studio().id}`}>
+                    More From {studio().name}
                 </ContextMenu.Link>
             </Show>
             <ContextMenu.Item

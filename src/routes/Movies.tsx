@@ -79,6 +79,13 @@ export function Movies(props: Props) {
                         headerName: "Studio",
                         cellEditor: MySelectEditor,
                         cellEditorPopup: true,
+                        valueSetter: (params) => {
+                            const value = JSON.parse(params.newValue); console.log(value)
+                            if (value.name === "") return false;
+                            params.data.studio_name = value.name == "Unknown" ? "" : value.name
+                            params.data.studio_id = value.id
+                            return true
+                        }
 
                     }, {
                         field: "actors",
