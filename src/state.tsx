@@ -2,6 +2,7 @@ import { ReactiveSet } from "@solid-primitives/set";
 import { createStore } from "solid-js/store";
 import shuffleArray from "./lib/shuffleArray";
 import { Actor } from "./datatypes";
+import "./events/drop"
 
 export type PlaylistFile = {
     title: string;
@@ -42,7 +43,7 @@ const [state, setState] = createStore({
         selections: new ReactiveSet<number>(),
         lastSelection: -1,
         lastDraggedOver: -1,
-
+        width: 200,
         push: (items: PlaylistFile[]) => {
             setState('sidePanel', 'list', prev => [...prev, ...items]);
         },
@@ -75,12 +76,12 @@ const [state, setState] = createStore({
         setLastDraggedOver: (i: number) => {
             setState('sidePanel', 'lastDraggedOver', i);
         },
+        setWidth: (width: number) => {
+            setState('sidePanel', 'width', width)
+        }
     },
     mainPanel: {
-        width: 800,
-        setWidth: (width: number) => {
-            setState('mainPanel', 'width', width)
-        },
+        width: () => state.windowDimensions.width - state.tree.width - state.sidePanel.width,
         selectedItems: [] as PlaylistFile[],
         setSelectedItems: (items: PlaylistFile[]) => {
             setState('mainPanel', 'selectedItems', items)
@@ -90,6 +91,13 @@ const [state, setState] = createStore({
         width: 208,
         setWidth: (width: number) => {
             setState('tree', 'width', width)
+        }
+    },
+    windowDimensions: {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        set: (dimensions: {width?: number, height?: number}) => {
+            setState('windowDimensions', prev => ({...prev, ...dimensions}))
         }
     }
 })

@@ -8,6 +8,7 @@ import { db } from ".";
 import { BottomBar } from "./components/BottomBar";
 import { Tree } from "./components/Tree/Tree";
 import Resizer from "./components/Resizer";
+import { handleKeyup, handleResize } from "./events";
 
 function App(props: { children?: JSXElement }) {
     createEffect(() => {
@@ -22,17 +23,7 @@ function App(props: { children?: JSXElement }) {
             }
         })()
     })
-    function handleKeyup(e: KeyboardEvent) {
-        e.preventDefault();
-        if (e.key == 'Delete') {
-            state.sidePanel.deleteSelections()
-        }
-        if (e.key == "a" && e.ctrlKey) {
-            for (let i = 0; i < state.sidePanel.list.length; i++) {
-                state.sidePanel.selections.add(i)
-            }
-        }
-    }
+
     onMount(() => {
         document.addEventListener('keyup', handleKeyup);
         window.addEventListener("resize", handleResize)
@@ -51,27 +42,24 @@ function App(props: { children?: JSXElement }) {
                     min={0}
                     setDimension={state.tree.setWidth}
                     length={state.tree.width}
-                    orientation="horizontal"
+                    pivot="right"
+                    max={window.innerWidth}
                 />
-                <main class="overflow-hidden bg-slate-900" style={{ width: state.mainPanel.width + "px" }}>
+                <main class="overflow-hidden bg-slate-900" style={{ width: state.mainPanel.width() + "px" }}>
                     {props.children}
                 </main>
                 <Resizer
                     min={state.tree.width}
-                    setDimension={state.mainPanel.setWidth}
-                    length={state.mainPanel.width}
-                    orientation="horizontal"
+                    setDimension={state.sidePanel.setWidth}
+                    length={state.sidePanel.width}
+                    pivot="left"
+                    max={state.windowDimensions.width}
                 />
                 <SidePanel />
             </div>
             <BottomBar />
         </div>
     );
-}
-
-function handleResize() {
-    const width = window.innerWidth - state.tree.width - 208
-    state.mainPanel.setWidth(width);
 }
 
 export default App;
