@@ -17,11 +17,14 @@ export function ActorItem(props: Props) {
     }
     return (
         <li
-            onclick={handleClick}
-            classList={{ 'border-2 border-green-500': props.rowActors().some((x: any) => x.actor_id === props.actor.actor_id) }}
-        >
-            <img src={props.actor.image ?? "/Question_Mark.svg"} class="h-100 aspect-square object-cover" loading="lazy" alt="" />
-            {props.actor.name}
-        </li>
+        onclick={handleClick}
+        class="overflow-hidden h-60 flex flex-col"
+        classList={{ 'border-2 border-green-500': props.rowActors().some((x: any) => x.actor_id === props.actor.actor_id) }}
+    >
+        <div class="h-[90%] overflow-hidden">
+            <img src={props.actor.image ?? "/Question_Mark.svg"} class="object-cover object-top h-full w-full" loading="lazy" alt="" />
+        </div>
+        <span class="flex-1 flex items-center justify-center">{props.actor.name}</span>
+    </li>
     );
 }
