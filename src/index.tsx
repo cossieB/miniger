@@ -22,27 +22,27 @@ render(() => (
             <Route
                 path="/"
                 component={() => <Movies fetcher={() => getFilms()} />}
-                load={void getFilms}
+                preload={void getFilms}
             />
             <Route
                 path="/tags/:tag"
                 component={(props) => <Movies fetcher={() => getFilmsByTag(props.params.tag)} />}
-                load={(args) => getFilmsByTag(args.params.tag)}
+                preload={(args) => getFilmsByTag(args.params.tag)}
             />
             <Route
                 path="/actors/:actorId"
                 component={props => <Movies fetcher={() => getFilmsByActor(Number(props.params.actorId))} />}
-                load={(args) => getFilmsByActor(Number(args.params.actorId))}
+                preload={(args) => getFilmsByActor(Number(args.params.actorId))}
             />
             <Route
                 path="/studios/:studioId"
                 component={props => <Movies fetcher={() => getFilmsByStudio(Number(props.params.studioId))} />}
-                load={args => getFilmsByStudio(Number(args.params.studioId))}
+                preload={args => getFilmsByStudio(Number(args.params.studioId))}
             />
         </Route>
-        <Route path={["/actors", "/movies/actors"]} component={Actors} load={() => getActors()} />
-        <Route path={["/studios", "/movies/studios"]} component={Studios} load={() => getStudios()} />
-        <Route path="/movies/inaccessible" component={Inaccessible} load={() => getInaccessible()} />
+        <Route path={["/actors", "/movies/actors"]} component={Actors} preload={() => getActors()} />
+        <Route path={["/studios", "/movies/studios"]} component={Studios} preload={() => getStudios()} />
+        <Route path="/movies/inaccessible" component={Inaccessible} preload={() => getInaccessible()} />
     </Router>
 ), document.getElementById("root") as HTMLElement);
 

@@ -80,7 +80,7 @@ export function Movies(props: Props) {
                         cellEditor: MySelectEditor,
                         cellEditorPopup: true,
                         valueSetter: (params) => {
-                            const value = JSON.parse(params.newValue); console.log(value)
+                            const value = JSON.parse(params.newValue); 
                             if (value.name === "") return false;
                             params.data.studio_name = value.name == "Unknown" ? "" : value.name
                             params.data.studio_id = value.id
@@ -94,7 +94,7 @@ export function Movies(props: Props) {
                         editable: true,
                         cellEditor: ActorSelector,
                         cellEditorPopup: true,
-                        cellEditorPopupPosition: "under",
+                        cellEditorPopupPosition: "over",
                     }, {
                         field: "release_date",
                         headerName: "Release Date"

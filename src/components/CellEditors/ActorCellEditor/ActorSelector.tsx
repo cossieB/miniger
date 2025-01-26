@@ -19,10 +19,8 @@ export function ActorSelector(props: ICellEditorParams) {
 
     (props as any).ref(api);
 
-    createEffect(on(actors,() => {
-        console.log(refInput)
+    createEffect(on(actors, () => {
         refInput.focus();
-        
     } ) );
 
     const [input, setInput] = createSignal("");

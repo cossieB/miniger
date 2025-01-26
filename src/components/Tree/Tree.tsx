@@ -1,6 +1,6 @@
-import { A, query } from "@solidjs/router"
+import { A, createAsync, query } from "@solidjs/router"
 import Database from "@tauri-apps/plugin-sql"
-import { For, JSX, JSXElement, Show, createResource, createSignal, onMount } from "solid-js"
+import { For, JSX, JSXElement, Show, createSignal, onMount } from "solid-js"
 import { getStudios } from "../../api/data"
 import { state } from "../../state"
 
@@ -10,8 +10,8 @@ const getTags = query(async () => {
 }, 'getTags')
 
 export function Tree() {
-    const [tags] = createResource(() => getTags(), { initialValue: [] })
-    const [studios] = createResource(() => getStudios(), {initialValue: []})
+    const tags = createAsync(() => getTags(), { initialValue: [] })
+    const studios = createAsync(() => getStudios(), {initialValue: []})
     return (
         <nav 
             class="top-0 left-0 h-full bg-slate-700 text-orange-50 shrink-0 overflow-y-auto"
