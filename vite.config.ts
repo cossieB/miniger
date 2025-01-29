@@ -18,4 +18,7 @@ export default defineConfig(async () => ({
       ignored: ["**/src-tauri/**"],
     },
   },
+  esbuild: {
+    target: "es2022"
+  }
 }));

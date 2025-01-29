@@ -1,12 +1,11 @@
 import { query } from "@solidjs/router"
-import Database from "@tauri-apps/plugin-sql"
 import { Studio, Actor, FilmTag, ActorFilm, DetailedFilm } from "../datatypes"
 import { invoke } from "@tauri-apps/api/core"
-
-const db = await Database.load("sqlite:mngr.db");
+import { getDatabase } from "./db"
 
 export const getFilms = query(async () => {
-    return await db.select(`
+    await using db = await getDatabase()
+    return await db.connection.select(`
     WITH tq AS (
         SELECT JSON_GROUP_ARRAY(tag) tags, film_id
         FROM film_tag
@@ -32,30 +31,35 @@ export const getFilms = query(async () => {
 }, 'films')
 
 export const getStudios = query(async () => {
-    return await db.select("SELECT * FROM studio ORDER BY name ASC") as Studio[]
+    await using db = await getDatabase()
+    return await db.connection.select("SELECT * FROM studio ORDER BY name ASC") as Studio[]
 }, 'studios')
 
 export const getActors = query(async () => {
-    return await db.select("SELECT * FROM actor ORDER BY name") as Actor[]
+    await using db = await getDatabase()
+    return await db.connection.select("SELECT * FROM actor ORDER BY name") as Actor[]
 }, 'actors')
 
 export const getFilmTags = query(async () => {
-    return await db.select("SELECT * FROM film_tag") as FilmTag[]
+    await using db = await getDatabase()
+    return await db.connection.select("SELECT * FROM film_tag") as FilmTag[]
 }, 'tags')
 
 export const getActorFilms = query(async () => {
-    return await db.select("SELECT * FROM actor_film") as ActorFilm[]
+    await using db = await getDatabase()
+    return await db.connection.select("SELECT * FROM actor_film") as ActorFilm[]
 }, 'appearances')
 
 export const getInaccessible = query(async () => {
-    const db = await Database.load("sqlite:mngr.db");
-    const films = await db.select("SELECT title, path FROM film")
+    await using db = await getDatabase()
+    const films = await db.connection.select("SELECT title, path FROM film")
     return await invoke('get_inaccessible', { playlist: films }) as { title: string, path: string }[]
 }, 'inaccessible')
 
 export const getFilmsByTag = query(async (tag: string) => {
+    await using db = await getDatabase()
     const decoded = decodeURI(tag);
-    return await db.select(`
+    return await db.connection.select(`
     WITH fq AS (
         SELECT film_id FROM film_tag WHERE tag = $1
     ), tq AS (
@@ -83,7 +87,8 @@ export const getFilmsByTag = query(async (tag: string) => {
 }, 'filmsByTag')
 
 export const getFilmsByActor = query(async (actorId: number) => {
-    return await db.select(`
+    await using db = await getDatabase()
+    return await db.connection.select(`
     WITH tq AS (
         SELECT JSON_GROUP_ARRAY(tag) tags, film_id
         FROM film_tag
@@ -110,7 +115,8 @@ export const getFilmsByActor = query(async (actorId: number) => {
 }, "filmsByActor")
 
 export const getFilmsByStudio = query(async (studioId: number) => {
-    return await db.select(`
+    await using db = await getDatabase()
+    return await db.connection.select(`
     WITH tq AS (
         SELECT JSON_GROUP_ARRAY(tag) tags, film_id
         FROM film_tag
@@ -136,7 +142,8 @@ export const getFilmsByStudio = query(async (studioId: number) => {
 }, "filmsByStudio")
 
 export const getFilmByPath = query(async (path: string) => {
-    return await db.select(`
+    await using db = await getDatabase()
+    return await db.connection.select(`
     WITH tq AS (
         SELECT JSON_GROUP_ARRAY(tag) tags, film_id
         FROM film_tag
@@ -162,7 +169,8 @@ export const getFilmByPath = query(async (path: string) => {
 }, 'filmByPath')
 
 export const getActorsByFilm = query(async (filmId: number) => {
-    return await db.select(`
+    await using db = await getDatabase()
+    return await db.connection.select(`
     SELECT actor.*
     FROM actor_film
     JOIN actor using(actor_id)
