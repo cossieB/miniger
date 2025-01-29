@@ -1,10 +1,10 @@
-import Database from "@tauri-apps/plugin-sql";
 import { Suspense, onCleanup, onMount } from "solid-js";
 import AgGridSolid from "ag-grid-solid";
 import { GridApi } from "ag-grid-community";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { getInaccessible } from "../api/data";
 import { createAsync } from "@solidjs/router";
+import { getDatabase } from "../api/db";
 
 export default function Inaccessible() {
     const data = createAsync(() => getInaccessible())
@@ -15,16 +15,16 @@ export default function Inaccessible() {
         if (selection.length == 0) return
         const confirmed = await confirm(`Remove ${selection.length} file(s) from database?`);
         if (confirmed) {
-            const db = await Database.load("sqlite:mngr.db")
-            await db.select("BEGIN")
+            const db = await getDatabase()
+            await db.connection.select("BEGIN")
             try {
                 for (const film of selection) 
-                    await db.select("DELETE FROM film WHERE path = $1", [film.path])
-                await db.select("COMMIT")
+                    await db.connection.select("DELETE FROM film WHERE path = $1", [film.path])
+                await db.connection.select("COMMIT")
             } 
             catch (error) {
                 console.error(error)
-                await db.select("ROLLBACK")
+                await db.connection.select("ROLLBACK")
             }
         }
     }

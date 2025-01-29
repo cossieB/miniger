@@ -3,16 +3,15 @@ import { getStudios } from "../api/data";
 import { createStore } from "solid-js/store";
 import { ContextMenu } from "../components/ContextMenu/ContextMenu";
 import AgGridSolid from "ag-grid-solid";
-import { action, useAction } from "@solidjs/router";
-import Database from "@tauri-apps/plugin-sql";
+import { state } from "../state";
+import { getDatabase } from "../api/db";
 
-const updateStudio = action(async (field: string, value: string, studioId: number) => {
-    const db = await Database.load("sqlite:mngr.db");
-    await db.select(`UPDATE studio SET ${field} = $1 WHERE studio_id = $2`, [value, studioId])
-})
+async function updateStudio (field: string, value: string, studioId: number) {
+    const db = await getDatabase()
+    await db.connection.select(`UPDATE studio SET ${field} = $1 WHERE studio_id = $2`, [value, studioId])
+}
 
 export default function Studios() {
-    const updateStudioAction = useAction(updateStudio)
     const [studios] = createResource(() => getStudios())
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
@@ -27,12 +26,17 @@ export default function Studios() {
             >
                 <AgGridSolid
                     rowData={studios()}
+                    onGridReady={params => {
+                        state.setGridApi(params.api as any)
+                    }}
+                    rowSelection="multiple"
                     defaultColDef={{
                         editable: true,
                         sortable: true,
+                        suppressKeyboardEvent: ({event}) => event.key === "Delete",
                         onCellValueChanged: params => {
                             if (!params.colDef.field) return;
-                            updateStudioAction(params.colDef.field, params.newValue, params.data.studio_id)
+                            updateStudio(params.colDef.field, params.newValue, params.data.studio_id)
                         }
                     }}
                     columnDefs={[{

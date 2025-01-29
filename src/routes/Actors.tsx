@@ -6,6 +6,7 @@ import { ContextMenu } from "../components/ContextMenu/ContextMenu";
 import { createStore } from "solid-js/store";
 import AgGridSolid from "ag-grid-solid";
 import { updateActor } from "../api/mutations";
+import { state } from "../state";
 
 export default function Actors() {
     const actors = createAsync(() => getActors())
@@ -26,6 +27,10 @@ export default function Actors() {
             >
                 <AgGridSolid
                     rowData={actors()}
+                    rowSelection="multiple"
+                    onGridReady={params => {
+                        state.setGridApi(params.api as any)
+                    }}
                     onCellContextMenu={params => {
                         setContextMenu({
                             isOpen: true,
@@ -41,7 +46,8 @@ export default function Actors() {
                             if (!params.colDef.field) return;
                             updateActor(params.colDef.field, params.newValue, params.data.actor_id)
                         },
-                        editable: true
+                        editable: true,
+                        suppressKeyboardEvent: ({event}) => event.key === "Delete",
                     }}
                     columnDefs={[{
                         field: 'name',

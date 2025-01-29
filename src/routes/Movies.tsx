@@ -14,6 +14,8 @@ type Props = {
     fetcher(): Promise<DetailedFilm[] | undefined>
 }
 
+
+
 export function Movies(props: Props) {
     const isRouting = useIsRouting()
 
@@ -39,11 +41,12 @@ export function Movies(props: Props) {
 
     const data = createMemo(() => {
         if (!films()) return undefined
-        return films()!.map(film => ({
+        return films()!.map((film => ({
             ...film,
+            symbol: film.path,
             tags: JSON.parse(film.tags as any) as string[],
             actors: JSON.parse(film.actors as any) as Actor[],
-        }))
+        })))
     })
 
     return (
@@ -51,13 +54,18 @@ export function Movies(props: Props) {
             <div
                 id='gridContainer'
                 class='ag-theme-alpine-dark h-full relative'
+                // on:keyup={handleKeyup}
             >
                 <AgGridSolid
-                    onGridReady={params => ((gridApi as any) = params.api)}
+                    onGridReady={params => {
+                        (gridApi as any) = params.api
+                        state.setGridApi(gridApi);
+                    }}
+                    getRowId={params => params.data.path}
                     rowSelection="multiple"
                     rowData={data()}
                     onSelectionChanged={() => {
-                        const selection = gridApi.getSelectedRows()
+                        const selection = gridApi.getSelectedRows();
                         state.mainPanel.setSelectedItems(selection)
                     }}
                     onCellContextMenu={params => {
@@ -68,6 +76,9 @@ export function Movies(props: Props) {
                             data: params.data,
                             selections: gridApi.getSelectedRows(),
                         })
+                    }}
+                    defaultColDef={{
+                        suppressKeyboardEvent: ({event}) => event.key === "Delete",
                     }}
                     columnDefs={[{
                         field: 'title',
@@ -80,7 +91,7 @@ export function Movies(props: Props) {
                         cellEditor: MySelectEditor,
                         cellEditorPopup: true,
                         valueSetter: (params) => {
-                            const value = JSON.parse(params.newValue); 
+                            const value = JSON.parse(params.newValue);
                             if (value.name === "") return false;
                             params.data.studio_name = value.name == "Unknown" ? "" : value.name
                             params.data.studio_id = value.id
@@ -89,7 +100,11 @@ export function Movies(props: Props) {
 
                     }, {
                         field: "actors",
-                        valueFormatter: (params: any) => params.value.map((x: any) => x.name).join(", "),
+                        valueFormatter: (params: any) => {
+                            if (params.value === null) console.log(params)
+
+                            return params.value.map((x: any) => x.name).join(", ")
+                        },
                         filter: true,
                         editable: true,
                         cellEditor: ActorSelector,
@@ -106,7 +121,7 @@ export function Movies(props: Props) {
                         },
                         valueParser: (params: any) => params.newValue.trim().split(/\s*[,;]\s*/)
                     }, {
-                        field: "path"
+                        field: "path",
                     }]}
                 />
                 <Show when={contextMenu.isOpen}>
