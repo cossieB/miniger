@@ -4,12 +4,7 @@ import { createStore } from "solid-js/store";
 import { ContextMenu } from "../components/ContextMenu/ContextMenu";
 import AgGridSolid from "ag-grid-solid";
 import { state } from "../state";
-import { getDatabase } from "../api/db";
-
-async function updateStudio (field: string, value: string, studioId: number) {
-    const db = await getDatabase()
-    await db.connection.select(`UPDATE studio SET ${field} = $1 WHERE studio_id = $2`, [value, studioId])
-}
+import { updateStudio } from "../api/mutations";
 
 export default function Studios() {
     const [studios] = createResource(() => getStudios())

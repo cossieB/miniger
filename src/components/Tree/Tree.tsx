@@ -1,13 +1,7 @@
-import { A, createAsync, query } from "@solidjs/router"
-import Database from "@tauri-apps/plugin-sql"
+import { A, createAsync } from "@solidjs/router"
 import { For, JSX, JSXElement, Show, createSignal, onMount } from "solid-js"
-import { getStudios } from "../../api/data"
+import { getStudios, getTags } from "../../api/data"
 import { state } from "../../state"
-
-const getTags = query(async () => {
-    const db = await Database.load("sqlite:mngr.db")
-    return await db.select<{ tag: string }[]>("SELECT DISTINCT tag FROM film_tag ORDER BY tag ASC")
-}, 'getTags')
 
 export function Tree() {
     const tags = createAsync(() => getTags(), { initialValue: [] })

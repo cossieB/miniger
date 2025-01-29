@@ -25,11 +25,11 @@ export function SidePanel() {
         <section
             class="bg-gray-800 overflow-x-hidden select-none shrink-0"
             style={{ width: state.sidePanel.width + "px" }}
-            use:clickOutside={state.sidePanel.clearSelections}
-        >
+            >
             <ul
                 class="overflow-y-auto overflow-x-hidden droppable"
-                style={{ height: "calc(100vh - 4rem)" }}
+                style={{ "max-height": "calc(100vh - 4rem)" }}
+                use:clickOutside={state.sidePanel.clearSelections}
             >
                 <For each={state.sidePanel.list}>
                     {(data, i) =>

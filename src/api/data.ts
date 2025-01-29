@@ -177,3 +177,9 @@ export const getActorsByFilm = query(async (filmId: number) => {
     WHERE film_id = $1
     `, [filmId]) as Actor[]
 }, "actorsByFilm")
+
+
+export const getTags = query(async () => {
+    await using db = await getDatabase()
+    return await db.connection.select<{ tag: string }[]>("SELECT DISTINCT tag FROM film_tag ORDER BY tag ASC")
+}, 'getTags')

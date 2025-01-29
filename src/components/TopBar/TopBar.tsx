@@ -9,6 +9,7 @@ import { ClearPlaylistBtn } from "./ClearPlaylistBtn";
 import { AddToPlaylist } from "./AddToPlaylist";
 import { Breadcrumbs } from "../Breadcrumb";
 import { state } from "../../state";
+import { DeleteBtn } from "./DeleteBtn";
 
 export function TopBar() {
     const navigate = useNavigate();
@@ -22,6 +23,7 @@ export function TopBar() {
             {/* Center Part */}
             <AddDirectoryToDatabase />
             <AddToPlaylist />
+            <DeleteBtn />
 
             {/* Right Part */}
             <LoadPlaylistBtn />

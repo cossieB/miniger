@@ -1,5 +1,5 @@
 import { Accessor, Setter, Show } from "solid-js";
-import { CreateActorSvg } from "../../../icons";
+import { CirclePlusSvg } from "../../../icons";
 import { Actor } from "../../../datatypes";
 import { setAddedActors } from "./ActorSelector";
 import { addActor } from "../../../api/mutations";
@@ -21,7 +21,7 @@ export function AddActorToDatabaseBtn(props: Props) {
                 }}
             >
                 <li class="flex items-center">
-                    <CreateActorSvg />
+                    <CirclePlusSvg />
                     Add {props.input()} to database
                 </li>
             </button>

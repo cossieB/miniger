@@ -1,6 +1,6 @@
 import { AddToDatabaseSvg } from "../../icons";
 import { state } from "../../state";
-import { db } from "../..";
+import { addPlaylistFilesToDatabase } from "../../api/mutations";
 
 export function AddPlaylistFilesToDatabaseBtn() {
     return <AddToDatabaseSvg
@@ -8,15 +8,7 @@ export function AddPlaylistFilesToDatabaseBtn() {
         classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
         onclick={async () => {
             if (state.sidePanel.list.length == 0) return
-            try {
-                db()?.select("BEGIN");
-                for (const item of state.sidePanel.list)
-                    await db()?.execute("INSERT into film (title, path) VALUES ($1, $2) ON CONFLICT (path) DO NOTHING", [item.title, item.path]);
-                await db()?.select("COMMIT");
-            }
-            catch (error) {
-                console.error(error);
-                db()?.select("ROLLBACK");
-            }
+            await addPlaylistFilesToDatabase()
         }} />;
 }
+

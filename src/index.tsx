@@ -3,8 +3,6 @@ import { render } from "solid-js/web";
 import "./App.css";
 import App from "./App";
 import { Route, Router } from "@solidjs/router";
-import Database from "@tauri-apps/plugin-sql";
-import { createResource } from "solid-js";
 import Actors from "./routes/Actors";
 import Studios from "./routes/Studios";
 import { getActors, getFilms, getFilmsByActor, getFilmsByStudio, getFilmsByTag, getInaccessible, getStudios } from "./api/data";
@@ -12,8 +10,6 @@ import 'ag-grid-community/styles/ag-grid.css'; // grid core CSS
 import "ag-grid-community/styles/ag-theme-alpine.css"; // optional theme
 import { Movies } from "./routes/Movies";
 import Inaccessible from "./routes/Inaccessible";
-
-export const [db] = createResource(() => Database.load("sqlite:mngr.db"))
 
 render(() => (
     <Router root={App}>

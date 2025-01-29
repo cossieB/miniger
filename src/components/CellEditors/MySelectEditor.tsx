@@ -1,7 +1,7 @@
 import { For, Setter, Show, Suspense, createEffect, createSignal, on } from "solid-js";
 import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
 import { getStudios } from "../../api/data";
-import { CreateActorSvg } from "../../icons";
+import { CirclePlusSvg } from "../../icons";
 import { createStudio, updateFilmStudio } from "../../api/mutations";
 import { createAsync } from "@solidjs/router";
 
@@ -122,7 +122,7 @@ function AddStudioBtn(props: P1) {
                 props.stopEditing(studioId);
             }}
         >
-            <CreateActorSvg />
+            <CirclePlusSvg />
         </button>
     )
 }

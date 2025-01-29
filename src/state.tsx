@@ -3,6 +3,7 @@ import { createStore } from "solid-js/store";
 import shuffleArray from "./lib/shuffleArray";
 import { Actor } from "./datatypes";
 import "./events/drop"
+import { GridApi } from "ag-grid-community";
 
 export type PlaylistFile = {
     title: string;
@@ -13,6 +14,10 @@ export type PlaylistFile = {
 };
 
 const [state, setState] = createStore({
+    gridApi: undefined as GridApi<any> | undefined,
+    setGridApi: (g: GridApi<any> | undefined) => {
+        setState('gridApi', g)
+    },
     status: {
         message: "",
         timerId: -1,
