@@ -81,6 +81,14 @@ pub fn load_directory(path: String) -> Result<Vec<FileInfo>, AppError> {
 
 #[tauri::command]
 pub fn open_explorer(path: String) -> Result<(), AppError> {
-    Command::new("explorer").args(["/select,", &path]).spawn()?;
-    Ok(())
+    let os = std::env::consts::OS;
+    if os == "windows" {
+        Command::new("explorer").args(["/select,", &path]).spawn()?;
+        return Ok(());
+    }
+    else if os == "macos" {
+        Command::new("open").args(["-R", &path]).spawn()?;
+        return Ok(());
+    }
+    Err("Unsupported platform".to_string().into())
 }
