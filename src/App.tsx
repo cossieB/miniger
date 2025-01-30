@@ -10,21 +10,10 @@ import { useLocation } from "@solidjs/router";
 
 function App(props: { children?: JSXElement }) {
     const location = useLocation()
+    
     createRenderEffect(on(() => location.pathname, () => {
         state.setGridApi(undefined)
     }))
-    // createEffect(() => {
-    //     if (!db()) return;
-    //     (async function () {
-    //         try {
-    //             const script = await readTextFile(await resolveResource("./schema.sql"));
-    //             db()!.execute(script)
-    //         }
-    //         catch (error) {
-    //             console.error(error)
-    //         }
-    //     })()
-    // })
 
     onMount(() => {
         document.addEventListener('keyup', handleKeyup);

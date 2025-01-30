@@ -1,4 +1,3 @@
-BEGIN;
 CREATE TABLE IF NOT EXISTS actor (
     actor_id INTEGER NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
@@ -35,4 +34,3 @@ CREATE TABLE IF NOT EXISTS film_tag (
 
     PRIMARY KEY(film_id, tag)
 );
-END;
