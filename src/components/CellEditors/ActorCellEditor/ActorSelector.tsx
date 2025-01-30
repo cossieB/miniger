@@ -7,8 +7,6 @@ import { SubmitBtn } from "./SubmitBtn";
 import { AddActorToDatabaseBtn } from "./AddActorToDatabaseBtn";
 import { createAsync } from "@solidjs/router";
 
-export const [addedActors, setAddedActors] = createSignal<Actor[]>([]);
-
 export function ActorSelector(props: ICellEditorParams) {
     let refInput!: HTMLInputElement;
     const actors = createAsync(() => getActors())
@@ -24,7 +22,7 @@ export function ActorSelector(props: ICellEditorParams) {
     } ) );
 
     const [input, setInput] = createSignal("");
-    const filteredActors = () => actors.latest?.filter(actor => actor.name.toLowerCase().includes(input().toLowerCase()))
+    const filteredActors = () => actors()?.filter(actor => actor.name.toLowerCase().includes(input().toLowerCase()))
     return (
         <Suspense>
             <input
@@ -49,9 +47,6 @@ export function ActorSelector(props: ICellEditorParams) {
             </Show>
             <ul class="bg-slate-800 grid text-center p-2 gap-2 max-h-[75vh] overflow-auto w-[50vw] actorsList">
                 <For each={filteredActors()}>
-                    {actor => <ActorItem actor={actor} rowActors={rowActors} setRowActors={setRowActors} />}
-                </For>
-                <For each={addedActors()?.filter(actor => actor.name.toLowerCase().includes(input().toLowerCase()))}>
                     {actor => <ActorItem actor={actor} rowActors={rowActors} setRowActors={setRowActors} />}
                 </For>
                 <AddActorToDatabaseBtn

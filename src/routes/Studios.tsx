@@ -1,13 +1,15 @@
-import { Show, Suspense, createResource } from "solid-js";
+import { Show, Suspense } from "solid-js";
 import { getStudios } from "../api/data";
 import { createStore } from "solid-js/store";
 import { ContextMenu } from "../components/ContextMenu/ContextMenu";
 import AgGridSolid from "ag-grid-solid";
 import { state } from "../state";
 import { updateStudio } from "../api/mutations";
+import { createAsync, useAction } from "@solidjs/router";
 
 export default function Studios() {
-    const [studios] = createResource(() => getStudios())
+    const studios = createAsync(() => getStudios())
+    const updateAction = useAction(updateStudio)
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
         selectedId: -1,
@@ -21,6 +23,7 @@ export default function Studios() {
             >
                 <AgGridSolid
                     rowData={studios()}
+                    getRowId={params => params.data.studio_id}
                     onGridReady={params => {
                         state.setGridApi(params.api as any)
                     }}
@@ -31,7 +34,7 @@ export default function Studios() {
                         suppressKeyboardEvent: ({event}) => event.key === "Delete",
                         onCellValueChanged: params => {
                             if (!params.colDef.field) return;
-                            updateStudio(params.colDef.field, params.newValue, params.data.studio_id)
+                            updateAction(params.colDef.field, params.newValue, params.data.studio_id)
                         }
                     }}
                     columnDefs={[{

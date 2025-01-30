@@ -1,7 +1,7 @@
 import { Show, Suspense } from "solid-js";
 import { getActors } from "../api/data";
 import { countryList } from "../countryList";
-import { createAsync } from "@solidjs/router";
+import { createAsync, useAction } from "@solidjs/router";
 import { ContextMenu } from "../components/ContextMenu/ContextMenu";
 import { createStore } from "solid-js/store";
 import AgGridSolid from "ag-grid-solid";
@@ -9,6 +9,7 @@ import { updateActor } from "../api/mutations";
 import { state } from "../state";
 
 export default function Actors() {
+    const updateActorAction = useAction(updateActor)
     const actors = createAsync(() => getActors())
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
@@ -28,6 +29,7 @@ export default function Actors() {
                 <AgGridSolid
                     rowData={actors()}
                     rowSelection="multiple"
+                    getRowId={params => params.data.actor_id}
                     onGridReady={params => {
                         state.setGridApi(params.api as any)
                     }}
@@ -44,7 +46,7 @@ export default function Actors() {
                     defaultColDef={{
                         onCellValueChanged: params => {
                             if (!params.colDef.field) return;
-                            updateActor(params.colDef.field, params.newValue, params.data.actor_id)
+                            updateActorAction(params.colDef.field, params.newValue, params.data.actor_id)
                         },
                         editable: true,
                         suppressKeyboardEvent: ({event}) => event.key === "Delete",

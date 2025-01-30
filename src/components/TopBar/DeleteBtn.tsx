@@ -1,4 +1,4 @@
-import { useLocation } from "@solidjs/router";
+import { useAction, useLocation } from "@solidjs/router";
 import { TrashSvg } from "../../icons";
 import { state } from "../../state";
 import { Show } from "solid-js";
@@ -6,7 +6,9 @@ import { confirm } from "@tauri-apps/plugin-dialog";
 import { deleteItems } from "../../api/mutations";
 
 export function DeleteBtn() {
+    const deleteAction = useAction(deleteItems)
     const params = useLocation()
+
     const map: Record<string, string> = {
         "/movies": "film",
         "/actors": "actor",
@@ -28,9 +30,9 @@ export function DeleteBtn() {
                         }
                         try {
                             const ids = sel.map(item => item[table+"_id"]);
-                            await deleteItems(ids, table) 
-                            gridApi.applyTransaction({ 'remove': sel })
-                        } catch (error: any) {
+                            await deleteAction(ids, table) 
+                        } 
+                        catch (error: any) {
                             state.status.setStatus(error)
                         }
                     }

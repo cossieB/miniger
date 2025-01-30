@@ -31,6 +31,12 @@ export type FilmTag = {
     tag: string;
 }
 
+export type DetailedDbFilm = Film & {
+    actors: string
+    studio_name: string | null
+    tags: string
+}
+
 export type DetailedFilm = Film & {
     actors: Actor[]
     studio_name: string | null;

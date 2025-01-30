@@ -3,7 +3,7 @@ import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
 import { getStudios } from "../../api/data";
 import { CirclePlusSvg } from "../../icons";
 import { createStudio, updateFilmStudio } from "../../api/mutations";
-import { createAsync } from "@solidjs/router";
+import { createAsync, useAction } from "@solidjs/router";
 
 export function MySelectEditor(props: ICellEditorParams) {
     const studios = createAsync(() => getStudios())
@@ -85,7 +85,9 @@ type Props = {
     filmId: number
 }
 
+
 function Option(props: Props) {
+    const updateFilmStudioAction = useAction(updateFilmStudio)
     const studio = {
         id: props.value,
         name: props.text,
@@ -94,7 +96,7 @@ function Option(props: Props) {
         <li
             class="hover:bg-slate-500 p-1"
             onclick={async () => {
-                await updateFilmStudio(props.filmId, studio.id);
+                await updateFilmStudioAction(props.filmId, studio.id);
                 props.setInput(studio);
                 props.stopEditing();
             }}
@@ -111,14 +113,15 @@ type P1 = {
 }
 
 function AddStudioBtn(props: P1) {
-
+    const createAction = useAction(createStudio)
+    const updateAction = useAction(updateFilmStudio)
     return (
         <button
             type="button"
             onclick={async () => {
-                const row = await createStudio(props.input)
-                const studioId = row[0].studio_id
-                await updateFilmStudio(props.filmId, studioId)
+                const row = await createAction(props.input)
+                const studioId = row.studio_id
+                await updateAction(props.filmId, studioId)
                 props.stopEditing(studioId);
             }}
         >

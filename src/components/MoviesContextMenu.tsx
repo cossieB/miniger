@@ -4,7 +4,6 @@ import { ContextMenu } from "./ContextMenu/ContextMenu";
 import { Actor } from "../datatypes";
 import { open, } from "@tauri-apps/plugin-shell";
 import { invoke } from "@tauri-apps/api/core";
-import { unwrap } from "solid-js/store";
 
 type P = {
     contextMenu: {
@@ -41,17 +40,12 @@ export default function MoviesContextMenu(props: P) {
 }
 
 export function MoviesMenu(props: Pick<P['contextMenu'], 'data'>) {
-    const tags = () => unwrap(props.data).tags;
-    const actors = () => unwrap(props.data).actors
-    const studio = () => ({
-        name: unwrap(props.data).studio_name,
-        id: unwrap(props.data).studio_id,
-    })
+
     return (
         <>
-            <Show when={tags().length > 0}>
+            <Show when={props.data.tags.length > 0}>
                 <ContextMenu.SubMenu label="More From Genre" >
-                    <For each={tags()}>
+                    <For each={props.data.tags}>
                         {tag =>
                             <ContextMenu.Link href={`/movies/tags/${tag}`}>
                                 {tag}
@@ -60,9 +54,9 @@ export function MoviesMenu(props: Pick<P['contextMenu'], 'data'>) {
                     </For>
                 </ContextMenu.SubMenu>
             </Show>
-            <Show when={actors().length > 0}>
+            <Show when={props.data.actors.length > 0}>
                 <ContextMenu.SubMenu label="More From Actor" >
-                    <For each={actors()}>
+                    <For each={props.data.actors}>
                         {actor =>
                             <ContextMenu.Link href={`/movies/actors/${actor.actor_id}`}>
                                 {actor.name}
@@ -71,9 +65,9 @@ export function MoviesMenu(props: Pick<P['contextMenu'], 'data'>) {
                     </For>
                 </ContextMenu.SubMenu>
             </Show>
-            <Show when={studio().id}>
-                <ContextMenu.Link href={`/movies/studios/${studio().id}`}>
-                    More From {studio().name}
+            <Show when={props.data.studio_id}>
+                <ContextMenu.Link href={`/movies/studios/${props.data.studio_id}`}>
+                    More From {props.data.studio_name}
                 </ContextMenu.Link>
             </Show>
             <ContextMenu.Item

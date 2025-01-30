@@ -1,5 +1,5 @@
 import { getFilms } from "../../api/data";
-import { DetailedFilm, Actor } from "../../datatypes";
+import { Actor, DetailedDbFilm } from "../../datatypes";
 import { PlaylistFile } from "../../state";
 
 export async function getFilmCache() {
@@ -7,9 +7,9 @@ export async function getFilmCache() {
     return allFilms.reduce((acc, film) => {
         acc[film.path] = film;
         return acc;
-    }, {} as { [path: string]: DetailedFilm; });
+    }, {} as { [path: string]: DetailedDbFilm; });
 }
-export function getFilmDetails(fileList: { path: string; title: string; }[], cache: { [path: string]: DetailedFilm; }): PlaylistFile[] {
+export function getFilmDetails(fileList: { path: string; title: string; }[], cache: { [path: string]: DetailedDbFilm; }): PlaylistFile[] {
     return fileList.map(file => {
         const film = cache[file.path];
         if (!film)

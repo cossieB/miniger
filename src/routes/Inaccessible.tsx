@@ -3,10 +3,11 @@ import AgGridSolid from "ag-grid-solid";
 import { GridApi } from "ag-grid-community";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { getInaccessible } from "../api/data";
-import { createAsync } from "@solidjs/router";
+import { createAsync, useAction } from "@solidjs/router";
 import { removeByPaths } from "../api/mutations";
 
 export default function Inaccessible() {
+    const removeAction = useAction(removeByPaths)
     const data = createAsync(() => getInaccessible())
     let gridApi!: GridApi<any>
 
@@ -15,7 +16,7 @@ export default function Inaccessible() {
         if (selection.length == 0) return
         const confirmed = await confirm(`Remove ${selection.length} file(s) from database?`);
         if (confirmed) {
-            await removeByPaths(selection);
+            await removeAction(selection);
         }
     }
 
@@ -39,6 +40,7 @@ export default function Inaccessible() {
                 </button>
                 <AgGridSolid
                     onGridReady={params => ((gridApi as any) = params.api)}
+                    getRowId={params => params.data.path}
                     rowSelection="multiple"
                     onCellContextMenu={e => {
                         console.log(e)

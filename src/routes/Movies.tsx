@@ -1,9 +1,9 @@
-import { createAsync, useIsRouting } from "@solidjs/router"
+import { createAsync, useAction } from "@solidjs/router"
 import { GridApi } from "ag-grid-community"
 import AgGridSolid from "ag-grid-solid"
-import { createMemo, Suspense, Show, createEffect } from "solid-js"
+import { createMemo, Suspense, Show } from "solid-js"
 import { createStore } from "solid-js/store"
-import { Actor, DetailedFilm } from "../datatypes"
+import { DetailedDbFilm, DetailedFilm } from "../datatypes"
 import { state } from "../state"
 import { ActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSelector"
 import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
@@ -11,21 +11,12 @@ import MoviesContextMenu from "../components/MoviesContextMenu"
 import { updateTag } from "../api/mutations"
 
 type Props = {
-    fetcher(): Promise<DetailedFilm[] | undefined>
+    fetcher(): Promise<DetailedDbFilm[] | undefined>
 }
 
-
-
 export function Movies(props: Props) {
-    const isRouting = useIsRouting()
-
     const films = createAsync(() => props.fetcher())
-
-    createEffect(() => {
-        if (isRouting())
-            setContextMenu('isOpen', false)
-    })
-
+    const updateTagAction = useAction(updateTag)
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
         x: 0,
@@ -33,19 +24,18 @@ export function Movies(props: Props) {
         close() {
             setContextMenu('isOpen', false)
         },
-        data: {} as NonNullable<ReturnType<typeof films>>[number],
-        selections: [] as NonNullable<ReturnType<typeof films>>[number][]
+        data: {} as DetailedFilm,
+        selections: [] as DetailedFilm[]
     })
 
     let gridApi!: GridApi
 
     const data = createMemo(() => {
         if (!films()) return undefined
-        return films()!.map((film => ({
+        return films()!.map<DetailedFilm>((film => ({
             ...film,
-            symbol: film.path,
-            tags: JSON.parse(film.tags as any) as string[],
-            actors: JSON.parse(film.actors as any) as Actor[],
+            tags: JSON.parse(film.tags),
+            actors: JSON.parse(film.actors),
         })))
     })
 
@@ -54,7 +44,6 @@ export function Movies(props: Props) {
             <div
                 id='gridContainer'
                 class='ag-theme-alpine-dark h-full relative'
-                // on:keyup={handleKeyup}
             >
                 <AgGridSolid
                     onGridReady={params => {
@@ -78,7 +67,7 @@ export function Movies(props: Props) {
                         })
                     }}
                     defaultColDef={{
-                        suppressKeyboardEvent: ({event}) => event.key === "Delete",
+                        suppressKeyboardEvent: ({ event }) => event.key === "Delete",
                     }}
                     columnDefs={[{
                         field: 'title',
@@ -97,14 +86,9 @@ export function Movies(props: Props) {
                             params.data.studio_id = value.id
                             return true
                         }
-
                     }, {
                         field: "actors",
-                        valueFormatter: (params: any) => {
-                            if (params.value === null) console.log(params)
-
-                            return params.value.map((x: any) => x.name).join(", ")
-                        },
+                        valueFormatter: params => params.value.map((x: any) => x.name).join(", "),
                         filter: true,
                         editable: true,
                         cellEditor: ActorSelector,
@@ -112,14 +96,20 @@ export function Movies(props: Props) {
                         cellEditorPopupPosition: "over",
                     }, {
                         field: "release_date",
-                        headerName: "Release Date"
+                        headerName: "Release Date",
                     }, {
                         field: "tags",
                         editable: true,
-                        onCellValueChanged: async (params: any) => {
-                            await updateTag(params.data.film_id, params.newValue)
+                        onCellValueChanged: async params => {
+                            try {
+                                const arr = (params.newValue as string[]).filter(x => !!x) // remove empty strings
+                                await updateTagAction(params.data.film_id, arr);
+                            }
+                            catch (error) {
+
+                            }
                         },
-                        valueParser: (params: any) => params.newValue.trim().split(/\s*[,;]\s*/)
+                        valueParser: params => params.newValue.trim().split(/\s*[,;]+\s*/)
                     }, {
                         field: "path",
                     }]}

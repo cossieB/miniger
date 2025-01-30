@@ -1,25 +1,29 @@
-import { reload } from "@solidjs/router";
+import { action, json } from "@solidjs/router";
 import { Actor, Studio } from "../datatypes";
 import { state } from "../state";
 import { readDirectories } from "../utils/readDirectories";
 import { getDatabase } from "./db";
+import { getActors, getFilms, getInaccessible, getStudios } from "./data";
 
-export async function updateTag(filmId: string, tags: string[]) {
+export const updateTag = action(async (filmId: string, tags: string[]) => {
     await using db = await getDatabase();
     try {
-        await db.connection.select("BEGIN")
+        await db.connection.select("BEGIN");
         await db.connection.select("DELETE FROM film_tag WHERE film_id = $1", [filmId])
         for (const tag of tags)
             await db.connection.select("INSERT INTO film_tag (film_id, tag) VALUES ($1, $2)", [filmId, tag.toLowerCase()])
         await db.connection.select("COMMIT")
+
+        return json(undefined, {revalidate: [getFilms.key]})
     }
     catch (error) {
         await db.connection.select("ROLLBACK")
-        throw error
+        state.status.setStatus(String(error))
+        throw json(undefined, {revalidate: [getFilms.key]})
     }
-}
+})
 
-export async function addActor(name: string, filmId?: string) {
+export const addActor = action(async (name: string, filmId?: string) => {
     await using db = await getDatabase();
     try {
         await db.connection.select("BEGIN")
@@ -28,15 +32,18 @@ export async function addActor(name: string, filmId?: string) {
             await db.connection.select("INSERT INTO actor_film (actor_id, film_id) VALUES ($1, $2) ", [actor.actor_id, filmId])
         }
         await db.connection.select("COMMIT")
-        return actor
+        return json(actor, {revalidate: [getActors.key]})
 
-    } catch (error) {
+    } 
+    catch (error) {
         console.error(error);
         await db.connection.select("ROLLBACK")
+        state.status.setStatus(String(error))
+        throw json(undefined, {revalidate: []});
     }
-}
+})
 
-export async function updateFilmStudio(filmId: number, studioId: number | null) {
+export const updateFilmStudio = action(async (filmId: number, studioId: number | null) => {
     if (studioId === -1)
         studioId = null
     await using db = await getDatabase();
@@ -45,30 +52,37 @@ export async function updateFilmStudio(filmId: number, studioId: number | null) 
     }
     catch (error) {
         console.error(error);
+        state.status.setStatus(String(error))
+        throw json(undefined, {revalidate: []});
     }
-}
+})
 
-export async function createStudio(name: string) {
+export const createStudio = action(async (name: string) => {
     await using db = await getDatabase();
     try {
-        return await db.connection.select("INSERT INTO studio (name) VALUES($1) RETURNING *", [name]) as [Studio]
-    } 
+        const studio = await db.connection.select("INSERT INTO studio (name) VALUES($1) RETURNING *", [name]) as [Studio]
+        return json(studio[0], {revalidate: [getStudios.key]})
+    }
     catch (error) {
-        throw error
+        state.status.setStatus(String(error))
+        throw json(undefined, {revalidate: []});
     }
-}
+})
 
-export async function updateActor(field: string, value: string, actorId: string) {
+export const updateActor = action(async (field: string, value: string, actorId: string) => {
     await using db = await getDatabase();
     try {
-        await db.connection.select(`UPDATE actor SET ${field} = $1 WHERE actor_id = $2`, [value, actorId])
-    } 
+        const row = await db.connection.select<Actor[]>(`UPDATE actor SET ${field} = $1 WHERE actor_id = $2 RETURNING *`, [value, actorId])
+        return json(row[0], {revalidate: []})
+    }
     catch (error) {
         console.error(error);
+        state.status.setStatus(String(error))
+        throw json(undefined, {revalidate: []});
     }
-}
+})
 
-export async function deleteItems(ids: number[], table: string) {
+export const deleteItems = action(async (ids: number[], table: string) => {
     await using db = await getDatabase()
     try {
         await db.connection.select("BEGIN")
@@ -76,14 +90,15 @@ export async function deleteItems(ids: number[], table: string) {
             await db.connection.select(`DELETE FROM ${table} WHERE ${table}_id = $1`, [id])
         }
         await db.connection.select("COMMIT")
-    } 
+    }
     catch (error) {
         await db.connection.select("ROLLBACK")
-        throw error
+        state.status.setStatus(String(error))
+        throw json(undefined, {revalidate: []});
     }
-}
+})
 
-export async function editFilmActors (actors: Actor[], filmId: string) {
+export const editFilmActors = action(async (actors: Actor[], filmId: string) => {
     await using db = await getDatabase();
     try {
         await db.connection.select("BEGIN");
@@ -92,13 +107,16 @@ export async function editFilmActors (actors: Actor[], filmId: string) {
             await db.connection.select("INSERT INTO actor_film (film_id, actor_id) VALUES ($1, $2)", [filmId, actor.actor_id]);
         }
         await db.connection.select("COMMIT");
+        return json(undefined, {revalidate: [getFilms.key]})
     }
     catch (error) {
         await db.connection.select("ROLLBACK");
+        state.status.setStatus(String(error))
+        throw json(undefined, {revalidate: []});
     }
-}
+})
 
-export async function addDirectoriesToDatabase() {
+export const addDirectoriesToDatabase = action(async () => {
     const files = await readDirectories()
     await using db = await getDatabase()
     try {
@@ -108,15 +126,17 @@ export async function addDirectoriesToDatabase() {
         }
         await db.connection.select("COMMIT")
         state.status.setStatus("Successfully added files")
-        reload()
+        return json(undefined, {revalidate: [getFilms.key]})
     }
     catch (error) {
         console.log(error);
         await db.connection.select("ROLLBACK")
+        state.status.setStatus(String(error))
+        throw json(undefined, {revalidate: []});
     }
-}
+})
 
-export async function addPlaylistFilesToDatabase() {
+export const addPlaylistFilesToDatabase = action(async () => {
     await using db = await getDatabase()
     try {
         db.connection.select("BEGIN");
@@ -127,24 +147,36 @@ export async function addPlaylistFilesToDatabase() {
     catch (error) {
         console.error(error);
         await db.connection.select("ROLLBACK");
+        state.status.setStatus(String(error))
+        throw json(undefined, {revalidate: []});
     }
-}
+})
 
-export async function removeByPaths(selection: {path: string}[]) {
+export const removeByPaths = action(async (selection: { path: string }[]) => {
     await using db = await getDatabase();
     await db.connection.select("BEGIN");
     try {
         for (const film of selection)
             await db.connection.select("DELETE FROM film WHERE path = $1", [film.path]);
         await db.connection.select("COMMIT");
+        return json(undefined, {revalidate: [getFilms.key, getInaccessible.key]});
     }
     catch (error) {
         console.error(error);
         await db.connection.select("ROLLBACK");
+        state.status.setStatus(String(error))
+        throw json(undefined, {revalidate: []});
     }
-}
+})
 
-export async function updateStudio (field: string, value: string, studioId: number) {
+export const updateStudio = action(async (field: string, value: string, studioId: number) => {
     await using db = await getDatabase()
-    await db.connection.select(`UPDATE studio SET ${field} = $1 WHERE studio_id = $2`, [value, studioId])
-}
+    try {
+        await db.connection.select(`UPDATE studio SET ${field} = $1 WHERE studio_id = $2`, [value, studioId])
+        return json(undefined, {revalidate: [getStudios.key]})
+    } catch (error) {
+        console.error(error)
+        state.status.setStatus(String(error))
+        throw json(undefined, {revalidate: []});
+    }
+})
