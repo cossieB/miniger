@@ -21,7 +21,7 @@ export function DeleteBtn() {
                     const gridApi = state.gridApi;
                     if (!gridApi) return;
                     const sel = gridApi.getSelectedRows()
-                    const confirmed = await confirm(`Remove ${sel.length} item${sel.length != 1 ? "s" : ""} from the database?`);
+                    const confirmed = await confirm(`Remove ${sel.length} item${sel.length != 1 ? "s" : ""} from the database?`, {kind: "warning"});
                     if (confirmed) {
                         const table = map[params.pathname]; 
                         if (!table) {
@@ -40,5 +40,4 @@ export function DeleteBtn() {
             />
         </Show>
     )
-
 }

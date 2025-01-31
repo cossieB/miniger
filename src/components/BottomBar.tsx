@@ -16,7 +16,7 @@ function ClearMessageBtn() {
     return (
         <Show when={!!state.status.message}>
             <ClearSVG
-                title="Clear notification"
+                title="Clear Notification"
                 class="mr-5"
                 onclick={state.status.clear}
             />

@@ -10,6 +10,7 @@ import 'ag-grid-community/styles/ag-grid.css'; // grid core CSS
 import "ag-grid-community/styles/ag-theme-alpine.css"; // optional theme
 import { Movies } from "./routes/Movies";
 import Inaccessible from "./routes/Inaccessible";
+import { VideoPlayer } from "./components/VideoPlayer/VideoPlayer";
 
 render(() => (
     <Router root={App}>
@@ -39,6 +40,7 @@ render(() => (
         <Route path={["/actors", "/movies/actors"]} component={Actors} preload={() => getActors()} />
         <Route path={["/studios", "/movies/studios"]} component={Studios} preload={() => getStudios()} />
         <Route path="/movies/inaccessible" component={Inaccessible} preload={() => getInaccessible()} />
+        <Route path="/play" component={VideoPlayer} />
     </Router>
 ), document.getElementById("root") as HTMLElement);
 

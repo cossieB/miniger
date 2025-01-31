@@ -16,14 +16,14 @@ type E = {
 listen<E>("tauri://drag-drop", async event => {
     const pos = event.payload.position
     const target = document.elementFromPoint(pos.x, pos.y);
-    const elem = target?.closest(".droppable") as HTMLElement | null;
+    const elem = target?.closest<HTMLElement>(".droppable")
     if (!elem) return;
 
     const files = event.payload.paths
     for (const path of files) {
         let idx = path.lastIndexOf(".")
         if (idx < 0) 
-            idx = path.length
+            continue;
         
         const extension = path.slice(idx + 1);
         if (!extension) continue;

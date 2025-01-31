@@ -6,10 +6,7 @@ import { ContextMenu } from "../ContextMenu/ContextMenu";
 import { MoviesMenu } from "../MoviesContextMenu";
 import { createStore } from "solid-js/store";
 
-
 false && clickOutside
-
-
 
 export function SidePanel() {
     const [contextMenu, setContextMenu] = createStore({
@@ -21,9 +18,10 @@ export function SidePanel() {
         },
         data: {} as Parameters<typeof MoviesMenu>[0]['data'],
     })
+    
     return (
         <section
-            class="bg-gray-800 overflow-x-hidden select-none shrink-0"
+            class="bg-gray-800 overflow-x-hidden select-none shrink-0 droppable"
             style={{ width: state.sidePanel.width + "px" }}
             >
             <ul

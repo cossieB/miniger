@@ -1,5 +1,6 @@
 import { Accessor, JSX, splitProps } from "solid-js";
 import { state } from "../../state";
+import { useNavigate } from "@solidjs/router";
 
 type P = {
     data: (typeof state)['sidePanel']['list'][number];
@@ -7,6 +8,7 @@ type P = {
 } & JSX.HTMLAttributes<HTMLLIElement>;
 
 export function SidePanelItem(props: P) {
+    const navigate = useNavigate()
     const isSelected = () => state.sidePanel.selections.has(props.i());
     const isLastDraggedOver = () => state.sidePanel.lastDraggedOver === props.i();
     const isLastSelected = () => state.sidePanel.lastSelection === props.i();
@@ -20,7 +22,7 @@ export function SidePanelItem(props: P) {
             data-i={props.i()}
             onClick={e => {
                 e.preventDefault();
-                if (props.i() === state.sidePanel.list.length) return
+                if (props.i() === state.sidePanel.list.length) return //invisible item at the end of the list
 
                 if (e.ctrlKey) {
                     if (isSelected()) {
@@ -64,6 +66,9 @@ export function SidePanelItem(props: P) {
                 state.sidePanel.setFiles(newArr);
                 state.sidePanel.setLastDraggedOver(-1)
                 state.sidePanel.selections.clear();
+            }}
+            ondblclick={() => {
+                navigate(`/play?i=${props.i()}`)
             }}
             {...attr}
         >
