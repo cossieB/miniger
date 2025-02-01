@@ -1,6 +1,7 @@
 import { Accessor, JSX, splitProps } from "solid-js";
 import { state } from "../../state";
-import { useNavigate, useSearchParams } from "@solidjs/router";
+import { useNavigate } from "@solidjs/router";
+import { useControls } from "../VideoPlayer/useControls";
 
 type P = {
     data: (typeof state)['sidePanel']['list'][number];
@@ -9,11 +10,11 @@ type P = {
 
 export function SidePanelItem(props: P) {
     const navigate = useNavigate()
-    const [searchParams] = useSearchParams();
     const isSelected = () => state.sidePanel.selections.has(props.i());
     const isLastDraggedOver = () => state.sidePanel.lastDraggedOver === props.i();
     const isLastSelected = () => state.sidePanel.lastSelection === props.i();
-    const isPlaying = () => props.i() === Number(searchParams.i)
+    const {currentVideo} = useControls()
+    const isPlaying = () => props.data.id === currentVideo()?.id
     const [_, attr] = splitProps(props, ['i', 'data']);
 
     return (
@@ -75,7 +76,7 @@ export function SidePanelItem(props: P) {
                 state.sidePanel.selections.clear();
             }}
             ondblclick={() => {
-                navigate(`/play?i=${props.i()}`)
+                navigate(`/play?id=${props.data.id}`)
             }}
             {...attr}
         >

@@ -16,7 +16,7 @@ type E = {
 listen<E>("tauri://drag-drop", async event => {
     const pos = event.payload.position
     const target = document.elementFromPoint(pos.x, pos.y);
-    const elem = target?.closest<HTMLElement>(".droppable")
+    const elem = target?.closest<HTMLElement>(".droppable"); console.log(target, elem)
     if (!elem) return;
 
     const files = event.payload.paths

@@ -1,25 +1,21 @@
 import { convertFileSrc } from "@tauri-apps/api/core"
-import { createEffect, createSignal, on, onMount } from "solid-js"
-import { state } from "../../state"
-import { useSearchParams } from "@solidjs/router"
+import { createEffect, createSignal } from "solid-js"
 import { VideoControls } from "./VideoControls";
 import { CustomVideo } from "./CustomVideo";
+import { useControls } from "./useControls";
 
 export function VideoPlayer() {
-    const [searchParams, setSearchParams] = useSearchParams();
+    let video!: HTMLVideoElement
+    const { currentVideo } = useControls()
     const [src, setSrc] = createSignal("")
     const [isPlaying, setIsPlaying] = createSignal(false)
-    let video!: HTMLVideoElement
-    const index = () => Number(searchParams.i) ?? 0
-
     const [time, setTime] = createSignal(0)
 
-    createEffect(on(index, () => {
-        const file = state.sidePanel.list.at(index())
-        if (file) {
-            setSrc(convertFileSrc(file.path))
+    createEffect(() => {
+        if (currentVideo()) {
+            setSrc(convertFileSrc(currentVideo()!.path))
         }
-    }))
+    })
 
     return (
         <div class="w-full h-full flex flex-col relative">

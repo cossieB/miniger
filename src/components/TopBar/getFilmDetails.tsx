@@ -1,3 +1,4 @@
+import { createUniqueId } from "solid-js";
 import { getFilms } from "../../api/data";
 import { Actor, DetailedDbFilm } from "../../datatypes";
 import { PlaylistFile } from "../../state";
@@ -17,13 +18,15 @@ export function getFilmDetails(fileList: { path: string; title: string; }[], cac
                 ...file,
                 studio_name: "",
                 actors: [] as Actor[],
-                tags: [] as string[]
+                tags: [] as string[],
+                id: createUniqueId()
             };
         else {
             return {
                 ...film,
                 tags: JSON.parse(film.tags as any) as string[],
                 actors: JSON.parse(film.actors as any) as Actor[],
+                id: createUniqueId()
             };
         }
     })

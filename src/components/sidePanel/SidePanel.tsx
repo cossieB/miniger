@@ -18,15 +18,14 @@ export function SidePanel() {
         },
         data: {} as Parameters<typeof MoviesMenu>[0]['data'],
     })
-    
+
     return (
         <section
             class="bg-gray-800 overflow-x-hidden select-none shrink-0 droppable"
             style={{ width: state.sidePanel.width + "px" }}
             >
             <ul
-                class="overflow-y-auto overflow-x-hidden droppable"
-                style={{ "max-height": "calc(100vh - 4rem)" }}
+                class="overflow-y-auto overflow-x-hidden droppable max-h-[calc(100vh - 4rem)]"
                 use:clickOutside={state.sidePanel.clearSelections}
             >
                 <For each={state.sidePanel.list}>
@@ -48,7 +47,7 @@ export function SidePanel() {
                             }}
                         />}
                 </For>
-                <SidePanelItem data={{ path: "", title: "", actors: [], tags: [], studio_name: "" }} i={() => state.sidePanel.list.length} />
+                <SidePanelItem data={{ path: "", title: "", actors: [], tags: [], studio_name: "", id: "" }} i={() => state.sidePanel.list.length} />
             </ul>
             <Show when={contextMenu.isOpen}>
                 <ContextMenu close={contextMenu.close} pos={{ x: contextMenu.x, y: contextMenu.y }}>

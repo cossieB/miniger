@@ -8,7 +8,7 @@ type P = {
 };
 
 export function VideoControls(props: P) {
-    const {playNext, playPrevious} = useControls()
+    const { playNext, playPrevious } = useControls()
     return (
         <>
             <button
@@ -23,7 +23,7 @@ export function VideoControls(props: P) {
             </button>
             <button
                 onclick={() => {
-                    
+
                     if (!props.isPlaying()) {
                         props.video.play();
                     }
@@ -36,9 +36,7 @@ export function VideoControls(props: P) {
                     <PlaySvg class="h-10 w-10" />
                 </Show>
             </button>
-            <button
-            onclick={playNext}
-            >
+            <button onclick={playNext} >
                 <SkipForwardSvg class="h-6 w-6" />
             </button>
         </>

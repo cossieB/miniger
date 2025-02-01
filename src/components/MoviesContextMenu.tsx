@@ -1,4 +1,4 @@
-import { For, Show } from "solid-js";
+import { createUniqueId, For, Show } from "solid-js";
 import { state } from "../state";
 import { ContextMenu } from "./ContextMenu/ContextMenu";
 import { Actor } from "../datatypes";
@@ -29,7 +29,7 @@ export default function MoviesContextMenu(props: P) {
         <ContextMenu close={props.contextMenu.close} pos={{ x: props.contextMenu.x, y: props.contextMenu.y }} >
             <ContextMenu.Item
                 onClick={() => {
-                    state.sidePanel.push(props.contextMenu.selections)
+                    state.sidePanel.push(props.contextMenu.selections.map(selection => ({...selection, id: createUniqueId()})))
                 }}
             >
                 Add To Playlist

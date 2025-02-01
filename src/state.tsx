@@ -11,6 +11,7 @@ export type PlaylistFile = {
     studio_name: string | null;
     actors: Actor[],
     tags: string[];
+    id: string
 };
 
 const [state, setState] = createStore({
