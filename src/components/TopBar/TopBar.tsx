@@ -15,24 +15,30 @@ export function TopBar() {
     const navigate = useNavigate();
     return (
         <nav class="w-full h-8 bg-orange-500 flex pl-5 gap-5 [&>svg]:h-full text-orange-50">
-            {/* Left Part */}
-            <BackArrow onclick={() => navigate(-1)} />
-            <ForwardArrow onclick={() => navigate(1)} />
-            <Breadcrumbs />
+            <div class="flex-1 flex h-full justify-start items-center gap-3">
+                {/* Left Part */}
+                <BackArrow onclick={() => navigate(-1)} />
+                <ForwardArrow onclick={() => navigate(1)} />
+                <Breadcrumbs />
+            </div>
 
-            {/* Center Part */}
-            <AddDirectoryToDatabase />
-            <AddToPlaylist />
-            <DeleteBtn />
+            <div class="ml-auto flex-1 flex h-full justify-center items-center gap-3">
+                {/* Center Part */}
+                <AddDirectoryToDatabase />
+                <AddToPlaylist />
+                <DeleteBtn />
+            </div>
 
-            {/* Right Part */}
-            <LoadPlaylistBtn />
-            <AddDirectoryBtn />
-            <CleanPlaylistBtn />
-            <AddPlaylistFilesToDatabaseBtn />
-            <SavePlaylistBtn />
-            <ShufflePlaylistBtn />
-            <ClearPlaylistBtn />
+            <div class="ml-auto flex-1 flex h-full justify-end items-center gap-3">
+                {/* Right Part */}
+                <LoadPlaylistBtn />
+                <AddDirectoryBtn />
+                <CleanPlaylistBtn />
+                <AddPlaylistFilesToDatabaseBtn />
+                <SavePlaylistBtn />
+                <ShufflePlaylistBtn />
+                <ClearPlaylistBtn />
+            </div>
         </nav>
     );
 }

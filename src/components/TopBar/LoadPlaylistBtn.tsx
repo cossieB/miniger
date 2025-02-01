@@ -6,7 +6,6 @@ import { getFilmCache, getFilmDetails } from "./getFilmDetails";
 
 export function LoadPlaylistBtn() {
     return <PlayListSvg
-        class="ml-auto"
         title="Load Playlist"
         onclick={async () => {
             const selection = await open({

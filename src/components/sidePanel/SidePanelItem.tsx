@@ -1,6 +1,6 @@
 import { Accessor, JSX, splitProps } from "solid-js";
 import { state } from "../../state";
-import { useNavigate } from "@solidjs/router";
+import { useNavigate, useSearchParams } from "@solidjs/router";
 
 type P = {
     data: (typeof state)['sidePanel']['list'][number];
@@ -9,15 +9,22 @@ type P = {
 
 export function SidePanelItem(props: P) {
     const navigate = useNavigate()
+    const [searchParams] = useSearchParams();
     const isSelected = () => state.sidePanel.selections.has(props.i());
     const isLastDraggedOver = () => state.sidePanel.lastDraggedOver === props.i();
     const isLastSelected = () => state.sidePanel.lastSelection === props.i();
+    const isPlaying = () => props.i() === Number(searchParams.i)
     const [_, attr] = splitProps(props, ['i', 'data']);
 
     return (
         <li
             class={"text-ellipsis text-nowrap overflow-hidden p-1 cursor-default [&:not(:last-child):hover]:bg-slate-700 droppable"}
-            classList={{ "!bg-slate-500": isSelected(), "mt-8": isLastDraggedOver(), 'outline-dashed outline-1': isLastSelected()}}
+            classList={{ 
+                "!bg-slate-500": isSelected(), 
+                "mt-8": isLastDraggedOver(), 
+                'outline-dashed outline-1': isLastSelected(),
+                "text-orange-500": isPlaying()
+            }}
             draggable={props.i() !== state.sidePanel.list.length}
             data-i={props.i()}
             onClick={e => {

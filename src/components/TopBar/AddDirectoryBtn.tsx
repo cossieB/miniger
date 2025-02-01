@@ -18,7 +18,6 @@ export function AddDirectoryToDatabase() {
     return (
         <AddFolderSvg
             title="Add Folder To Database"
-            class="ml-auto"
             onClick={addAction}
         />
     )
