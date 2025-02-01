@@ -11,7 +11,8 @@ export type PlaylistFile = {
     studio_name: string | null;
     actors: Actor[],
     tags: string[];
-    id: string
+    id: string,
+    cantPlay?: boolean,
 };
 
 const [state, setState] = createStore({
@@ -84,6 +85,11 @@ const [state, setState] = createStore({
         },
         setWidth: (width: number) => {
             setState('sidePanel', 'width', width)
+        },
+        markDirty: (i: number) => {
+            setState('sidePanel', 'list', i, prev => ({
+                ...prev, cantPlay: true
+            }))
         }
     },
     mainPanel: {

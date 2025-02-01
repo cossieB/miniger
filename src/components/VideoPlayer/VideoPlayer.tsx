@@ -3,6 +3,7 @@ import { createEffect, createSignal } from "solid-js"
 import { VideoControls } from "./VideoControls";
 import { CustomVideo } from "./CustomVideo";
 import { useControls } from "./useControls";
+import { VolumeControl } from "./VolumeControl";
 
 export function VideoPlayer() {
     let video!: HTMLVideoElement
@@ -48,6 +49,7 @@ export function VideoPlayer() {
                     video={video}
                     isPlaying={isPlaying}
                 />
+                <VolumeControl video={video} />
             </div>
         </div>
     )

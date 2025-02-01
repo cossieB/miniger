@@ -12,6 +12,7 @@ export function VideoControls(props: P) {
     return (
         <>
             <button
+            class="active:scale-90 hover:text-orange-500"
                 onclick={() => {
                     if (props.video.currentTime > 5)
                         return props.video.currentTime = 0
@@ -22,6 +23,7 @@ export function VideoControls(props: P) {
                 <SkipBackSvg class="h-6 w-6" />
             </button>
             <button
+            class="active:scale-90 hover:text-orange-500"
                 onclick={() => {
 
                     if (!props.isPlaying()) {
@@ -36,7 +38,10 @@ export function VideoControls(props: P) {
                     <PlaySvg class="h-10 w-10" />
                 </Show>
             </button>
-            <button onclick={playNext} >
+            <button 
+            class="active:scale-90 hover:text-orange-500"
+            onclick={playNext} 
+            >
                 <SkipForwardSvg class="h-6 w-6" />
             </button>
         </>

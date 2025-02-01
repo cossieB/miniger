@@ -24,7 +24,8 @@ export function SidePanelItem(props: P) {
                 "!bg-slate-500": isSelected(), 
                 "mt-8": isLastDraggedOver(), 
                 'outline-dashed outline-1': isLastSelected(),
-                "text-orange-500": isPlaying()
+                "text-orange-500": isPlaying(),
+                "text-gray-400": props.data.cantPlay
             }}
             draggable={props.i() !== state.sidePanel.list.length}
             data-i={props.i()}

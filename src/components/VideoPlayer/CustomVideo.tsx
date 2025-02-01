@@ -1,4 +1,7 @@
+import { createEffect, onCleanup } from "solid-js";
 import { useControls } from "./useControls";
+import { on } from "solid-js";
+import { state } from "../../state";
 
 type P = {
     ref: HTMLVideoElement;
@@ -8,8 +11,19 @@ type P = {
     isPlaying: boolean;
 };
 
+
 export function CustomVideo(props: P) {
-    const {playNext} = useControls();
+    let t: number
+    
+    const {playNext, currentVideo} = useControls();
+    
+    onCleanup(() => {
+        clearTimeout(t);
+    })
+    createEffect(on(currentVideo, () => {
+        clearTimeout(t)
+    }))
+
     return (
         <video
             class="w-full h-full object-contain"
@@ -35,12 +49,13 @@ export function CustomVideo(props: P) {
                 if (props.isPlaying) {
                     e.currentTarget.pause();
                 }
-
                 else
                     e.currentTarget.play();
             }}
             onerror={() => {
-                playNext()
+                const i = state.sidePanel.list.findIndex(item => item.id === currentVideo()?.id)
+                state.sidePanel.markDirty(i)
+                t = setTimeout(playNext, 500)
             }}
         />
     );
