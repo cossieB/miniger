@@ -1,9 +1,9 @@
 import { createAsync, useAction } from "@solidjs/router"
 import { GridApi } from "ag-grid-community"
 import AgGridSolid from "ag-grid-solid"
-import { createMemo, Suspense, Show } from "solid-js"
+import { createMemo, Suspense, Show, createUniqueId } from "solid-js"
 import { createStore } from "solid-js/store"
-import { DetailedDbFilm, DetailedFilm } from "../datatypes"
+import { type DetailedDbFilm } from "../datatypes"
 import { state } from "../state"
 import { ActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSelector"
 import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
@@ -17,6 +17,20 @@ type Props = {
 export function Movies(props: Props) {
     const films = createAsync(() => props.fetcher())
     const updateTagAction = useAction(updateTag)
+    
+    let gridApi!: GridApi
+    
+    const data = createMemo(() => {
+        if (!films()) return undefined
+        return films()!.map((film => ({
+            ...film,
+            tags: JSON.parse(film.tags),
+            actors: JSON.parse(film.actors),
+            rowId: createUniqueId()
+        })))
+    })
+    type MovieTableData = NonNullable<ReturnType<typeof data>>[number]
+
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
         x: 0,
@@ -24,19 +38,8 @@ export function Movies(props: Props) {
         close() {
             setContextMenu('isOpen', false)
         },
-        data: {} as DetailedFilm,
-        selections: [] as DetailedFilm[]
-    })
-
-    let gridApi!: GridApi
-
-    const data = createMemo(() => {
-        if (!films()) return undefined
-        return films()!.map<DetailedFilm>((film => ({
-            ...film,
-            tags: JSON.parse(film.tags),
-            actors: JSON.parse(film.actors),
-        })))
+        data: {} as MovieTableData,
+        selections: [] as MovieTableData[]
     })
 
     return (

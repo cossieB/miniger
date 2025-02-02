@@ -10,7 +10,7 @@ type P = {
 export function VideoControls(props: P) {
     const { playNext, playPrevious } = useControls()
     return (
-        <>
+        <div class="flex-1 flex h-full items-center justify-center gap-2.5">
             <button
             class="active:scale-90 hover:text-orange-500"
                 onclick={() => {
@@ -44,6 +44,6 @@ export function VideoControls(props: P) {
             >
                 <SkipForwardSvg class="h-6 w-6" />
             </button>
-        </>
+        </div>
     );
 }

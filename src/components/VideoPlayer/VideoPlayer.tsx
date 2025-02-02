@@ -35,9 +35,12 @@ export function VideoPlayer() {
                 />
             </div>
             <div class="w-full flex justify-center gap-5 h-20 flex-shrink-0 relative">
+                <div class="flex-1">
+                    {/* TODO: loop, repeat, random video controls etc */}
+                </div>
                 <input
                     type="range"
-                    class="w-full absolute top-0 -translate-y-1/2"
+                    class="w-full absolute top-0 -translate-y-1/2 flex-1"
                     value={time()}
                     min={0}
                     max={100}

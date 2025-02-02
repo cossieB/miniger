@@ -1,9 +1,10 @@
-import { createUniqueId, For, Show } from "solid-js";
+import { For, Show } from "solid-js";
 import { state } from "../state";
 import { ContextMenu } from "./ContextMenu/ContextMenu";
 import { Actor } from "../datatypes";
 import { open, } from "@tauri-apps/plugin-shell";
 import { invoke } from "@tauri-apps/api/core";
+import { useNavigate } from "@solidjs/router";
 
 type P = {
     contextMenu: {
@@ -19,17 +20,27 @@ type P = {
             release_date: string | null;
             studio_name: string | null;
             tags: string[];
+            rowId: string
         },
         selections: P['contextMenu']['data'][]
     }
 }
 
 export default function MoviesContextMenu(props: P) {
+    const navigate = useNavigate()
     return (
         <ContextMenu close={props.contextMenu.close} pos={{ x: props.contextMenu.x, y: props.contextMenu.y }} >
             <ContextMenu.Item
                 onClick={() => {
-                    state.sidePanel.push(props.contextMenu.selections.map(selection => ({...selection, id: createUniqueId()})))
+                    state.sidePanel.setFiles(props.contextMenu.selections)
+                    navigate("/play?rowId=" + props.contextMenu.data.rowId)
+                }}
+            >
+                Play
+            </ContextMenu.Item>
+            <ContextMenu.Item
+                onClick={() => {
+                    state.sidePanel.push(props.contextMenu.selections)
                 }}
             >
                 Add To Playlist

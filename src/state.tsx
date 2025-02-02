@@ -11,7 +11,7 @@ export type PlaylistFile = {
     studio_name: string | null;
     actors: Actor[],
     tags: string[];
-    id: string,
+    rowId: string,
     cantPlay?: boolean,
 };
 

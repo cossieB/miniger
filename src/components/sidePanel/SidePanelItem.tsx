@@ -14,18 +14,18 @@ export function SidePanelItem(props: P) {
     const isLastDraggedOver = () => state.sidePanel.lastDraggedOver === props.i();
     const isLastSelected = () => state.sidePanel.lastSelection === props.i();
     const {currentVideo} = useControls()
-    const isPlaying = () => props.data.id === currentVideo()?.id
+    const isPlaying = () => props.data.rowId === currentVideo()?.rowId
     const [_, attr] = splitProps(props, ['i', 'data']);
 
     return (
         <li
-            class={"text-ellipsis text-nowrap overflow-hidden p-1 cursor-default [&:not(:last-child):hover]:bg-slate-700 droppable"}
+            class={"text-ellipsis text-nowrap overflow-hidden p-1 cursor-default [&:not(:last-child):hover]:bg-slate-700 transition-[margin-top] droppable"}
             classList={{ 
                 "!bg-slate-500": isSelected(), 
                 "mt-8": isLastDraggedOver(), 
                 'outline-dashed outline-1': isLastSelected(),
+                "text-gray-400!": props.data.cantPlay,
                 "text-orange-500": isPlaying(),
-                "text-gray-400": props.data.cantPlay
             }}
             draggable={props.i() !== state.sidePanel.list.length}
             data-i={props.i()}
@@ -77,7 +77,7 @@ export function SidePanelItem(props: P) {
                 state.sidePanel.selections.clear();
             }}
             ondblclick={() => {
-                navigate(`/play?id=${props.data.id}`)
+                navigate(`/play?rowId=${props.data.rowId}`)
             }}
             {...attr}
         >
