@@ -51,9 +51,11 @@ export default function MoviesContextMenu(props: P) {
 }
 
 export function MoviesMenu(props: Pick<P['contextMenu'], 'data'>) {
-
     return (
         <>
+            <ContextMenu.Item onClick={() => state.setMiniplayer({path: props.data.path, title: props.data.title})}>
+                Play In Miniplayer
+            </ContextMenu.Item>
             <Show when={props.data.tags.length > 0}>
                 <ContextMenu.SubMenu label="More From Genre" >
                     <For each={props.data.tags}>

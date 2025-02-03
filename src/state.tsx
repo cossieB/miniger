@@ -111,6 +111,10 @@ const [state, setState] = createStore({
         set: (dimensions: {width?: number, height?: number}) => {
             setState('windowDimensions', prev => ({...prev, ...dimensions}))
         }
+    },
+    miniplayer: null as {title: string, path: string} | null,
+    setMiniplayer: (obj: {title: string, path: string} | null) => {
+        setState('miniplayer', obj)
     }
 })
 

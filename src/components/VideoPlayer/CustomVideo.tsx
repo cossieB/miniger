@@ -57,6 +57,14 @@ export function CustomVideo(props: P) {
                 state.sidePanel.markDirty(i)
                 t = setTimeout(playNext, 500)
             }}
+            onkeyup={e => {
+                if (e.key === "F11") {
+                    props.ref.requestFullscreen()
+                }
+            }}
+            ondblclick={e => {
+                e.currentTarget.requestFullscreen()
+            }}
         >
         </video>
     );

@@ -5,10 +5,12 @@ import { SidePanelItem } from "./SidePanelItem";
 import { ContextMenu } from "../ContextMenu/ContextMenu";
 import { MoviesMenu } from "../MoviesContextMenu";
 import { createStore } from "solid-js/store";
+import { Miniplayer } from "../Miniplayer";
 
 false && clickOutside
 
 export function SidePanel() {
+
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
         x: 0,
@@ -21,11 +23,11 @@ export function SidePanel() {
 
     return (
         <section
-            class="bg-gray-800 overflow-x-hidden select-none shrink-0 droppable"
+            class="bg-gray-800 overflow-x-hidden select-none shrink-0 droppable h-[calc(100vh - 4rem)] flex flex-col"
             style={{ width: state.sidePanel.width + "px" }}
-            >
+        >
             <ul
-                class="overflow-y-auto overflow-x-hidden droppable max-h-[calc(100vh - 4rem)]"
+                class="overflow-y-auto overflow-x-hidden droppable shrink"
                 use:clickOutside={state.sidePanel.clearSelections}
             >
                 <For each={state.sidePanel.list}>
@@ -53,6 +55,9 @@ export function SidePanel() {
                 <ContextMenu close={contextMenu.close} pos={{ x: contextMenu.x, y: contextMenu.y }}>
                     <MoviesMenu data={contextMenu.data} />
                 </ContextMenu>
+            </Show>
+            <Show when={state.miniplayer}>
+                <Miniplayer />
             </Show>
         </section>
     );
