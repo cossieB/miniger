@@ -8,7 +8,7 @@ export function Tree() {
     const studios = createAsync(() => getStudios(), {initialValue: []})
     return (
         <nav 
-            class="top-0 left-0 h-full bg-slate-700 text-orange-50 shrink-0 overflow-y-auto"
+            class="top-0 left-0 h-full bg-slate-950 text-orange-50 shrink-0 overflow-y-auto"
             style={{width: state.tree.width + "px"}}
             >
             <ul id="tree-root">

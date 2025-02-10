@@ -50,33 +50,38 @@ pub fn get_inaccessible(playlist: Vec<FileInfo>) -> Vec<FileInfo> {
 #[tauri::command]
 pub fn load_directory(path: String) -> Result<Vec<FileInfo>, AppError> {
     let dir = Path::new(&path);
-    let files = fs::read_dir(dir)?;
-    let file_info = files
-        .into_iter()
-        .filter_map(|file| match file {
-            Ok(entry) => {
-                if !entry.file_type().unwrap().is_file() {
-                    return None;
-                }
-                match entry.path().extension() {
-                    Some(ext) => {
-                        let ext = ext.to_str().unwrap_or_default();
-                        if EXTENSIONS.contains(&ext) {
-                            return Some(FileInfo::new(
-                                entry.file_name().into_string().unwrap(),
-                                entry.path().to_str().unwrap().to_string(),
-                            ));
-                        } else {
-                            return None;
-                        }
-                    }
-                    None => return None,
+    let mut file_info = Vec::with_capacity(1000);
+    read_recursive(&dir, &mut file_info, 0)?;
+    Ok(file_info)
+}
+
+pub fn read_recursive(path: &Path, files: &mut Vec<FileInfo>, depth: u8) -> Result<(), AppError> {
+
+    const MAX_DEPTH: u8 = 3;
+    let dir = Path::new(&path);
+    let dir_items = fs::read_dir(dir)?;
+
+    
+    for item in dir_items {
+        let entry = item?;
+        let file_type = entry.file_type()?;
+
+        if file_type.is_file() {
+            if let Some(ext) = entry.path().extension() {
+                let ext = ext.to_str().unwrap_or_default();
+                if EXTENSIONS.contains(&ext) {
+                    files.push(FileInfo::new(
+                        entry.file_name().into_string().unwrap(),
+                        entry.path().to_str().unwrap().to_string(),
+                    ));
                 }
             }
-            Err(_) => None,
-        })
-        .collect();
-    Ok(file_info)
+        }
+        else if file_type.is_dir() && depth < MAX_DEPTH {
+            read_recursive(entry.path().as_path(), files, depth + 1)?;
+        } 
+    }
+    return Ok(());
 }
 
 #[tauri::command]
@@ -85,8 +90,7 @@ pub fn open_explorer(path: String) -> Result<(), AppError> {
     if os == "windows" {
         Command::new("explorer").args(["/select,", &path]).spawn()?;
         return Ok(());
-    }
-    else if os == "macos" {
+    } else if os == "macos" {
         Command::new("open").args(["-R", &path]).spawn()?;
         return Ok(());
     }

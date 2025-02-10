@@ -8,7 +8,7 @@ import { state } from "../state"
 import { ActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSelector"
 import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
 import MoviesContextMenu from "../components/MoviesContextMenu"
-import { updateTag } from "../api/mutations"
+import { editFilm, updateTag } from "../api/mutations"
 
 type Props = {
     fetcher(): Promise<DetailedDbFilm[] | undefined>
@@ -17,6 +17,7 @@ type Props = {
 export function Movies(props: Props) {
     const films = createAsync(() => props.fetcher())
     const updateTagAction = useAction(updateTag)
+    const updateFilmAction = useAction(editFilm)
     
     let gridApi!: GridApi
     
@@ -76,6 +77,9 @@ export function Movies(props: Props) {
                         field: 'title',
                         filter: true,
                         editable: true,
+                        onCellValueChanged: async (params) => {
+                            updateFilmAction('title', params.newValue, params.data.film_id)
+                        }
                     }, {
                         field: "studio_name",
                         editable: true,

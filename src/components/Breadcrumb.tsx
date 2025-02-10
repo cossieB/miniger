@@ -1,5 +1,5 @@
 import { A, useLocation, useNavigate } from "@solidjs/router"
-import { ChevronRight, House } from "../icons"
+import { ChevronRight, HouseSvg } from "../icons"
 import { For, Show, createMemo } from "solid-js"
 import titleCase from "../lib/titleCase"
 
@@ -14,7 +14,7 @@ export function Breadcrumbs() {
 
     return (
         <ol class="h-full flex items-center" >
-            <li><House onclick={() => navigate("/")} /> </li>
+            <li><HouseSvg onclick={() => navigate("/")} /> </li>
             <For each={segments()}>
                 {(segment, i) =>
                     <>

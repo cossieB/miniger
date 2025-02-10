@@ -1,16 +1,12 @@
-import { AddFolderSvg } from "../../icons";
-import { state } from "../../state";
+import { AddFolderSvg, OpenFolderSvg } from "../../icons";
 import { addDirectoriesToDatabase } from "../../api/mutations";
-import { readDirectories } from "../../utils/readDirectories";
 import { useAction } from "@solidjs/router";
+import { addFolderToSidebar, readDirectories } from "../../utils/readDirectories";
 
 export function AddDirectoryBtn() {
-    return <AddFolderSvg
+    return <OpenFolderSvg
         title="Open Folder"
-        onclick={async () => {
-            const files = await readDirectories()
-            state.sidePanel.setFiles(files);
-        }} />;
+        onclick={addFolderToSidebar} />;
 }
 
 export function AddDirectoryToDatabase() {
@@ -18,7 +14,10 @@ export function AddDirectoryToDatabase() {
     return (
         <AddFolderSvg
             title="Add Folder To Database"
-            onClick={addAction}
+            onClick={async () => {
+                const files = await readDirectories()
+                files && addAction(files)
+            }}
         />
     )
 }

@@ -31,6 +31,13 @@
         scrollbar-gutter: stable;
     }
 }
+
+.homeBtn svg {
+    @apply fill-orange-500;
+    @apply w-20;
+    @apply h-20
+}
+
 input[type=range] {
     -webkit-appearance: none;
   appearance: none;

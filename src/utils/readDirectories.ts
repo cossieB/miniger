@@ -1,11 +1,11 @@
 import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { getFilmCache, getFilmDetails } from "../components/TopBar/getFilmDetails";
-import { PlaylistFile } from "../state";
+import { PlaylistFile, state } from "../state";
 
 export async function readDirectories() {
     const directories = await open({ directory: true, multiple: true });
-    if (directories == null) return [];
+    if (directories == null) return null;
     
     const files: PlaylistFile[] = []
 
@@ -18,3 +18,8 @@ export async function readDirectories() {
     }
     return files;
 }
+
+export async function addFolderToSidebar() {
+    const files = await readDirectories();
+    files && state.sidePanel.setFiles(files);
+};

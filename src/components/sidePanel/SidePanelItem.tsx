@@ -19,7 +19,7 @@ export function SidePanelItem(props: P) {
 
     return (
         <li
-            class={"text-ellipsis text-nowrap overflow-hidden p-1 cursor-default [&:not(:last-child):hover]:bg-slate-700 transition-[margin-top] droppable"}
+            class={"text-ellipsis text-nowrap overflow-hidden p-1 cursor-default not-last:hover:bg-slate-700 transition-[margin-top] not-last:odd:bg-slate-900 not-last:even:bg-slate-800 "}
             classList={{ 
                 "!bg-slate-500": isSelected(), 
                 "mt-8": isLastDraggedOver(), 

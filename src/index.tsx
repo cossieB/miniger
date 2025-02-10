@@ -11,10 +11,11 @@ import "ag-grid-community/styles/ag-theme-alpine.css"; // optional theme
 import { Movies } from "./routes/Movies";
 import Inaccessible from "./routes/Inaccessible";
 import { VideoPlayer } from "./components/VideoPlayer/VideoPlayer";
+import { Home } from "./routes/Home";
 
 render(() => (
     <Router root={App}>
-        <Route path="/" component={() => <p>Index</p>} />
+        <Route path="/" component={Home} />
         <Route path="/movies"  >
             <Route
                 path="/"

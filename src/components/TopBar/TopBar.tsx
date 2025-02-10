@@ -1,5 +1,5 @@
 import { useNavigate } from "@solidjs/router";
-import { BackArrow, ForwardArrow, ShuffleSvg } from "../../icons";
+import { BackArrowSvg, ForwardArrowSvg, ShuffleSvg } from "../../icons";
 import { LoadPlaylistBtn } from "./LoadPlaylistBtn";
 import { SavePlaylistBtn } from "./SavePlaylistBtn";
 import { AddPlaylistFilesToDatabaseBtn } from "./AddPlaylistFilesToDatabaseBtn";
@@ -10,6 +10,7 @@ import { AddToPlaylist } from "./AddToPlaylist";
 import { Breadcrumbs } from "../Breadcrumb";
 import { state } from "../../state";
 import { DeleteBtn } from "./DeleteBtn";
+import { LoadVideosBtn } from "./LoadVideosBtn";
 
 export function TopBar() {
     const navigate = useNavigate();
@@ -17,8 +18,8 @@ export function TopBar() {
         <nav class="w-full h-8 bg-orange-500 flex pl-5 gap-5 [&>svg]:h-full text-orange-50">
             <div class="flex-1 flex h-full justify-start items-center gap-3">
                 {/* Left Part */}
-                <BackArrow onclick={() => navigate(-1)} />
-                <ForwardArrow onclick={() => navigate(1)} />
+                <BackArrowSvg onclick={() => navigate(-1)} />
+                <ForwardArrowSvg onclick={() => navigate(1)} />
                 <Breadcrumbs />
             </div>
 
@@ -31,6 +32,7 @@ export function TopBar() {
 
             <div class="ml-auto flex-1 flex h-full justify-end items-center gap-3">
                 {/* Right Part */}
+                <LoadVideosBtn />
                 <LoadPlaylistBtn />
                 <AddDirectoryBtn />
                 <CleanPlaylistBtn />

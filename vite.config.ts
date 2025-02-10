@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
 import tailwindcss from "@tailwindcss/vite";
-
+import path from "node:path";
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
@@ -22,5 +22,10 @@ export default defineConfig(async () => ({
   },
   esbuild: {
     target: "es2022"
+  },
+  resolve: {
+    alias: {
+      "~": path.resolve(__dirname, "./src"),
+    }
   }
 }));

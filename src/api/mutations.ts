@@ -1,7 +1,6 @@
 import { action, json } from "@solidjs/router";
 import { Actor, Studio } from "../datatypes";
-import { state } from "../state";
-import { readDirectories } from "../utils/readDirectories";
+import { PlaylistFile, state } from "../state";
 import { getDatabase } from "./db";
 import { getActors, getFilms, getInaccessible, getStudios } from "./data";
 
@@ -116,8 +115,7 @@ export const editFilmActors = action(async (actors: Actor[], filmId: string) => 
     }
 })
 
-export const addDirectoriesToDatabase = action(async () => {
-    const files = await readDirectories()
+export const addDirectoriesToDatabase = action(async (files: PlaylistFile[]) => {
     await using db = await getDatabase()
     try {
         await db.connection.select("BEGIN")
@@ -178,5 +176,17 @@ export const updateStudio = action(async (field: string, value: string, studioId
         console.error(error)
         state.status.setStatus(String(error))
         throw json(undefined, {revalidate: []});
+    }
+})
+
+export const editFilm = action(async (field: string, value: string, filmId: number) => {
+    await using db = await getDatabase();
+
+    try {
+        await db.connection.select(`UPDATE film SET ${field} = $1 WHERE film_id = $2`, [value, filmId])    
+        return json(undefined, {revalidate: []})
+    } 
+    catch (error) {
+        
     }
 })
