@@ -79,7 +79,8 @@ export function Movies(props: Props) {
                         editable: true,
                         onCellValueChanged: async (params) => {
                             updateFilmAction('title', params.newValue, params.data.film_id)
-                        }
+                        },
+                        tooltipField: 'title'
                     }, {
                         field: "studio_name",
                         editable: true,
@@ -101,6 +102,8 @@ export function Movies(props: Props) {
                         cellEditor: ActorSelector,
                         cellEditorPopup: true,
                         cellEditorPopupPosition: "over",
+                        tooltipValueGetter: params => params.value.map((x: any) => x.name).join(", "),
+                        
                     }, {
                         field: "release_date",
                         headerName: "Release Date",

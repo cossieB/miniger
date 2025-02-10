@@ -7,6 +7,7 @@ import { createStore } from "solid-js/store";
 import AgGridSolid from "ag-grid-solid";
 import { updateActor } from "../api/mutations";
 import { state } from "../state";
+import { ImageEditor } from "~/components/CellEditors/ImageEditor";
 
 export default function Actors() {
     const updateActorAction = useAction(updateActor)
@@ -72,7 +73,12 @@ export default function Actors() {
                             values: countryList
                         }
                     }, {
-                        field: 'image'
+                        field: 'image',
+                        cellEditor: ImageEditor,
+                        cellEditorPopup: true,
+                        onCellValueChanged: async params => {
+                            return true;
+                        }
                     }]}
 
                 />

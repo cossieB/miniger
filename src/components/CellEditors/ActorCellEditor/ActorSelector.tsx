@@ -39,13 +39,13 @@ export function ActorSelector(props: ICellEditorParams) {
                 stopEditing={props.stopEditing}
             />
             <Show when={rowActors().length > 0}>
-            <ul class="bg-slate-800 grid text-center p-2 gap-2 max-h-[75vh] overflow-auto w-[50vw] actorsList">
+            <ul class="bg-slate-800 grid text-center p-2 gap-2 max-h-[50vh] overflow-auto w-[50vw] actorsList">
                 <For each={rowActors()}>
                     {actor => <ActorItem actor={actor} rowActors={rowActors} setRowActors={setRowActors} />}
                 </For>
             </ul>
             </Show>
-            <ul class="bg-slate-800 grid text-center p-2 gap-2 max-h-[75vh] overflow-auto w-[50vw] actorsList">
+            <ul class="bg-slate-800 grid text-center p-2 gap-2 max-h-[50vh] overflow-auto w-[50vw] actorsList">
                 <For each={filteredActors()}>
                     {actor => <ActorItem actor={actor} rowActors={rowActors} setRowActors={setRowActors} />}
                 </For>
