@@ -1,13 +1,16 @@
 import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
-import { createSignal, Show } from "solid-js";
+import { createResource, createSignal, Show } from "solid-js";
 import { appDataDir, sep } from "@tauri-apps/api/path";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { writeFile, remove } from "@tauri-apps/plugin-fs";
 import { updateActor } from "../../api/mutations";
 import { useAction } from "@solidjs/router";
 
-const d = await appDataDir()
-const dir = d + sep() + "images" + sep()
+const [dir] = createResource(async () => {
+    const d = await appDataDir()
+    return d + sep() + "images" + sep()
+})
+
 
 export function ImageEditor(props: ICellEditorParams) {
     const updateActorAction = useAction(updateActor);
@@ -23,8 +26,8 @@ export function ImageEditor(props: ICellEditorParams) {
     const src = () => {
         if (objUrl())
             return objUrl()
-        if (props.data.image)
-            return convertFileSrc(dir + props.data.image)
+        if (props.data.image && dir())
+            return convertFileSrc(dir() + props.data.image)
     }
     return (
         <div

@@ -1,4 +1,4 @@
-import { Accessor, Setter, Suspense } from "solid-js";
+import { Accessor, createResource, Setter, Suspense } from "solid-js";
 import { Actor } from "../../../datatypes";
 import { appDataDir, sep } from "@tauri-apps/api/path";
 import { convertFileSrc } from "@tauri-apps/api/core";
@@ -9,8 +9,10 @@ type Props = {
     setRowActors: Setter<Actor[]>;
 };
 
-const d = await appDataDir()
-const dir = d + sep() + "images" + sep()
+const [dir] = createResource(async () => {
+    const d = await appDataDir()
+    return d + sep() + "images" + sep()
+})
 
 export function ActorItem(props: Props) {
 
@@ -29,7 +31,7 @@ export function ActorItem(props: Props) {
                 classList={{ 'border-2 border-green-500': props.rowActors().some((x: any) => x.actor_id === props.actor.actor_id) }}
             >
                 <div class="h-[90%] overflow-hidden">
-                    <img src={props.actor.image ? convertFileSrc(dir! + props.actor.image) : "/Question_Mark.svg"} class="object-cover object-top h-full w-full" loading="lazy" alt="" onerror={e => e.currentTarget.src = "/Question_Mark.svg" } />
+                    <img src={props.actor.image ? convertFileSrc(dir()! + props.actor.image) : "/Question_Mark.svg"} class="object-cover object-top h-full w-full" loading="lazy" alt="" onerror={e => e.currentTarget.src = "/Question_Mark.svg" } />
                 </div>
                 <span class="flex-1 flex items-center justify-center">{props.actor.name}</span>
             </li>
