@@ -20,9 +20,14 @@
     "dialog:allow-save",
     "dialog:default",
     "fs:default",
-    "fs:write-files",
     {
       "identifier": "fs:write-files",
+      "allow": [{
+        "path": "$APPDATA/**/*"
+      }]
+    },
+    {
+      "identifier": "fs:read-files",
       "allow": [{
         "path": "$APPDATA/**/*"
       }]
@@ -33,6 +38,7 @@
     "sql:allow-close",
     "sql:allow-load",
     "sql:allow-select",
-    "sql:default"
+    "sql:default",
+    "core:window:allow-destroy"
   ]
 }

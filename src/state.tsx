@@ -1,9 +1,8 @@
 import { ReactiveSet } from "@solid-primitives/set";
-import { createStore } from "solid-js/store";
-import shuffleArray from "./lib/shuffleArray";
-import { Actor } from "./datatypes";
-import "./events/drop"
 import { GridApi } from "ag-grid-community";
+import { createStore } from "solid-js/store";
+import { Actor } from "./datatypes";
+import shuffleArray from "./lib/shuffleArray";
 
 export type PlaylistFile = {
     title: string;
@@ -13,6 +12,7 @@ export type PlaylistFile = {
     tags: string[];
     rowId: string,
     cantPlay?: boolean,
+    isOnDb: boolean
 };
 
 const [state, setState] = createStore({
@@ -50,7 +50,7 @@ const [state, setState] = createStore({
         selections: new ReactiveSet<number>(),
         lastSelection: -1,
         lastDraggedOver: -1,
-        width: 200,
+        width: 300,
         push: (items: PlaylistFile[]) => {
             setState('sidePanel', 'list', prev => [...prev, ...items]);
         },
@@ -86,9 +86,16 @@ const [state, setState] = createStore({
         setWidth: (width: number) => {
             setState('sidePanel', 'width', width)
         },
-        markDirty: (i: number) => {
+        markDirty: (rowId: string) => {
+            const i = state.sidePanel.list.findIndex(p => p.rowId === rowId)
             setState('sidePanel', 'list', i, prev => ({
                 ...prev, cantPlay: true
+            }))
+        },
+        setIsOnDb: (rowId: string, isOnDb = true) => {
+            const i = state.sidePanel.list.findIndex(p => p.rowId === rowId)
+            setState('sidePanel', 'list', i, prev => ({
+                ...prev, isOnDb
             }))
         }
     },
@@ -100,7 +107,7 @@ const [state, setState] = createStore({
         }
     },
     tree: {
-        width: 208,
+        width: 150,
         setWidth: (width: number) => {
             setState('tree', 'width', width)
         }

@@ -7,6 +7,8 @@ import { Tree } from "./components/Tree/Tree";
 import Resizer from "./components/Resizer";
 import { handleKeyup, handleResize } from "./events";
 import { useLocation } from "@solidjs/router";
+import { readSettings } from "./readSettings";
+import "~/events/close"
 
 function App(props: { children?: JSXElement }) {
     const location = useLocation()
@@ -17,7 +19,8 @@ function App(props: { children?: JSXElement }) {
 
     onMount(() => {
         document.addEventListener('keyup', handleKeyup);
-        window.addEventListener("resize", handleResize)
+        window.addEventListener("resize", handleResize);
+        readSettings()
     })
     onCleanup(() => {
         document.removeEventListener("keyup", handleKeyup);

@@ -4,7 +4,8 @@ import { ContextMenu } from "./ContextMenu/ContextMenu";
 import { Actor } from "../datatypes";
 import { open, } from "@tauri-apps/plugin-shell";
 import { invoke } from "@tauri-apps/api/core";
-import { useNavigate } from "@solidjs/router";
+import { useAction, useNavigate } from "@solidjs/router";
+import { addDirectoriesToDatabase } from "~/api/mutations";
 
 type P = {
     contextMenu: {
@@ -20,7 +21,8 @@ type P = {
             release_date: string | null;
             studio_name: string | null;
             tags: string[];
-            rowId: string
+            rowId: string;
+            isOnDb: boolean;
         },
         selections: P['contextMenu']['data'][]
     }
@@ -51,9 +53,18 @@ export default function MoviesContextMenu(props: P) {
 }
 
 export function MoviesMenu(props: Pick<P['contextMenu'], 'data'>) {
+    const addAction = useAction(addDirectoriesToDatabase)
     return (
         <>
-            <ContextMenu.Item onClick={() => state.setMiniplayer({path: props.data.path, title: props.data.title})}>
+            <Show when={!props.data.isOnDb}>
+                <ContextMenu.Item onClick={async () => {
+                    await addAction([props.data])
+                    state.sidePanel.setIsOnDb(props.data.rowId)
+                }} >
+                    Add To Database
+                </ContextMenu.Item>
+            </Show>
+            <ContextMenu.Item onClick={() => state.setMiniplayer({ path: props.data.path, title: props.data.title })}>
                 Play In Miniplayer
             </ContextMenu.Item>
             <Show when={props.data.tags.length > 0}>

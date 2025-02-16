@@ -11,7 +11,7 @@ export function ContextSubMenu(props: { label: string; children: JSX.Element; })
     const [x, setX] = createSignal(position.width)
 
     let ref: HTMLLIElement | undefined;
-    let timerId: number | undefined;
+    let timerId: NodeJS.Timeout | undefined;
     let sub: HTMLDivElement | undefined
 
     createEffect(() => {

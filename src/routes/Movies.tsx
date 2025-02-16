@@ -27,7 +27,8 @@ export function Movies(props: Props) {
             ...film,
             tags: JSON.parse(film.tags),
             actors: JSON.parse(film.actors),
-            rowId: createUniqueId()
+            rowId: createUniqueId(),
+            isOnDb: true
         })))
     })
     type MovieTableData = NonNullable<ReturnType<typeof data>>[number]

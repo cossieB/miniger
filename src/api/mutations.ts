@@ -134,22 +134,6 @@ export const addDirectoriesToDatabase = action(async (files: PlaylistFile[]) => 
     }
 })
 
-export const addPlaylistFilesToDatabase = action(async () => {
-    await using db = await getDatabase()
-    try {
-        db.connection.select("BEGIN");
-        for (const item of state.sidePanel.list)
-            await db.connection.select("INSERT into film (title, path) VALUES ($1, $2) ON CONFLICT (path) DO NOTHING", [item.title, item.path]);
-        await db.connection.select("COMMIT");
-    }
-    catch (error) {
-        console.error(error);
-        await db.connection.select("ROLLBACK");
-        state.status.setStatus(String(error))
-        throw json(undefined, {revalidate: []});
-    }
-})
-
 export const removeByPaths = action(async (selection: { path: string }[]) => {
     await using db = await getDatabase();
     await db.connection.select("BEGIN");

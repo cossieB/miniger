@@ -19,14 +19,16 @@ export function getFilmDetails(fileList: { path: string; title: string; }[], cac
                 studio_name: "",
                 actors: [] as Actor[],
                 tags: [] as string[],
-                rowId: createUniqueId()
+                rowId: createUniqueId(),
+                isOnDb: false
             };
         else {
             return {
                 ...film,
                 tags: JSON.parse(film.tags as any) as string[],
                 actors: JSON.parse(film.actors as any) as Actor[],
-                rowId: createUniqueId()
+                rowId: createUniqueId(),
+                isOnDb: true
             };
         }
     })

@@ -1,14 +1,21 @@
-import { AddToDatabaseSvg } from "../../icons";
-import { state } from "../../state";
-import { addPlaylistFilesToDatabase } from "../../api/mutations";
+import { useAction } from "@solidjs/router";
+import { addDirectoriesToDatabase } from "~/api/mutations";
+import { AddToDatabaseSvg } from "~/icons";
+import { state } from "~/state";
+
 
 export function AddPlaylistFilesToDatabaseBtn() {
+    const addAction = useAction(addDirectoriesToDatabase)
     return <AddToDatabaseSvg
         title="Add to database"
         classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
         onclick={async () => {
-            if (state.sidePanel.list.length == 0) return
-            await addPlaylistFilesToDatabase()
+            const files = state.sidePanel.list.filter(file => !file.isOnDb)
+            if (files.length == 0) return
+            await addAction(files)
+            state.sidePanel.list.forEach(file => {
+                state.sidePanel.setIsOnDb(file.rowId)
+            })
         }} />;
 }
 

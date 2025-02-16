@@ -7,7 +7,9 @@ use crate::{error::AppError, extensions::EXTENSIONS};
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 pub fn greet(name: &str, num: i32) -> String {
-    format!("Hello, {name}! You've been greeted from Rust! You chose the number {num}")
+    let s = format!("Hello, {name}! You've been greeted from Rust! You chose the number {num}");
+    print!("{s}");
+    s
 }
 
 #[tauri::command]
