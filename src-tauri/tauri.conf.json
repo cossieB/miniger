@@ -8,28 +8,41 @@
     "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
   },
-  "app": {"windows": [
+  "app": {
+    "windows": [
       {
         "title": "miniger",
         "height": 720,
         "width": 1280,
         "dragDropEnabled": false,
-        "maximized": true
+        "maximized": true,
+        "label": "main",
+        "visible": false
+      },{
+        "height": 600,
+        "width": 600,
+        "resizable": false,
+        "maximizable": false,
+        "label": "splash",
+        "url": "splash.html",
+        "center": true
       }
     ],
     "security": {
       "csp": "default-src 'self' ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost; media-src 'self' asset: http://asset.localhost",
       "assetProtocol": {
-          "enable": true,
-          "scope": [
-              "**"
-          ]
+        "enable": true,
+        "scope": [
+          "**"
+        ]
       }
     }
   },
   "plugins": {
     "sql": {
-      "preload": ["sqlite:mngr.db"]
+      "preload": [
+        "sqlite:mngr.db"
+      ]
     }
   },
   "bundle": {

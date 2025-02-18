@@ -14,6 +14,8 @@
     "core:resources:default",
     "core:tray:default",
     "core:window:default",
+    "core:window:allow-destroy",
+    "core:window:allow-show",
     "dialog:allow-ask",
     "dialog:allow-confirm",
     "dialog:allow-open",
@@ -38,7 +40,6 @@
     "sql:allow-close",
     "sql:allow-load",
     "sql:allow-select",
-    "sql:default",
-    "core:window:allow-destroy"
+    "sql:default"
   ]
 }
