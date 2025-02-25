@@ -40,16 +40,23 @@ export function SidePanel() {
                                     isOpen: true,
                                     x: e.clientX,
                                     y: e.clientY,
-                                    data: {
-                                        studio_id: null,
-                                        release_date: null,
-                                        ...data,
-                                    }
+                                    data
                                 })
                             }}
                         />}
                 </For>
-                <SidePanelItem data={{ path: "", title: "", actors: [], tags: [], studio_name: "", rowId: "", isOnDb: true }} i={() => state.sidePanel.list.length} />
+                <SidePanelItem data={{
+                    path: "",
+                    title: "",
+                    actors: [],
+                    tags: [],
+                    studio_name: "",
+                    rowId: "",
+                    isOnDb: true,
+                    studio_id: null
+                }}
+                    i={() => state.sidePanel.list.length}
+                />
             </ul>
             <Show when={contextMenu.isOpen}>
                 <ContextMenu close={contextMenu.close} pos={{ x: contextMenu.x, y: contextMenu.y }}>

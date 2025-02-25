@@ -8,6 +8,7 @@ export type PlaylistFile = {
     title: string;
     path: string;
     studio_name: string | null;
+    studio_id: number | null;
     actors: Actor[],
     tags: string[];
     rowId: string,

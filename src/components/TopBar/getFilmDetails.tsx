@@ -20,7 +20,8 @@ export function getFilmDetails(fileList: { path: string; title: string; }[], cac
                 actors: [] as Actor[],
                 tags: [] as string[],
                 rowId: createUniqueId(),
-                isOnDb: false
+                isOnDb: false,
+                studio_id: null
             };
         else {
             return {
@@ -28,7 +29,7 @@ export function getFilmDetails(fileList: { path: string; title: string; }[], cac
                 tags: JSON.parse(film.tags as any) as string[],
                 actors: JSON.parse(film.actors as any) as Actor[],
                 rowId: createUniqueId(),
-                isOnDb: true
+                isOnDb: true,
             };
         }
     })

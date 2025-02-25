@@ -1,7 +1,6 @@
 import { For, Show } from "solid-js";
-import { state } from "../state";
+import { PlaylistFile, state } from "../state";
 import { ContextMenu } from "./ContextMenu/ContextMenu";
-import { Actor } from "../datatypes";
 import { open, } from "@tauri-apps/plugin-shell";
 import { invoke } from "@tauri-apps/api/core";
 import { useAction, useNavigate } from "@solidjs/router";
@@ -13,17 +12,7 @@ type P = {
         x: number;
         y: number;
         close(): void;
-        data: {
-            actors: Actor[];
-            path: string;
-            title: string;
-            studio_id: number | null;
-            release_date: string | null;
-            studio_name: string | null;
-            tags: string[];
-            rowId: string;
-            isOnDb: boolean;
-        },
+        data: PlaylistFile,
         selections: P['contextMenu']['data'][]
     }
 }
