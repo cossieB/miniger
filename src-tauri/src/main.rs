@@ -2,11 +2,39 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use miniger::{commands, db::get_migrations};
+use tauri::{menu::{MenuBuilder, SubmenuBuilder}, Emitter};
 
 fn main() {
     let migrations = get_migrations();
 
     tauri::Builder::default()
+        .setup(|app| {
+
+            let app_submenu = SubmenuBuilder::new(app, "App")
+                .text("load_playlist", "Load Playlist")
+                .text("load_folder", "Load Folder")
+                .quit()
+                .build()?;
+            
+            let tools_submenu = SubmenuBuilder::new(app, "Tools")
+                .text("convert_playlist", "Convert Playlist")
+                .build()?;
+
+            let menu = MenuBuilder::new(app)
+                .items(&[
+                    &app_submenu,
+                    &tools_submenu
+                ])
+                .build()?;
+
+            app.set_menu(menu)?;
+
+            Ok(())
+        })
+        .on_menu_event(|app, event| {
+            app.emit_to("main", &event.id().0, 1).unwrap();
+            
+        })
         .plugin(tauri_plugin_sql::Builder::new().build())
         .plugin(tauri_plugin_fs::init())
         .plugin(
