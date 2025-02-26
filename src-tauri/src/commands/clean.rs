@@ -1,4 +1,4 @@
-pub(crate) use std::{collections::HashSet, path::Path};
+pub use std::{collections::HashSet, path::Path};
 
 use serde::{Deserialize, Serialize};
 
@@ -17,6 +17,7 @@ pub struct  PlaylistFile {
     title: String,
     path: String,
     studio_name: Option<String>,
+    studio_id: Option<i32>,
     actors: Vec<Actor>,
     tags: Vec<String>,
     rowId: String,

@@ -12,6 +12,7 @@ import { Movies } from "./routes/Movies";
 import Inaccessible from "./routes/Inaccessible";
 import { VideoPlayer } from "./components/VideoPlayer/VideoPlayer";
 import { Home } from "./routes/Home";
+import { Settings } from "./routes/Settings";
 
 render(() => (
     <Router root={App}>
@@ -42,6 +43,7 @@ render(() => (
         <Route path={["/studios", "/movies/studios"]} component={Studios} preload={() => getStudios()} />
         <Route path="/movies/inaccessible" component={Inaccessible} preload={() => getInaccessible()} />
         <Route path="/play" component={VideoPlayer} />
+        <Route path="/settings" component={Settings} />
     </Router>
 ), document.getElementById("root") as HTMLElement);
 

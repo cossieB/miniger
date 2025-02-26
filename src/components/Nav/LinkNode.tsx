@@ -13,7 +13,6 @@ export function LinkNode(props: P1) {
     let ref!: HTMLLIElement
     const [level, setLevel] = createSignal(0);
     onMount(() => {
-        console.log(ref)
         setLevel(calculateLevel(ref))})
     return (
         <li

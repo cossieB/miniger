@@ -6,6 +6,7 @@ import { CameraSvg, FilmstripSvg, GearSvg, QuestionMarkSvg, TagSvg, TheatreSvg }
 import { ButtonNode } from "./ButtonNode"
 import { ParentNode } from "./ParentNode"
 import { LinkNode } from "./LinkNode"
+import { openSettingsWindow } from "~/utils/openSettingsWindow"
 
 export function Nav() {
     const tags = createAsync(() => getTags(), { initialValue: [] })
@@ -35,9 +36,7 @@ export function Nav() {
                 <ButtonNode
                     label="Settings"
                     icon={<GearSvg />}
-                    onclick={() => {
-
-                    }}
+                    onclick={openSettingsWindow}
                 />
             </ul>
         </nav>

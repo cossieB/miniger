@@ -8,6 +8,9 @@ type P = {
     i: Accessor<number>;
 } & JSX.HTMLAttributes<HTMLLIElement>;
 
+let onCooldown = false;
+let timerId = -1
+
 export function SidePanelItem(props: P) {
     const navigate = useNavigate()
     const isSelected = () => state.sidePanel.selections.has(props.i());
@@ -56,7 +59,11 @@ export function SidePanelItem(props: P) {
             }}
             ondragover={e => {
                 e.preventDefault();
-                state.sidePanel.setLastDraggedOver(props.i());
+                if (!onCooldown) {
+                    state.sidePanel.setLastDraggedOver(props.i());
+                    onCooldown = true;
+                    timerId = setTimeout(() => (onCooldown = false), 250);
+                }
             }}
             ondragend={e => {
                 e.preventDefault();

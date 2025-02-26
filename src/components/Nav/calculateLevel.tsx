@@ -9,7 +9,9 @@ export function calculateLevel(elem: Element | null): number {
         elem = elem.parentElement;
     }
     return level;
-}function useLevel() {
+}
+
+function useLevel() {
     let ref!: HTMLElement
     const [level, setLevel] = createSignal(0)
     onMount(() => setLevel(calculateLevel(ref)))

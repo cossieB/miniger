@@ -3,11 +3,11 @@ import { JSXElement, createRenderEffect, on, onCleanup, onMount } from "solid-js
 import { SidePanel } from "./components/sidePanel/SidePanel";
 import { state } from "./state";
 import { BottomBar } from "./components/BottomBar";
-import { Tree } from "./components/Tree/Tree";
 import Resizer from "./components/Resizer";
 import { handleKeyup, handleResize } from "./events";
 import { useLocation } from "@solidjs/router";
-import { readSettings } from "./readSettings";
+import { Nav } from "./components/Nav/Nav";
+import { readSession, readWatchJson } from "./readSettings";
 import "~/events/close"
 
 function App(props: { children?: JSXElement }) {
@@ -20,7 +20,8 @@ function App(props: { children?: JSXElement }) {
     onMount(() => {
         document.addEventListener('keyup', handleKeyup);
         window.addEventListener("resize", handleResize);
-        readSettings()
+        // readSession()
+        // readWatchJson()
     })
     onCleanup(() => {
         document.removeEventListener("keyup", handleKeyup);
@@ -31,7 +32,7 @@ function App(props: { children?: JSXElement }) {
         <div oncontextmenu={e => e.preventDefault()} class="h-screen w-screen text-white">
             <TopBar />
             <div class="w-screen flex relative" style={{ height: "calc(100vh - 4rem" }}>
-                <Tree />
+                <Nav />
                 <Resizer
                     min={0}
                     setDimension={state.tree.setWidth}

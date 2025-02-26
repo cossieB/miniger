@@ -1,6 +1,6 @@
 import { action, json } from "@solidjs/router";
 import { Actor, Studio } from "../datatypes";
-import { PlaylistFile, state } from "../state";
+import { state } from "../state";
 import { getDatabase } from "./db";
 import { getActors, getFilms, getInaccessible, getStudios } from "./data";
 
@@ -115,7 +115,7 @@ export const editFilmActors = action(async (actors: Actor[], filmId: string) => 
     }
 })
 
-export const addDirectoriesToDatabase = action(async (files: PlaylistFile[]) => {
+export const addDirectoriesToDatabase = action(async (files: {title: string, path: string}[]) => {
     await using db = await getDatabase()
     try {
         await db.connection.select("BEGIN")
@@ -123,7 +123,6 @@ export const addDirectoriesToDatabase = action(async (files: PlaylistFile[]) => 
             await db.connection.select("INSERT INTO film (title, path) VALUES ($1, $2) ON CONFLICT(path) DO NOTHING", [file.title, file.path])
         }
         await db.connection.select("COMMIT")
-        state.status.setStatus("Successfully added files")
         return json(undefined, {revalidate: [getFilms.key]})
     }
     catch (error) {

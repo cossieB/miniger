@@ -20,7 +20,7 @@ const [state, setState] = createStore({
     gridApi: undefined as GridApi<any> | undefined,
     setGridApi: (g: GridApi<any> | undefined) => {
         setState('gridApi', g)
-    },
+    },   
     status: {
         message: "",
         timerId: -1,

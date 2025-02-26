@@ -3,9 +3,14 @@ import { invoke } from "@tauri-apps/api/core";
 import { getFilmCache, getFilmDetails } from "../components/TopBar/getFilmDetails";
 import { PlaylistFile, state } from "../state";
 
-export async function readDirectories() {
-    const directories = await open({ directory: true, multiple: true });
-    if (directories == null) return null;
+export async function readDirectories(dirs?: string[]) {
+    let directories = dirs;
+    
+    if (!directories) {
+        const selections = await open({ directory: true, multiple: true });
+        if (selections == null) return null;
+        directories = selections;
+    }
     
     const files: PlaylistFile[] = []
 

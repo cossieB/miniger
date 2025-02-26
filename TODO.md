@@ -1,2 +1,3 @@
-delete movies, actors from db
-video player
+[] menu bar
+
+[] performance improvements for large playlists
