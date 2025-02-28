@@ -2,11 +2,9 @@ import { createAsync } from "@solidjs/router"
 import { For } from "solid-js"
 import { getStudios, getTags } from "../../api/data"
 import { state } from "../../state"
-import { CameraSvg, FilmstripSvg, GearSvg, QuestionMarkSvg, TagSvg, TheatreSvg } from "~/icons"
-import { ButtonNode } from "./ButtonNode"
+import { CameraSvg, FilmstripSvg, QuestionMarkSvg, TagSvg, TheatreSvg } from "~/icons"
 import { ParentNode } from "./ParentNode"
 import { LinkNode } from "./LinkNode"
-import { openSettingsWindow } from "~/utils/openSettingsWindow"
 
 export function Nav() {
     const tags = createAsync(() => getTags(), { initialValue: [] })
@@ -33,11 +31,6 @@ export function Nav() {
                 </ParentNode>
                 <LinkNode label="Actors" href="/actors" icon={<TheatreSvg />} />
                 <LinkNode label="Studios" href="/studios" icon={<CameraSvg />} />
-                <ButtonNode
-                    label="Settings"
-                    icon={<GearSvg />}
-                    onclick={openSettingsWindow}
-                />
             </ul>
         </nav>
     )

@@ -1,14 +1,14 @@
-import { useAction } from "@solidjs/router"
+import { useAction, useSubmission } from "@solidjs/router"
 import { getCurrentWindow } from "@tauri-apps/api/window"
 import { open } from "@tauri-apps/plugin-dialog"
 import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs"
-import { createResource, For, onMount } from "solid-js"
+import { createResource, createSignal, For, onMount, Show } from "solid-js"
 import { addDirectoriesToDatabase } from "~/api/mutations"
 import { TrashSvg } from "~/icons"
-import { readWatchJson } from "~/readSettings"
 import { readDirectories } from "~/utils/readDirectories"
 
 export function Settings() {
+    const [hasChanged, setHasChanged] = createSignal(false)
     const [data, { mutate, refetch }] = createResource(readFile, {
         initialValue: []
     })
@@ -16,9 +16,10 @@ export function Settings() {
         document.querySelectorAll("nav").forEach(el => el.remove())
     })
     const action = useAction(addDirectoriesToDatabase)
+    const submissions = useSubmission(addDirectoriesToDatabase)
     return (
-        <div class="w-screen h-screen bg-slate-800 z-[999] absolute p-2 overflow-y-auto scroll" 
-            style={{"scrollbar-gutter": "stable"}}
+        <div class="w-screen h-screen bg-slate-800 z-[999] absolute p-2 overflow-y-auto scroll"
+            style={{ "scrollbar-gutter": "stable" }}
         >
             <span>Folders</span>
             <button
@@ -27,21 +28,25 @@ export function Settings() {
                     const dirs = await open({ multiple: true, directory: true });
                     if (!dirs?.length) return;
                     mutate(p => [...p, ...dirs.map(x => ({ path: x, scanOnStart: true }))]);
+                    setHasChanged(true);
                 }}>
                 Add Folder
             </button>
-            <button
-                class="bg-slate-700 rounded-sm float-end p-1 mr-1"
-                onclick={async () => {
-                    const files = await readDirectories(data().map(x => x.path))
-                    if (!files?.length) return;
-                    await action(files);
-                    const window = getCurrentWindow()
-                    await window.emitTo("main", "update-films")
-                }}
-            >
-                Scan Now
-            </button>
+            <Show when={!hasChanged()}>
+                <button
+                    class="bg-slate-700 rounded-sm float-end p-1 mr-1"
+                    disabled={submissions.pending}
+                    onclick={async () => {
+                        const files = await readDirectories(data().map(x => x.path))
+                        if (!files?.length) return;
+                        await action(files);
+                        const window = getCurrentWindow()
+                        window.emitTo("main", "update-films")
+                    }}
+                >
+                    Scan Now
+                </button>
+            </Show>
             <table class="table-fixed w-full">
                 <thead>
                     <tr>
@@ -68,7 +73,10 @@ export function Settings() {
                                     />
                                 </td>
                                 <td>
-                                    <button onclick={() => mutate(p => p.filter((f, j) => j != i() ))}>
+                                    <button onclick={() => {
+                                        mutate(p => p.filter((_, j) => j != i()))
+                                        setHasChanged(true);
+                                    }}>
                                         <TrashSvg />
                                     </button>
                                 </td>
@@ -78,17 +86,21 @@ export function Settings() {
                 </tbody>
             </table>
             <button
-                class="bg-lime-700 rounded-sm float-end p-1"
+                class="bg-orange-500 rounded-sm float-end p-1"
                 onclick={async () => {
                     await writeTextFile("watch.json", JSON.stringify(data()), {
                         baseDir: BaseDirectory.AppData
                     })
+                    setHasChanged(false)
                 }}>
                 Save
             </button>
             <button
-                class="bg-red-700 rounded-sm float-end p-1"
-                onclick={refetch}
+                class="bg-slate-700 rounded-sm float-end p-1 mr-1"
+                onclick={async () => {
+                    await refetch()
+                    setHasChanged(false)
+                }}
             >
                 Reset
             </button>

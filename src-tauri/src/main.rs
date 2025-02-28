@@ -2,38 +2,38 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use miniger::{commands, db::get_migrations};
-use tauri::{menu::{MenuBuilder, SubmenuBuilder}, Emitter};
+use tauri::{
+    menu::{MenuBuilder, SubmenuBuilder},
+    Emitter, Manager,
+};
 
 fn main() {
     let migrations = get_migrations();
 
     tauri::Builder::default()
         .setup(|app| {
-
             let app_submenu = SubmenuBuilder::new(app, "App")
-                .text("load_playlist", "Load Playlist")
-                .text("load_folder", "Load Folder")
+                .text("load_playlist", "Load Playlist File")
+                .text("load_videos", "Load Videos")
+                .text("scan_folders", "Scan Folders")
                 .quit()
                 .build()?;
-            
+
             let tools_submenu = SubmenuBuilder::new(app, "Tools")
                 .text("convert_playlist", "Convert Playlist")
                 .build()?;
 
             let menu = MenuBuilder::new(app)
-                .items(&[
-                    &app_submenu,
-                    &tools_submenu
-                ])
+                .items(&[&app_submenu, &tools_submenu])
                 .build()?;
 
-            app.set_menu(menu)?;
+            let main = app.get_webview_window("main").unwrap();
+            main.set_menu(menu)?;
 
             Ok(())
         })
         .on_menu_event(|app, event| {
-            app.emit_to("main", &event.id().0, 1).unwrap();
-            
+            app.emit_to("main", &event.id.as_ref(), 1).unwrap();
         })
         .plugin(tauri_plugin_sql::Builder::new().build())
         .plugin(tauri_plugin_fs::init())

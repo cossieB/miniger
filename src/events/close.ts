@@ -4,6 +4,8 @@ import { unwrap } from "solid-js/store";
 import { state } from "~/state";
 import {revalidate} from "@solidjs/router"
 import { getFilms } from "~/api/data";
+import { loadPlaylist, loadVideos } from "~/utils/loadPlaylist";
+import { openSettingsWindow } from "~/utils/openSettingsWindow";
 
 export type SessionJSON = {
     list: typeof state['sidePanel']['list'],
@@ -28,6 +30,18 @@ getAllWindows().then(windows => {
     })
 
     mainWindow.listen("update-films", async () => {
-        revalidate(getFilms.key)
+        state.status.setStatus("Scanning for new files")
+        await revalidate(getFilms.key)
+        state.status.clear();
+    })
+
+    mainWindow.listen("load_playlist", async () => {
+        loadPlaylist()
+    })
+    mainWindow.listen("load_videos", async () => {
+        loadVideos()
+    })
+    mainWindow.listen("scan_folders", () => {
+        openSettingsWindow()
     })
 })
