@@ -7,12 +7,12 @@ import Resizer from "./components/Resizer";
 import { handleKeyup, handleResize } from "./events";
 import { useLocation } from "@solidjs/router";
 import { Nav } from "./components/Nav/Nav";
-import { readSession, readWatchJson } from "./readSettings";
+import { readSession, useWatchJson } from "./readSettings";
 import "~/events/mainWindow"
 
 function App(props: { children?: JSXElement }) {
     const location = useLocation()
-    
+    useWatchJson()
     createRenderEffect(on(() => location.pathname, () => {
         state.setGridApi(undefined)
     }))
@@ -20,8 +20,7 @@ function App(props: { children?: JSXElement }) {
     onMount(() => {
         document.addEventListener('keyup', handleKeyup);
         window.addEventListener("resize", handleResize);
-        // readSession()
-        // readWatchJson()
+        readSession()
     })
     onCleanup(() => {
         document.removeEventListener("keyup", handleKeyup);

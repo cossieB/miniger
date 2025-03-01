@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS film (
     studio_id INTEGER,
     release_date TEXT,
 
-    FOREIGN KEY (studio_id) REFERENCES studio(studio_id) ON DELETE RESTRICT
+    FOREIGN KEY (studio_id) REFERENCES studio(studio_id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS actor_film (

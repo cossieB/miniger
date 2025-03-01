@@ -52,6 +52,7 @@ fn main() {
             commands::get_inaccessible,
             commands::load_directory,
             commands::open_explorer,
+            commands::convert_playlist
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -13,6 +13,7 @@ import Inaccessible from "./routes/Inaccessible";
 import { VideoPlayer } from "./components/VideoPlayer/VideoPlayer";
 import { Home } from "./routes/Home";
 import { Settings } from "./routes/Settings";
+import { Convert } from "./routes/Convert";
 
 render(() => (
     <Router root={App}>
@@ -44,6 +45,7 @@ render(() => (
         <Route path="/movies/inaccessible" component={Inaccessible} preload={() => getInaccessible()} />
         <Route path="/play" component={VideoPlayer} />
         <Route path="/settings" component={Settings} />
+        <Route path="/convert" component={Convert} />
     </Router>
 ), document.getElementById("root") as HTMLElement);
 

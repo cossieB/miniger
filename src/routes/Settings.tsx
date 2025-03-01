@@ -8,12 +8,14 @@ import { TrashSvg } from "~/icons"
 import { readDirectories } from "~/utils/readDirectories"
 
 export function Settings() {
+    let scanNowBtn!: HTMLButtonElement
     const [hasChanged, setHasChanged] = createSignal(false)
     const [data, { mutate, refetch }] = createResource(readFile, {
         initialValue: []
     })
     onMount(() => {
         document.querySelectorAll("nav").forEach(el => el.remove())
+        scanNowBtn.focus()
     })
     const action = useAction(addDirectoriesToDatabase)
     const submissions = useSubmission(addDirectoriesToDatabase)
@@ -34,15 +36,18 @@ export function Settings() {
             </button>
             <Show when={!hasChanged()}>
                 <button
+                    ref={scanNowBtn}
                     class="bg-slate-700 rounded-sm float-end p-1 mr-1"
                     disabled={submissions.pending}
                     onclick={async () => {
                         const files = await readDirectories(data().map(x => x.path))
                         if (!files?.length) return;
                         const window = getCurrentWindow()
-                        window.emitTo("main", "set-status", "Scanning for new files")
+                        window.emitTo("main", "set-status", "Scanning for new files");
+                        await window.hide();
                         await action(files);
-                        window.emitTo("main", "update-films")
+                        window.emitTo("main", "update-films");
+                        window.destroy()
                     }}
                 >
                     Scan Now
@@ -74,10 +79,11 @@ export function Settings() {
                                     />
                                 </td>
                                 <td>
-                                    <button onclick={() => {
-                                        mutate(p => p.filter((_, j) => j != i()))
-                                        setHasChanged(true);
-                                    }}>
+                                    <button
+                                        onclick={() => {
+                                            mutate(p => p.filter((_, j) => j != i()))
+                                            setHasChanged(true);
+                                        }}>
                                         <TrashSvg />
                                     </button>
                                 </td>

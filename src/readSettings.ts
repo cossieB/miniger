@@ -5,6 +5,8 @@ import { SessionJSON } from "./events/mainWindow";
 import { WatchJSON } from "./routes/Settings";
 import { readDirectories } from "./utils/readDirectories";
 import { filterMap } from "./lib/filterMap";
+import { onMount } from "solid-js";
+import { useAction } from "@solidjs/router";
 import { addDirectoriesToDatabase } from "./api/mutations";
 
 export async function readSession() {
@@ -16,8 +18,8 @@ export async function readSession() {
         const settings = JSON.parse(content) as SessionJSON
 
         state.sidePanel.setFiles(settings.list ?? [])
-        state.tree.setWidth(settings.treeWidth ?? state.tree.width)
-        state.sidePanel.setWidth(settings.sidePanelWidth ?? state.sidePanel.width)
+        settings.treeWidth && state.tree.setWidth(settings.treeWidth * window.innerWidth)
+        settings.sidePanelWidth && state.sidePanel.setWidth(settings.sidePanelWidth * window.innerWidth)
     } catch (error) { }
 
     finally {
@@ -30,7 +32,7 @@ export async function readSession() {
 }
 
 export async function readWatchJson(scanAll = false) {
-    
+
     try {
         const content = await readTextFile("watch.json", {
             baseDir: BaseDirectory.AppData
@@ -44,4 +46,19 @@ export async function readWatchJson(scanAll = false) {
         console.error(error);
         state.status.setStatus(String(error))
     }
+}
+
+export function useWatchJson() {
+    const action = useAction(addDirectoriesToDatabase)
+    onMount(async () => {
+        try {
+            const files = await readWatchJson()
+            if (!files?.length) return
+            state.status.setStatus("Reading files....")
+            await action(files)
+            state.status.clear()
+        } catch (error) {
+            state.status.setStatus(String(error))
+        }
+    })
 }

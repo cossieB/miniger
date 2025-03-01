@@ -6,6 +6,8 @@ import {revalidate} from "@solidjs/router"
 import { getFilms } from "~/api/data";
 import { loadPlaylist, loadVideos } from "~/utils/loadPlaylist";
 import { openSettingsWindow } from "~/utils/openSettingsWindow";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { invoke } from "@tauri-apps/api/core";
 
 export type SessionJSON = {
     list: typeof state['sidePanel']['list'],
@@ -23,8 +25,8 @@ getAllWindows().then(windows => {
     mainWindow.listen("tauri://close-requested", async e => {
         const data: SessionJSON = {
             list: unwrap(state.sidePanel.list),
-            sidePanelWidth: unwrap(state.sidePanel.width),
-            treeWidth: unwrap(state.tree.width)
+            sidePanelWidth: unwrap(state.sidePanel.width) / window.innerWidth,
+            treeWidth: unwrap(state.tree.width) / window.innerWidth,
         };
         
         await writeTextFile("session.json", JSON.stringify(data), {
@@ -46,5 +48,24 @@ getAllWindows().then(windows => {
     })
     mainWindow.listen("scan_folders", () => {
         openSettingsWindow()
+    })
+    mainWindow.listen("convert_playlist", () => {
+        const window = new WebviewWindow("convert", {
+            alwaysOnTop: true,
+            center: true,
+            height: 300,
+            width: 600,
+            url: "/convert",
+            maximizable: false,
+            minimizable: false,
+            title: "Convert Playlist"
+        })
+        window.once("tauri://created", () => {
+    
+        })
+        window.once("tauri://error", (e) => {
+            invoke("echo", { string: JSON.stringify(e.payload) });
+    
+        })
     })
 })
