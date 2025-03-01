@@ -8,7 +8,7 @@ import { handleKeyup, handleResize } from "./events";
 import { useLocation } from "@solidjs/router";
 import { Nav } from "./components/Nav/Nav";
 import { readSession, readWatchJson } from "./readSettings";
-import "~/events/close"
+import "~/events/mainWindow"
 
 function App(props: { children?: JSXElement }) {
     const location = useLocation()

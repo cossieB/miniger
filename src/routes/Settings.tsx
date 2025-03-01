@@ -39,8 +39,9 @@ export function Settings() {
                     onclick={async () => {
                         const files = await readDirectories(data().map(x => x.path))
                         if (!files?.length) return;
-                        await action(files);
                         const window = getCurrentWindow()
+                        window.emitTo("main", "set-status", "Scanning for new files")
+                        await action(files);
                         window.emitTo("main", "update-films")
                     }}
                 >

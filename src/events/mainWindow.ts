@@ -16,6 +16,10 @@ export type SessionJSON = {
 getAllWindows().then(windows => {
     const mainWindow = windows.find(w => w.label === "main")!
     
+    mainWindow.listen<string>("set-status", e => {
+        state.status.setStatus(e.payload)
+    })
+
     mainWindow.listen("tauri://close-requested", async e => {
         const data: SessionJSON = {
             list: unwrap(state.sidePanel.list),
@@ -30,7 +34,6 @@ getAllWindows().then(windows => {
     })
 
     mainWindow.listen("update-films", async () => {
-        state.status.setStatus("Scanning for new files")
         await revalidate(getFilms.key)
         state.status.clear();
     })

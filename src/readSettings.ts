@@ -1,7 +1,7 @@
 import { readTextFile, BaseDirectory } from "@tauri-apps/plugin-fs";
 import { state } from "./state";
 import { getAllWindows } from "@tauri-apps/api/window"
-import { SessionJSON } from "./events/close";
+import { SessionJSON } from "./events/mainWindow";
 import { WatchJSON } from "./routes/Settings";
 import { readDirectories } from "./utils/readDirectories";
 import { filterMap } from "./lib/filterMap";
