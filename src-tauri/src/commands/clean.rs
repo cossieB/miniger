@@ -3,26 +3,11 @@ pub use std::{collections::HashSet, path::Path};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
-struct Actor {
-    actor_id: i32,
-    name: String,
-    dob: Option<String>,
-    nationality: Option<String>,
-    gender: Option<String>,
-    image: Option<String>,
-}
-
-#[derive(Serialize, Deserialize)]
+#[allow(nonstandard_style)]
 pub struct  PlaylistFile {
     title: String,
     path: String,
-    studio_name: Option<String>,
-    studio_id: Option<i32>,
-    actors: Vec<Actor>,
-    tags: Vec<String>,
     rowId: String,
-    cantPlay: Option<bool>,
-    isOnDb: bool
 }
 
 #[tauri::command]

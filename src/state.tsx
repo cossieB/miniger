@@ -11,7 +11,6 @@ export type PlaylistFile = {
 };
 
 type ExtraProps = {
-    rowId: string,
     isSelected: boolean,
     selectedLast: boolean,
     lastDraggedOver: boolean
@@ -153,7 +152,6 @@ const [state, setState] = createStore({
             }))
         },
         setField: <T extends keyof ExtraProps>(i: number, field: T, value: ExtraProps[T]) => {
-            //@ts-expect-error
             setState("sidePanel", 'list', i, field, value)
         },
     },
