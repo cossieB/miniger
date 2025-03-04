@@ -1,4 +1,4 @@
-import { For, Show } from "solid-js";
+import { Index, Show } from "solid-js";
 import { state } from "../../state";
 import clickOutside from "../../lib/clickOutside";
 import { SidePanelItem } from "./SidePanelItem";
@@ -28,34 +28,35 @@ export function SidePanel() {
         >
             <ul
                 class="overflow-y-auto overflow-x-hidden droppable shrink"
-                use:clickOutside={state.sidePanel.clearSelections}
+                use:clickOutside={state.sidePanel.selections.clearSelections}
             >
-                <For each={state.sidePanel.list}>
+                <Index each={state.sidePanel.list}>
                     {(data, i) =>
                         <SidePanelItem
-                            data={data}
+                            data={data()}
                             i={i}
+                            draggable
                             oncontextmenu={e => {
                                 setContextMenu({
                                     isOpen: true,
                                     x: e.clientX,
                                     y: e.clientY,
-                                    data
+                                    data: data()
                                 })
                             }}
                         />}
-                </For>
-                <SidePanelItem data={{
-                    path: "",
-                    title: "",
-                    actors: [],
-                    tags: [],
-                    studio_name: "",
-                    rowId: "",
-                    isOnDb: true,
-                    studio_id: null
-                }}
-                    i={() => state.sidePanel.list.length}
+                </Index>
+                <SidePanelItem
+                    data={{
+                        path: "",
+                        title: "",
+                        rowId: "",
+                        isSelected: false,
+                        lastDraggedOver: false,
+                        selectedLast: false
+                    }}
+                    i={state.sidePanel.list.length}
+                    draggable={false}
                 />
             </ul>
             <Show when={contextMenu.isOpen}>

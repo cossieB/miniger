@@ -1,87 +1,94 @@
-import { Accessor, JSX, splitProps } from "solid-js";
+import { createMemo, JSX, splitProps } from "solid-js";
 import { state } from "../../state";
-import { useNavigate } from "@solidjs/router";
-import { useControls } from "../VideoPlayer/useControls";
+import { useLocation, useNavigate, useSearchParams } from "@solidjs/router";
 
 type P = {
     data: (typeof state)['sidePanel']['list'][number];
-    i: Accessor<number>;
+    i: number;
 } & JSX.HTMLAttributes<HTMLLIElement>;
 
-let onCooldown = false;
 let timerId = -1
+let j = -1
 
 export function SidePanelItem(props: P) {
     const navigate = useNavigate()
-    const isSelected = () => state.sidePanel.selections.has(props.i());
-    const isLastDraggedOver = () => state.sidePanel.lastDraggedOver === props.i();
-    const isLastSelected = () => state.sidePanel.lastSelection === props.i();
-    const {currentVideo} = useControls()
-    const isPlaying = () => props.data.rowId === currentVideo()?.rowId
+
+    const [searchParams] = useSearchParams<{ rowId: string }>();
+    const location = useLocation()
+    console.log("HERE")
+    const isPlaying = createMemo(() => {
+        if (location.pathname !== "/play") return false;
+        return searchParams.rowId === props.data.rowId;
+    })
     const [_, attr] = splitProps(props, ['i', 'data']);
 
     return (
         <li
-            class={"text-ellipsis text-nowrap overflow-hidden p-1 cursor-default not-last:hover:bg-slate-700 transition-[margin-top] not-last:odd:bg-slate-900 not-last:even:bg-slate-800 "}
-            classList={{ 
-                "!bg-slate-500": isSelected(), 
-                "mt-8": isLastDraggedOver(), 
-                'outline-dashed outline-1': isLastSelected(),
+            class="text-ellipsis text-nowrap overflow-hidden p-1 cursor-default not-last:hover:bg-slate-700 transition-[margin-top] not-last:odd:bg-slate-900 not-last:even:bg-slate-800 relative sidepanel-item -outline-offset-1"
+            classList={{
+                "!bg-slate-500": props.data.isSelected,
+                "mt-4": props.data.lastDraggedOver,
+                'outline-dashed outline-1': props.data.selectedLast,
                 "text-gray-400!": props.data.cantPlay,
                 "text-orange-500": isPlaying(),
             }}
-            draggable={props.i() !== state.sidePanel.list.length}
-            data-i={props.i()}
+            data-i={props.i}
             onClick={e => {
                 e.preventDefault();
-                if (props.i() === state.sidePanel.list.length) return //invisible item at the end of the list
+                if (props.i === state.sidePanel.list.length) return //invisible item at the end of the list
 
                 if (e.ctrlKey) {
-                    if (isSelected()) {
-                        state.sidePanel.selections.delete(props.i());
+                    if (props.data.isSelected) {
+                        state.sidePanel.selections.unselect(props.i)
                     }
                     else {
-                        state.sidePanel.selections.add(props.i())
+                        state.sidePanel.selections.add(props.i)
                     }
                 }
                 else if (e.shiftKey) {
-                    const [min, max] = [Math.min(props.i(), state.sidePanel.lastSelection), Math.max(props.i(), state.sidePanel.lastSelection)];
+                    const [min, max] = [Math.min(props.i, state.sidePanel.selections.lastSelection), Math.max(props.i, state.sidePanel.selections.lastSelection)];
                     for (let i = min; i <= max; i++) {
                         state.sidePanel.selections.add(i);
                     }
-                    state.sidePanel.setLastSelection(props.i());
+                    state.sidePanel.selections.setLastSelection(props.i);
                 }
                 else {
-                    state.sidePanel.selections.clear();
-                    state.sidePanel.selections.add(props.i());
-                    state.sidePanel.setLastSelection(props.i());
+                    state.sidePanel.selections.set(props.i)
                 }
+            }}
+            ondragenter={e => {
+                clearTimeout(timerId);
+                j = props.i;
+                timerId = setTimeout(() => {
+                    state.sidePanel.setLastDraggedOver(props.i);
+                    j = -1
+                }, 100)
             }}
             ondragover={e => {
                 e.preventDefault();
-                if (!onCooldown) {
-                    state.sidePanel.setLastDraggedOver(props.i());
-                    onCooldown = true;
-                    timerId = setTimeout(() => (onCooldown = false), 250);
-                }
             }}
             ondragend={e => {
                 e.preventDefault();
+                clearTimeout(timerId);
+                if (j > -1) {
+                    state.sidePanel.setLastDraggedOver(j)
+                }
+                if (state.sidePanel.lastDraggedOver == -1) return;
                 const newArr: typeof state.sidePanel.list = [];
                 for (let i = 0; i < state.sidePanel.lastDraggedOver; i++) {
-                    if (state.sidePanel.selections.has(i)) continue;
+                    if (state.sidePanel.selections.all.has(i)) continue;
                     newArr.push(state.sidePanel.list[i]);
                 }
-                state.sidePanel.selections.forEach(num => {
+                state.sidePanel.selections.all.forEach(num => {
                     newArr.push(state.sidePanel.list[num]);
                 });
                 for (let i = state.sidePanel.lastDraggedOver; i < state.sidePanel.list.length; i++) {
-                    if (state.sidePanel.selections.has(i)) continue;
+                    if (state.sidePanel.selections.all.has(i)) continue;
                     newArr.push(state.sidePanel.list[i]);
                 }
                 state.sidePanel.setFiles(newArr);
                 state.sidePanel.setLastDraggedOver(-1)
-                state.sidePanel.selections.clear();
+                state.sidePanel.selections.all.clear();
             }}
             ondblclick={() => {
                 navigate(`/play?rowId=${props.data.rowId}`)

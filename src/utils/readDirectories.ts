@@ -1,6 +1,5 @@
 import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
-import { getFilmCache, getFilmDetails } from "../components/TopBar/getFilmDetails";
 import { PlaylistFile, state } from "../state";
 
 export async function readDirectories(dirs?: string[]) {
@@ -14,12 +13,11 @@ export async function readDirectories(dirs?: string[]) {
     
     const files: PlaylistFile[] = []
 
-    const cache = await getFilmCache();
-
     for (const directory of directories) {
         const fileList: { title: string, path: string }[] = await invoke('load_directory', { path: directory });
-        const f = getFilmDetails(fileList, cache)
-        files.push(...f)
+        for (const file of fileList) {
+            files.push(file)
+        }
     }
     return files;
 }

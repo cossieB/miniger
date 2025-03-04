@@ -10,12 +10,9 @@ export function AddPlaylistFilesToDatabaseBtn() {
         title="Add to database"
         classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
         onclick={async () => {
-            const files = state.sidePanel.list.filter(file => !file.isOnDb)
+            const files = state.sidePanel.list
             if (files.length == 0) return
             await addAction(files)
-            state.sidePanel.list.forEach(file => {
-                state.sidePanel.setIsOnDb(file.rowId)
-            })
         }} />;
 }
 

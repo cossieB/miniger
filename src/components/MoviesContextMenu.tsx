@@ -1,10 +1,17 @@
-import { For, Show } from "solid-js";
-import { PlaylistFile, state } from "../state";
+import { createUniqueId, For, Show, Suspense } from "solid-js";
+import { state } from "../state";
 import { ContextMenu } from "./ContextMenu/ContextMenu";
 import { open, } from "@tauri-apps/plugin-shell";
 import { invoke } from "@tauri-apps/api/core";
-import { useAction, useNavigate } from "@solidjs/router";
+import { createAsync, useAction, useNavigate } from "@solidjs/router";
 import { addDirectoriesToDatabase } from "~/api/mutations";
+import { getFilmByPath } from "~/api/data";
+import { Actor } from "~/datatypes";
+
+type F = {
+    title: string;
+    path: string;
+}
 
 type P = {
     contextMenu: {
@@ -12,7 +19,7 @@ type P = {
         x: number;
         y: number;
         close(): void;
-        data: PlaylistFile,
+        data: F,
         selections: P['contextMenu']['data'][]
     }
 }
@@ -23,15 +30,30 @@ export default function MoviesContextMenu(props: P) {
         <ContextMenu close={props.contextMenu.close} pos={{ x: props.contextMenu.x, y: props.contextMenu.y }} >
             <ContextMenu.Item
                 onClick={() => {
-                    state.sidePanel.setFiles(props.contextMenu.selections)
-                    navigate("/play?rowId=" + props.contextMenu.data.rowId)
+                    const playlist = props.contextMenu.selections.map(file => ({
+                        ...file,
+                        rowId: createUniqueId(),
+                        isSelected: false,
+                        selectedLast: false,
+                        lastDraggedOver: false
+                    }))
+                    state.sidePanel.setFiles(playlist)
+                    const rowId = playlist.find(file => file.path === props.contextMenu.data.path)!.rowId
+                    navigate("/play?rowId=" + rowId)
                 }}
             >
                 Play
             </ContextMenu.Item>
             <ContextMenu.Item
                 onClick={() => {
-                    state.sidePanel.push(props.contextMenu.selections)
+                    const playlist = props.contextMenu.selections.map(file => ({
+                        ...file,
+                        rowId: createUniqueId(),
+                        isSelected: false,
+                        selectedLast: false,
+                        lastDraggedOver: false
+                    }))
+                    state.sidePanel.push(playlist)
                 }}
             >
                 Add To Playlist
@@ -43,12 +65,14 @@ export default function MoviesContextMenu(props: P) {
 
 export function MoviesMenu(props: Pick<P['contextMenu'], 'data'>) {
     const addAction = useAction(addDirectoriesToDatabase)
+    const data = createAsync(() => getFilmByPath(props.data.path))
+    const actors = () => data() ? JSON.parse(data()!.actors) as Actor[] : []
+    const tags = () => data() ? JSON.parse(data()!.tags) as string[] : []
     return (
-        <>
-            <Show when={!props.data.isOnDb}>
+        <Suspense>
+            <Show when={data() === null}>
                 <ContextMenu.Item onClick={async () => {
                     await addAction([props.data])
-                    state.sidePanel.setIsOnDb(props.data.rowId)
                 }} >
                     Add To Database
                 </ContextMenu.Item>
@@ -56,9 +80,9 @@ export function MoviesMenu(props: Pick<P['contextMenu'], 'data'>) {
             <ContextMenu.Item onClick={() => state.setMiniplayer({ path: props.data.path, title: props.data.title })}>
                 Play In Miniplayer
             </ContextMenu.Item>
-            <Show when={props.data.tags.length > 0}>
+            <Show when={tags().length > 0}>
                 <ContextMenu.SubMenu label="More From Genre" >
-                    <For each={props.data.tags}>
+                    <For each={tags()}>
                         {tag =>
                             <ContextMenu.Link href={`/movies/tags/${tag}`}>
                                 {tag}
@@ -67,9 +91,9 @@ export function MoviesMenu(props: Pick<P['contextMenu'], 'data'>) {
                     </For>
                 </ContextMenu.SubMenu>
             </Show>
-            <Show when={props.data.actors.length > 0}>
+            <Show when={actors().length > 0}>
                 <ContextMenu.SubMenu label="More From Actor" >
-                    <For each={props.data.actors}>
+                    <For each={actors()}>
                         {actor =>
                             <ContextMenu.Link href={`/movies/actors/${actor.actor_id}`}>
                                 {actor.name}
@@ -78,9 +102,9 @@ export function MoviesMenu(props: Pick<P['contextMenu'], 'data'>) {
                     </For>
                 </ContextMenu.SubMenu>
             </Show>
-            <Show when={props.data.studio_id}>
-                <ContextMenu.Link href={`/movies/studios/${props.data.studio_id}`}>
-                    More From {props.data.studio_name}
+            <Show when={data()?.studio_id}>
+                <ContextMenu.Link href={`/movies/studios/${data()?.studio_id}`}>
+                    More From {data()?.studio_name}
                 </ContextMenu.Link>
             </Show>
             <ContextMenu.Item
@@ -107,6 +131,6 @@ export function MoviesMenu(props: Pick<P['contextMenu'], 'data'>) {
             >
                 Show In Explorer
             </ContextMenu.Item>
-        </>
+        </Suspense>
     )
 }

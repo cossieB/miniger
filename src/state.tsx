@@ -1,26 +1,29 @@
-import { ReactiveSet } from "@solid-primitives/set";
 import { GridApi } from "ag-grid-community";
 import { createStore } from "solid-js/store";
-import { Actor } from "./datatypes";
 import shuffleArray from "./lib/shuffleArray";
+import { createUniqueId } from "solid-js";
 
 export type PlaylistFile = {
     title: string;
     path: string;
-    studio_name: string | null;
-    studio_id: number | null;
-    actors: Actor[],
-    tags: string[];
-    rowId: string,
     cantPlay?: boolean,
-    isOnDb: boolean
+    rowId?: string
 };
+
+type ExtraProps = {
+    rowId: string,
+    isSelected: boolean,
+    selectedLast: boolean,
+    lastDraggedOver: boolean
+}
+
+type SidepanelFile = ExtraProps & PlaylistFile
 
 const [state, setState] = createStore({
     gridApi: undefined as GridApi<any> | undefined,
     setGridApi: (g: GridApi<any> | undefined) => {
         setState('gridApi', g)
-    },   
+    },
     status: {
         message: "",
         timerId: -1,
@@ -47,16 +50,73 @@ const [state, setState] = createStore({
         }
     },
     sidePanel: {
-        list: [] as PlaylistFile[],
-        selections: new ReactiveSet<number>(),
-        lastSelection: -1,
+        list: [] as SidepanelFile[],
+        selections: {
+            lastSelection: -1,
+            all: new Set<number>(),
+            add: (i: number) => {
+                if (i < 0 || i > state.sidePanel.list.length) return
+                state.sidePanel.setField(i, "isSelected", true)
+                state.sidePanel.selections.all.add(i);
+                state.sidePanel.selections.setLastSelection(i)
+            },
+            set: (i: number) => {
+                state.sidePanel.selections.all.forEach(num => {
+                    state.sidePanel.setField(num, "isSelected", false)
+                })
+                state.sidePanel.setField(i, "isSelected", true)
+                state.sidePanel.selections.all.add(i);
+                state.sidePanel.selections.setLastSelection(i)
+            },
+            deleteSelections: () => {
+                state.sidePanel.selections.setLastSelection(-1)
+                setState('sidePanel', prev => ({
+                    list: prev.list.filter((_, i) => !state.sidePanel.selections.all.has(i)),
+                }))
+                state.sidePanel.selections.all.clear()
+            },
+            clearSelections: () => {
+                state.sidePanel.selections.all.forEach(num => {
+                    state.sidePanel.setField(num, "isSelected", false)
+                })
+                state.sidePanel.selections.all.clear();
+                state.sidePanel.selections.setLastSelection(-1)
+            },
+            setLastSelection: (i: number) => {
+                const last = state.sidePanel.selections.lastSelection
+                setState('sidePanel', 'selections', 'lastSelection', i);
+                if (last > -1 && last < state.sidePanel.list.length)
+                    setState('sidePanel', 'list', last, 'selectedLast', false)
+                if (i > -1 && i < state.sidePanel.list.length)
+                    setState('sidePanel', 'list', i, 'selectedLast', true)
+            },
+            unselect: (i: number) => {
+                state.sidePanel.selections.all.delete(i)
+                state.sidePanel.setField(i, 'isSelected', false);
+            }
+        },
+
         lastDraggedOver: -1,
         width: 300,
         push: (items: PlaylistFile[]) => {
-            setState('sidePanel', 'list', prev => [...prev, ...items]);
+            setState('sidePanel', 'list', prev => [...prev, ...items.map(x => ({
+                ...x,
+                cantPlay: false,
+                isSelected: false,
+                selectedLast: false,
+                lastDraggedOver: false,
+                rowId: x.rowId ?? createUniqueId()
+            }))]);
         },
         insertAt(index: number, items: PlaylistFile[],) {
-            setState('sidePanel', 'list', prev => prev.toSpliced(index, 0, ...items));
+            setState('sidePanel', 'list', prev => prev.toSpliced(index, 0, ...items.map(x => ({
+                ...x,
+                cantPlay: false,
+                isSelected: false,
+                selectedLast: false,
+                lastDraggedOver: false,
+                rowId: x.rowId ?? createUniqueId()
+            }))));
         },
         clear: () => {
             setState('sidePanel', 'list', [])
@@ -65,23 +125,22 @@ const [state, setState] = createStore({
             setState('sidePanel', 'list', prev => shuffleArray(prev))
         },
         setFiles: (files: PlaylistFile[]) => {
-            setState('sidePanel', 'list', files)
+            setState('sidePanel', 'list', files.map(x => ({
+                ...x,
+                cantPlay: false,
+                isSelected: false,
+                selectedLast: false,
+                lastDraggedOver: false,
+                rowId: x.rowId ?? createUniqueId()
+            })))
         },
-        deleteSelections: () => {
-            setState('sidePanel', prev => ({
-                list: prev.list.filter((_item, i) => !state.sidePanel.selections.has(i)),
-                lastSelection: -1
-            }))
-            state.sidePanel.selections.clear()
-        },
-        clearSelections: () => {
-            state.sidePanel.selections.clear();
-            setState('sidePanel', 'lastSelection', -1)
-        },
-        setLastSelection: (i: number) => {
-            setState('sidePanel', 'lastSelection', i)
-        },
+
         setLastDraggedOver: (i: number) => {
+            const last = state.sidePanel.lastDraggedOver;
+            if (last > -1 && last < state.sidePanel.list.length)
+                setState('sidePanel', 'list', last, 'lastDraggedOver', false)
+            if (i > -1 && i < state.sidePanel.list.length)
+                setState('sidePanel', 'list', i, 'lastDraggedOver', true)
             setState('sidePanel', 'lastDraggedOver', i);
         },
         setWidth: (width: number) => {
@@ -93,12 +152,10 @@ const [state, setState] = createStore({
                 ...prev, cantPlay: true
             }))
         },
-        setIsOnDb: (rowId: string, isOnDb = true) => {
-            const i = state.sidePanel.list.findIndex(p => p.rowId === rowId)
-            setState('sidePanel', 'list', i, prev => ({
-                ...prev, isOnDb
-            }))
-        }
+        setField: <T extends keyof ExtraProps>(i: number, field: T, value: ExtraProps[T]) => {
+            //@ts-expect-error
+            setState("sidePanel", 'list', i, field, value)
+        },
     },
     mainPanel: {
         width: () => state.windowDimensions.width - state.tree.width - state.sidePanel.width,
@@ -116,14 +173,14 @@ const [state, setState] = createStore({
     windowDimensions: {
         width: window.innerWidth,
         height: window.innerHeight,
-        set: (dimensions: {width?: number, height?: number}) => {
-            setState('windowDimensions', prev => ({...prev, ...dimensions}))
+        set: (dimensions: { width?: number, height?: number }) => {
+            setState('windowDimensions', prev => ({ ...prev, ...dimensions }))
         }
     },
-    miniplayer: null as {title: string, path: string} | null,
-    setMiniplayer: (obj: {title: string, path: string} | null) => {
+    miniplayer: null as { title: string, path: string } | null,
+    setMiniplayer: (obj: { title: string, path: string } | null) => {
         setState('miniplayer', obj)
     }
 })
 
-export {state}
+export { state }

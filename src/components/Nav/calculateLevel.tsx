@@ -1,5 +1,3 @@
-import { createSignal, onMount } from "solid-js";
-
 export function calculateLevel(elem: Element | null): number {
     let level = 0;
     while (true) {
@@ -10,11 +8,3 @@ export function calculateLevel(elem: Element | null): number {
     }
     return level;
 }
-
-function useLevel() {
-    let ref!: HTMLElement
-    const [level, setLevel] = createSignal(0)
-    onMount(() => setLevel(calculateLevel(ref)))
-    return level
-}
-

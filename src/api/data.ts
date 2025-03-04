@@ -143,7 +143,7 @@ export const getFilmsByStudio = query(async (studioId: number) => {
 
 export const getFilmByPath = query(async (path: string) => {
     await using db = await getDatabase()
-    return await db.connection.select<DetailedDbFilm[]>(`
+    const res = await db.connection.select<DetailedDbFilm[]>(`
     WITH tq AS (
         SELECT JSON_GROUP_ARRAY(tag) tags, film_id
         FROM film_tag
@@ -166,6 +166,7 @@ export const getFilmByPath = query(async (path: string) => {
     LEFT JOIN aq USING (film_id)
     WHERE path = $1
     `, [path]) 
+    return res.at(0) ?? null
 }, 'filmByPath')
 
 export const getActorsByFilm = query(async (filmId: number) => {

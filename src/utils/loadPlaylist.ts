@@ -1,9 +1,9 @@
 import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
-import { getFilmCache, getFilmDetails, processPlaylist } from "../components/TopBar/getFilmDetails";
 import { state } from "../state";
 import extensions from "~/videoExtensions.json"
 import { sep } from "@tauri-apps/api/path";
+import { createUniqueId } from "solid-js";
 
 export async function loadPlaylist() {
     const selection = await open({
@@ -19,9 +19,13 @@ export async function loadPlaylist() {
         const fileList: { title: string; path: string; }[] = await invoke("read_playlist", {
             playlist: selection
         });
-        const cache = await getFilmCache();
-        const films = getFilmDetails(fileList, cache);
-        state.sidePanel.setFiles(films);
+        state.sidePanel.setFiles(fileList.map(f => ({
+            ...f, 
+            rowId: createUniqueId(),
+            isSelected: false,
+            selectedLast: false,
+            lastDraggedOver: false
+        })));
     }
     catch (error) {
         state.status.setStatus(error as string);
@@ -38,9 +42,13 @@ export async function loadVideos() {
         }]
     })
     if (!selection?.length) return;
-    const files = await processPlaylist(selection.map(f => ({
+    const files = selection.map(f => ({
         path: f,
-        title: f.slice(f.lastIndexOf(sep()) + 1, f.lastIndexOf("."))
-    })))
+        title: f.slice(f.lastIndexOf(sep()) + 1),
+        rowId: createUniqueId(),
+        isSelected: false,
+        selectedLast: false,
+        lastDraggedOver: false
+    }))
     state.sidePanel.setFiles(files);
 }

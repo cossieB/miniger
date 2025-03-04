@@ -1,5 +1,5 @@
 import { TopBar } from "./components/TopBar/TopBar";
-import { JSXElement, createRenderEffect, on, onCleanup, onMount } from "solid-js";
+import { JSXElement, createEffect, on, onCleanup, onMount } from "solid-js";
 import { SidePanel } from "./components/sidePanel/SidePanel";
 import { state } from "./state";
 import { BottomBar } from "./components/BottomBar";
@@ -13,7 +13,7 @@ import "~/events/mainWindow"
 function App(props: { children?: JSXElement }) {
     const location = useLocation()
     useWatchJson()
-    createRenderEffect(on(() => location.pathname, () => {
+    createEffect(on(() => location.pathname, () => {
         state.setGridApi(undefined)
     }))
 
