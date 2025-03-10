@@ -2,12 +2,14 @@ import { getAllWindows } from "@tauri-apps/api/window";
 import { BaseDirectory, writeTextFile } from "@tauri-apps/plugin-fs";
 import { unwrap } from "solid-js/store";
 import { state } from "~/state";
-import {revalidate} from "@solidjs/router"
+import { revalidate } from "@solidjs/router"
 import { getFilms } from "~/api/data";
 import { loadPlaylist, loadVideos } from "~/utils/loadPlaylist";
 import { openSettingsWindow } from "~/utils/openSettingsWindow";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { invoke } from "@tauri-apps/api/core";
+import { join, tempDir, } from "@tauri-apps/api/path";
+import { open } from "@tauri-apps/plugin-shell";
 
 export type SessionJSON = {
     list: typeof state['sidePanel']['list'],
@@ -17,7 +19,7 @@ export type SessionJSON = {
 
 getAllWindows().then(windows => {
     const mainWindow = windows.find(w => w.label === "main")!
-    
+
     mainWindow.listen<string>("set-status", e => {
         state.status.setStatus(e.payload)
     })
@@ -28,7 +30,7 @@ getAllWindows().then(windows => {
             sidePanelWidth: unwrap(state.sidePanel.width) / window.innerWidth,
             treeWidth: unwrap(state.tree.width) / window.innerWidth,
         };
-        
+
         await writeTextFile("session.json", JSON.stringify(data), {
             baseDir: BaseDirectory.AppData
         });
@@ -61,11 +63,23 @@ getAllWindows().then(windows => {
             title: "Convert Playlist"
         })
         window.once("tauri://created", () => {
-    
+
         })
         window.once("tauri://error", (e) => {
             invoke("echo", { string: JSON.stringify(e.payload) });
-    
+
         })
+    })
+    mainWindow.listen("play_playlist", async () => {
+        try {
+            const path = await join(await tempDir(), "mngr_temp.m3u")
+            await invoke("save_playlist", {
+                path,
+                files: state.sidePanel.list
+            })
+            open(path)
+        } catch (error) {
+            state.status.setStatus(String(error))
+        }
     })
 })

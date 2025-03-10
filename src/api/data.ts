@@ -1,5 +1,5 @@
 import { query } from "@solidjs/router"
-import { Studio, Actor, FilmTag, ActorFilm, DetailedDbFilm } from "../datatypes"
+import type { Studio, Actor, DetailedDbFilm } from "../datatypes"
 import { invoke } from "@tauri-apps/api/core"
 import { getDatabase } from "./db"
 
@@ -32,23 +32,13 @@ export const getFilms = query(async () => {
 
 export const getStudios = query(async () => {
     await using db = await getDatabase()
-    return await db.connection.select<Studio[]>("SELECT * FROM studio ORDER BY name ASC") 
+    return await db.connection.select<Studio[]>("SELECT * FROM studio ORDER BY LOWER(name) ASC") 
 }, 'studios')
 
 export const getActors = query(async () => {
     await using db = await getDatabase()
-    return await db.connection.select<Actor[]>("SELECT * FROM actor ORDER BY name")
+    return await db.connection.select<Actor[]>("SELECT * FROM actor ORDER BY LOWER(name)")
 }, 'actors')
-
-export const getFilmTags = query(async () => {
-    await using db = await getDatabase()
-    return await db.connection.select<FilmTag[]>("SELECT * FROM film_tag") 
-}, 'tags')
-
-export const getActorFilms = query(async () => {
-    await using db = await getDatabase()
-    return await db.connection.select<ActorFilm[]>("SELECT * FROM actor_film")
-}, 'appearances')
 
 export const getInaccessible = query(async () => {
     await using db = await getDatabase()
@@ -83,6 +73,7 @@ export const getFilmsByTag = query(async (tag: string) => {
     LEFT JOIN studio USING(studio_id)
     LEFT JOIN tq USING(film_id)
     LEFT JOIN aq USING(film_id)
+    ORDER BY LOWER(title)
     `, [decoded])
 }, 'filmsByTag')
 
@@ -111,6 +102,7 @@ export const getFilmsByActor = query(async (actorId: number) => {
     LEFT JOIN tq USING (film_id)
     LEFT JOIN aq USING (film_id)
     WHERE actor_id = $1
+    ORDER BY LOWER(title)
     `, [actorId])
 }, "filmsByActor")
 
@@ -138,6 +130,7 @@ export const getFilmsByStudio = query(async (studioId: number) => {
     LEFT JOIN tq USING(film_id)
     LEFT JOIN aq USING(film_id)
     WHERE studio_id = $1
+    ORDER BY LOWER(title)
     `, [studioId]) 
 }, "filmsByStudio")
 
@@ -168,17 +161,6 @@ export const getFilmByPath = query(async (path: string) => {
     `, [path]) 
     return res.at(0) ?? null
 }, 'filmByPath')
-
-export const getActorsByFilm = query(async (filmId: number) => {
-    await using db = await getDatabase()
-    return await db.connection.select<Actor[]>(`
-    SELECT actor.*
-    FROM actor_film
-    JOIN actor using(actor_id)
-    WHERE film_id = $1
-    `, [filmId])
-}, "actorsByFilm")
-
 
 export const getTags = query(async () => {
     await using db = await getDatabase()

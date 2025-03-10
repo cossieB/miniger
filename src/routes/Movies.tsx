@@ -74,6 +74,13 @@ export function Movies(props: Props) {
                     defaultColDef={{
                         suppressKeyboardEvent: ({ event }) => event.key === "Delete",
                     }}
+                    onCellKeyDown={params => {
+                        if (!params.event) return
+                        const e = params.event as KeyboardEvent
+                        if (e.key === "a" && e.ctrlKey) {
+                            params.api.selectAll()
+                        }
+                    }}
                     columnDefs={[{
                         field: 'title',
                         filter: true,

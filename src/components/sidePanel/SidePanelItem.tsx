@@ -15,7 +15,6 @@ export function SidePanelItem(props: P) {
 
     const [searchParams] = useSearchParams<{ rowId: string }>();
     const location = useLocation()
-    console.log("HERE")
     const isPlaying = createMemo(() => {
         if (location.pathname !== "/play") return false;
         return searchParams.rowId === props.data.rowId;

@@ -8,6 +8,7 @@ pub struct  PlaylistFile {
     title: String,
     path: String,
     rowId: String,
+    cantPlay: Option<bool>
 }
 
 #[tauri::command]

@@ -25,6 +25,19 @@ export function SidePanel() {
         <section
             class="bg-slate-950 overflow-x-hidden select-none shrink-0 droppable h-[calc(100vh - 4rem)] flex flex-col"
             style={{ width: state.sidePanel.width + "px" }}
+            tabindex={0}
+            onkeyup={e => {
+                e.preventDefault();
+                if (e.key == 'Delete') {
+                    state.sidePanel.selections.deleteSelections()
+                }
+            
+                if (e.key == "a" && e.ctrlKey ) {
+                    for (let i = 0; i < state.sidePanel.list.length; i++) {
+                        state.sidePanel.selections.add(i)
+                    }
+                }
+            }}
         >
             <ul
                 class="overflow-y-auto overflow-x-hidden droppable shrink"

@@ -4,7 +4,7 @@ import { SidePanel } from "./components/sidePanel/SidePanel";
 import { state } from "./state";
 import { BottomBar } from "./components/BottomBar";
 import Resizer from "./components/Resizer";
-import { handleKeyup, handleResize } from "./events";
+import { handleResize } from "./events";
 import { useLocation } from "@solidjs/router";
 import { Nav } from "./components/Nav/Nav";
 import { readSession, useWatchJson } from "./readSettings";
@@ -18,12 +18,10 @@ function App(props: { children?: JSXElement }) {
     }))
 
     onMount(() => {
-        document.addEventListener('keyup', handleKeyup);
         window.addEventListener("resize", handleResize);
         readSession()
     })
     onCleanup(() => {
-        document.removeEventListener("keyup", handleKeyup);
         window.removeEventListener("resize", handleResize)
     })
 

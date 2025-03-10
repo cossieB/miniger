@@ -2,7 +2,7 @@ import { action, json } from "@solidjs/router";
 import { Actor, Studio } from "../datatypes";
 import { state } from "../state";
 import { getDatabase } from "./db";
-import { getActors, getFilms, getInaccessible, getStudios } from "./data";
+import { getActors, getFilms, getFilmsByTag, getInaccessible, getStudios, getTags } from "./data";
 
 export const updateTag = action(async (filmId: string, tags: string[]) => {
     await using db = await getDatabase();
@@ -13,7 +13,7 @@ export const updateTag = action(async (filmId: string, tags: string[]) => {
             await db.connection.select("INSERT INTO film_tag (film_id, tag) VALUES ($1, $2)", [filmId, tag.toLowerCase()])
         await db.connection.select("COMMIT")
 
-        return json(undefined, {revalidate: [getFilms.key]})
+        return json(undefined, {revalidate: [getFilms.key, getTags.key, getFilmsByTag.key]})
     }
     catch (error) {
         await db.connection.select("ROLLBACK")
