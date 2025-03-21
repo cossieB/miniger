@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core"
 import { open, save } from "@tauri-apps/plugin-dialog"
-import { createSignal, onMount } from "solid-js"
+import { createSignal } from "solid-js"
 
 export function Convert() {
     const [source, setSource] = createSignal("")
@@ -8,11 +8,8 @@ export function Convert() {
     const [isBusy, setIsBusy] = createSignal(false)
     const [message, setMessage] = createSignal("")
 
-    onMount(() => {
-        document.querySelectorAll("nav").forEach(el => el.remove())
-    })
     return (
-        <div class="w-screen h-screen bg-slate-800 z-[999] absolute p-2 overflow-y-auto scroll">
+        <div class="w-screen h-screen bg-slate-800 z-[999] absolute p-2 overflow-y-auto scroll text-white">
             <div
                 class="grid grid-cols-[auto_1fr] gap-2 items-center"
             >
@@ -78,8 +75,9 @@ export function Convert() {
                             setSource("")
                             setDestination("")
                         } 
-                        catch (error) {
-                            setMessage("Conversion error: " + error)
+                        catch (error: any) {
+                            console.error(error)
+                            setMessage("Conversion error: " + error.message)
                         }
                         finally {
                             setIsBusy(false);

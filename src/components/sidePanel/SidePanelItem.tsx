@@ -12,7 +12,6 @@ let j = -1
 
 export function SidePanelItem(props: P) {
     const navigate = useNavigate()
-
     const [searchParams] = useSearchParams<{ rowId: string }>();
     const location = useLocation()
     const isPlaying = createMemo(() => {
@@ -23,7 +22,7 @@ export function SidePanelItem(props: P) {
 
     return (
         <li
-            class="text-ellipsis text-nowrap overflow-hidden p-1 cursor-default not-last:hover:bg-slate-700 transition-[margin-top] not-last:odd:bg-slate-900 not-last:even:bg-slate-800 relative sidepanel-item -outline-offset-1"
+            class="text-ellipsis text-nowrap overflow-hidden p-1 cursor-default not-last:hover:bg-slate-700 transition-[margin-top,padding-top] not-last:odd:bg-slate-900 not-last:even:bg-slate-800 relative sidepanel-item -outline-offset-1"
             classList={{
                 "!bg-slate-500": props.data.isSelected,
                 "mt-4": props.data.lastDraggedOver,
@@ -33,7 +32,7 @@ export function SidePanelItem(props: P) {
             }}
             data-i={props.i}
             onClick={e => {
-                e.preventDefault();
+                e.preventDefault(); 
                 if (props.i === state.sidePanel.list.length) return //invisible item at the end of the list
 
                 if (e.ctrlKey) {
@@ -90,6 +89,7 @@ export function SidePanelItem(props: P) {
                 state.sidePanel.selections.all.clear();
             }}
             ondblclick={() => {
+                if (location.pathname === "/dragdrop") return;
                 navigate(`/play?rowId=${props.data.rowId}`)
             }}
             {...attr}

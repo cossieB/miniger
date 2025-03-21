@@ -18,6 +18,7 @@
     "core:window:allow-close",
     "core:window:allow-destroy",
     "core:window:allow-hide",
+    "core:window:allow-set-enabled",
     "core:window:allow-show",
     "dialog:allow-ask",
     "dialog:allow-confirm",

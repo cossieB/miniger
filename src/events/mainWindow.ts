@@ -5,7 +5,6 @@ import { state } from "~/state";
 import { revalidate } from "@solidjs/router"
 import { getFilms } from "~/api/data";
 import { loadPlaylist, loadVideos } from "~/utils/loadPlaylist";
-import { openSettingsWindow } from "~/utils/openSettingsWindow";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { invoke } from "@tauri-apps/api/core";
 import { join, tempDir, } from "@tauri-apps/api/path";
@@ -49,7 +48,24 @@ getAllWindows().then(windows => {
         loadVideos()
     })
     mainWindow.listen("scan_folders", () => {
-        openSettingsWindow()
+        const window = new WebviewWindow("settings", {
+            alwaysOnTop: true,
+            center: true,
+            height: 600,
+            width: 600,
+            url: "/settings",
+            maximizable: false,
+            minimizable: false,
+        })
+        window.once("tauri://created", () => {
+            mainWindow.setEnabled(false)
+        })
+        window.once("tauri://error", (e) => {
+            invoke("echo", { string: JSON.stringify(e.payload) });
+        })
+        window.onCloseRequested(() => {
+            mainWindow.setEnabled(true)
+        })
     })
     mainWindow.listen("convert_playlist", () => {
         const window = new WebviewWindow("convert", {
@@ -63,11 +79,13 @@ getAllWindows().then(windows => {
             title: "Convert Playlist"
         })
         window.once("tauri://created", () => {
-
+            mainWindow.setEnabled(false)
         })
         window.once("tauri://error", (e) => {
             invoke("echo", { string: JSON.stringify(e.payload) });
-
+        })
+        window.onCloseRequested(() => {
+            mainWindow.setEnabled(true)
         })
     })
     mainWindow.listen("play_playlist", async () => {
@@ -81,5 +99,28 @@ getAllWindows().then(windows => {
         } catch (error) {
             state.status.setStatus(String(error))
         }
+    })
+    mainWindow.listen("open_drag_drop", () => {
+        const window = new WebviewWindow("drag-drop", {
+            url: "/dragdrop",
+            dragDropEnabled: true,
+            title: "Drop files",
+        })
+        window.once("tauri://created", (e) => {
+            mainWindow.setEnabled(false)
+        })
+        window.once("tauri://error", (e) => {
+            invoke("echo", { string: JSON.stringify(e.payload) });
+
+        })
+        window.onCloseRequested(() => {
+            mainWindow.setEnabled(true)
+        })
+    })
+    mainWindow.listen("drop_ready", (e) => {
+        mainWindow.emitTo("drag-drop", "sidepanel-files", state.sidePanel.list.map(x => ({ title: x.title, path: x.path })))
+    })
+    mainWindow.listen<typeof state['sidePanel']['list']>("files-dropped", e => {
+        state.sidePanel.setFiles(e.payload);
     })
 })

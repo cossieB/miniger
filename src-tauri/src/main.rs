@@ -17,6 +17,7 @@ fn main() {
                 .text("load_videos", "Load Videos")
                 .text("scan_folders", "Scan Folders")
                 .text("play_playlist", "Play Playlist")
+                .text("open_drag_drop", "Drop Files")
                 .quit()
                 .build()?;
 

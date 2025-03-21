@@ -14,13 +14,12 @@ export function Settings() {
         initialValue: []
     })
     onMount(() => {
-        document.querySelectorAll("nav").forEach(el => el.remove())
         scanNowBtn.focus()
     })
     const action = useAction(addDirectoriesToDatabase)
     const submissions = useSubmission(addDirectoriesToDatabase)
     return (
-        <div class="w-screen h-screen bg-slate-800 z-[999] absolute p-2 overflow-y-auto scroll"
+        <div class="w-screen h-screen bg-slate-800 z-[999] absolute p-2 overflow-y-auto scroll text-white"
             style={{ "scrollbar-gutter": "stable" }}
         >
             <span>Folders</span>
@@ -84,7 +83,7 @@ export function Settings() {
                                             mutate(p => p.filter((_, j) => j != i()))
                                             setHasChanged(true);
                                         }}>
-                                        <TrashSvg />
+                                        <TrashSvg color="red" />
                                     </button>
                                 </td>
                             </tr>
