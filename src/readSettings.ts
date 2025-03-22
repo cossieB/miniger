@@ -1,15 +1,15 @@
 import { readTextFile, BaseDirectory } from "@tauri-apps/plugin-fs";
 import { state } from "./state";
-import { getAllWindows } from "@tauri-apps/api/window"
 import { SessionJSON } from "./events/mainWindow";
 import { WatchJSON } from "./routes/Settings";
 import { readDirectories } from "./utils/readDirectories";
 import { filterMap } from "./lib/filterMap";
 import { onMount } from "solid-js";
-import { useAction } from "@solidjs/router";
+import { useAction, useNavigate } from "@solidjs/router";
 import { addDirectoriesToDatabase } from "./api/mutations";
 
 export async function readSession() {
+    const navigate = useNavigate()
     try {
         const content = await readTextFile("session.json", {
             baseDir: BaseDirectory.AppData
@@ -23,11 +23,7 @@ export async function readSession() {
     } catch (error) { }
 
     finally {
-        const windows = await getAllWindows()
-        const mainWindow = windows.find(window => window.label === "main")!
-        const splash = windows.find(window => window.label === "splash")!
-        await splash.destroy();
-        await mainWindow.show();
+        navigate("/")
     }
 }
 

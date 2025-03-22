@@ -1,12 +1,28 @@
 import { invoke } from "@tauri-apps/api/core"
+import { getCurrentWindow } from "@tauri-apps/api/window"
 import { open, save } from "@tauri-apps/plugin-dialog"
-import { createSignal } from "solid-js"
+import { createSignal, onMount } from "solid-js"
 
 export function Convert() {
     const [source, setSource] = createSignal("")
     const [destination, setDestination] = createSignal("")
     const [isBusy, setIsBusy] = createSignal(false)
     const [message, setMessage] = createSignal("")
+
+    onMount(() => {
+        getCurrentWindow().listen<{paths: string[]}>("tauri://drag-drop", e => {
+            if (isBusy()) return;
+            setMessage("");
+            const path = e.payload.paths[0];
+            let idx = path.lastIndexOf(".")
+            if (idx < 0) 
+                return;
+            const extension = path.slice(idx + 1);
+            if (!extension) return
+            if (["mpcpl", "asx", "m3u", "pls"].includes(extension.toLowerCase()))
+                setSource(path)
+        })
+    })
 
     return (
         <div class="w-screen h-screen bg-slate-800 z-[999] absolute p-2 overflow-y-auto scroll text-white">

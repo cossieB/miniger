@@ -7,7 +7,7 @@ import Resizer from "./components/Resizer";
 import { handleResize } from "./events";
 import { useLocation } from "@solidjs/router";
 import { Nav } from "./components/Nav/Nav";
-import { readSession, useWatchJson } from "./readSettings";
+import { useWatchJson } from "./readSettings";
 import "~/events/mainWindow"
 
 function App(props: { children?: JSXElement }) {
@@ -19,7 +19,6 @@ function App(props: { children?: JSXElement }) {
 
     onMount(() => {
         window.addEventListener("resize", handleResize);
-        readSession()
     })
     onCleanup(() => {
         window.removeEventListener("resize", handleResize)

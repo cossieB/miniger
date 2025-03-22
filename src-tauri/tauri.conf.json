@@ -17,15 +17,8 @@
         "dragDropEnabled": false,
         "maximized": true,
         "label": "main",
-        "visible": false
-      },{
-        "height": 600,
-        "width": 600,
-        "resizable": false,
-        "maximizable": false,
-        "label": "splash",
-        "url": "splash.html",
-        "center": true
+        "visible": true,
+        "url": "/splash"
       }
     ],
     "security": {

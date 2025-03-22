@@ -15,6 +15,7 @@ import { Home } from "./routes/Home";
 import { Settings } from "./routes/Settings";
 import { Convert } from "./routes/Convert";
 import { DragDrop } from "./components/DragDrop";
+import { readSession } from "./readSettings";
 
 render(() => (
     <Router  >
@@ -50,7 +51,16 @@ render(() => (
         <Route path="/settings" component={Settings} />
         <Route path="/convert" component={Convert} />
         <Route path="/dragdrop" component={DragDrop} />
+        <Route path="/splash" component={Splash} />
     </Router>
 ), document.getElementById("root") as HTMLElement);
 
 
+function Splash() {
+    readSession()
+    return (
+        <main class="w-screen h-screen flex items-center justify-center">
+            <img class="animate-[spin_5s_linear_infinite] " src="/tauri.svg" />
+        </main>
+    )
+}

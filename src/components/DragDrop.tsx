@@ -1,4 +1,4 @@
-import { createEffect, createResource, Index, onMount } from "solid-js"
+import { createResource, Index } from "solid-js"
 import { getCurrentWindow } from "@tauri-apps/api/window"
 import { state } from "~/state"
 import { SidePanelItem } from "./sidePanel/SidePanelItem"
@@ -18,10 +18,8 @@ window.onCloseRequested(async () => {
 
 
 export function DragDrop() {
-    createEffect(() => {
-        console.log(state.sidePanel.list)
-    })
-    const [, {refetch}] = createResource(() => {
+
+    createResource(() => {
         getCurrentWindow().emitTo("main", "drop_ready")
     })
 
@@ -45,12 +43,6 @@ export function DragDrop() {
             <div
                 class="w-full flex justify-end"
             >
-                {/* <button
-                    class="bg-slate-700 rounded-sm p-1 mr-1"
-                    onclick={refetch}
-                >
-                    RESET
-                </button> */}
                 <button
                     class="bg-orange-500 rounded-sm p-1"
                     onclick={async () => {

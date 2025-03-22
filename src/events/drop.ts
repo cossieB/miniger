@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { sep } from "@tauri-apps/api/path";
 import { state } from "../state";
 import videoExtensions from "../videoExtensions.json"
-import { getAllWindows, getCurrentWindow } from "@tauri-apps/api/window";
+import { getAllWindows } from "@tauri-apps/api/window";
 
 type E = {
     paths: string[];

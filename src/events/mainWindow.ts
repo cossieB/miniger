@@ -76,7 +76,8 @@ getAllWindows().then(windows => {
             url: "/convert",
             maximizable: false,
             minimizable: false,
-            title: "Convert Playlist"
+            title: "Convert Playlist",
+            dragDropEnabled: true,
         })
         window.once("tauri://created", () => {
             mainWindow.setEnabled(false)
