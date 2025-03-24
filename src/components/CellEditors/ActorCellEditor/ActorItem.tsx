@@ -31,10 +31,26 @@ export function ActorItem(props: Props) {
                 classList={{ 'border-2 border-green-500': props.rowActors().some((x: any) => x.actor_id === props.actor.actor_id) }}
             >
                 <div class="h-[90%] overflow-hidden">
-                    <img src={props.actor.image ? convertFileSrc(dir()! + props.actor.image) : "/Question_Mark.svg"} class="object-cover object-top h-full w-full" loading="lazy" alt="" onerror={e => e.currentTarget.src = "/Question_Mark.svg" } />
+                    <img src={props.actor.image ? convertFileSrc(dir()! + props.actor.image) : "/Question_Mark.svg"} class="object-cover object-top h-full w-full" loading="lazy" alt="" onerror={e => e.currentTarget.src = "/Question_Mark.svg"} />
                 </div>
                 <span class="flex-1 flex items-center justify-center">{props.actor.name}</span>
             </li>
         </Suspense>
     );
+}
+
+export function ActorItem2(props: { actor: Actor }) {
+
+    return (
+        <Suspense>
+            <li                
+                class="overflow-hidden h-60 flex flex-col bg-slate-800 p-2"
+            >
+                <div class="h-[90%] overflow-hidden">
+                    <img src={props.actor.image ? convertFileSrc(dir()! + props.actor.image) : "/Question_Mark.svg"} class="object-cover object-top h-full w-full" loading="lazy" alt="" onerror={e => e.currentTarget.src = "/Question_Mark.svg"} />
+                </div>
+                <span class="flex-1 flex items-center justify-center">{props.actor.name}</span>
+            </li>
+        </Suspense>
+    )
 }

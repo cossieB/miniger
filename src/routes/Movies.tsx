@@ -1,7 +1,7 @@
 import { createAsync, useAction } from "@solidjs/router"
-import { GridApi } from "ag-grid-community"
+import { GridApi, ITooltipParams } from "ag-grid-community"
 import AgGridSolid from "ag-grid-solid"
-import { createMemo, Suspense, Show, createUniqueId } from "solid-js"
+import { createMemo, Suspense, Show, createUniqueId, For } from "solid-js"
 import { createStore } from "solid-js/store"
 import { type DetailedDbFilm } from "../datatypes"
 import { state } from "../state"
@@ -9,6 +9,7 @@ import { ActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSe
 import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
 import MoviesContextMenu from "../components/MoviesContextMenu"
 import { editFilm, updateTag } from "../api/mutations"
+import { ActorItem2 } from "~/components/CellEditors/ActorCellEditor/ActorItem"
 
 type Props = {
     fetcher(): Promise<DetailedDbFilm[] | undefined>
@@ -110,8 +111,11 @@ export function Movies(props: Props) {
                         cellEditor: ActorSelector,
                         cellEditorPopup: true,
                         cellEditorPopupPosition: "over",
+                        tooltipComponentParams: {
+                            delay: 7
+                        },
                         tooltipValueGetter: params => params.value.map((x: any) => x.name).join(", "),
-                        
+                        tooltipComponent: Tooltip
                     }, {
                         field: "release_date",
                         headerName: "Release Date",
@@ -137,5 +141,15 @@ export function Movies(props: Props) {
                 </Show>
             </div>
         </Suspense>
+    )
+}
+
+function Tooltip(params: ITooltipParams) {
+    return (
+        <ul class="grid text-center max-h-[50vh] overflow-auto max-w-[50vw]  actorsList">
+            <For each={params.data.actors}>
+                {actor => <ActorItem2 actor={actor} />}
+            </For>
+        </ul>
     )
 }
