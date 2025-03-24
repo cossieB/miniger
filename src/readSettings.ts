@@ -7,6 +7,7 @@ import { filterMap } from "./lib/filterMap";
 import { onMount } from "solid-js";
 import { useAction, useNavigate } from "@solidjs/router";
 import { addDirectoriesToDatabase } from "./api/mutations";
+import { sleep } from "./lib/sleep";
 
 export async function readSession() {
     const navigate = useNavigate()
@@ -28,7 +29,7 @@ export async function readSession() {
 }
 
 export async function readWatchJson(scanAll = false) {
-
+    await sleep(1000)
     try {
         const content = await readTextFile("watch.json", {
             baseDir: BaseDirectory.AppData

@@ -42,8 +42,8 @@ export const getActors = query(async () => {
 
 export const getInaccessible = query(async () => {
     await using db = await getDatabase()
-    const films = await db.connection.select("SELECT title, path FROM film")
-    return await invoke('get_inaccessible', { playlist: films }) as { title: string, path: string }[]
+    const films = await db.connection.select("SELECT title, path, film_id FROM film")
+    return await invoke('get_inaccessible', { playlist: films }) as { title: string, path: string, film_id: number }[]
 }, 'inaccessible')
 
 export const getFilmsByTag = query(async (tag: string) => {

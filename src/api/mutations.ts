@@ -162,12 +162,12 @@ export const updateStudio = action(async (field: string, value: string, studioId
     }
 })
 
-export const editFilm = action(async (field: string, value: string, filmId: number) => {
+export const editFilm = action(async (field: string, value: string, filmId: number, revalidate: string[] = []) => {
     await using db = await getDatabase();
 
     try {
         await db.connection.select(`UPDATE film SET ${field} = $1 WHERE film_id = $2`, [value, filmId])    
-        return json(undefined, {revalidate: []})
+        return json(undefined, {revalidate})
     } 
     catch (error) {
         

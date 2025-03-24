@@ -1,10 +1,12 @@
 import { Suspense, onCleanup, onMount } from "solid-js";
 import AgGridSolid from "ag-grid-solid";
-import { GridApi } from "ag-grid-community";
-import { confirm } from "@tauri-apps/plugin-dialog";
+import { GridApi, ICellEditorParams } from "ag-grid-community";
+import { confirm, open } from "@tauri-apps/plugin-dialog";
 import { getInaccessible } from "../api/data";
 import { createAsync, useAction } from "@solidjs/router";
-import { removeByPaths } from "../api/mutations";
+import { editFilm, removeByPaths } from "../api/mutations";
+import videoExtensions from "~/videoExtensions.json"
+import { SearchSvg } from "~/icons";
 
 export default function Inaccessible() {
     const removeAction = useAction(removeByPaths)
@@ -42,9 +44,6 @@ export default function Inaccessible() {
                     onGridReady={params => ((gridApi as any) = params.api)}
                     getRowId={params => params.data.path}
                     rowSelection="multiple"
-                    onCellContextMenu={e => {
-                        console.log(e)
-                    }}
                     onColumnHeaderContextMenu={e => {
                         console.log(e)
                     }}
@@ -52,12 +51,22 @@ export default function Inaccessible() {
                     columnDefs={[{
                         checkboxSelection: true,
                         headerCheckboxSelection: true,
-                        width: 150,
+                        width: 50,
                         suppressSizeToFit: true,
                     }, {
                         field: "title",
                     }, {
                         field: 'path'
+                    }, {
+                        editable: true,
+                        singleClickEdit: true,
+                        cellEditor: Find,
+                        width: 50,
+                        cellRenderer: () => (
+                            <div class="h-full flex items-center" title="Find this file" aria-label="Find this file">
+                                <SearchSvg />
+                            </div>
+                        )
                     }]}
                 />
             </div>
@@ -65,3 +74,18 @@ export default function Inaccessible() {
     )
 }
 
+function Find(props: ICellEditorParams) {
+    const action = useAction(editFilm)
+    onMount(async () => {
+        const sel = await open({
+            filters: [{
+                extensions: videoExtensions,
+                name: "Video Files"
+            }]
+        })
+        if (!sel) return props.stopEditing()
+        await action("path", sel, props.data.film_id, [getInaccessible.key])
+        props.stopEditing()
+    })
+    return null
+}
