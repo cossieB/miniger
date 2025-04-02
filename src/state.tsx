@@ -2,6 +2,7 @@ import { GridApi } from "ag-grid-community";
 import { createStore } from "solid-js/store";
 import shuffleArray from "./lib/shuffleArray";
 import { createUniqueId } from "solid-js";
+import { Require } from "./lib/utilityTypes";
 
 export type PlaylistFile = {
     title: string;
@@ -16,7 +17,7 @@ type ExtraProps = {
     lastDraggedOver: boolean
 }
 
-type SidepanelFile = ExtraProps & PlaylistFile
+type SidepanelFile = ExtraProps & Require<PlaylistFile, 'rowId'>
 
 const [state, setState] = createStore({
     gridApi: undefined as GridApi<any> | undefined,

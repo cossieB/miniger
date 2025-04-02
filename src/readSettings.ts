@@ -5,9 +5,10 @@ import { WatchJSON } from "./routes/Settings";
 import { readDirectories } from "./utils/readDirectories";
 import { filterMap } from "./lib/filterMap";
 import { onMount } from "solid-js";
-import { useAction, useNavigate } from "@solidjs/router";
+import { createAsync, useAction, useNavigate } from "@solidjs/router";
 import { addDirectoriesToDatabase } from "./api/mutations";
 import { sleep } from "./lib/sleep";
+import { getFilms } from "./api/data";
 
 export async function readSession() {
     const navigate = useNavigate()
@@ -28,16 +29,15 @@ export async function readSession() {
     }
 }
 
-export async function readWatchJson(scanAll = false) {
+async function readWatchJson() {
     await sleep(1000)
     try {
         const content = await readTextFile("watch.json", {
             baseDir: BaseDirectory.AppData
         })
         const data = JSON.parse(content) as WatchJSON[];
-        const t = filterMap(data, val => val.scanOnStart || scanAll, val => val.path)
+        const t = filterMap(data, val => val.scanOnStart, val => val.path)
         const files = await readDirectories(t)
-        if (!files?.length) return;
         return files
     } catch (error) {
         console.error(error);
@@ -46,13 +46,16 @@ export async function readWatchJson(scanAll = false) {
 }
 
 export function useWatchJson() {
+    const films = createAsync(() => getFilms())
     const action = useAction(addDirectoriesToDatabase)
     onMount(async () => {
         try {
             const files = await readWatchJson()
             if (!files?.length) return
             state.status.setStatus("Reading files....")
-            await action(files)
+            const paths = new Set((films.latest ?? []).map(f => f.path))
+            const newFiles = files.filter(f => !paths.has(f.path))
+            await action(newFiles)
             state.status.clear()
         } catch (error) {
             state.status.setStatus(String(error))

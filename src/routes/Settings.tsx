@@ -19,12 +19,14 @@ export function Settings() {
     const action = useAction(addDirectoriesToDatabase)
     const submissions = useSubmission(addDirectoriesToDatabase)
     return (
-        <div class="w-screen h-screen bg-slate-800 z-[999] absolute p-2 overflow-y-auto scroll text-white"
+        <div 
+            class="w-screen h-screen bg-slate-800 z-[999] absolute p-2 overflow-y-auto scroll text-white"
             style={{ "scrollbar-gutter": "stable" }}
         >
             <span>Folders</span>
             <button
                 class="bg-slate-700 rounded-sm float-end p-1"
+                disabled={submissions.pending}
                 onclick={async () => {
                     const dirs = await open({ multiple: true, directory: true });
                     if (!dirs?.length) return;
@@ -36,17 +38,16 @@ export function Settings() {
             <Show when={!hasChanged()}>
                 <button
                     ref={scanNowBtn}
-                    class="bg-slate-700 rounded-sm float-end p-1 mr-1"
+                    class="bg-orange-500 disabled:bg-slate-700 rounded-sm float-end p-1 mr-1"
                     disabled={submissions.pending}
                     onclick={async () => {
                         const files = await readDirectories(data().map(x => x.path))
                         if (!files?.length) return;
                         const window = getCurrentWindow()
                         window.emitTo("main", "set-status", "Scanning for new files");
-                        await window.hide();
                         await action(files);
-                        window.emitTo("main", "update-films");
-                        window.destroy()
+                        await window.emitTo("main", "update-films");
+                        window.close()
                     }}
                 >
                     Scan Now
@@ -91,25 +92,32 @@ export function Settings() {
                     </For>
                 </tbody>
             </table>
-            <button
-                class="bg-orange-500 rounded-sm float-end p-1"
-                onclick={async () => {
-                    await writeTextFile("watch.json", JSON.stringify(data()), {
-                        baseDir: BaseDirectory.AppData
-                    })
-                    setHasChanged(false)
-                }}>
-                Save
-            </button>
-            <button
-                class="bg-slate-700 rounded-sm float-end p-1 mr-1"
-                onclick={async () => {
-                    await refetch()
-                    setHasChanged(false)
-                }}
-            >
-                Reset
-            </button>
+            <div class="flex justify-end">
+                <button
+                    class="bg-orange-500 rounded-sm p-1"
+                    onclick={async () => {
+                        await writeTextFile("watch.json", JSON.stringify(data()), {
+                            baseDir: BaseDirectory.AppData
+                        })
+                        setHasChanged(false)
+                    }}>
+                    Save
+                </button>
+                <button
+                    class="bg-slate-700 rounded-sm p-1 mr-1"
+                    onclick={async () => {
+                        await refetch()
+                        setHasChanged(false)
+                    }}
+                >
+                    Reset
+                </button>
+            </div>
+            <Show when={submissions.pending}>
+                <div class="animate-bounce bg-orange-500 h-20 w-20 rounded-full ml-auto mr-auto">
+
+                </div>
+            </Show>
         </div>
     )
 }

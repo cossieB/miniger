@@ -11,7 +11,7 @@ export function ContextSubMenu(props: { label: string; children: JSX.Element; })
     const [x, setX] = createSignal(position.width)
 
     let ref: HTMLLIElement | undefined;
-    let timerId: NodeJS.Timeout | undefined;
+    let timerId = -1
     let sub: HTMLDivElement | undefined
 
     createEffect(() => {
@@ -36,7 +36,7 @@ export function ContextSubMenu(props: { label: string; children: JSX.Element; })
                 onClick={() => {
                     setShowMenu(p => !p);
                     clearTimeout(timerId);
-                    timerId = undefined;
+                    timerId = -1;
                 }}
                 onMouseEnter={() => {
                     timerId = setTimeout(() => setShowMenu(true), 250);
