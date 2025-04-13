@@ -22,16 +22,17 @@ export const updateTag = action(async (filmId: string, tags: string[]) => {
     }
 })
 
-export const addActor = action(async (name: string, filmId?: string) => {
+export const addActor = action(async (actor: string | Omit<Actor, 'actor_id'>, filmId?: string) => {
     await using db = await getDatabase();
+    const actorObj: Omit<Actor, 'actor_id'> = typeof actor === "string" ? {name: actor, dob: null, gender: null, image: null, nationality: null} : actor;
     try {
         await db.connection.select("BEGIN")
-        const actor = (await db.connection.select<[Actor]>("INSERT INTO actor (name) VALUES ($1) RETURNING *", [name]))[0];
+        const a = (await db.connection.select<[Actor]>(`INSERT INTO actor (name, dob, nationality, gender, image) VALUES ($1, $2, $3, $4, $5) RETURNING *`, [actorObj.name, actorObj.dob, actorObj.nationality, actorObj.gender, actorObj.image]))[0];
         if (filmId) {
-            await db.connection.select("INSERT INTO actor_film (actor_id, film_id) VALUES ($1, $2) ", [actor.actor_id, filmId])
+            await db.connection.select("INSERT INTO actor_film (actor_id, film_id) VALUES ($1, $2) ", [a.actor_id, filmId])
         }
         await db.connection.select("COMMIT")
-        return json(actor, {revalidate: [getActors.key]})
+        return json(a, {revalidate: [getActors.key]})
 
     } 
     catch (error) {
@@ -170,6 +171,6 @@ export const editFilm = action(async (field: string, value: string, filmId: numb
         return json(undefined, {revalidate})
     } 
     catch (error) {
-        
+        state.status.setStatus(String(error))
     }
 })

@@ -23,7 +23,7 @@ export function SidePanel() {
 
     return (
         <section
-            class="bg-slate-950 overflow-x-hidden select-none shrink-0 droppable h-[calc(100vh - 4rem)] flex flex-col"
+            class="bg-slate-950 overflow-x-hidden select-none shrink-0 droppable h-[calc(100vh - 4rem)] flex flex-col relative"
             style={{ width: state.sidePanel.width + "px" }}
             tabindex={0}
             onkeyup={e => {

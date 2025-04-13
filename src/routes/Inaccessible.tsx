@@ -1,7 +1,7 @@
 import { Suspense, onCleanup, onMount } from "solid-js";
 import AgGridSolid from "ag-grid-solid";
 import { GridApi, ICellEditorParams } from "ag-grid-community";
-import { confirm, open } from "@tauri-apps/plugin-dialog";
+import { confirm, open,  } from "@tauri-apps/plugin-dialog";
 import { getInaccessible } from "../api/data";
 import { createAsync, useAction } from "@solidjs/router";
 import { editFilm, removeByPaths } from "../api/mutations";
@@ -80,7 +80,7 @@ function Find(props: ICellEditorParams) {
         const sel = await open({
             filters: [{
                 extensions: videoExtensions,
-                name: "Video Files"
+                name: "Video Files", 
             }]
         })
         if (!sel) return props.stopEditing()
