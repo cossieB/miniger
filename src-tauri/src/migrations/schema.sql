@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS film (
     path text NOT NULL UNIQUE,
     title TEXT NOT NULL,
     studio_id INTEGER,
-    release_date TEXT,
+    release_date DATETIME,
+    date_added DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (studio_id) REFERENCES studio(studio_id) ON DELETE SET NULL
 );

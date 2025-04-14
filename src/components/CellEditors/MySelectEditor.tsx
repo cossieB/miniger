@@ -119,8 +119,7 @@ function AddStudioBtn(props: P1) {
         <button
             type="button"
             onclick={async () => {
-                const row = await createAction(props.input)
-                const studioId = row.studio_id
+                const studioId = await createAction(props.input)
                 await updateAction(props.filmId, studioId)
                 props.stopEditing(studioId);
             }}

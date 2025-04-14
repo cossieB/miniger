@@ -14,7 +14,15 @@ export function AddActorToDatabaseBtn(props: Props) {
         <Show when={props.input().length > 0}>
             <button
                 onclick={async () => {
-                    const actor = await addActorAction(props.input().trim());
+                    const actorId = await addActorAction(props.input().trim());
+                    const actor: Actor = {
+                        actor_id: actorId,
+                        dob: null,
+                        gender: null,
+                        image: null,
+                        name: props.input().trim(),
+                        nationality: null,
+                    }
                     props.setRowActors(prev => [...prev, actor])
                 }}
             >

@@ -134,6 +134,10 @@ export function Movies(props: Props) {
                         valueParser: params => params.newValue.trim().split(/\s*[,;]+\s*/)
                     }, {
                         field: "path",
+                    }, {
+                        field: "date_added",
+                        headerName: "Date Added",
+                        valueFormatter: param => new Intl.DateTimeFormat(undefined, {dateStyle: 'medium', timeStyle: "medium"}).format(new Date(param.value + " UTC"))
                     }]}
                 />
                 <Show when={contextMenu.isOpen}>
