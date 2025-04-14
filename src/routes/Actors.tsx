@@ -1,4 +1,4 @@
-import { createEffect, createSignal, on, Show, Suspense } from "solid-js";
+import { createSignal, Show, Suspense } from "solid-js";
 import { getActors } from "../api/data";
 import { countryList } from "../countryList";
 import { createAsync, useAction } from "@solidjs/router";
@@ -9,10 +9,12 @@ import { addActor, updateActor } from "../api/mutations";
 import { state } from "../state";
 import { ImageEditor } from "~/components/CellEditors/ImageEditor";
 import { Actor } from "~/datatypes";
-import { Portal } from "solid-js/web";
+import { fixPinnedRowHeight, useAdded, useFilter } from "~/utils/pinnedUtils";
+import { PinnedRowButtons } from "~/components/PinnedRowButtons";
 
 export default function Actors() {
-    let ref!: AgGridSolidRef
+    // let ref!: AgGridSolidRef
+    let [ref, setRef] = createSignal<AgGridSolidRef>()
     const updateActorAction = useAction(updateActor)
     const addActorAction = useAction(addActor)
     const actors = createAsync(() => getActors())
@@ -30,36 +32,13 @@ export default function Actors() {
         nationality: null
     })
 
-    createEffect(on(() => input.name, () => {
-        if (!ref) return;
+    useFilter(ref, 'name', () => input.name)
 
-        ref.api.setFilterModel({
-            name: {
-                filterType: "text",
-                type: "includes",
-                filter: input.name
-            }
-        })
-    }))
-
-    const [added, setAdded] = createSignal<number>()
-    createEffect(() => {
-        if (!added()) return
-        const idx = actors()?.findIndex(a => a.actor_id === added());
-        if (!idx || idx === -1) return;
-        ref.api.ensureIndexVisible(idx, "middle");
-        const node = ref.api.getRowNode(added()!.toString())
-        if (!node) return
-        ref.api.setNodesSelected({
-            newValue: true,
-            nodes: [node]
-        })
-        setAdded()
-    })
+    const setAdded = useAdded(actors, 'actor_id', ref)
 
     function reset() {
-        ref.api.setFilterModel(null);
-        ref.api.setGridOption("pinnedBottomRowData", [{ name: "Add Actor..." }]);
+        ref()?.api.setFilterModel(null);
+        ref()?.api.setGridOption("pinnedBottomRowData", [{ name: "Add Actor..." }]);
         setInput({
             name: "",
             dob: null,
@@ -80,18 +59,13 @@ export default function Actors() {
                 }}
             >
                 <AgGridSolid
-                    ref={ref}
+                    ref={setRef}
                     rowData={actors()}
                     rowSelection="multiple"
                     getRowId={params => params.data.actor_id}
                     onGridReady={params => {
                         state.setGridApi(params.api as any)
-
-                        // Fix bug with AG Grid library that sets height of pinned rows to 0
-                        document.querySelectorAll<HTMLDivElement>(".ag-floating-bottom, .ag-floating-top").forEach(el => {
-                            el.style.height = "42px"
-                            el.style.flexShrink = "0"
-                        })
+                        fixPinnedRowHeight()
                     }}
                     onCellContextMenu={params => {
                         setContextMenu({
@@ -153,26 +127,13 @@ export default function Actors() {
                         <ContextMenu.Link href={`/movies/actors/${contextMenu.selectedId}`}> Go To Movies </ContextMenu.Link>
                     </ContextMenu>
                 </Show>
-                <Show when={input.name} >
-                    <Portal mount={document.querySelector('section')!} >
-                        <div class="z-[999] absolute bottom-0 w-full h-10 text-white flex">
-                            <button
-                                class="bg-orange-600 rounded-lg flex-1"
-                                style={{ width: state.sidePanel.width + "px" }}
-                                onclick={async () => {
-                                    const actor = await addActorAction(input);
-                                    reset();
-                                    setAdded(actor.actor_id)
-                                }}
-                            >
-                                SAVE
-                            </button>
-                            <button class="bg-red-600 rounded-lg flex-1" onclick={reset}>
-                                RESET
-                            </button>
-                        </div>
-                    </Portal>
-                </Show>
+                <PinnedRowButtons
+                    addAction={addActorAction}
+                    input={input}
+                    key="name"
+                    reset={reset}
+                    setAdded={setAdded}
+                />
             </div>
         </Suspense>
     )

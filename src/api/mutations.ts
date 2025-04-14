@@ -32,7 +32,7 @@ export const addActor = action(async (actor: string | Omit<Actor, 'actor_id'>, f
             await db.connection.select("INSERT INTO actor_film (actor_id, film_id) VALUES ($1, $2) ", [a.actor_id, filmId])
         }
         await db.connection.select("COMMIT")
-        return json(a, {revalidate: [getActors.key]})
+        return json(a.actor_id, {revalidate: [getActors.key]})
 
     } 
     catch (error) {
@@ -57,11 +57,12 @@ export const updateFilmStudio = action(async (filmId: number, studioId: number |
     }
 })
 
-export const createStudio = action(async (name: string) => {
+export const createStudio = action(async (studio: string | Studio) => {
     await using db = await getDatabase();
+    const studioObj: Omit<Studio, 'studio_id'> = typeof studio === "string" ?  {name: studio, website: null} : studio
     try {
-        const studio = await db.connection.select("INSERT INTO studio (name) VALUES($1) RETURNING *", [name]) as [Studio]
-        return json(studio[0], {revalidate: [getStudios.key]})
+        const s = await db.connection.select("INSERT INTO studio (name, website) VALUES($1,$2) RETURNING *", [studioObj.name, studioObj.website]) as [Studio]
+        return json(s[0].studio_id, {revalidate: [getStudios.key]})
     }
     catch (error) {
         state.status.setStatus(String(error))
