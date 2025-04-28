@@ -1,5 +1,5 @@
-import { createSignal, JSXElement, onMount } from "solid-js";
-import { calculateLevel } from "./calculateLevel";
+import { JSXElement } from "solid-js";
+import { useLevel } from "./calculateLevel";
 import { Icon } from "./Icon";
 import { A } from "@solidjs/router";
 
@@ -10,14 +10,11 @@ type P1 = {
 }
 
 export function LinkNode(props: P1) {
-    let ref!: HTMLLIElement
-    const [level, setLevel] = createSignal(0);
-    onMount(() => {
-        setLevel(calculateLevel(ref))})
+    const {level, setRef} = useLevel()
     return (
         <li
             class="tree-node"
-            ref={ref}
+            ref={setRef}
         >
             <A
                 href={props.href}

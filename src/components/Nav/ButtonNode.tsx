@@ -1,5 +1,5 @@
-import { createSignal, JSXElement, onMount } from "solid-js";
-import { calculateLevel } from "./calculateLevel";
+import { JSXElement } from "solid-js";
+import { useLevel } from "./calculateLevel";
 import { Icon } from "./Icon";
 
 type P2 = {
@@ -9,14 +9,12 @@ type P2 = {
 }
 
 export function ButtonNode(props: P2) {
-    let ref!: HTMLLIElement;
-    const [level, setLevel] = createSignal(0);
-    onMount(() => setLevel(calculateLevel(ref)));
+const {level, setRef} = useLevel()
 
     return (
         <li
             class="tree-node"
-            ref={ref}
+            ref={setRef}
         >
             <div
                 onclick={props.onclick}

@@ -1,5 +1,5 @@
-import { createSignal, JSXElement, onMount } from "solid-js";
-import { calculateLevel } from "./calculateLevel";
+import { createSignal, JSXElement } from "solid-js";
+import { useLevel } from "./calculateLevel";
 import { Icon } from "./Icon";
 
 type P = {
@@ -9,14 +9,12 @@ type P = {
 }
 
 export function ParentNode(props: P) {
-    let ref!: HTMLLIElement;
     const [isOpen, setIsOpen] = createSignal(false);
-    const [level, setLevel] = createSignal(0);
-    onMount(() => setLevel(calculateLevel(ref)));
+    const {level, setRef} = useLevel()
     return (
         <li
             class="tree-node"
-            ref={ref}
+            ref={setRef}
         >
             <div
                 onclick={() => setIsOpen(p => !p)}
