@@ -1,7 +1,7 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
 import "./App.css";
-import MainWindow from "./MainWindow";
+import MainWindow from "./windows/MainWindow";
 import { Route, Router } from "@solidjs/router";
 import Actors from "./routes/Actors";
 import Studios from "./routes/Studios";
@@ -12,9 +12,9 @@ import { Movies } from "./routes/Movies";
 import Inaccessible from "./routes/Inaccessible";
 import { VideoPlayer } from "./components/VideoPlayer/VideoPlayer";
 import { Home } from "./routes/Home";
-import { Settings } from "./routes/Settings";
-import { Convert } from "./routes/Convert";
-import { DragDrop } from "./components/DragDrop";
+import { Settings } from "./windows/Settings";
+import { Convert } from "./windows/Convert";
+import { DragDrop } from "./windows/DragDrop";
 import { readSession } from "./readSettings";
 
 render(() => (

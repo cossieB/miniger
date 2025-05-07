@@ -1,7 +1,7 @@
 import { readTextFile, BaseDirectory } from "@tauri-apps/plugin-fs";
 import { state } from "./state";
 import { SessionJSON } from "./events/mainWindow";
-import { WatchJSON } from "./routes/Settings";
+import { WatchJSON } from "./windows/Settings";
 import { readDirectories } from "./utils/readDirectories";
 import { filterMap } from "./lib/filterMap";
 import { onMount } from "solid-js";

@@ -1,7 +1,7 @@
 import { createResource, Index } from "solid-js"
 import { getCurrentWindow } from "@tauri-apps/api/window"
 import { state } from "~/state"
-import { SidePanelItem } from "./sidePanel/SidePanelItem"
+import { SidePanelItem } from "~/components/sidePanel/SidePanelItem";
 import "~/events/drop"
 
 const window = getCurrentWindow();
@@ -48,7 +48,7 @@ export function DragDrop() {
                     onclick={async () => {
                         (await unlisten)()
                         await window.emitTo("main", "files-dropped", state.sidePanel.list)
-                        window.destroy()
+                        window.close()
                     }}
                 >
                     DONE
@@ -77,6 +77,5 @@ export function DragDrop() {
                 />
             </ul>
         </div>
-
     )
 }

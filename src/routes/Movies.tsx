@@ -19,9 +19,9 @@ export function Movies(props: Props) {
     const films = createAsync(() => props.fetcher())
     const updateTagAction = useAction(updateTag)
     const updateFilmAction = useAction(editFilm)
-    
+
     let gridApi!: GridApi
-    
+
     const data = createMemo(() => {
         if (!films()) return undefined
         return films()!.map((film => ({
@@ -29,7 +29,7 @@ export function Movies(props: Props) {
             tags: JSON.parse(film.tags),
             actors: JSON.parse(film.actors),
             rowId: createUniqueId(),
-            isOnDb: true
+            isOnDb: true,
         })))
     })
     type MovieTableData = NonNullable<ReturnType<typeof data>>[number]
@@ -119,6 +119,9 @@ export function Movies(props: Props) {
                     }, {
                         field: "release_date",
                         headerName: "Release Date",
+                        editable: true,
+                        cellEditor: "agDateStringCellEditor",
+                        onCellValueChanged: params => updateFilmAction('release_date', params.newValue, params.data.film_id)
                     }, {
                         field: "tags",
                         editable: true,
@@ -137,7 +140,7 @@ export function Movies(props: Props) {
                     }, {
                         field: "date_added",
                         headerName: "Date Added",
-                        valueFormatter: param => new Intl.DateTimeFormat(undefined, {dateStyle: 'medium', timeStyle: "medium"}).format(new Date(param.value + " UTC"))
+                        valueFormatter: param => new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: "medium" }).format(new Date(param.value + " UTC"))
                     }]}
                 />
                 <Show when={contextMenu.isOpen}>
