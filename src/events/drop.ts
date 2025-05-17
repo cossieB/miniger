@@ -28,12 +28,12 @@ getAllWindows().then(async windows => {
             if (idx < 0) 
                 continue;
             
-            const extension = path.slice(idx + 1);
+            const extension = path.slice(idx + 1).toLowerCase();
             if (!extension) continue;
     
             const i = target?.dataset.i === undefined ? state.sidePanel.list.length : Number(target.dataset.i)
     
-            if (["mpcpl", "asx", "m3u", "pls"].includes(extension.toLowerCase())) {
+            if (["mpcpl", "asx", "m3u", "pls"].includes(extension)) {
                 const fileList: { title: string; path: string; }[] = await invoke("read_playlist", {
                     playlist: path
                 });

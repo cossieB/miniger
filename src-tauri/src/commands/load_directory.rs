@@ -25,8 +25,8 @@ fn read_recursive(path: &Path, files: &mut Vec<FileInfo>, depth: u8) -> Result<(
 
         if file_type.is_file() {
             if let Some(ext) = entry.path().extension() {
-                let ext = ext.to_str().unwrap_or_default();
-                if EXTENSIONS.contains(&ext) {
+                let ext = ext.to_str().unwrap_or_default().to_lowercase();
+                if EXTENSIONS.contains(&ext.as_str()) {
                     files.push(FileInfo::new(
                         entry.file_name().into_string().unwrap(),
                         entry.path().to_str().unwrap().to_string(),
