@@ -37,6 +37,7 @@ export function ContextMenu(props: Props) {
 
     onMount(() => {
         setPosition('width', ref.clientWidth);
+        // shift menu when close the the right and bottom edges of the window
         if (props.pos.y + ref.clientHeight > window.innerHeight)
             setPosition({
                 y: props.pos.y - ref.clientHeight,
@@ -45,6 +46,7 @@ export function ContextMenu(props: Props) {
             setPosition({
                 x: props.pos.x - ref.clientWidth,
             })
+        ref.style.opacity = "1" 
     })
 
     return (

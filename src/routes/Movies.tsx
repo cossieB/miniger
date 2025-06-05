@@ -144,7 +144,7 @@ export function Movies(props: Props) {
                     }]}
                 />
                 <Show when={contextMenu.isOpen}>
-                    <MoviesContextMenu contextMenu={contextMenu} />
+                    <MoviesContextMenu isMainPanel contextMenu={contextMenu} />
                 </Show>
             </div>
         </Suspense>

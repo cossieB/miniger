@@ -19,9 +19,10 @@ export function ContextSubMenu(props: { label: string; children: JSX.Element; })
             setY(ref.offsetTop);
         }
     });
-    createEffect(on(() => showMenu(),() => {
+    createEffect(on(showMenu,() => {
         setX(position.width);
         if (sub) {
+            sub.style.opacity = "1";
             const w = position.x + position.width + sub.clientLeft + sub.clientWidth;
             if (w > window.innerWidth) {
                 setX( -position.width)

@@ -2,10 +2,10 @@ import { Index, Show } from "solid-js";
 import { state } from "../../state";
 import clickOutside from "../../lib/clickOutside";
 import { SidePanelItem } from "./SidePanelItem";
-import { ContextMenu } from "../ContextMenu/ContextMenu";
-import { MoviesMenu } from "../MoviesContextMenu";
+
 import { createStore } from "solid-js/store";
 import { Miniplayer } from "../Miniplayer";
+import MoviesContextMenu from "../MoviesContextMenu";
 
 false && clickOutside
 
@@ -18,7 +18,7 @@ export function SidePanel() {
         close() {
             setContextMenu('isOpen', false)
         },
-        data: {} as Parameters<typeof MoviesMenu>[0]['data'],
+        data: {} as {title: string, path: string},
     })
 
     return (
@@ -73,9 +73,10 @@ export function SidePanel() {
                 />
             </ul>
             <Show when={contextMenu.isOpen}>
-                <ContextMenu close={contextMenu.close} pos={{ x: contextMenu.x, y: contextMenu.y }}>
-                    <MoviesMenu data={contextMenu.data} />
-                </ContextMenu>
+                <MoviesContextMenu
+                    contextMenu={{...contextMenu, selections: []}}
+                    isMainPanel={false}
+                />
             </Show>
             <Show when={state.miniplayer}>
                 <Miniplayer />
