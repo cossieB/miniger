@@ -1,4 +1,4 @@
-import { JSX, Show, createEffect, createSignal, on } from "solid-js";
+import { JSX, Show, createEffect, createSignal, on, untrack } from "solid-js";
 import { ChevronRight } from "../../icons";
 import { useContextMenuContext } from "./useContextMenuContext";
 import { Menu } from "./Menu";
@@ -10,30 +10,34 @@ export function ContextSubMenu(props: { label: string; children: JSX.Element; })
     const [y, setY] = createSignal(position.y);
     const [x, setX] = createSignal(position.width)
 
-    let ref: HTMLLIElement | undefined;
-    let timerId = -1
-    let sub: HTMLDivElement | undefined
+    let [parentItem, setParentItem] = createSignal<HTMLLIElement | undefined>()
+    let [subMenu, setSubmenu] = createSignal<HTMLDivElement | undefined>()
 
-    createEffect(() => {
-        if (ref) {
-            setY(ref.offsetTop);
+    let timerId = -1
+
+
+    createEffect(on(showMenu, () => {
+        setY(prev => parentItem()?.offsetTop ?? prev);
+        if (!parentItem() || !subMenu()) return
+        const rect = subMenu()!.getBoundingClientRect();
+        const h = rect.top + rect.height;
+
+        if (h > window.innerHeight) {
+            const diff = h - window.innerHeight;
+            setY(untrack(y) - diff);
         }
-    });
-    createEffect(on(showMenu,() => {
         setX(position.width);
-        if (sub) {
-            sub.style.opacity = "1";
-            const w = position.x + position.width + sub.clientLeft + sub.clientWidth;
-            if (w > window.innerWidth) {
-                setX( -position.width)
-            }
+        subMenu()!.style.opacity = "1";
+        const w = position.x + position.width + subMenu()!.clientLeft + subMenu()!.clientWidth;
+        if (w > window.innerWidth) {
+            setX(-position.width)
         }
-    }))
+    }));
 
     return (
         <>
             <ContextMenuItem
-                ref={ref}
+                ref={setParentItem}
                 onClick={() => {
                     setShowMenu(p => !p);
                     clearTimeout(timerId);
@@ -54,7 +58,7 @@ export function ContextSubMenu(props: { label: string; children: JSX.Element; })
                     <Menu
                         pos={{ x: x(), y: y() }}
                         close={() => setShowMenu(false)}
-                        ref={sub}
+                        ref={setSubmenu}
                     >
                         {props.children}
                     </Menu>

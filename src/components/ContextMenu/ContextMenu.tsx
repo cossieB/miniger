@@ -16,7 +16,7 @@ export type Props = {
         y: number,
     },
     attach?: HTMLElement
-    ref?: HTMLDivElement
+    ref?: HTMLDivElement | (() => HTMLDivElement | undefined)
 }
 
 type Ctx = {

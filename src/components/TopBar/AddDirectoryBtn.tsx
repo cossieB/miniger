@@ -2,6 +2,7 @@ import { AddFolderSvg, OpenFolderSvg } from "../../icons";
 import { addDirectoriesToDatabase } from "../../api/mutations";
 import { useAction } from "@solidjs/router";
 import { addFolderToSidebar, readDirectories } from "../../utils/readDirectories";
+import { state } from "~/state";
 
 export function AddDirectoryBtn() {
     return <OpenFolderSvg
@@ -15,8 +16,10 @@ export function AddDirectoryToDatabase() {
         <AddFolderSvg
             title="Add Folder To Database"
             onClick={async () => {
+                state.status.setStatus("Scanning for new files")
                 const files = await readDirectories()
-                files && addAction(files)
+                files && await addAction(files)
+                state.status.setStatus("Done", true)
             }}
         />
     )

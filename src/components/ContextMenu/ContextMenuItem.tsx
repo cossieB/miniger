@@ -3,7 +3,7 @@ import { JSX } from "solid-js";
 type ContextMenuProps = {
     children: JSX.Element;
     onClick: () => void;
-    ref?: HTMLLIElement;
+    ref?: HTMLLIElement | (() => HTMLLIElement | undefined);
 } & JSX.HTMLAttributes<HTMLLIElement>;
 
 export function ContextMenuItem(props: ContextMenuProps) {

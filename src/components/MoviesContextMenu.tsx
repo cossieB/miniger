@@ -76,6 +76,17 @@ export default function MoviesContextMenu(props: P) {
                 <ContextMenu.Item onClick={() => state.setMiniplayer({ path: props.contextMenu.data.path, title: props.contextMenu.data.title })}>
                     Play In Miniplayer
                 </ContextMenu.Item>
+                <ContextMenu.Item
+                    onClick={async () => {
+                        try {
+                            await open(props.contextMenu.data.path)
+                        } catch (error) {
+                            console.error(error)
+                            state.status.setStatus("File Not Found")
+                        }
+                    }} >
+                    Open With Default Player
+                </ContextMenu.Item>
                 <Show when={tags().length > 0}>
                     <ContextMenu.SubMenu label="More From Genre" >
                         <For each={tags()}>
@@ -103,17 +114,6 @@ export default function MoviesContextMenu(props: P) {
                         More From {data()?.studio_name}
                     </ContextMenu.Link>
                 </Show>
-                <ContextMenu.Item
-                    onClick={async () => {
-                        try {
-                            await open(props.contextMenu.data.path)
-                        } catch (error) {
-                            console.error(error)
-                            state.status.setStatus("File Not Found")
-                        }
-                    }} >
-                    Open With Default Player
-                </ContextMenu.Item>
                 <ContextMenu.Item
                     onClick={async () => {
                         try {
