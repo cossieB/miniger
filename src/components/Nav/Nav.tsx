@@ -25,7 +25,7 @@ export function Nav() {
                     </ParentNode>
                     <ParentNode label="Studios">
                         <For each={studios()}>
-                            {studio => <LinkNode label={studio.name} href={`/movies/studios/${studio.studio_id}`} icon={<CameraSvg />} />}
+                            {studio => <LinkNode label={studio.name} href={`/movies/studios/${studio.studio_id}?${studio.studio_id}=${studio.name}`} icon={<CameraSvg />} />}
                         </For>
                     </ParentNode>
                 </ParentNode>

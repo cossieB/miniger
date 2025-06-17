@@ -102,7 +102,7 @@ export default function MoviesContextMenu(props: P) {
                     <ContextMenu.SubMenu label="More From Actor" >
                         <For each={actors()}>
                             {actor =>
-                                <ContextMenu.Link href={`/movies/actors/${actor.actor_id}`}>
+                                <ContextMenu.Link href={`/movies/actors/${actor.actor_id}?${actor.actor_id}=${actor.name}`}>
                                     {actor.name}
                                 </ContextMenu.Link>
                             }
@@ -110,7 +110,7 @@ export default function MoviesContextMenu(props: P) {
                     </ContextMenu.SubMenu>
                 </Show>
                 <Show when={data()?.studio_id}>
-                    <ContextMenu.Link href={`/movies/studios/${data()?.studio_id}`}>
+                    <ContextMenu.Link href={`/movies/studios/${data()?.studio_id}?${data()?.studio_id}=${data()?.studio_name}`}>
                         More From {data()?.studio_name}
                     </ContextMenu.Link>
                 </Show>

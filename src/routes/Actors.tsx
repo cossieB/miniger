@@ -22,6 +22,7 @@ export default function Actors() {
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
         selectedId: -1,
+        selectedName: "",
         pos: { x: 0, y: 0 },
     })
     const [input, setInput] = createStore<Omit<Actor, 'actor_id'>>({
@@ -74,7 +75,8 @@ export default function Actors() {
                                 x: (params.event as MouseEvent).clientX,
                                 y: (params.event as MouseEvent).clientY,
                             },
-                            selectedId: params.data.actor_id
+                            selectedId: params.data.actor_id,
+                            selectedName: params.data.name,
                         })
                     }}
                     defaultColDef={{
@@ -124,7 +126,7 @@ export default function Actors() {
                 />
                 <Show when={contextMenu.isOpen}>
                     <ContextMenu pos={contextMenu.pos} close={() => setContextMenu('isOpen', false)} >
-                        <ContextMenu.Link href={`/movies/actors/${contextMenu.selectedId}`}> Go To Movies </ContextMenu.Link>
+                        <ContextMenu.Link href={`/movies/actors/${contextMenu.selectedId}?${contextMenu.selectedId}=${contextMenu.selectedName}`}> Go To Movies </ContextMenu.Link>
                     </ContextMenu>
                 </Show>
                 <PinnedRowButtons

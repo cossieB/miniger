@@ -17,6 +17,7 @@ export default function Studios() {
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
         selectedId: -1,
+        selectedName: "",
         pos: { x: 0, y: 0 },
     })
     const [input, setInput] = createStore({
@@ -64,6 +65,17 @@ export default function Studios() {
                             setInput(field, params.newValue)
                         }
                     }}
+                    onCellContextMenu={params => {
+                        setContextMenu({
+                            isOpen: true,
+                            pos: {
+                                x: (params.event as MouseEvent).clientX,
+                                y: (params.event as MouseEvent).clientY,
+                            },
+                            selectedId: params.data.studio_id,
+                            selectedName: params.data.name,
+                        })
+                    }}
                     columnDefs={[{
                         field: 'name',
                         filter: true
@@ -77,7 +89,7 @@ export default function Studios() {
                 />
                 <Show when={contextMenu.isOpen}>
                     <ContextMenu pos={contextMenu.pos} close={() => setContextMenu('isOpen', false)} >
-                        <ContextMenu.Link href={`/movies/actors/${contextMenu.selectedId}`}> Go To Movies </ContextMenu.Link>
+                        <ContextMenu.Link href={`/movies/studios/${contextMenu.selectedId}?${contextMenu.selectedId}=${contextMenu.selectedName}`}> Go To Movies </ContextMenu.Link>
                     </ContextMenu>
                 </Show>
                 <PinnedRowButtons
