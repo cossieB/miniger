@@ -79,6 +79,7 @@ export default function Actors() {
                             selectedName: params.data.name,
                         })
                     }}
+
                     defaultColDef={{
                         onCellValueChanged: params => {
                             if (!params.colDef.field || !params.node) return;
@@ -105,8 +106,7 @@ export default function Actors() {
                         cellEditor: 'agSelectCellEditor',
                         cellEditorParams: {
                             values: ["M", "F"]
-                        }
-
+                        },
                     }, {
                         field: 'dob',
                         cellEditor: "agDateStringCellEditor",
@@ -121,6 +121,9 @@ export default function Actors() {
                         field: 'image',
                         cellEditor: ImageEditor,
                         cellEditorPopup: true,
+                    }, {
+                        field: 'appearances',
+                        editable: false
                     }]}
 
                 />

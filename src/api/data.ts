@@ -37,7 +37,12 @@ export const getStudios = query(async () => {
 
 export const getActors = query(async () => {
     await using db = await getDatabase()
-    return await db.connection.select<Actor[]>("SELECT * FROM actor ORDER BY LOWER(name)")
+    return await db.connection.select<Actor[]>(`
+        SELECT *, COUNT(film_id) as appearances FROM actor 
+        LEFT JOIN actor_film USING (actor_id)
+        GROUP BY actor_id
+        ORDER BY LOWER(name)
+        `)
 }, 'actors')
 
 export const getInaccessible = query(async () => {

@@ -33,11 +33,11 @@ type P = {
 function Crumb(props: P) {
     const location = useLocation()
     const [search] = useSearchParams()
-    const url = getUrl(location, props, search)
+    const url = () => getUrl(location, props, search)
     return (
         <>
             <li>
-                <A href={url.toString()} >
+                <A href={url().toString()} >
                     {titleCase(decodeURI(search[props.segment] as string | undefined ?? props.segment))}
                 </A>
             </li>
@@ -48,7 +48,7 @@ function Crumb(props: P) {
     )
 }
 function getUrl(location: ReturnType<typeof useLocation>, props: P, search: ReturnType<typeof useSearchParams>[0]) {
-    const url = new URL(window.location.href)
+    const url = new URL("http://localhost:1420" + location.pathname)
     const temp = props.segments().slice(0, props.i() + 1).join("/")
     if (temp === "/movies/tags") {
         const s = new URLSearchParams(search as any)

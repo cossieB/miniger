@@ -4,7 +4,13 @@ import { useContextMenuContext } from "./useContextMenuContext";
 import { Menu } from "./Menu";
 import { ContextMenuItem } from "./ContextMenuItem";
 
-export function ContextSubMenu(props: { label: string; children: JSX.Element; }) {
+type Props = {
+    label: string;
+    children: JSX.Element;
+    icon?: JSX.Element;
+};
+
+export function ContextSubMenu(props: Props) {
     const [showMenu, setShowMenu] = createSignal(false);
     const position = useContextMenuContext();
     const [y, setY] = createSignal(position.y);
@@ -50,10 +56,11 @@ export function ContextSubMenu(props: { label: string; children: JSX.Element; })
                     clearTimeout(timerId);
                     timerId = setTimeout(() => setShowMenu(false), 250);
                 }}
+                icon={props.icon}
 
             >
                 <span>{props.label} </span>
-                <ChevronRight />
+                <span class="ml-auto"><ChevronRight /></span>
                 <Show when={showMenu()}>
                     <Menu
                         pos={{ x: x(), y: y() }}

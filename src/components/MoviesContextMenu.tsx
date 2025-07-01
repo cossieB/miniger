@@ -7,6 +7,7 @@ import { createAsync, useAction, useNavigate } from "@solidjs/router";
 import { addDirectoriesToDatabase } from "~/api/mutations";
 import { getFilmByPath } from "~/api/data";
 import { Actor } from "~/datatypes";
+import { CameraSvg, PlayCircleSvg, PlayFillSvg, PlayListSvg, PlaySvg, TagSvg, TheatreSvg, WindowSvg } from "~/icons";
 
 type F = {
     title: string;
@@ -47,6 +48,7 @@ export default function MoviesContextMenu(props: P) {
                         const rowId = playlist.find(file => file.path === props.contextMenu.data.path)!.rowId
                         navigate("/play?rowId=" + rowId)
                     }}
+                    icon={<PlaySvg />}
                 >
                     Play
                 </ContextMenu.Item>
@@ -62,6 +64,7 @@ export default function MoviesContextMenu(props: P) {
                             }))
                             state.sidePanel.push(playlist)
                         }}
+                        icon={<PlayListSvg />}
                     >
                         Add To Playlist
                     </ContextMenu.Item>
@@ -73,7 +76,9 @@ export default function MoviesContextMenu(props: P) {
                         Add To Database
                     </ContextMenu.Item>
                 </Show>
-                <ContextMenu.Item onClick={() => state.setMiniplayer({ path: props.contextMenu.data.path, title: props.contextMenu.data.title })}>
+                <ContextMenu.Item
+                    icon={<PlayFillSvg />}
+                    onClick={() => state.setMiniplayer({ path: props.contextMenu.data.path, title: props.contextMenu.data.title })}>
                     Play In Miniplayer
                 </ContextMenu.Item>
                 <ContextMenu.Item
@@ -84,11 +89,13 @@ export default function MoviesContextMenu(props: P) {
                             console.error(error)
                             state.status.setStatus("File Not Found")
                         }
-                    }} >
+                    }} 
+                    icon={<PlayCircleSvg />}
+                    >
                     Open With Default Player
                 </ContextMenu.Item>
                 <Show when={tags().length > 0}>
-                    <ContextMenu.SubMenu label="More From Genre" >
+                    <ContextMenu.SubMenu label="More From Genre" icon={<TagSvg />} >
                         <For each={tags()}>
                             {tag =>
                                 <ContextMenu.Link href={`/movies/tags/${tag}`}>
@@ -99,7 +106,7 @@ export default function MoviesContextMenu(props: P) {
                     </ContextMenu.SubMenu>
                 </Show>
                 <Show when={actors().length > 0}>
-                    <ContextMenu.SubMenu label="More From Actor" >
+                    <ContextMenu.SubMenu label="More From Actor" icon={<TheatreSvg width={16} />} >
                         <For each={actors()}>
                             {actor =>
                                 <ContextMenu.Link href={`/movies/actors/${actor.actor_id}?${actor.actor_id}=${actor.name}`}>
@@ -110,11 +117,16 @@ export default function MoviesContextMenu(props: P) {
                     </ContextMenu.SubMenu>
                 </Show>
                 <Show when={data()?.studio_id}>
-                    <ContextMenu.Link href={`/movies/studios/${data()?.studio_id}?${data()?.studio_id}=${data()?.studio_name}`}>
+                    <ContextMenu.Link
+                        href={`/movies/studios/${data()?.studio_id}?${data()?.studio_id}=${data()?.studio_name}`}
+                        icon={<CameraSvg />}
+                    >
+
                         More From {data()?.studio_name}
                     </ContextMenu.Link>
                 </Show>
                 <ContextMenu.Item
+                    icon={<WindowSvg />}
                     onClick={async () => {
                         try {
                             await invoke("open_explorer", {
