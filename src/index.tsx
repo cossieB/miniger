@@ -2,10 +2,10 @@
 import { render } from "solid-js/web";
 import "./App.css";
 import MainWindow from "./windows/MainWindow";
-import { Route, Router } from "@solidjs/router";
+import { Navigate, Route, Router } from "@solidjs/router";
 import Actors from "./routes/Actors";
 import Studios from "./routes/Studios";
-import { getActors, getFilms, getFilmsByActor, getFilmsByStudio, getFilmsByTag, getInaccessible, getStudios } from "./api/data";
+import { getActors, getFilms, getFilmsByActor, getFilmsByStudio, getFilmsByTag, getInaccessible, getStudios, getTags } from "./api/data";
 import 'ag-grid-community/styles/ag-grid.css'; // grid core CSS
 import "ag-grid-community/styles/ag-theme-alpine.css"; // optional theme
 import { Movies } from "./routes/Movies";
@@ -16,6 +16,7 @@ import { Settings } from "./windows/Settings";
 import { Convert } from "./windows/Convert";
 import { DragDrop } from "./windows/DragDrop";
 import { readSession } from "./readSettings";
+import { Tags } from "./routes/Tags";
 
 render(() => (
     <Router  >
@@ -46,6 +47,8 @@ render(() => (
             <Route path={["/actors", "/movies/actors"]} component={Actors} preload={() => getActors()} />
             <Route path={["/studios", "/movies/studios"]} component={Studios} preload={() => getStudios()} />
             <Route path="/movies/inaccessible" component={Inaccessible} preload={() => getInaccessible()} />
+            <Route path="/tags" component={Tags} preload={() => getTags()} />
+            <Route path="/movies/tags" component={() => <Navigate href="/tags"/>}   />
             <Route path="/play" component={VideoPlayer} />
         </Route>
         <Route path="/settings" component={Settings} />

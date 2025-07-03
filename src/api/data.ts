@@ -169,5 +169,5 @@ export const getFilmByPath = query(async (path: string) => {
 
 export const getTags = query(async () => {
     await using db = await getDatabase()
-    return await db.connection.select<{ tag: string }[]>("SELECT DISTINCT tag FROM film_tag ORDER BY tag ASC")
+    return await db.connection.select<{ tag: string, count: number }[]>("SELECT tag, COUNT(*) as films FROM film_tag GROUP BY tag ORDER BY tag ASC")
 }, 'getTags')
