@@ -11,7 +11,7 @@ type Props = {
 export function SubmitBtn(props: Props) {
     const editFilmActorsAction = useAction(editFilmActors);
     return (
-        <button class="flex h-10 w-full items-center justify-center bg-green-600"
+        <button class="flex p-3 w-full items-center justify-center bg-green-600"
             onclick={() => {
                 editFilmActorsAction(props.rowActors(), props.film_id);
                 props.stopEditing();

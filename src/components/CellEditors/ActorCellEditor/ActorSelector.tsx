@@ -19,7 +19,7 @@ export function ActorSelector(props: ICellEditorParams) {
 
     createEffect(on(actors, () => {
         refInput.focus();
-    } ) );
+    }));
 
     const [input, setInput] = createSignal("");
     const filteredActors = () => actors()?.filter(actor => actor.name.toLowerCase().includes(input().toLowerCase()))
@@ -39,21 +39,22 @@ export function ActorSelector(props: ICellEditorParams) {
                 stopEditing={props.stopEditing}
             />
             <Show when={rowActors().length > 0}>
-            <ul class="bg-slate-800 grid text-center p-2 gap-2 max-h-[50vh] overflow-auto w-[50vw] actorsList">
-                <For each={rowActors()}>
-                    {actor => <ActorItem actor={actor} rowActors={rowActors} setRowActors={setRowActors} />}
-                </For>
-            </ul>
+                <ul class="bg-slate-800 grid text-center p-2 gap-2 max-h-[50vh] overflow-auto w-[50vw] actorsList">
+                    <For each={rowActors()}>
+                        {actor => <ActorItem actor={actor} rowActors={rowActors} setRowActors={setRowActors} />}
+                    </For>
+                </ul>
             </Show>
             <ul class="bg-slate-800 grid text-center p-2 gap-2 max-h-[50vh] overflow-auto w-[50vw] actorsList">
                 <For each={filteredActors()}>
                     {actor => <ActorItem actor={actor} rowActors={rowActors} setRowActors={setRowActors} />}
                 </For>
-                <AddActorToDatabaseBtn
-                    input={input}
-                    setRowActors={setRowActors}
-                />
             </ul>
+            <AddActorToDatabaseBtn
+                input={input}
+                setRowActors={setRowActors}
+                clearInput={() => setInput("")}
+            />
         </Suspense>
     );
 }
