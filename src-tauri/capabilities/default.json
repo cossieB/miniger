@@ -3,7 +3,7 @@
   "identifier": "default",
   "description": "Capability for the main window",
   "windows": [
-   "*"
+    "*"
   ],
   "permissions": [
     "core:app:default",
@@ -28,15 +28,19 @@
     "fs:default",
     {
       "identifier": "fs:write-files",
-      "allow": [{
-        "path": "$APPDATA/**/*"
-      }]
+      "allow": [
+        {
+          "path": "$APPDATA/**/*"
+        }
+      ]
     },
     {
       "identifier": "fs:read-files",
-      "allow": [{
-        "path": "$APPDATA/**/*"
-      }]
+      "allow": [
+        {
+          "path": "$APPDATA/**/*"
+        }
+      ]
     },
     "shell:allow-execute",
     "shell:allow-open",
@@ -45,6 +49,15 @@
     "sql:allow-execute",
     "sql:allow-load",
     "sql:allow-select",
-    "sql:default"
+    "sql:default",
+    "opener:default",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [
+        {
+          "path": "$APPDATA"
+        }
+      ]
+    }
   ]
 }

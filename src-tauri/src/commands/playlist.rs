@@ -19,7 +19,6 @@ pub fn save_playlist(path: String, files: Vec<FileInfo>) -> Result<(), String> {
     Ok(())
 }
 
-
 #[tauri::command]
 pub fn convert_playlist(source: String, destination: String) -> Result<(), AppError> {
     let files = read_playlist(&source)?;

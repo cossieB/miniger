@@ -4,13 +4,13 @@ import { PlaylistFile, state } from "../state";
 
 export async function readDirectories(dirs?: string[]) {
     let directories = dirs;
-    
+
     if (!directories) {
         const selections = await open({ directory: true, multiple: true });
         if (selections == null) return null;
         directories = selections;
     }
-    
+    state.status.setStatus("Scanning for new files")
     const files: PlaylistFile[] = []
 
     for (const directory of directories) {
@@ -19,6 +19,7 @@ export async function readDirectories(dirs?: string[]) {
             files.push(file)
         }
     }
+    state.status.setStatus("✓ Scanning for new files", true)
     return files;
 }
 

@@ -31,8 +31,6 @@ impl From<io::Error> for AppError {
 
 impl From<String> for AppError {
     fn from(value: String) -> Self {
-        AppError {
-            message: value
-        }
+        AppError { message: value }
     }
 }

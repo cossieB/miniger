@@ -37,6 +37,7 @@ async function readWatchJson() {
         })
         const data = JSON.parse(content) as WatchJSON[];
         const t = filterMap(data, val => val.scanOnStart, val => val.path)
+        if (t.length == 0) return;
         const files = await readDirectories(t)
         return files
     } catch (error) {

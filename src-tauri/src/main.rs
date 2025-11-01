@@ -11,6 +11,7 @@ fn main() {
     let migrations = get_migrations();
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_opener::init())
         .setup(|app| {
             let app_submenu = SubmenuBuilder::new(app, "App")
                 .text("load_playlist", "Load Playlist File")
@@ -23,6 +24,7 @@ fn main() {
 
             let tools_submenu = SubmenuBuilder::new(app, "Tools")
                 .text("convert_playlist", "Convert Playlist")
+                .text("data_dir", "Show data folder")
                 .build()?;
 
             let menu = MenuBuilder::new(app)

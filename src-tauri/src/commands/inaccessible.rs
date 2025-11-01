@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 pub struct MyFile {
     pub title: String,
     pub film_id: u32,
-    pub path: String
+    pub path: String,
 }
 
 #[tauri::command]

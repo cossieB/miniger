@@ -1,6 +1,6 @@
 pub mod commands;
+pub mod db;
 mod error;
 mod extensions;
-pub mod db;
 pub use error::AppError;
 pub use extensions::EXTENSIONS;

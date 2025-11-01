@@ -6,13 +6,19 @@ import { state } from "~/state";
 
 export function AddPlaylistFilesToDatabaseBtn() {
     const addAction = useAction(addDirectoriesToDatabase)
-    return <AddToDatabaseSvg
-        title="Add to database"
-        classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
-        onclick={async () => {
-            const files = state.sidePanel.list
-            if (files.length == 0) return
-            await addAction(files)
-        }} />;
+    return (
+        <button
+            title="Add to database"
+            onclick={async () => {
+                const files = state.sidePanel.list
+                if (files.length == 0) return
+                await addAction(files)
+            }}
+        >
+            <AddToDatabaseSvg
+                classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
+            />
+        </button>
+    )
 }
 

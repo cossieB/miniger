@@ -7,8 +7,9 @@ import { getFilms } from "~/api/data";
 import { loadPlaylist, loadVideos } from "~/utils/loadPlaylist";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { invoke } from "@tauri-apps/api/core";
-import { join, tempDir, } from "@tauri-apps/api/path";
+import { appDataDir, join, tempDir, } from "@tauri-apps/api/path";
 import { open } from "@tauri-apps/plugin-shell";
+import { openPath } from "@tauri-apps/plugin-opener";
 
 export type SessionJSON = {
     list: typeof state['sidePanel']['list'],
@@ -123,5 +124,12 @@ getAllWindows().then(windows => {
     })
     mainWindow.listen<typeof state['sidePanel']['list']>("files-dropped", e => {
         state.sidePanel.setFiles(e.payload);
+    })
+    mainWindow.listen("data_dir", async () => {
+        try {
+            openPath(await appDataDir())
+        } catch (error) {
+            console.error(error)
+        }
     })
 })

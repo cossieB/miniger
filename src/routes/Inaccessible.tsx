@@ -1,30 +1,22 @@
 import { Suspense, onCleanup, onMount } from "solid-js";
 import AgGridSolid from "ag-grid-solid";
 import { GridApi, ICellEditorParams } from "ag-grid-community";
-import { confirm, open,  } from "@tauri-apps/plugin-dialog";
+import { open, } from "@tauri-apps/plugin-dialog";
 import { getInaccessible } from "../api/data";
 import { createAsync, useAction } from "@solidjs/router";
-import { editFilm, removeByPaths } from "../api/mutations";
+import { editFilm } from "../api/mutations";
 import videoExtensions from "~/videoExtensions.json"
 import { SearchSvg } from "~/icons";
+import { state } from "~/state";
 
 export default function Inaccessible() {
-    const removeAction = useAction(removeByPaths)
     const data = createAsync(() => getInaccessible())
     let gridApi!: GridApi<any>
 
-    async function del() {
-        const selection = gridApi.getSelectedRows()
-        if (selection.length == 0) return
-        const confirmed = await confirm(`Remove ${selection.length} file(s) from database?`);
-        if (confirmed) {
-            await removeAction(selection);
-        }
-    }
-
     async function handleKeyup(e: KeyboardEvent) {
         if (e.key === "Delete") {
-            await del()
+            console.log('click' in document.getElementById("topbar-delete-btn")!)
+            document.getElementById("topbar-delete-btn")?.dispatchEvent(new Event("click"))
         }
     }
 
@@ -37,11 +29,12 @@ export default function Inaccessible() {
     return (
         <Suspense>
             <div id='gridContainer' class='ag-theme-alpine-dark h-full relative' >
-                <button onclick={del} class="absolute right-10 top-1 h-10 bg-red-600 p-3 rounded-sm z-50">
-                    Delete Selected
-                </button>
+
                 <AgGridSolid
-                    onGridReady={params => ((gridApi as any) = params.api)}
+                    onGridReady={params => {
+                        (gridApi as any) = params.api
+                        state.setGridApi(gridApi);
+                    }}
                     getRowId={params => params.data.path}
                     rowSelection="multiple"
                     onColumnHeaderContextMenu={e => {
@@ -80,7 +73,7 @@ function Find(props: ICellEditorParams) {
         const sel = await open({
             filters: [{
                 extensions: videoExtensions,
-                name: "Video Files", 
+                name: "Video Files",
             }]
         })
         if (!sel) return props.stopEditing()

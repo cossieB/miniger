@@ -4,3 +4,4 @@ dist
 /script
 .vscode/settings.json
 script.ts
+target/
