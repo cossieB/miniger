@@ -1,7 +1,7 @@
 import { createUniqueId, For, Show, Suspense } from "solid-js";
 import { state } from "../state";
 import { ContextMenu } from "./ContextMenu/ContextMenu";
-import { open, } from "@tauri-apps/plugin-shell";
+import { openPath } from "@tauri-apps/plugin-opener";
 import { invoke } from "@tauri-apps/api/core";
 import { createAsync, useAction, useNavigate } from "@solidjs/router";
 import { addDirectoriesToDatabase } from "~/api/mutations";
@@ -84,7 +84,7 @@ export default function MoviesContextMenu(props: P) {
                 <ContextMenu.Item
                     onClick={async () => {
                         try {
-                            await open(props.contextMenu.data.path)
+                            await openPath(props.contextMenu.data.path)
                         } catch (error) {
                             console.error(error)
                             state.status.setStatus("File Not Found")

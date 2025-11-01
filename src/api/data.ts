@@ -32,7 +32,7 @@ export const getFilms = query(async () => {
 
 export const getStudios = query(async () => {
     await using db = await getDatabase()
-    return await db.connection.select<Studio[]>("SELECT * FROM studio ORDER BY LOWER(name) ASC") 
+    return await db.connection.select<Studio[]>("SELECT * FROM studio ORDER BY LOWER(name) ASC")
 }, 'studios')
 
 export const getActors = query(async () => {
@@ -136,7 +136,7 @@ export const getFilmsByStudio = query(async (studioId: number) => {
     LEFT JOIN aq USING(film_id)
     WHERE studio_id = $1
     ORDER BY LOWER(title)
-    `, [studioId]) 
+    `, [studioId])
 }, "filmsByStudio")
 
 export const getFilmByPath = query(async (path: string) => {
@@ -163,7 +163,7 @@ export const getFilmByPath = query(async (path: string) => {
     LEFT JOIN tq USING(film_id)
     LEFT JOIN aq USING (film_id)
     WHERE path = $1
-    `, [path]) 
+    `, [path])
     return res.at(0) ?? null
 }, 'filmByPath')
 
@@ -171,3 +171,51 @@ export const getTags = query(async () => {
     await using db = await getDatabase()
     return await db.connection.select<{ tag: string, count: number }[]>("SELECT tag, COUNT(*) as films FROM film_tag GROUP BY tag ORDER BY tag ASC")
 }, 'getTags')
+
+export const getCostars = query(async (actorId: number) => {
+    await using db = await getDatabase()
+    return await db.connection.select<{actorA: string, actorAId: number, actorB: string, actorBId: number, together: number, }[]>(`
+        SELECT a.name actorA, a.actor_id actorAId, b.name actorB, b.actor_id actorBId, COUNT(*) as together
+        FROM actor_film af1
+        JOIN actor_film af2 ON af1.film_id = af2.film_id AND af2.actor_id != $1
+        JOIN actor a ON a.actor_id = af1.actor_id
+        JOIN actor b ON b.actor_id = af2.actor_id
+        WHERE af1.actor_id = $1
+        GROUP BY a.actor_id, b.actor_id
+        ORDER BY b.name
+        `, [actorId])
+    }, 'costars')
+    
+    export const getMoviesByCostars = query(async (actorAId: number, actorBId: number) => {
+        await using db = await getDatabase()
+        return await db.connection.select<DetailedDbFilm[]>(`
+            WITH tq AS (
+                SELECT JSON_GROUP_ARRAY(tag) tags, film_id
+                FROM film_tag
+                GROUP BY film_id
+                ), aq AS (
+                    SELECT JSON_GROUP_ARRAY(JSON_OBJECT('actor_id', actor_id, 'name', name, 'image', image, 'dob', dob, 'nationality', nationality, 'gender', gender)) actors, film_id
+                    FROM actor_film
+                    JOIN actor USING(actor_id)
+                    GROUP BY film_id
+                ), filter AS (
+                    SELECT af1.film_id
+                    FROM actor_film af1
+                    JOIN actor_film af2 ON af2.film_id = af1.film_id AND af2.actor_id != af1.actor_id
+                    JOIN film USING (film_id)
+                    WHERE af1.actor_id = $1 AND af2.actor_id = $2
+                )
+                    
+            SELECT 
+                film.*, 
+                studio.name AS studio_name,
+                COALESCE(tags, '[]') as tags,
+                COALESCE(actors, '[]') as actors
+            FROM film
+            JOIN filter USING(film_id)
+            LEFT JOIN studio USING(studio_id)
+            LEFT JOIN tq USING(film_id)
+            LEFT JOIN aq USING (film_id)
+            
+            `, [actorAId, actorBId])
+        }, "costarMovies")

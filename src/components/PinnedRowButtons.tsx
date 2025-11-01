@@ -14,7 +14,7 @@ export function PinnedRowButtons<T>(props: Props<T>) {
     return (
         <Show when={props.input[props.key]} >
         <Portal mount={document.querySelector('section')!} >
-            <div class="z-[999] absolute bottom-0 w-full h-10 text-white flex">
+            <div class="z-999 absolute bottom-0 w-full h-10 text-white flex">
                 <button
                     class="bg-orange-600 rounded-lg flex-1"
                     style={{ width: state.sidePanel.width + "px" }}

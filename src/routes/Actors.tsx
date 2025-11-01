@@ -130,6 +130,7 @@ export default function Actors() {
                 <Show when={contextMenu.isOpen}>
                     <ContextMenu pos={contextMenu.pos} close={() => setContextMenu('isOpen', false)} >
                         <ContextMenu.Link href={`/movies/actors/${contextMenu.selectedId}?${contextMenu.selectedId}=${contextMenu.selectedName}`}> Go To Movies </ContextMenu.Link>
+                        <ContextMenu.Link href={`/actors/${contextMenu.selectedId}/costars?${contextMenu.selectedId}=${contextMenu.selectedName}`} >See Co-stars</ContextMenu.Link>
                     </ContextMenu>
                 </Show>
                 <PinnedRowButtons
