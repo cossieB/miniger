@@ -42,3 +42,11 @@ export type DetailedFilm = Film & {
     studio_name: string | null;
     tags: string[]
 }
+
+export type PairingResult = {
+    actorA: string
+    actorAId: number
+    actorB: string
+    actorBId: number
+    together: number
+}

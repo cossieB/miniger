@@ -1,7 +1,6 @@
 import { useMatch } from "@solidjs/router";
 import { GridState } from "ag-grid-community";
 import AgGridSolid, { AgGridSolidProps } from "ag-grid-solid";
-import { createEffect } from "solid-js";
 
 import { state } from "~/state";
 
@@ -14,8 +13,7 @@ const map: Record<string, GridState> = {}
 export function GridWrapper(props: Props) {
 
     const match = useMatch(() => "/:table/*")
-    createEffect(() => console.log(match()))
-
+    
     return (
         <AgGridSolid
             onGridReady={params => {

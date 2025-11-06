@@ -1,5 +1,5 @@
 import { query } from "@solidjs/router"
-import type { Studio, Actor, DetailedDbFilm } from "../datatypes"
+import type { Studio, Actor, DetailedDbFilm, PairingResult } from "../datatypes"
 import { invoke } from "@tauri-apps/api/core"
 import { getDatabase } from "./db"
 
@@ -174,7 +174,7 @@ export const getTags = query(async () => {
 
 export const getCostars = query(async (actorId: number) => {
     await using db = await getDatabase()
-    return await db.connection.select<{actorA: string, actorAId: number, actorB: string, actorBId: number, together: number, }[]>(`
+    return await db.connection.select<PairingResult[]>(`
         SELECT a.name actorA, a.actor_id actorAId, b.name actorB, b.actor_id actorBId, COUNT(*) as together
         FROM actor_film af1
         JOIN actor_film af2 ON af1.film_id = af2.film_id AND af2.actor_id != $1
@@ -182,13 +182,28 @@ export const getCostars = query(async (actorId: number) => {
         JOIN actor b ON b.actor_id = af2.actor_id
         WHERE af1.actor_id = $1
         GROUP BY a.actor_id, b.actor_id
-        ORDER BY b.name
+        ORDER BY a.name, b.name
         `, [actorId])
-    }, 'costars')
-    
-    export const getMoviesByCostars = query(async (actorAId: number, actorBId: number) => {
-        await using db = await getDatabase()
-        return await db.connection.select<DetailedDbFilm[]>(`
+}, 'costarsOf')
+
+
+export const getPairings = query(async () => {
+    await using db = await getDatabase()
+
+    return await db.connection.select<PairingResult[]>(`
+        SELECT a.name actorA, a.actor_id actorAId, b.name actorB, b.actor_id actorBId, COUNT(*) as together
+        FROM actor_film af1
+        JOIN actor_film af2 ON af1.film_id = af2.film_id AND af2.actor_id != af1.actor_id
+        JOIN actor a ON a.actor_id = af1.actor_id
+        JOIN actor b ON b.actor_id = af2.actor_id
+        GROUP BY a.actor_id, b.actor_id
+        ORDER BY a.name, b.name
+        `)
+}, 'costars')
+
+export const getMoviesByCostars = query(async (actorAId: number, actorBId: number) => {
+    await using db = await getDatabase()
+    return await db.connection.select<DetailedDbFilm[]>(`
             WITH tq AS (
                 SELECT JSON_GROUP_ARRAY(tag) tags, film_id
                 FROM film_tag
@@ -218,4 +233,4 @@ export const getCostars = query(async (actorId: number) => {
             LEFT JOIN aq USING (film_id)
             
             `, [actorAId, actorBId])
-        }, "costarMovies")
+}, "costarMovies")

@@ -5,7 +5,7 @@ import MainWindow from "./windows/MainWindow";
 import { Navigate, Route, Router } from "@solidjs/router";
 import Actors from "./routes/Actors";
 import Studios from "./routes/Studios";
-import { getActors, getFilms, getFilmsByActor, getFilmsByStudio, getFilmsByTag, getInaccessible, getMoviesByCostars, getStudios, getTags } from "./api/data";
+import { getActors, getCostars, getFilms, getFilmsByActor, getFilmsByStudio, getFilmsByTag, getInaccessible, getMoviesByCostars, getPairings, getStudios, getTags } from "./api/data";
 import 'ag-grid-community/styles/ag-grid.css'; // grid core CSS
 import "ag-grid-community/styles/ag-theme-alpine.css"; // optional theme
 import { Movies } from "./routes/Movies";
@@ -62,7 +62,16 @@ render(() => (
             <Route path="/studios" component={Studios} preload={() => getStudios()} />
             <Route path="/tags" component={Tags} preload={() => getTags()} />
             <Route path="/play" component={VideoPlayer} />
-        <Route path="/costars/:actorId" component={Costars} />
+            <Route path="/costars">
+                <Route
+                    path="/"
+                    component={props => <Costars fetcher={() => getPairings()} />}
+                />
+                <Route
+                    path="/:actorId"
+                    component={props => <Costars fetcher={() => getCostars(Number(props.params.actorId))} />}
+                />
+            </Route>
         </Route>
         <Route path="/settings" component={Settings} />
         <Route path="/convert" component={Convert} />

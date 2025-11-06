@@ -1,14 +1,17 @@
-import { A, createAsync, useParams } from "@solidjs/router"
+import { A, createAsync } from "@solidjs/router"
 import { ICellRendererParams } from "ag-grid-community"
 import { Show, Suspense } from "solid-js"
 import { createStore } from "solid-js/store"
-import { getCostars } from "~/api/data"
 import { ContextMenu } from "~/components/ContextMenu/ContextMenu"
 import { GridWrapper } from "~/components/GridWrapper"
+import { PairingResult } from "~/datatypes"
 
-export function Costars() {
-    const params = useParams()
-    const data = createAsync(() => getCostars(Number(params.actorId)))
+type Props = {
+    fetcher(): Promise<PairingResult[] | undefined>
+}
+
+export function Costars(props: Props) {
+    const data = createAsync(() => props.fetcher())
 
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
