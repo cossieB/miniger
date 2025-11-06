@@ -46,7 +46,9 @@ export type DetailedFilm = Film & {
 export type PairingResult = {
     actorA: string
     actorAId: number
+    actorAImage: string
     actorB: string
     actorBId: number
     together: number
+    actorBImage: string
 }

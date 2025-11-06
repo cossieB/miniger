@@ -1,7 +1,8 @@
 import { A, createAsync } from "@solidjs/router"
-import { ICellRendererParams } from "ag-grid-community"
+import { ICellRendererParams, ITooltipParams } from "ag-grid-community"
 import { Show, Suspense } from "solid-js"
 import { createStore } from "solid-js/store"
+import { ActorItem2 } from "~/components/CellEditors/ActorCellEditor/ActorItem"
 import { ContextMenu } from "~/components/ContextMenu/ContextMenu"
 import { GridWrapper } from "~/components/GridWrapper"
 import { PairingResult } from "~/datatypes"
@@ -47,9 +48,19 @@ export function Costars(props: Props) {
                     columnDefs={[{
                         field: "actorA",
                         headerName: "Actor",
+                        tooltipComponent: Tooltip,
+                        tooltipValueGetter: params => ({
+                            name: params.data.actorA,
+                            image: params.data.actorAImage
+                        }),
                     }, {
                         field: 'actorB',
-                        headerName: "Co-Star"
+                        headerName: "Co-Star",
+                        tooltipComponent: Tooltip,
+                        tooltipValueGetter: params => ({
+                            name: params.data.actorB,
+                            image: params.data.actorBImage
+                        }),
                     }, {
                         field: "together",
                         headerName: "Movies",
@@ -66,5 +77,17 @@ export function Costars(props: Props) {
                 </ContextMenu>
             </Show>
         </Suspense>
+    )
+}
+
+function Tooltip(param: ITooltipParams) {
+console.log(param.value)
+    return (
+        <ActorItem2
+            actor={{
+                name: param.value.name,
+                image: param.value.image,
+            }}
+        />
     )
 }

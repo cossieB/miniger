@@ -39,7 +39,7 @@ export function ActorItem(props: Props) {
     );
 }
 
-export function ActorItem2(props: { actor: Actor }) {
+export function ActorItem2(props: { actor: Pick<Actor, 'image' | 'name'> }) {
 
     return (
         <Suspense>

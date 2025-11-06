@@ -175,9 +175,16 @@ export const getTags = query(async () => {
 export const getCostars = query(async (actorId: number) => {
     await using db = await getDatabase()
     return await db.connection.select<PairingResult[]>(`
-        SELECT a.name actorA, a.actor_id actorAId, b.name actorB, b.actor_id actorBId, COUNT(*) as together
+        SELECT 
+            a.name actorA, 
+            a.actor_id actorAId, 
+            a.image actorAImage,
+            b.name actorB, 
+            b.actor_id actorBId,
+            b.image actorBImage, 
+            COUNT(*) as together
         FROM actor_film af1
-        JOIN actor_film af2 ON af1.film_id = af2.film_id AND af2.actor_id != $1
+        JOIN actor_film af2 ON af1.film_id = af2.film_id AND af2.actor_id > $1
         JOIN actor a ON a.actor_id = af1.actor_id
         JOIN actor b ON b.actor_id = af2.actor_id
         WHERE af1.actor_id = $1
@@ -191,9 +198,16 @@ export const getPairings = query(async () => {
     await using db = await getDatabase()
 
     return await db.connection.select<PairingResult[]>(`
-        SELECT a.name actorA, a.actor_id actorAId, b.name actorB, b.actor_id actorBId, COUNT(*) as together
+        SELECT 
+            a.name actorA, 
+            a.actor_id actorAId, 
+            a.image actorAImage,
+            b.name actorB, 
+            b.actor_id actorBId,
+            b.image actorBImage, 
+            COUNT(*) as together
         FROM actor_film af1
-        JOIN actor_film af2 ON af1.film_id = af2.film_id AND af2.actor_id != af1.actor_id
+        JOIN actor_film af2 ON af1.film_id = af2.film_id AND af2.actor_id > af1.actor_id
         JOIN actor a ON a.actor_id = af1.actor_id
         JOIN actor b ON b.actor_id = af2.actor_id
         GROUP BY a.actor_id, b.actor_id
