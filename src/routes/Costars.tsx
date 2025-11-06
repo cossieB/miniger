@@ -1,12 +1,24 @@
 import { A, createAsync, useParams } from "@solidjs/router"
 import { ICellRendererParams } from "ag-grid-community"
-import AgGridSolid from "ag-grid-solid"
-import { Suspense } from "solid-js"
+import { Show, Suspense } from "solid-js"
+import { createStore } from "solid-js/store"
 import { getCostars } from "~/api/data"
+import { ContextMenu } from "~/components/ContextMenu/ContextMenu"
+import { GridWrapper } from "~/components/GridWrapper"
 
 export function Costars() {
     const params = useParams()
     const data = createAsync(() => getCostars(Number(params.actorId)))
+
+    const [contextMenu, setContextMenu] = createStore({
+        isOpen: false,
+        pos: { x: 0, y: 0 },
+        actorAId: -1,
+        actorBId: -1,
+        actorA: "",
+        actorB: "",
+    })
+
     return (
         <Suspense>
             <div
@@ -17,8 +29,18 @@ export function Costars() {
                     return false
                 }}
             >
-                <AgGridSolid
+                <GridWrapper
                     rowData={data()}
+                    onCellContextMenu={params => {
+                        setContextMenu({
+                            isOpen: true,
+                            pos: {
+                                x: (params.event as MouseEvent).clientX,
+                                y: (params.event as MouseEvent).clientY,
+                            },
+                            ...params.data
+                        })
+                    }}
                     columnDefs={[{
                         field: "actorA",
                         headerName: "Actor",
@@ -26,7 +48,7 @@ export function Costars() {
                         field: 'actorB',
                         headerName: "Co-Star"
                     }, {
-                        field: "together", 
+                        field: "together",
                         headerName: "Movies",
                     }, {
                         field: "",
@@ -34,6 +56,12 @@ export function Costars() {
                     }]}
                 />
             </div>
+            <Show when={contextMenu.isOpen}>
+                <ContextMenu pos={contextMenu.pos} close={() => setContextMenu('isOpen', false)} >
+                    <ContextMenu.Link href={`/movies/actors/${contextMenu.actorAId}?${contextMenu.actorAId}=${contextMenu.actorA}`}> <span class="font-bold whitespace-pre">{contextMenu.actorA} </span>Movies </ContextMenu.Link>
+                    <ContextMenu.Link href={`/movies/actors/${contextMenu.actorBId}?${contextMenu.actorBId}=${contextMenu.actorB}`}> <span class="font-bold whitespace-pre">{contextMenu.actorB} </span>Movies </ContextMenu.Link>
+                </ContextMenu>
+            </Show>
         </Suspense>
     )
 }

@@ -57,12 +57,12 @@ render(() => (
             </Route>
             <Route path="/actors" >
                 <Route path="/" component={Actors} preload={() => getActors()} />
-                <Route path=":actorId/costars" component={Costars} />
                 <Route path=":a" component={() => <Navigate href={"/actors"} />} />
             </Route>
             <Route path="/studios" component={Studios} preload={() => getStudios()} />
             <Route path="/tags" component={Tags} preload={() => getTags()} />
             <Route path="/play" component={VideoPlayer} />
+        <Route path="/costars/:actorId" component={Costars} />
         </Route>
         <Route path="/settings" component={Settings} />
         <Route path="/convert" component={Convert} />

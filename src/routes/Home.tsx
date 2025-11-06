@@ -47,7 +47,7 @@ type P = {
 function Btn(props: P) {
     return (
         <button
-            class="p-1 h-52 flex flex-col items-center border-2 border-amber-400 hover:bg-slate-700 cursor-pointer hover:bg-gradient-to-b from-slate-700 to-slate-900 homeBtn"
+            class="p-1 h-52 flex flex-col items-center border-2 border-amber-400 hover:bg-slate-700 cursor-pointer hover:bg-linear-to-b from-slate-700 to-slate-900 homeBtn"
             onclick={props.onclick}
         >
             <div class="h-[80%] flex place-items-center">

@@ -17,7 +17,7 @@ export function DeleteBtn() {
     const segment1 = () => params.pathname.split("/")[1]
 
     return (
-        <Show when={["movies", "actors", "studios"].includes(segment1())}>
+        <Show when={/^\/(?!.*costar)(movies|actors|studios)/.test(params.pathname)}>
             <button
                 id="topbar-delete-btn"
                 title="Delete selected items"

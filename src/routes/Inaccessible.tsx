@@ -1,17 +1,15 @@
 import { Suspense, onCleanup, onMount } from "solid-js";
-import AgGridSolid from "ag-grid-solid";
-import { GridApi, ICellEditorParams } from "ag-grid-community";
+import { ICellEditorParams } from "ag-grid-community";
 import { open, } from "@tauri-apps/plugin-dialog";
 import { getInaccessible } from "../api/data";
 import { createAsync, useAction } from "@solidjs/router";
 import { editFilm } from "../api/mutations";
 import videoExtensions from "~/videoExtensions.json"
 import { SearchSvg } from "~/icons";
-import { state } from "~/state";
+import { GridWrapper } from "~/components/GridWrapper";
 
 export default function Inaccessible() {
     const data = createAsync(() => getInaccessible())
-    let gridApi!: GridApi<any>
 
     async function handleKeyup(e: KeyboardEvent) {
         if (e.key === "Delete") {
@@ -30,11 +28,7 @@ export default function Inaccessible() {
         <Suspense>
             <div id='gridContainer' class='ag-theme-alpine-dark h-full relative' >
 
-                <AgGridSolid
-                    onGridReady={params => {
-                        (gridApi as any) = params.api
-                        state.setGridApi(gridApi);
-                    }}
+                <GridWrapper
                     getRowId={params => params.data.path}
                     rowSelection="multiple"
                     onColumnHeaderContextMenu={e => {

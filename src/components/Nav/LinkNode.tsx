@@ -18,7 +18,7 @@ export function LinkNode(props: P1) {
         >
             <A
                 href={props.href}
-                class="w-full flex items-center h-8 hover:bg-orange-500"
+                class="w-full flex items-center h-8 hover:bg-orange-500 text-nowrap"
                 style={{ "padding-left": level() + 'rem' }}
             >
                 <Icon>

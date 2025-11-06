@@ -2,12 +2,12 @@ import { createSignal, Show, Suspense } from "solid-js";
 import { getStudios } from "../api/data";
 import { createStore } from "solid-js/store";
 import { ContextMenu } from "../components/ContextMenu/ContextMenu";
-import AgGridSolid, { AgGridSolidRef } from "ag-grid-solid";
-import { state } from "../state";
+import { AgGridSolidRef } from "ag-grid-solid";
 import { createStudio, updateStudio } from "../api/mutations";
 import { createAsync, useAction } from "@solidjs/router";
 import { fixPinnedRowHeight, useAdded, useFilter } from "~/utils/pinnedUtils";
 import { PinnedRowButtons } from "~/components/PinnedRowButtons";
+import { GridWrapper } from "~/components/GridWrapper";
 
 export default function Studios() {
     const studios = createAsync(() => getStudios())
@@ -42,14 +42,11 @@ export default function Studios() {
                 id='gridContainer'
                 class='ag-theme-alpine-dark h-full relative'
             >
-                <AgGridSolid
+                <GridWrapper
                     ref={setRef}
                     rowData={studios()}
                     getRowId={params => params.data.studio_id}
-                    onGridReady={params => {
-                        state.setGridApi(params.api as any)
-                        fixPinnedRowHeight()
-                    }}
+                    additionalSetup={fixPinnedRowHeight}
                     rowSelection="multiple"
                     defaultColDef={{
                         editable: true,

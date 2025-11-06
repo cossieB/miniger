@@ -1,6 +1,5 @@
 import { createAsync, useAction } from "@solidjs/router"
-import { GridApi, ITooltipParams } from "ag-grid-community"
-import AgGridSolid from "ag-grid-solid"
+import type { ITooltipParams } from "ag-grid-community"
 import { createMemo, Suspense, Show, createUniqueId, For } from "solid-js"
 import { createStore } from "solid-js/store"
 import { type DetailedDbFilm } from "../datatypes"
@@ -10,6 +9,7 @@ import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
 import MoviesContextMenu from "../components/MoviesContextMenu"
 import { editFilm, updateTag } from "../api/mutations"
 import { ActorItem2 } from "~/components/CellEditors/ActorCellEditor/ActorItem"
+import { GridWrapper } from "~/components/GridWrapper"
 
 type Props = {
     fetcher(): Promise<DetailedDbFilm[] | undefined>
@@ -19,8 +19,6 @@ export function Movies(props: Props) {
     const films = createAsync(() => props.fetcher())
     const updateTagAction = useAction(updateTag)
     const updateFilmAction = useAction(editFilm)
-
-    let gridApi!: GridApi
 
     const data = createMemo(() => {
         if (!films()) return undefined
@@ -51,16 +49,13 @@ export function Movies(props: Props) {
                 id='gridContainer'
                 class='ag-theme-alpine-dark h-full relative'
             >
-                <AgGridSolid
-                    onGridReady={params => {
-                        (gridApi as any) = params.api
-                        state.setGridApi(gridApi);
-                    }}
+                <GridWrapper
+                    gridId={location.pathname}
                     getRowId={params => params.data.path}
                     rowSelection="multiple"
                     rowData={data()}
-                    onSelectionChanged={() => {
-                        const selection = gridApi.getSelectedRows();
+                    onSelectionChanged={(params) => {
+                        const selection = params.api.getSelectedRows();
                         state.mainPanel.setSelectedItems(selection)
                     }}
                     onCellContextMenu={params => {
@@ -69,7 +64,7 @@ export function Movies(props: Props) {
                             x: (params.event as MouseEvent).clientX,
                             y: (params.event as MouseEvent).clientY,
                             data: params.data,
-                            selections: gridApi.getSelectedRows(),
+                            selections: params.api.getSelectedRows(),
                         })
                     }}
                     defaultColDef={{

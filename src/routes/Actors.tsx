@@ -4,13 +4,13 @@ import { countryList } from "../countryList";
 import { createAsync, useAction } from "@solidjs/router";
 import { ContextMenu } from "../components/ContextMenu/ContextMenu";
 import { createStore } from "solid-js/store";
-import AgGridSolid, { AgGridSolidRef } from "ag-grid-solid";
+import { AgGridSolidRef } from "ag-grid-solid";
 import { addActor, updateActor } from "../api/mutations";
-import { state } from "../state";
 import { ImageEditor } from "~/components/CellEditors/ImageEditor";
 import { Actor } from "~/datatypes";
 import { fixPinnedRowHeight, useAdded, useFilter } from "~/utils/pinnedUtils";
 import { PinnedRowButtons } from "~/components/PinnedRowButtons";
+import { GridWrapper } from "~/components/GridWrapper";
 
 export default function Actors() {
     // let ref!: AgGridSolidRef
@@ -59,15 +59,12 @@ export default function Actors() {
                     return false
                 }}
             >
-                <AgGridSolid
+                <GridWrapper
                     ref={setRef}
                     rowData={actors()}
                     rowSelection="multiple"
                     getRowId={params => params.data.actor_id}
-                    onGridReady={params => {
-                        state.setGridApi(params.api as any)
-                        fixPinnedRowHeight()
-                    }}
+                    additionalSetup={fixPinnedRowHeight}
                     onCellContextMenu={params => {
                         setContextMenu({
                             isOpen: true,
@@ -130,7 +127,7 @@ export default function Actors() {
                 <Show when={contextMenu.isOpen}>
                     <ContextMenu pos={contextMenu.pos} close={() => setContextMenu('isOpen', false)} >
                         <ContextMenu.Link href={`/movies/actors/${contextMenu.selectedId}?${contextMenu.selectedId}=${contextMenu.selectedName}`}> Go To Movies </ContextMenu.Link>
-                        <ContextMenu.Link href={`/actors/${contextMenu.selectedId}/costars?${contextMenu.selectedId}=${contextMenu.selectedName}`} >See Co-stars</ContextMenu.Link>
+                        <ContextMenu.Link href={`/costars/${contextMenu.selectedId}?${contextMenu.selectedId}=${contextMenu.selectedName}`} >See Co-stars</ContextMenu.Link>
                     </ContextMenu>
                 </Show>
                 <PinnedRowButtons

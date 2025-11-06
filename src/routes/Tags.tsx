@@ -1,9 +1,9 @@
 import { createAsync } from "@solidjs/router";
-import AgGridSolid from "ag-grid-solid";
 import { Show, Suspense } from "solid-js";
 import { createStore } from "solid-js/store";
 import { getTags } from "~/api/data";
 import { ContextMenu } from "~/components/ContextMenu/ContextMenu";
+import { GridWrapper } from "~/components/GridWrapper";
 
 export function Tags() {
     const data = createAsync(() => getTags())
@@ -19,7 +19,7 @@ export function Tags() {
                 id='gridContainer'
                 class='ag-theme-alpine-dark h-full relative'
             >
-                <AgGridSolid
+                <GridWrapper
                     rowData={data()}
                     columnDefs={[{
                         field: "tag"
