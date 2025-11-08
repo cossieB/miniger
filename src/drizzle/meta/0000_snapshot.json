@@ -1,0 +1,323 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "6",
+  "dialect": "sqlite",
+  "tables": {
+    "_sqlx_migrations": {
+      "name": "_sqlx_migrations",
+      "columns": {
+        "version": {
+          "autoincrement": false,
+          "name": "version",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "installed_on": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "installed_on",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "success": {
+          "autoincrement": false,
+          "name": "success",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "checksum": {
+          "autoincrement": false,
+          "name": "checksum",
+          "type": "blob",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "execution_time": {
+          "autoincrement": false,
+          "name": "execution_time",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "actor": {
+      "name": "actor",
+      "columns": {
+        "actor_id": {
+          "autoincrement": false,
+          "name": "actor_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dob": {
+          "autoincrement": false,
+          "name": "dob",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nationality": {
+          "autoincrement": false,
+          "name": "nationality",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gender": {
+          "autoincrement": false,
+          "name": "gender",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "studio": {
+      "name": "studio",
+      "columns": {
+        "studio_id": {
+          "autoincrement": false,
+          "name": "studio_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "website": {
+          "autoincrement": false,
+          "name": "website",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "film": {
+      "name": "film",
+      "columns": {
+        "film_id": {
+          "autoincrement": false,
+          "name": "film_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "path": {
+          "autoincrement": false,
+          "name": "path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "autoincrement": false,
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "studio_id": {
+          "autoincrement": false,
+          "name": "studio_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "release_date": {
+          "autoincrement": false,
+          "name": "release_date",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_added": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "date_added",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "film_studio_id_studio_studio_id_fk": {
+          "name": "film_studio_id_studio_studio_id_fk",
+          "tableFrom": "film",
+          "tableTo": "studio",
+          "columnsFrom": [
+            "studio_id"
+          ],
+          "columnsTo": [
+            "studio_id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "actor_film": {
+      "name": "actor_film",
+      "columns": {
+        "actor_id": {
+          "autoincrement": false,
+          "name": "actor_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "film_id": {
+          "autoincrement": false,
+          "name": "film_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "actor_film_actor_id_film_id_pk": {
+          "columns": [
+            "actor_id",
+            "film_id"
+          ],
+          "name": "actor_film_actor_id_film_id_pk"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "actor_film_film_id_film_film_id_fk": {
+          "name": "actor_film_film_id_film_film_id_fk",
+          "tableFrom": "actor_film",
+          "tableTo": "film",
+          "columnsFrom": [
+            "film_id"
+          ],
+          "columnsTo": [
+            "film_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "actor_film_actor_id_actor_actor_id_fk": {
+          "name": "actor_film_actor_id_actor_actor_id_fk",
+          "tableFrom": "actor_film",
+          "tableTo": "actor",
+          "columnsFrom": [
+            "actor_id"
+          ],
+          "columnsTo": [
+            "actor_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "film_tag": {
+      "name": "film_tag",
+      "columns": {
+        "film_id": {
+          "autoincrement": false,
+          "name": "film_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tag": {
+          "autoincrement": false,
+          "name": "tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "film_tag_film_id_tag_pk": {
+          "columns": [
+            "film_id",
+            "tag"
+          ],
+          "name": "film_tag_film_id_tag_pk"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "film_tag_film_id_film_film_id_fk": {
+          "name": "film_tag_film_id_film_film_id_fk",
+          "tableFrom": "film_tag",
+          "tableTo": "film",
+          "columnsFrom": [
+            "film_id"
+          ],
+          "columnsTo": [
+            "film_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}
