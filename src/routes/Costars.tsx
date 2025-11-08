@@ -1,6 +1,6 @@
 import { A, createAsync } from "@solidjs/router"
 import { ICellRendererParams, ITooltipParams } from "ag-grid-community"
-import { Show, Suspense } from "solid-js"
+import { createEffect, Show, Suspense } from "solid-js"
 import { createStore } from "solid-js/store"
 import { ActorItem2 } from "~/components/CellEditors/ActorCellEditor/ActorItem"
 import { ContextMenu } from "~/components/ContextMenu/ContextMenu"
@@ -13,6 +13,10 @@ type Props = {
 
 export function Costars(props: Props) {
     const data = createAsync(() => props.fetcher())
+
+    createEffect(() => {
+        console.log(data())
+    })
 
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,

@@ -34,7 +34,7 @@ export function ActorSelector(props: ICellEditorParams) {
                 placeholder="Filter actors"
             />
             <SubmitBtn
-                film_id={props.data.film_id}
+                filmId={props.data.filmId}
                 rowActors={rowActors}
                 stopEditing={props.stopEditing}
             />

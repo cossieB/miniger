@@ -109,7 +109,7 @@ export default function MoviesContextMenu(props: P) {
                     <ContextMenu.SubMenu label="More From Actor" icon={<TheatreSvg width={16} />} >
                         <For each={actors()}>
                             {actor =>
-                                <ContextMenu.Link href={`/movies/actors/${actor.actor_id}?${actor.actor_id}=${actor.name}`}>
+                                <ContextMenu.Link href={`/movies/actors/${actor.actorId}?${actor.actorId}=${actor.name}`}>
                                     {actor.name}
                                 </ContextMenu.Link>
                             }

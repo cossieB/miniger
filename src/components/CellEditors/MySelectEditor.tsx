@@ -44,16 +44,16 @@ export function MySelectEditor(props: ICellEditorParams) {
                     value={null}
                     setInput={setSelectedStudio}
                     stopEditing={props.stopEditing}
-                    filmId={props.data.film_id}
+                    filmId={props.data.filmId}
                 />
                 <For each={filtered()}>
                     {studio =>
                         <Option
                             text={studio.name}
-                            value={studio.studio_id}
+                            value={studio.studioId}
                             setInput={setSelectedStudio}
                             stopEditing={props.stopEditing}
-                            filmId={props.data.film_id}
+                            filmId={props.data.filmId}
                         />}
                 </For>
                 <Show when={input().length > 0}>
@@ -66,7 +66,7 @@ export function MySelectEditor(props: ICellEditorParams) {
                             })
                             props.stopEditing()
                         }}
-                        filmId={props.data.film_id}
+                        filmId={props.data.filmId}
                     />
                 </Show>
             </ul>

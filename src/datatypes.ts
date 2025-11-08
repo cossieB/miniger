@@ -1,37 +1,13 @@
-export type Film = {
-    film_id: number;
-    path: string;
-    title: string;
-    studio_id: number | null;
-    release_date: string | null;
-}
+import { InferSelectModel } from "drizzle-orm";
+import { actor, actorFilm, film, filmTag, studio } from "./drizzle/schema";
 
-export type Actor = {
-    actor_id: number;
-    name: string;
-    dob: string | null;
-    nationality: string | null;
-    gender: string | null;
-    image: string | null;
-}
+export type Film = InferSelectModel<typeof film>
+export type Actor = InferSelectModel<typeof actor>
+export type Studio = InferSelectModel<typeof studio>
+export type ActorFilm = InferSelectModel<typeof actorFilm>
+export type FilmTag = InferSelectModel<typeof filmTag>
 
-export type Studio = {
-    studio_id: number;
-    name: string;
-    website: string | null;
-}
-
-export type ActorFilm = {
-    actor_id: number;
-    film_id: number;
-}
-
-export type FilmTag = {
-    film_id: number;
-    tag: string;
-}
-
-export type DetailedDbFilm = Film & {
+type DetailedDbFilm = Film & {
     actors: string
     studio_name: string | null
     tags: string

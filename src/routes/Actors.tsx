@@ -1,4 +1,4 @@
-import { createSignal, Show, Suspense } from "solid-js";
+import { createEffect, createSignal, Show, Suspense } from "solid-js";
 import { getActors } from "../api/data";
 import { countryList } from "../countryList";
 import { createAsync, useAction } from "@solidjs/router";
@@ -25,7 +25,7 @@ export default function Actors() {
         selectedName: "",
         pos: { x: 0, y: 0 },
     })
-    const [input, setInput] = createStore<Omit<Actor, 'actor_id'>>({
+    const [input, setInput] = createStore<Omit<Actor, 'actorId'>>({
         name: "",
         dob: null,
         gender: null,
@@ -35,7 +35,7 @@ export default function Actors() {
 
     useFilter(ref, 'name', () => input.name)
 
-    const setAdded = useAdded(actors, 'actor_id', ref)
+    const setAdded = useAdded(actors, 'actorId', ref)
 
     function reset() {
         ref()?.api.setFilterModel(null);
@@ -48,6 +48,7 @@ export default function Actors() {
             nationality: null
         });
     }
+    createEffect(() => {console.log(contextMenu.selectedId)})
 
     return (
         <Suspense>
@@ -63,7 +64,7 @@ export default function Actors() {
                     ref={setRef}
                     rowData={actors()}
                     rowSelection="multiple"
-                    getRowId={params => params.data.actor_id}
+                    getRowId={params => params.data.actorId}
                     additionalSetup={fixPinnedRowHeight}
                     onCellContextMenu={params => {
                         setContextMenu({
@@ -72,16 +73,16 @@ export default function Actors() {
                                 x: (params.event as MouseEvent).clientX,
                                 y: (params.event as MouseEvent).clientY,
                             },
-                            selectedId: params.data.actor_id,
+                            selectedId: params.data.actorId,
                             selectedName: params.data.name,
                         })
                     }}
 
                     defaultColDef={{
-                        onCellValueChanged: params => {
+                        onCellValueChanged: (params) => {
                             if (!params.colDef.field || !params.node) return;
                             if (!params.node.rowPinned) {
-                                updateActorAction(params.colDef.field, params.newValue, params.data.actor_id)
+                                updateActorAction(params.colDef.field, params.newValue, params.data.actorId)
                                 return
                             }
                             const field: any = params.colDef.field

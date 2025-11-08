@@ -26,7 +26,7 @@ export default function Studios() {
     })
 
     useFilter(ref, 'name', () => input.name)
-    const setAdded = useAdded(studios, 'studio_id', ref)
+    const setAdded = useAdded(studios, 'studioId', ref)
     function reset() {
         ref()?.api.setFilterModel(null);
         ref()?.api.setGridOption("pinnedBottomRowData", [{ name: "Add Studio..." }]);
@@ -45,7 +45,7 @@ export default function Studios() {
                 <GridWrapper
                     ref={setRef}
                     rowData={studios()}
-                    getRowId={params => params.data.studio_id}
+                    getRowId={params => params.data.studioId}
                     additionalSetup={fixPinnedRowHeight}
                     rowSelection="multiple"
                     defaultColDef={{
@@ -55,7 +55,7 @@ export default function Studios() {
                         onCellValueChanged: params => {
                             if (!params.colDef.field || !params.node) return;
                             if (!params.node.rowPinned) {
-                                updateAction(params.colDef.field, params.newValue, params.data.studio_id)
+                                updateAction(params.colDef.field, params.newValue, params.data.studioId)
                                 return;
                             }
                             const field: any = params.colDef.field;
@@ -69,7 +69,7 @@ export default function Studios() {
                                 x: (params.event as MouseEvent).clientX,
                                 y: (params.event as MouseEvent).clientY,
                             },
-                            selectedId: params.data.studio_id,
+                            selectedId: params.data.studioId,
                             selectedName: params.data.name,
                         })
                     }}

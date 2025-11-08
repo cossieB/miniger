@@ -82,7 +82,7 @@ export function Movies(props: Props) {
                         filter: true,
                         editable: true,
                         onCellValueChanged: async (params) => {
-                            updateFilmAction('title', params.newValue, params.data.film_id)
+                            updateFilmAction('title', params.newValue, params.data.filmId)
                         },
                         tooltipField: 'title'
                     }, {
@@ -94,8 +94,8 @@ export function Movies(props: Props) {
                         valueSetter: (params) => {
                             const value = JSON.parse(params.newValue);
                             if (value.name === "") return false;
-                            params.data.studio_name = value.name == "Unknown" ? "" : value.name
-                            params.data.studio_id = value.id
+                            params.data.studioName = value.name == "Unknown" ? "" : value.name
+                            params.data.studioId = value.id
                             return true
                         }
                     }, {
@@ -115,14 +115,14 @@ export function Movies(props: Props) {
                         field: "releaseDate",
                         editable: true,
                         cellEditor: "agDateStringCellEditor",
-                        onCellValueChanged: params => updateFilmAction('release_date', params.newValue, params.data.film_id)
+                        onCellValueChanged: params => updateFilmAction('release_date', params.newValue, params.data.filmId)
                     }, {
                         field: "tags",
                         editable: true,
                         onCellValueChanged: async params => {
                             try {
                                 const arr = (params.newValue as string[]).filter(x => !!x) // remove empty strings
-                                await updateTagAction(params.data.film_id, arr);
+                                await updateTagAction(params.data.filmId, arr);
                             }
                             catch (error) {
 

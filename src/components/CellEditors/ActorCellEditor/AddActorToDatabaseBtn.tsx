@@ -18,7 +18,7 @@ export function AddActorToDatabaseBtn(props: Props) {
                 onclick={async () => {
                     const actorId = await addActorAction(props.input().trim());
                     const actor: Actor = {
-                        actor_id: actorId,
+                        actorId: actorId,
                         dob: null,
                         gender: null,
                         image: null,

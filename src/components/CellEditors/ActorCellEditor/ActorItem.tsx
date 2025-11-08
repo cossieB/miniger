@@ -17,8 +17,8 @@ const [dir] = createResource(async () => {
 export function ActorItem(props: Props) {
 
     function handleClick() {
-        if (props.rowActors().some(x => x.actor_id === props.actor.actor_id))
-            props.setRowActors(prev => prev.filter(x => x.actor_id !== props.actor.actor_id));
+        if (props.rowActors().some(x => x.actorId === props.actor.actorId))
+            props.setRowActors(prev => prev.filter(x => x.actorId !== props.actor.actorId));
 
         else
             props.setRowActors(prev => [...prev, props.actor]);
@@ -28,7 +28,7 @@ export function ActorItem(props: Props) {
             <li
                 onclick={handleClick}
                 class="overflow-hidden h-60 flex flex-col"
-                classList={{ 'border-2 border-green-500': props.rowActors().some((x: any) => x.actor_id === props.actor.actor_id) }}
+                classList={{ 'border-2 border-green-500': props.rowActors().some((x: any) => x.actorId === props.actor.actorId) }}
             >
                 <div class="h-[90%] overflow-hidden">
                     <img src={props.actor.image ? convertFileSrc(dir()! + props.actor.image) : "/Question_Mark.svg"} class="object-cover object-top h-full w-full" loading="lazy" alt="" onerror={e => e.currentTarget.src = "/Question_Mark.svg"} />

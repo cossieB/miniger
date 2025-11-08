@@ -3,6 +3,7 @@ import type { Studio, Actor, PairingResult } from "../datatypes"
 import { invoke } from "@tauri-apps/api/core"
 import { getDatabase } from "./db"
 import { allFilms, filmsByActor, filmsByPath, filmsByStudio, filmsByTag, moviesByCostars } from "./films"
+import { allActors, allPairings, costarsOf } from "./actors"
 
 export const getFilms = query(async () => {
     return await allFilms()
@@ -14,18 +15,11 @@ export const getStudios = query(async () => {
 }, 'studios')
 
 export const getActors = query(async () => {
-    await using db = await getDatabase()
-    return await db.connection.select<Actor[]>(`
-        SELECT *, COUNT(film_id) as appearances FROM actor 
-        LEFT JOIN actor_film USING (actor_id)
-        GROUP BY actor_id
-        ORDER BY LOWER(name)
-        `)
+    return allActors()
 }, 'actors')
 
 export const getInaccessible = query(async () => {
-    await using db = await getDatabase()
-    const films = await db.connection.select("SELECT title, path, film_id FROM film")
+    const films = await allFilms()
     return await invoke('get_inaccessible', { playlist: films }) as { title: string, path: string, film_id: number }[]
 }, 'inaccessible')
 
@@ -52,46 +46,12 @@ export const getTags = query(async () => {
 }, 'getTags')
 
 export const getCostars = query(async (actorId: number) => {
-    await using db = await getDatabase()
-    return await db.connection.select<PairingResult[]>(`
-        SELECT 
-            a.name actorA, 
-            a.actor_id actorAId, 
-            a.image actorAImage,
-            b.name actorB, 
-            b.actor_id actorBId,
-            b.image actorBImage, 
-            COUNT(*) as together
-        FROM actor_film af1
-        JOIN actor_film af2 ON af1.film_id = af2.film_id AND af2.actor_id > $1
-        JOIN actor a ON a.actor_id = af1.actor_id
-        JOIN actor b ON b.actor_id = af2.actor_id
-        WHERE af1.actor_id = $1
-        GROUP BY a.actor_id, b.actor_id
-        ORDER BY a.name, b.name
-        `, [actorId])
+    return costarsOf(actorId);
+
 }, 'costarsOf')
 
 export const getPairings = query(async () => {
-    await using db = await getDatabase()
-
-    return await db.connection.select<PairingResult[]>(`
-        SELECT 
-            a.name actorA, 
-            a.actor_id actorAId, 
-            a.image actorAImage,
-            b.name actorB, 
-            b.actor_id actorBId,
-            b.image actorBImage, 
-            COUNT(*) as together
-        FROM actor_film af1
-        JOIN actor_film af2 ON af1.film_id = af2.film_id
-        JOIN actor a ON a.actor_id = af1.actor_id
-        JOIN actor b ON b.actor_id = af2.actor_id
-        WHERE a.actor_id < b.actor_id
-        GROUP BY a.actor_id, b.actor_id
-        ORDER BY together DESC
-        `)
+    return allPairings()
 }, 'costars')
 
 export const getMoviesByCostars = query(async (actorAId: number, actorBId: number) => {
