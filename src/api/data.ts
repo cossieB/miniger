@@ -1,33 +1,11 @@
 import { query } from "@solidjs/router"
-import type { Studio, Actor, DetailedDbFilm, PairingResult } from "../datatypes"
+import type { Studio, Actor, PairingResult } from "../datatypes"
 import { invoke } from "@tauri-apps/api/core"
 import { getDatabase } from "./db"
+import { allFilms, filmsByActor, filmsByPath, filmsByStudio, filmsByTag, moviesByCostars } from "./films"
 
 export const getFilms = query(async () => {
-    await using db = await getDatabase()
-    return await db.connection.select<DetailedDbFilm[]>(`
-    WITH tq AS (
-        SELECT JSON_GROUP_ARRAY(tag) tags, film_id
-        FROM film_tag
-        GROUP BY film_id
-    ), aq AS (
-        SELECT JSON_GROUP_ARRAY(JSON_OBJECT('actor_id', actor_id, 'name', name, 'image', image, 'dob', dob, 'nationality', nationality, 'gender', gender)) actors, film_id
-        FROM actor_film
-        JOIN actor USING(actor_id)
-        GROUP BY film_id
-    )
-    
-    SELECT 
-        film.*, 
-        studio.name AS studio_name,
-        COALESCE(tags, '[]') as tags,
-        COALESCE(actors, '[]') as actors
-    FROM film
-    LEFT JOIN studio USING(studio_id)
-    LEFT JOIN tq USING(film_id)
-    LEFT JOIN aq USING(film_id)
-    ORDER BY LOWER(title)
-    `)
+    return await allFilms()
 }, 'films')
 
 export const getStudios = query(async () => {
@@ -52,119 +30,20 @@ export const getInaccessible = query(async () => {
 }, 'inaccessible')
 
 export const getFilmsByTag = query(async (tag: string) => {
-    await using db = await getDatabase()
     const decoded = decodeURI(tag);
-    return await db.connection.select<DetailedDbFilm[]>(`
-    WITH fq AS (
-        SELECT film_id FROM film_tag WHERE tag = $1
-    ), tq AS (
-        SELECT JSON_GROUP_ARRAY(tag) tags, film_id
-        FROM film_tag
-        GROUP BY film_id
-    ), aq AS (
-        SELECT JSON_GROUP_ARRAY(JSON_OBJECT('actor_id', actor_id, 'name', name, 'image', image, 'dob', dob, 'nationality', nationality, 'gender', gender)) actors, film_id
-        FROM actor_film
-        JOIN actor USING(actor_id)
-        GROUP BY film_id
-    )
-    
-    SELECT 
-        film.*, 
-        studio.name AS studio_name,
-        COALESCE(tags, '[]') as tags,
-        COALESCE(actors, '[]') as actors
-    FROM film
-    JOIN fq USING (film_id)
-    LEFT JOIN studio USING(studio_id)
-    LEFT JOIN tq USING(film_id)
-    LEFT JOIN aq USING(film_id)
-    ORDER BY LOWER(title)
-    `, [decoded])
+    return await filmsByTag(decoded)
 }, 'filmsByTag')
 
 export const getFilmsByActor = query(async (actorId: number) => {
-    await using db = await getDatabase()
-    return await db.connection.select<DetailedDbFilm[]>(`
-    WITH tq AS (
-        SELECT JSON_GROUP_ARRAY(tag) tags, film_id
-        FROM film_tag
-        GROUP BY film_id
-    ), aq AS (
-        SELECT JSON_GROUP_ARRAY(JSON_OBJECT('actor_id', actor_id, 'name', name, 'image', image, 'dob', dob, 'nationality', nationality, 'gender', gender)) actors, film_id
-        FROM actor_film
-        JOIN actor USING(actor_id)
-        GROUP BY film_id
-    )
-
-    SELECT 
-        film.*,
-        studio.name AS studio_name,
-        COALESCE(tags, '[]') as tags,
-        COALESCE(actors, '[]') as actors        
-    FROM actor_film 
-    JOIN film USING (film_id)
-    LEFT JOIN studio USING(studio_id)
-    LEFT JOIN tq USING (film_id)
-    LEFT JOIN aq USING (film_id)
-    WHERE actor_id = $1
-    ORDER BY LOWER(title)
-    `, [actorId])
+    return filmsByActor(actorId)
 }, "filmsByActor")
 
 export const getFilmsByStudio = query(async (studioId: number) => {
-    await using db = await getDatabase()
-    return await db.connection.select<DetailedDbFilm[]>(`
-    WITH tq AS (
-        SELECT JSON_GROUP_ARRAY(tag) tags, film_id
-        FROM film_tag
-        GROUP BY film_id
-    ), aq AS (
-        SELECT JSON_GROUP_ARRAY(JSON_OBJECT('actor_id', actor_id, 'name', name, 'image', image, 'dob', dob, 'nationality', nationality, 'gender', gender)) actors, film_id
-        FROM actor_film
-        JOIN actor USING(actor_id)
-        GROUP BY film_id
-    )
-    
-    SELECT 
-        film.*, 
-        studio.name AS studio_name,
-        COALESCE(tags, '[]') as tags,
-        COALESCE(actors, '[]') as actors
-    FROM film
-    LEFT JOIN studio USING(studio_id)
-    LEFT JOIN tq USING(film_id)
-    LEFT JOIN aq USING(film_id)
-    WHERE studio_id = $1
-    ORDER BY LOWER(title)
-    `, [studioId])
+    return filmsByStudio(studioId)
 }, "filmsByStudio")
 
 export const getFilmByPath = query(async (path: string) => {
-    await using db = await getDatabase()
-    const res = await db.connection.select<DetailedDbFilm[]>(`
-    WITH tq AS (
-        SELECT JSON_GROUP_ARRAY(tag) tags, film_id
-        FROM film_tag
-        GROUP BY film_id
-    ), aq AS (
-        SELECT JSON_GROUP_ARRAY(JSON_OBJECT('actor_id', actor_id, 'name', name, 'image', image, 'dob', dob, 'nationality', nationality, 'gender', gender)) actors, film_id
-        FROM actor_film
-        JOIN actor USING(actor_id)
-        GROUP BY film_id
-    )
-    
-    SELECT 
-        film.*, 
-        studio.name AS studio_name,
-        COALESCE(tags, '[]') as tags,
-        COALESCE(actors, '[]') as actors
-    FROM film
-    LEFT JOIN studio USING(studio_id)
-    LEFT JOIN tq USING(film_id)
-    LEFT JOIN aq USING (film_id)
-    WHERE path = $1
-    `, [path])
-    return res.at(0) ?? null
+    return filmsByPath(path)
 }, 'filmByPath')
 
 export const getTags = query(async () => {
@@ -193,7 +72,6 @@ export const getCostars = query(async (actorId: number) => {
         `, [actorId])
 }, 'costarsOf')
 
-
 export const getPairings = query(async () => {
     await using db = await getDatabase()
 
@@ -207,44 +85,15 @@ export const getPairings = query(async () => {
             b.image actorBImage, 
             COUNT(*) as together
         FROM actor_film af1
-        JOIN actor_film af2 ON af1.film_id = af2.film_id AND af2.actor_id > af1.actor_id
+        JOIN actor_film af2 ON af1.film_id = af2.film_id
         JOIN actor a ON a.actor_id = af1.actor_id
         JOIN actor b ON b.actor_id = af2.actor_id
+        WHERE a.actor_id < b.actor_id
         GROUP BY a.actor_id, b.actor_id
-        ORDER BY a.name, b.name
+        ORDER BY together DESC
         `)
 }, 'costars')
 
 export const getMoviesByCostars = query(async (actorAId: number, actorBId: number) => {
-    await using db = await getDatabase()
-    return await db.connection.select<DetailedDbFilm[]>(`
-            WITH tq AS (
-                SELECT JSON_GROUP_ARRAY(tag) tags, film_id
-                FROM film_tag
-                GROUP BY film_id
-                ), aq AS (
-                    SELECT JSON_GROUP_ARRAY(JSON_OBJECT('actor_id', actor_id, 'name', name, 'image', image, 'dob', dob, 'nationality', nationality, 'gender', gender)) actors, film_id
-                    FROM actor_film
-                    JOIN actor USING(actor_id)
-                    GROUP BY film_id
-                ), filter AS (
-                    SELECT af1.film_id
-                    FROM actor_film af1
-                    JOIN actor_film af2 ON af2.film_id = af1.film_id AND af2.actor_id != af1.actor_id
-                    JOIN film USING (film_id)
-                    WHERE af1.actor_id = $1 AND af2.actor_id = $2
-                )
-                    
-            SELECT 
-                film.*, 
-                studio.name AS studio_name,
-                COALESCE(tags, '[]') as tags,
-                COALESCE(actors, '[]') as actors
-            FROM film
-            JOIN filter USING(film_id)
-            LEFT JOIN studio USING(studio_id)
-            LEFT JOIN tq USING(film_id)
-            LEFT JOIN aq USING (film_id)
-            
-            `, [actorAId, actorBId])
+    return moviesByCostars(actorAId, actorBId);
 }, "costarMovies")

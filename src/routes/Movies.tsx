@@ -86,7 +86,7 @@ export function Movies(props: Props) {
                         },
                         tooltipField: 'title'
                     }, {
-                        field: "studio_name",
+                        field: "studioName",
                         editable: true,
                         headerName: "Studio",
                         cellEditor: MySelectEditor,
@@ -112,8 +112,7 @@ export function Movies(props: Props) {
                         tooltipValueGetter: params => params.value.map((x: any) => x.name).join(", "),
                         tooltipComponent: Tooltip
                     }, {
-                        field: "release_date",
-                        headerName: "Release Date",
+                        field: "releaseDate",
                         editable: true,
                         cellEditor: "agDateStringCellEditor",
                         onCellValueChanged: params => updateFilmAction('release_date', params.newValue, params.data.film_id)
@@ -133,8 +132,7 @@ export function Movies(props: Props) {
                     }, {
                         field: "path",
                     }, {
-                        field: "date_added",
-                        headerName: "Date Added",
+                        field: "dateAdded",
                         valueFormatter: param => new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: "medium" }).format(new Date(param.value + " UTC"))
                     }]}
                 />

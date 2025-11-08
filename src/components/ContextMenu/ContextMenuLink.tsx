@@ -6,9 +6,9 @@ export function ContextMenuLink(props: JSX.HTMLAttributes<HTMLLIElement> & { hre
     return (
         <li
             {...others}
-            class="flex items-center h-8 p-2 hover:bg-slate-500 relative"
+            class="flex items-center hover:bg-slate-500 relative"
         >
-            <A class="w-full h-full flex items-center" href={partial.href}>
+            <A class="w-full flex items-center h-8 p-2" href={partial.href}>
                 <span class="w-6"> {partial.icon} </span>
                 {props.children}
             </A>

@@ -116,13 +116,13 @@ export default function MoviesContextMenu(props: P) {
                         </For>
                     </ContextMenu.SubMenu>
                 </Show>
-                <Show when={data()?.studio_id}>
+                <Show when={data()?.studioId}>
                     <ContextMenu.Link
-                        href={`/movies/studios/${data()?.studio_id}?${data()?.studio_id}=${data()?.studio_name}`}
+                        href={`/movies/studios/${data()?.studioId}?${data()?.studioId}=${data()?.studioName}`}
                         icon={<CameraSvg />}
                     >
 
-                        More From {data()?.studio_name}
+                        More From {data()?.studioName}
                     </ContextMenu.Link>
                 </Show>
                 <ContextMenu.Item
