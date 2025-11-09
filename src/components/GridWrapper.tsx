@@ -1,16 +1,22 @@
 import { useMatch } from "@solidjs/router";
-import { GridState } from "ag-grid-community";
-import AgGridSolid, { AgGridSolidProps } from "ag-grid-solid";
-
+import { GridOptions, GridState, Module } from "ag-grid-community";
+import AgGridSolid, { AgGridSolidRef } from "ag-grid-solid";
 import { state } from "~/state";
 
-type Props = AgGridSolidProps & {
+interface AgGridSolidProps<TData> extends GridOptions<TData> {
+    gridOptions?: GridOptions<TData>;
+    ref?: AgGridSolidRef | ((ref: AgGridSolidRef) => void);
+    modules?: Module[];
+    class?: string;
+}
+
+type Props<TData = any> = AgGridSolidProps<TData> & {
     additionalSetup?: () => void;
 }
 
 const map: Record<string, GridState> = {}
 
-export function GridWrapper(props: Props) {
+export function GridWrapper<TData = any>(props: Props<TData>) {
 
     const match = useMatch(() => "/:table/*")
     

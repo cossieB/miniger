@@ -3,7 +3,7 @@ import { createResource, createSignal, Show } from "solid-js";
 import { appDataDir, sep } from "@tauri-apps/api/path";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { writeFile, remove } from "@tauri-apps/plugin-fs";
-import { updateActor } from "../../api/mutations";
+import { editActor } from "../../api/mutations";
 import { useAction } from "@solidjs/router";
 
 const [dir] = createResource(async () => {
@@ -13,7 +13,7 @@ const [dir] = createResource(async () => {
 
 
 export function ImageEditor(props: ICellEditorParams) {
-    const updateActorAction = useAction(updateActor);
+    const updateActorAction = useAction(editActor);
     let image = props.data.image;
 
     const api: ICellEditor = {

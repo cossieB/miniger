@@ -1,17 +1,16 @@
 import { query } from "@solidjs/router"
-import type { Studio, Actor, PairingResult } from "../datatypes"
 import { invoke } from "@tauri-apps/api/core"
-import { getDatabase } from "./db"
 import { allFilms, filmsByActor, filmsByPath, filmsByStudio, filmsByTag, moviesByCostars } from "./films"
 import { allActors, allPairings, costarsOf } from "./actors"
+import { allStudios } from "./studios"
+import { allTags } from "./tags"
 
 export const getFilms = query(async () => {
     return await allFilms()
 }, 'films')
 
 export const getStudios = query(async () => {
-    await using db = await getDatabase()
-    return await db.connection.select<Studio[]>("SELECT * FROM studio ORDER BY LOWER(name) ASC")
+    return allStudios()
 }, 'studios')
 
 export const getActors = query(async () => {
@@ -41,8 +40,7 @@ export const getFilmByPath = query(async (path: string) => {
 }, 'filmByPath')
 
 export const getTags = query(async () => {
-    await using db = await getDatabase()
-    return await db.connection.select<{ tag: string, count: number }[]>("SELECT tag, COUNT(*) as films FROM film_tag GROUP BY tag ORDER BY tag ASC")
+    return allTags()
 }, 'getTags')
 
 export const getCostars = query(async (actorId: number) => {

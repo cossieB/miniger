@@ -1,11 +1,11 @@
-import { createEffect, createSignal, Show, Suspense } from "solid-js";
+import { createSignal, Show, Suspense } from "solid-js";
 import { getActors } from "../api/data";
 import { countryList } from "../countryList";
 import { createAsync, useAction } from "@solidjs/router";
 import { ContextMenu } from "../components/ContextMenu/ContextMenu";
 import { createStore } from "solid-js/store";
 import { AgGridSolidRef } from "ag-grid-solid";
-import { addActor, updateActor } from "../api/mutations";
+import { addActor, editActor } from "../api/mutations";
 import { ImageEditor } from "~/components/CellEditors/ImageEditor";
 import { Actor } from "~/datatypes";
 import { fixPinnedRowHeight, useAdded, useFilter } from "~/utils/pinnedUtils";
@@ -15,7 +15,7 @@ import { GridWrapper } from "~/components/GridWrapper";
 export default function Actors() {
     // let ref!: AgGridSolidRef
     let [ref, setRef] = createSignal<AgGridSolidRef>()
-    const updateActorAction = useAction(updateActor)
+    const updateActorAction = useAction(editActor)
     const addActorAction = useAction(addActor)
     const actors = createAsync(() => getActors())
 
@@ -48,7 +48,6 @@ export default function Actors() {
             nationality: null
         });
     }
-    createEffect(() => {console.log(contextMenu.selectedId)})
 
     return (
         <Suspense>
@@ -64,7 +63,7 @@ export default function Actors() {
                     ref={setRef}
                     rowData={actors()}
                     rowSelection="multiple"
-                    getRowId={params => params.data.actorId}
+                    getRowId={params => params.data.actorId.toString()}
                     additionalSetup={fixPinnedRowHeight}
                     onCellContextMenu={params => {
                         setContextMenu({
@@ -73,8 +72,8 @@ export default function Actors() {
                                 x: (params.event as MouseEvent).clientX,
                                 y: (params.event as MouseEvent).clientY,
                             },
-                            selectedId: params.data.actorId,
-                            selectedName: params.data.name,
+                            selectedId: params.data!.actorId,
+                            selectedName: params.data!.name,
                         })
                     }}
 
@@ -82,7 +81,7 @@ export default function Actors() {
                         onCellValueChanged: (params) => {
                             if (!params.colDef.field || !params.node) return;
                             if (!params.node.rowPinned) {
-                                updateActorAction(params.colDef.field, params.newValue, params.data.actorId)
+                                updateActorAction({[params.colDef.field]: params.newValue, actorId: params.data!.actorId})
                                 return
                             }
                             const field: any = params.colDef.field

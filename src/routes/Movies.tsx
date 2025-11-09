@@ -2,7 +2,6 @@ import { createAsync, useAction } from "@solidjs/router"
 import type { ITooltipParams } from "ag-grid-community"
 import { createMemo, Suspense, Show, createUniqueId, For } from "solid-js"
 import { createStore } from "solid-js/store"
-import { type DetailedDbFilm } from "../datatypes"
 import { state } from "../state"
 import { ActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSelector"
 import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
@@ -10,6 +9,7 @@ import MoviesContextMenu from "../components/MoviesContextMenu"
 import { editFilm, updateTag } from "../api/mutations"
 import { ActorItem2 } from "~/components/CellEditors/ActorCellEditor/ActorItem"
 import { GridWrapper } from "~/components/GridWrapper"
+import { DetailedDbFilm } from "~/api/films"
 
 type Props = {
     fetcher(): Promise<DetailedDbFilm[] | undefined>
@@ -82,7 +82,7 @@ export function Movies(props: Props) {
                         filter: true,
                         editable: true,
                         onCellValueChanged: async (params) => {
-                            updateFilmAction('title', params.newValue, params.data.filmId)
+                            updateFilmAction({title: params.newValue}, params.data.filmId)
                         },
                         tooltipField: 'title'
                     }, {
@@ -115,7 +115,7 @@ export function Movies(props: Props) {
                         field: "releaseDate",
                         editable: true,
                         cellEditor: "agDateStringCellEditor",
-                        onCellValueChanged: params => updateFilmAction('release_date', params.newValue, params.data.filmId)
+                        onCellValueChanged: params => updateFilmAction({releaseDate: params.newValue}, params.data.filmId)
                     }, {
                         field: "tags",
                         editable: true,
