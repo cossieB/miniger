@@ -33,7 +33,7 @@ export function Tags() {
                                 x: (params.event as MouseEvent).clientX,
                                 y: (params.event as MouseEvent).clientY,
                             },
-                            selectedTag: params.data.tag,
+                            selectedTag: params.data!.tag,
                         })
                     }}
                 />

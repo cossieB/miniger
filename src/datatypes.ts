@@ -7,12 +7,6 @@ export type Studio = InferSelectModel<typeof studio>
 export type ActorFilm = InferSelectModel<typeof actorFilm>
 export type FilmTag = InferSelectModel<typeof filmTag>
 
-type DetailedDbFilm = Film & {
-    actors: string
-    studio_name: string | null
-    tags: string
-}
-
 export type DetailedFilm = Film & {
     actors: Actor[]
     studio_name: string | null;

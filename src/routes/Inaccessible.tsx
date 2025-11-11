@@ -71,7 +71,7 @@ function Find(props: ICellEditorParams) {
             }]
         })
         if (!sel) return props.stopEditing()
-        await action("path", sel, props.data.filmId, [getInaccessible.key])
+        await action({path: sel, filmId: props.data.filmId}, [getInaccessible.key])
         props.stopEditing()
     })
     return null

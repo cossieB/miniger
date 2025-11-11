@@ -12,7 +12,7 @@ export const db = drizzle<typeof schema>(
         const sqlite = await getDb();
         let rows: any = [];
         let results = [];
-
+        console.log(sql);
         // If the query is a SELECT, use the select method
         if (isSelectQuery(sql) || isWithQuery(sql)) {
             rows = await sqlite.select(sql, params).catch((e) => {
@@ -49,11 +49,15 @@ export const db = drizzle<typeof schema>(
  * @returns True if the query is a SELECT query, false otherwise.
  */
 function isSelectQuery(sql: string): boolean {
-    const selectRegex = /^\s*SELECT\b/i;
+    const selectRegex = /^\s*(SELECT|DELETE)\b/i;
     return selectRegex.test(sql);
 }
 
 function isWithQuery(sql: string): boolean {
     const selectRegex = /^\s*WITH\b/i;
     return selectRegex.test(sql);    
+}
+
+function isTransaction(sql: string): boolean {
+    return /^s*(BEGIN|COMMIT)\b/i.test(sql);
 }

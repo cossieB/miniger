@@ -21,7 +21,7 @@ const actorSubQuery = db
     .$with('aq')
     .as(
         db.select({
-            actors: sql`JSON_GROUP_ARRAY(JSON_OBJECT('actor_id', actor.actor_id, 'name', name, 'image', image, 'dob', dob, 'nationality', nationality, 'gender', gender) ORDER BY name)`.as('actors'),
+            actors: sql`JSON_GROUP_ARRAY(JSON_OBJECT('actorId', actor.actor_id, 'name', name, 'image', image, 'dob', dob, 'nationality', nationality, 'gender', gender) ORDER BY name)`.as('actors'),
             filmId: actorFilm.filmId
         })
             .from(actorFilm)
@@ -41,7 +41,8 @@ const filmsQuery = db
     .leftJoin(studio, eq(studio.studioId, film.studioId))
     .leftJoin(tagSubQuery, eq(tagSubQuery.filmId, film.filmId))
     .leftJoin(actorSubQuery, eq(actorSubQuery.filmId, film.filmId))
-    .orderBy(sql`LOWER(title)`);
+    .orderBy(sql`LOWER(title)`)
+    .$dynamic()
 
 export function allFilms() {
     return filmsQuery
@@ -94,7 +95,7 @@ export function editFilmStudio(filmId: number, studioId: number | null) {
 }
 
 export function updateFilm(f: Partial<Omit<Film, "filmId">>, filmId: number) {
-    db.update(film).set(f).where(eq(film.filmId, filmId))
+    return db.update(film).set(f).where(eq(film.filmId, filmId))
 }
 
 export function addFilms(files: {title: string, path: string}[]) {

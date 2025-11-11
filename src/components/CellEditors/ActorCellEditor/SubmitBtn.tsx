@@ -5,7 +5,7 @@ import { useAction } from "@solidjs/router";
 
 type Props = {
     rowActors: Accessor<Actor[]>;
-    filmId: string;
+    filmId: number;
     stopEditing(): void;
 };
 export function SubmitBtn(props: Props) {

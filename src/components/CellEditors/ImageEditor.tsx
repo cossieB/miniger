@@ -51,7 +51,10 @@ export function ImageEditor(props: ICellEditorParams) {
                 const buffer = await file.arrayBuffer()
                 const uint8array = new Uint8Array(buffer);
                 await writeFile(path, uint8array)
-                await updateActorAction('image', fileName, props.data.actorId)
+                await updateActorAction({
+                    image: fileName,
+                    actorId: props.data.actorId,
+                })
                 try {
                     await remove(oldPath)
                 } catch (error) { }

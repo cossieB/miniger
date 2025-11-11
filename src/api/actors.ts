@@ -70,18 +70,15 @@ export function allPairings() {
         .orderBy(actor1.name, actor2.name)
 }
 
-export function createActor(a: Omit<Actor, 'actorId'>, filmId?: number) {
-    
-    return db.transaction(async tx => {
-        const inserted = (await tx.insert(actor)
-            .values(a)
-            .returning())[0]
+export async function createActor(a: Omit<Actor, 'actorId'>, filmId?: number) {
+    const inserted = (await db.insert(actor)
+        .values(a)
+        .returning())[0]
 
-        if (filmId) {
-            await tx.insert(actorFilm).values({filmId, actorId: inserted.actorId})
-        }
-        return inserted
-    })
+    if (filmId) {
+        await db.insert(actorFilm).values({filmId, actorId: inserted.actorId})
+    }
+    return inserted
 }
 
 export function updateActor(a: Partial<Omit<Actor, "actorId">>, actorId: number) {
@@ -89,12 +86,17 @@ export function updateActor(a: Partial<Omit<Actor, "actorId">>, actorId: number)
 }
 
 export function editFilmActor(actors: Actor[], filmId: number) {
-    db.transaction(async tx => {
-        await tx.delete(actorFilm).where(eq(actorFilm.filmId, filmId))
-        if (actors.length > 0){
-            const arr = actors.map(a => ({filmId, actorId: a.actorId}))
-            await tx.insert(actorFilm).values(arr)
-        }
-            
-    })
+    return Promise.all([
+        db.delete(actorFilm).where(eq(actorFilm.filmId, filmId)),
+        actors.length > 0 && db.insert(actorFilm).values(actors.map(a => ({filmId, actorId: a.actorId})))
+    ])
+
+    // TODO: transactions aren't working. Figure out an alternative
+    // db.transaction(async tx => {
+    //     await tx.delete(actorFilm).where(eq(actorFilm.filmId, filmId))
+    //     if (actors.length > 0){
+    //         const arr = actors.map(a => ({filmId, actorId: a.actorId}))
+    //         await tx.insert(actorFilm).values(arr)
+    //     }
+    // })
 }

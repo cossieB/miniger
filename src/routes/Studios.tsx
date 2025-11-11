@@ -45,7 +45,7 @@ export default function Studios() {
                 <GridWrapper
                     ref={setRef}
                     rowData={studios()}
-                    getRowId={params => params.data.studioId}
+                    getRowId={params => params.data.studioId.toString()}
                     additionalSetup={fixPinnedRowHeight}
                     rowSelection="multiple"
                     defaultColDef={{
@@ -55,7 +55,10 @@ export default function Studios() {
                         onCellValueChanged: params => {
                             if (!params.colDef.field || !params.node) return;
                             if (!params.node.rowPinned) {
-                                updateAction(params.colDef.field, params.newValue, params.data.studioId)
+                                updateAction({[
+                                    params.colDef.field]: params.newValue,
+                                    studioId: params.data.studioId
+                                })
                                 return;
                             }
                             const field: any = params.colDef.field;
@@ -69,8 +72,8 @@ export default function Studios() {
                                 x: (params.event as MouseEvent).clientX,
                                 y: (params.event as MouseEvent).clientY,
                             },
-                            selectedId: params.data.studioId,
-                            selectedName: params.data.name,
+                            selectedId: params.data!.studioId,
+                            selectedName: params.data!.name,
                         })
                     }}
                     columnDefs={[{

@@ -82,7 +82,7 @@ export function Movies(props: Props) {
                         filter: true,
                         editable: true,
                         onCellValueChanged: async (params) => {
-                            updateFilmAction({title: params.newValue}, params.data.filmId)
+                            updateFilmAction({title: params.newValue, filmId: params.data.filmId})
                         },
                         tooltipField: 'title'
                     }, {
@@ -115,7 +115,7 @@ export function Movies(props: Props) {
                         field: "releaseDate",
                         editable: true,
                         cellEditor: "agDateStringCellEditor",
-                        onCellValueChanged: params => updateFilmAction({releaseDate: params.newValue}, params.data.filmId)
+                        onCellValueChanged: params => updateFilmAction({releaseDate: params.newValue, filmId: params.data.filmId})
                     }, {
                         field: "tags",
                         editable: true,

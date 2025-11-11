@@ -11,6 +11,7 @@ import { deleteItemsFromDb } from "./deleteItems";
 
 export const updateTag = action(async (filmId: number, tags: string[]) => {
     try {
+        tags = Array.from(new Set(tags));
         await tagRepo.updateTags(filmId, tags)
         return json(undefined, {revalidate: [getFilms.key, getTags.key, getFilmsByTag.key]})
     }
@@ -86,7 +87,7 @@ export const deleteItems = action(async (ids: number[], table: string) => {
 export const editFilmActors = action(async (actors: Actor[], filmId: number) => {
 
     try {
-        actorRepo.editFilmActor(actors, filmId)
+        await actorRepo.editFilmActor(actors, filmId)
         return json(undefined, {revalidate: [getFilms.key]})
     }
     catch (error) {
@@ -97,7 +98,7 @@ export const editFilmActors = action(async (actors: Actor[], filmId: number) => 
 
 export const addDirectoriesToDatabase = action(async (files: {title: string, path: string}[]) => {
     try {
-        filmRepo.addFilms(files)
+        await filmRepo.addFilms(files)
         return json(undefined, {revalidate: [getFilms.key]})
     }
     catch (error) {
@@ -109,7 +110,7 @@ export const addDirectoriesToDatabase = action(async (files: {title: string, pat
 
 export const removeByPaths = action(async (selection: { path: string }[]) => {
     try {
-        filmRepo.deleteByPaths(selection.map(s => s.path))
+        await filmRepo.deleteByPaths(selection.map(s => s.path))
         return json(undefined, {revalidate: [getFilms.key, getInaccessible.key]});
     }
     catch (error) {
@@ -131,10 +132,10 @@ export const updateStudio = action(async (s: OptionalExcept<Studio, "studioId">)
     }
 })
 
-export const editFilm = action(async (f: Partial<Omit<Film, "filmId">>, filmId: number, revalidate: string[] = []) => {
-
+export const editFilm = action(async (f: OptionalExcept<Film, "filmId">, revalidate: string[] = []) => {
+    const {filmId, ...rest} = f
     try {
-        filmRepo.updateFilm(f, filmId)    
+        await filmRepo.updateFilm(rest, filmId)    
         return json(undefined, {revalidate})
     } 
     catch (error) {

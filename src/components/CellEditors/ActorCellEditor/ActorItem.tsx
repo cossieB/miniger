@@ -15,7 +15,6 @@ const [dir] = createResource(async () => {
 })
 
 export function ActorItem(props: Props) {
-
     function handleClick() {
         if (props.rowActors().some(x => x.actorId === props.actor.actorId))
             props.setRowActors(prev => prev.filter(x => x.actorId !== props.actor.actorId));

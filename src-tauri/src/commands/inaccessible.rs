@@ -3,9 +3,10 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
+#[allow(non_snake_case)]
 pub struct MyFile {
     pub title: String,
-    pub film_id: u32,
+    pub filmId: u32,
     pub path: String,
 }
 

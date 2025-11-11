@@ -54,16 +54,16 @@ export function Costars(props: Props) {
                         headerName: "Actor",
                         tooltipComponent: Tooltip,
                         tooltipValueGetter: params => ({
-                            name: params.data.actorA,
-                            image: params.data.actorAImage
+                            name: params.data!.actorA,
+                            image: params.data!.actorAImage
                         }),
                     }, {
                         field: 'actorB',
                         headerName: "Co-Star",
                         tooltipComponent: Tooltip,
                         tooltipValueGetter: params => ({
-                            name: params.data.actorB,
-                            image: params.data.actorBImage
+                            name: params.data!.actorB,
+                            image: params.data!.actorBImage
                         }),
                     }, {
                         field: "together",
