@@ -13,7 +13,6 @@ export default function Inaccessible() {
 
     async function handleKeyup(e: KeyboardEvent) {
         if (e.key === "Delete") {
-            console.log('click' in document.getElementById("topbar-delete-btn")!)
             document.getElementById("topbar-delete-btn")?.dispatchEvent(new Event("click"))
         }
     }
@@ -31,9 +30,6 @@ export default function Inaccessible() {
                 <GridWrapper
                     getRowId={params => params.data.path}
                     rowSelection="multiple"
-                    onColumnHeaderContextMenu={e => {
-                        console.log(e)
-                    }}
                     rowData={data()}
                     columnDefs={[{
                         checkboxSelection: true,

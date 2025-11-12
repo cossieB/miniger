@@ -16,10 +16,6 @@ type Props = {
 export function Costars(props: Props) {
     const data = createAsync(() => props.fetcher())
 
-    createEffect(() => {
-        console.log(data())
-    })
-
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
         pos: { x: 0, y: 0 },

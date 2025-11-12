@@ -1,9 +1,8 @@
 import { db } from "~/kysely/database"
 
-export async function deleteItemsFromDb(ids: number[], label: string) {console.log(ids, label)
+export async function deleteItemsFromDb(ids: number[], label: string) {
     const [table, id] = getTable(label)
     const deleted = await db.deleteFrom(table).where(id, "in", ids).returningAll().execute()
-    console.log(deleted)
     return deleted
 }
 

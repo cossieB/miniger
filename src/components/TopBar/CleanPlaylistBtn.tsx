@@ -8,7 +8,6 @@ export function CleanPlaylistBtn() {
             title="Remove Duplicate And Inaccessible Files"
             onclick={async () => {
                 if (state.sidePanel.list.length === 0) return
-                console.log(state.sidePanel.list)
                 const filtered: any = await invoke('cleanup_playlist', { playlist: state.sidePanel.list });
                 state.sidePanel.setFiles(filtered);
             }}
