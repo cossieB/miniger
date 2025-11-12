@@ -1,0 +1,6 @@
+{
+    "camelCase": true,
+    "outFile": "./src/kysely/schema.ts",
+    "url": "./mngr.db",
+    "excludePattern": "_sqlx_migrations"
+}

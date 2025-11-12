@@ -1,12 +1,12 @@
 import { Accessor, Setter, Show } from "solid-js";
 import { CirclePlusSvg } from "../../../icons";
-import { Actor } from "../../../datatypes";
+import { TActor } from "../../../datatypes";
 import { addActor } from "../../../api/mutations";
 import { useAction } from "@solidjs/router";
 
 type Props = {
     input: Accessor<string>;
-    setRowActors: Setter<Actor[]>;
+    setRowActors: Setter<TActor[]>;
     clearInput: () => void;
 };
 export function AddActorToDatabaseBtn(props: Props) {
@@ -17,7 +17,7 @@ export function AddActorToDatabaseBtn(props: Props) {
                 class="w-full p-3 bg-orange-500"
                 onclick={async () => {
                     const actorId = await addActorAction(props.input().trim());
-                    const actor: Actor = {
+                    const actor: TActor = {
                         actorId: actorId,
                         dob: null,
                         gender: null,

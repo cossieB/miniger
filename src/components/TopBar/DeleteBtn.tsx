@@ -37,7 +37,7 @@ export function DeleteBtn() {
                         return state.status.setStatus("Could not delete items. Please try again")
                     }
                     try {
-                        const ids = sel.map(item => item[table + "_id"]);
+                        const ids = sel.map(item => item[table + "Id"]);
                         await deleteAction(ids, table)
                     }
                     catch (error: any) {

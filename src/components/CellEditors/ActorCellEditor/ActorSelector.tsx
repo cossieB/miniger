@@ -1,6 +1,6 @@
 import { For, Show, Suspense, createEffect, createSignal, on } from "solid-js";
 import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
-import { Actor } from "../../../datatypes";
+import {TActor } from "../../../datatypes";
 import { getActors } from "../../../api/data";
 import { ActorItem } from "./ActorItem";
 import { SubmitBtn } from "./SubmitBtn";
@@ -10,7 +10,7 @@ import { createAsync } from "@solidjs/router";
 export function ActorSelector(props: ICellEditorParams) {
     let refInput!: HTMLInputElement;
     const actors = createAsync(() => getActors())
-    const [rowActors, setRowActors] = createSignal<Actor[]>(props.data.actors);
+    const [rowActors, setRowActors] = createSignal<TActor[]>(props.data.actors);
     const api: ICellEditor = {
         getValue: () => rowActors()
     };

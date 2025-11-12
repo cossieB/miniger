@@ -1,102 +1,87 @@
-import { and, eq, getTableColumns, ne, sql, count, gt } from "drizzle-orm";
-import { alias } from "drizzle-orm/sqlite-core";
-import { Actor } from "~/datatypes";
-import { db } from "~/drizzle/database";
-import { actor, actorFilm } from "~/drizzle/schema";
-import { aliasColumn } from "~/utils/aliasColumn";
+import { sql } from "kysely";
+import { TActor } from "~/datatypes";
+import { db } from "~/kysely/database";
 
 export function allActors() {
     return db
-        .select({
-            ...getTableColumns(actor),
-            appearances: count(actor.actorId)
-        })
-        .from(actor)
-        .leftJoin(actorFilm, eq(actorFilm.actorId, actor.actorId))
-        .groupBy(actor.actorId)
+        .selectFrom("actor")
+        .leftJoin("actorFilm", "actor.actorId", "actorFilm.actorId")
+        .selectAll("actor")
+        .select(db.fn.count("actor.actorId").as("appearances"))
+        .groupBy("actor.actorId")
         .orderBy(sql`LOWER(name)`)
+        .execute()
 }
 
 export function costarsOf(actorId: number) {
-    const actorFilm1 = alias(actorFilm, 'af1')
-    const actorFilm2 = alias(actorFilm, 'af2')
-    const actor1 = alias(actor, 'a1')
-    const actor2 = alias(actor, 'a2')
+
     return db
-        .select({
-            actorA: aliasColumn(actor1.name, 'actorA'),
-            actorAId: aliasColumn(actor1.actorId, 'actorAId'),
-            actorAImage: aliasColumn(actor1.image, 'actorAImage'),
-            actorB: aliasColumn(actor2.name, 'actorB'),
-            actorBId: aliasColumn(actor2.actorId, 'actorBId'),
-            actorBImage: aliasColumn(actor2.image, 'actorBImage'),
-            together: count().as("together")
-        })
-        .from(actorFilm1)
-        .innerJoin(actorFilm2, and(
-            eq(actorFilm1.filmId, actorFilm2.filmId),
-            ne(actorFilm2.actorId, actorId)
-        ))
-        .innerJoin(actor1, eq(actorFilm1.actorId, actor1.actorId))
-        .innerJoin(actor2, eq(actorFilm2.actorId, actor2.actorId))
-        .where(eq(actor1.actorId, actorId))
-        .groupBy(actor1.actorId, actor2.actorId)
-        .orderBy(actor1.name, actor2.name)
+        .selectFrom("actorFilm as af1")
+        .innerJoin("actorFilm as af2", join => join
+            .onRef("af2.filmId", "=", "af1.filmId")
+            .on("af2.actorId", "!=", actorId)
+        )
+        .innerJoin("actor as a", "af1.actorId", "a.actorId")
+        .innerJoin("actor as b", "af2.actorId", "b.actorId")
+        .select([
+            "a.name as actorA",
+            "a.actorId as actorAid",
+            "a.image as actorAimage",
+            "b.name as actorB",
+            "b.actorId as actorBid",
+            "b.image as actorBimage",
+            db.fn.countAll().as("together")
+        ])
+        .where("af1.actorId", "=", actorId)
+        .groupBy(["a.actorId", "b.actorId"])
+        .orderBy("a.name", "asc")
+        .orderBy("b.name", "asc")
+        .execute();
 }
 
 export function allPairings() {
-    const actorFilm1 = alias(actorFilm, 'af1')
-    const actorFilm2 = alias(actorFilm, 'af2')
-    const actor1 = alias(actor, 'a1')
-    const actor2 = alias(actor, 'a2')
+
     return db
-        .select({
-            actorA: aliasColumn(actor1.name, 'actorA'),
-            actorAId: aliasColumn(actor1.actorId, 'actorAId'),
-            actorAImage: aliasColumn(actor1.image, 'actorAImage'),
-            actorB: aliasColumn(actor2.name, 'actorB'),
-            actorBId: aliasColumn(actor2.actorId, 'actorBId'),
-            actorBImage: aliasColumn(actor2.image, 'actorBImage'),
-            together: count().as("together")
-        })
-        .from(actorFilm1)
-        .innerJoin(actorFilm2, and(
-            eq(actorFilm1.filmId, actorFilm2.filmId),
-            gt(actorFilm2.actorId, actorFilm1.actorId)
-        ))
-        .innerJoin(actor1, eq(actorFilm1.actorId, actor1.actorId))
-        .innerJoin(actor2, eq(actorFilm2.actorId, actor2.actorId))
-        .groupBy(actor1.actorId, actor2.actorId)
-        .orderBy(actor1.name, actor2.name)
+        .selectFrom("actorFilm as af1")
+        .innerJoin("actorFilm as af2", join => join
+            .onRef("af2.filmId", "=", "af1.filmId")
+            .onRef("af2.actorId", ">", "af1.actorId")
+        )
+        .innerJoin("actor as a", "af1.actorId", "a.actorId")
+        .innerJoin("actor as b", "af2.actorId", "b.actorId")
+                .select([
+            "a.name as actorA",
+            "a.actorId as actorAid",
+            "a.image as actorAimage",
+            "b.name as actorB",
+            "b.actorId as actorBid",
+            "b.image as actorBimage",
+            db.fn.countAll().as("together")
+        ])
+        .groupBy(["a.actorId", "b.actorId"])
+        .orderBy("a.name", "asc")
+        .orderBy("b.name", "asc")
+        .execute();
 }
 
-export async function createActor(a: Omit<Actor, 'actorId'>, filmId?: number) {
-    const inserted = (await db.insert(actor)
-        .values(a)
-        .returning())[0]
+export async function createActor(a: Omit<TActor, 'actorId'>, filmId?: number) {
 
+    const inserted = await db.insertInto("actor").values(a).returningAll().executeTakeFirstOrThrow();
     if (filmId) {
-        await db.insert(actorFilm).values({filmId, actorId: inserted.actorId})
+        await db.insertInto("actorFilm").values({filmId, actorId: inserted.actorId}).execute();
     }
     return inserted
 }
 
-export function updateActor(a: Partial<Omit<Actor, "actorId">>, actorId: number) {
-    return db.update(actor).set(a).where(eq(actor.actorId, actorId)).returning()
+export function updateActor(a: Partial<Omit<TActor, "actorId">>, actorId: number) {
+    return db.updateTable("actor").set(a).where("actor.actorId", "=", actorId).execute();
 }
 
-export function editFilmActor(actors: Actor[], filmId: number) {
-    return Promise.all([
-        db.delete(actorFilm).where(eq(actorFilm.filmId, filmId)),
-        actors.length > 0 && db.insert(actorFilm).values(actors.map(a => ({filmId, actorId: a.actorId})))
-    ])
-
-    // TODO: transactions aren't working. Figure out an alternative
-    // db.transaction(async tx => {
-    //     await tx.delete(actorFilm).where(eq(actorFilm.filmId, filmId))
-    //     if (actors.length > 0){
-    //         const arr = actors.map(a => ({filmId, actorId: a.actorId}))
-    //         await tx.insert(actorFilm).values(arr)
-    //     }
-    // })
+export function editFilmActor(actors: TActor[], filmId: number) {
+    return db.transaction().execute(async tx => {
+        await tx.deleteFrom("actorFilm").where("actorFilm.filmId", "=", filmId).execute();
+        if (actors.length > 0) {
+            await tx.insertInto("actorFilm").values(actors.map(a => ({filmId, actorId: a.actorId}))).execute();
+        }
+    })
 }

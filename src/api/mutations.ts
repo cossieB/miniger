@@ -1,5 +1,4 @@
 import { action, json } from "@solidjs/router";
-import { Actor, Film, Studio } from "../datatypes";
 import { state } from "../state";
 import { getActors, getFilms, getFilmsByTag, getInaccessible, getStudios, getTags } from "./data";
 import * as tagRepo from "./tags"
@@ -8,6 +7,7 @@ import * as studioRepo from "./studios"
 import * as filmRepo from "./films"
 import { OptionalExcept } from "~/lib/utilityTypes";
 import { deleteItemsFromDb } from "./deleteItems";
+import { TActor, TFilm, TStudio } from "~/datatypes";
 
 export const updateTag = action(async (filmId: number, tags: string[]) => {
     try {
@@ -21,7 +21,7 @@ export const updateTag = action(async (filmId: number, tags: string[]) => {
     }
 })
 
-export const addActor = action(async (partialActor: string | Omit<Actor, 'actorId'>, filmId?: number) => {
+export const addActor = action(async (partialActor: string | Omit<TActor, 'actorId'>, filmId?: number) => {
     const actorObj = typeof partialActor === "string" ? {name: partialActor, dob: null, gender: null, image: null, nationality: null} : partialActor;
     try {
         const a = await actorRepo.createActor(actorObj, filmId)
@@ -48,7 +48,7 @@ export const updateFilmStudio = action(async (filmId: number, studioId: number |
     }
 })
 
-export const createStudio = action(async (studio: string | Omit<Studio, "studioId">) => {
+export const createStudio = action(async (studio: string | Omit<TStudio, "studioId">) => {
     const studioObj = typeof studio === "string" ?  {name: studio, website: null} : studio
     try {
         const s = await studioRepo.addStudio(studioObj);
@@ -60,11 +60,11 @@ export const createStudio = action(async (studio: string | Omit<Studio, "studioI
     }
 })
 
-export const editActor = action(async (a: OptionalExcept<Actor, 'actorId'>) => {
+export const editActor = action(async (a: OptionalExcept<TActor, 'actorId'>) => {
     const {actorId, ...rest} = a
     if (Object.keys(rest).length === 0) return;
     try {
-        const row = await actorRepo.updateActor(rest, actorId)
+        const row = await actorRepo.updateActor(rest, actorId as any as number)
         return json(row[0], {revalidate: []})
     }
     catch (error) {
@@ -76,7 +76,7 @@ export const editActor = action(async (a: OptionalExcept<Actor, 'actorId'>) => {
 
 export const deleteItems = action(async (ids: number[], table: string) => {
     try {
-        deleteItemsFromDb(ids, table)
+        await deleteItemsFromDb(ids, table)
     }
     catch (error) {
         state.status.setStatus(String(error))
@@ -84,7 +84,7 @@ export const deleteItems = action(async (ids: number[], table: string) => {
     }
 })
 
-export const editFilmActors = action(async (actors: Actor[], filmId: number) => {
+export const editFilmActors = action(async (actors: TActor[], filmId: number) => {
 
     try {
         await actorRepo.editFilmActor(actors, filmId)
@@ -120,7 +120,7 @@ export const removeByPaths = action(async (selection: { path: string }[]) => {
     }
 })
 
-export const updateStudio = action(async (s: OptionalExcept<Studio, "studioId">) => {
+export const updateStudio = action(async (s: OptionalExcept<TStudio, "studioId">) => {
     const {studioId, ...rest} = s
     try {
         await studioRepo.editStudio(rest, studioId)
@@ -132,7 +132,7 @@ export const updateStudio = action(async (s: OptionalExcept<Studio, "studioId">)
     }
 })
 
-export const editFilm = action(async (f: OptionalExcept<Film, "filmId">, revalidate: string[] = []) => {
+export const editFilm = action(async (f: OptionalExcept<TFilm, "filmId">, revalidate: string[] = []) => {
     const {filmId, ...rest} = f
     try {
         await filmRepo.updateFilm(rest, filmId)    

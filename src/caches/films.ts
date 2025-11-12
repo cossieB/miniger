@@ -1,7 +1,7 @@
-import { Actor } from "../datatypes";
+import { TActor } from "../datatypes";
 
 export const filmCache: Record<string, {
-    actors: Actor[];
+    actors: TActor[];
     film_id: number;
     path: string;
     title: string;

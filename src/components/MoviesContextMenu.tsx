@@ -6,7 +6,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { createAsync, useAction, useNavigate } from "@solidjs/router";
 import { addDirectoriesToDatabase } from "~/api/mutations";
 import { getFilmByPath } from "~/api/data";
-import { Actor } from "~/datatypes";
+import { TActor } from "~/datatypes";
 import { CameraSvg, PlayCircleSvg, PlayFillSvg, PlayListSvg, PlaySvg, TagSvg, TheatreSvg, WindowSvg } from "~/icons";
 
 type F = {
@@ -30,7 +30,7 @@ export default function MoviesContextMenu(props: P) {
     const data = createAsync(() => getFilmByPath(props.contextMenu.data.path))
     const navigate = useNavigate()
     const addAction = useAction(addDirectoriesToDatabase)
-    const actors = () => data() ? JSON.parse(data()!.actors) as Actor[] : []
+    const actors = () => data() ? JSON.parse(data()!.actors) as TActor[] : []
     const tags = () => data() ? JSON.parse(data()!.tags) as string[] : []
     return (
         <Suspense>

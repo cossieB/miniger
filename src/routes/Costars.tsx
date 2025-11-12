@@ -2,13 +2,15 @@ import { A, createAsync } from "@solidjs/router"
 import { ICellRendererParams, ITooltipParams } from "ag-grid-community"
 import { createEffect, Show, Suspense } from "solid-js"
 import { createStore } from "solid-js/store"
+import { allPairings } from "~/api/actors"
 import { ActorItem2 } from "~/components/CellEditors/ActorCellEditor/ActorItem"
 import { ContextMenu } from "~/components/ContextMenu/ContextMenu"
 import { GridWrapper } from "~/components/GridWrapper"
-import { PairingResult } from "~/datatypes"
+
+type P = ReturnType<Awaited<typeof allPairings>>
 
 type Props = {
-    fetcher(): Promise<PairingResult[] | undefined>
+    fetcher(): P
 }
 
 export function Costars(props: Props) {
@@ -21,8 +23,8 @@ export function Costars(props: Props) {
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
         pos: { x: 0, y: 0 },
-        actorAId: -1,
-        actorBId: -1,
+        actorAid: -1,
+        actorBid: -1,
         actorA: "",
         actorB: "",
     })
@@ -55,7 +57,7 @@ export function Costars(props: Props) {
                         tooltipComponent: Tooltip,
                         tooltipValueGetter: params => ({
                             name: params.data!.actorA,
-                            image: params.data!.actorAImage
+                            image: params.data!.actorAimage
                         }),
                     }, {
                         field: 'actorB',
@@ -63,21 +65,20 @@ export function Costars(props: Props) {
                         tooltipComponent: Tooltip,
                         tooltipValueGetter: params => ({
                             name: params.data!.actorB,
-                            image: params.data!.actorBImage
+                            image: params.data!.actorBimage
                         }),
                     }, {
                         field: "together",
                         headerName: "Movies",
-                    }, {
-                        field: "",
-                        cellRenderer: (params: ICellRendererParams) => <A href={`/movies/actors/${params.data.actorAId}/${params.data.actorBId}?${params.data.actorAId}=${params.data.actorA}&${params.data.actorBId}=${params.data.actorB}`}>View Movies</A>
+                    }, {                        
+                        cellRenderer: (params: ICellRendererParams) => <A href={`/movies/actors/${params.data.actorAid}/${params.data.actorBid}?${params.data.actorAid}=${params.data.actorA}&${params.data.actorBid}=${params.data.actorB}`}>View Movies</A>
                     }]}
                 />
             </div>
             <Show when={contextMenu.isOpen}>
                 <ContextMenu pos={contextMenu.pos} close={() => setContextMenu('isOpen', false)} >
-                    <ContextMenu.Link href={`/movies/actors/${contextMenu.actorAId}?${contextMenu.actorAId}=${contextMenu.actorA}`}> <span class="font-bold whitespace-pre">{contextMenu.actorA} </span>Movies </ContextMenu.Link>
-                    <ContextMenu.Link href={`/movies/actors/${contextMenu.actorBId}?${contextMenu.actorBId}=${contextMenu.actorB}`}> <span class="font-bold whitespace-pre">{contextMenu.actorB} </span>Movies </ContextMenu.Link>
+                    <ContextMenu.Link href={`/movies/actors/${contextMenu.actorAid}?${contextMenu.actorAid}=${contextMenu.actorA}`}> <span class="font-bold whitespace-pre">{contextMenu.actorA} </span>Movies </ContextMenu.Link>
+                    <ContextMenu.Link href={`/movies/actors/${contextMenu.actorBid}?${contextMenu.actorBid}=${contextMenu.actorB}`}> <span class="font-bold whitespace-pre">{contextMenu.actorB} </span>Movies </ContextMenu.Link>
                 </ContextMenu>
             </Show>
         </Suspense>
@@ -85,7 +86,6 @@ export function Costars(props: Props) {
 }
 
 function Tooltip(param: ITooltipParams) {
-console.log(param.value)
     return (
         <ActorItem2
             actor={{

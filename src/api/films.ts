@@ -1,109 +1,94 @@
-import { and, eq, getTableColumns, inArray, ne, sql } from "drizzle-orm";
-import { alias } from "drizzle-orm/sqlite-core";
-import { Film } from "~/datatypes";
-import { db } from "~/drizzle/database";
-import { actor, actorFilm, film, filmTag, studio } from "~/drizzle/schema";
+import { sql } from "kysely";
+import { TFilm } from "~/datatypes";
+import { db } from "~/kysely/database";
+
 
 export type DetailedDbFilm = Awaited<ReturnType<typeof allFilms>>[0]
 
-const tagSubQuery = db
-    .$with('tq')
-    .as(
-        db.select({
-            tags: sql`JSON_GROUP_ARRAY(tag)`.as("tags"),
-            filmId: filmTag.filmId
-        })
-            .from(filmTag)
-            .groupBy(filmTag.filmId)
+const cte = db
+    .with("tq", db => db
+        .selectFrom("filmTag")
+        .select([
+            sql<string>`JSON_GROUP_ARRAY(tag)`.as("tags"),
+            'filmId'
+        ])
+        .groupBy('filmId')
+    )
+    .with("aq", db => db
+        .selectFrom("actorFilm")
+        .select([
+            sql`JSON_GROUP_ARRAY(JSON_OBJECT('actorId', actor.actor_id, 'name', name, 'image', image, 'dob', dob, 'nationality', nationality, 'gender', gender) ORDER BY name)`.as('actors'),
+            "filmId"
+        ])
+        .innerJoin("actor", "actorFilm.actorId", "actor.actorId")
+        .groupBy("filmId")
     )
 
-const actorSubQuery = db
-    .$with('aq')
-    .as(
-        db.select({
-            actors: sql`JSON_GROUP_ARRAY(JSON_OBJECT('actorId', actor.actor_id, 'name', name, 'image', image, 'dob', dob, 'nationality', nationality, 'gender', gender) ORDER BY name)`.as('actors'),
-            filmId: actorFilm.filmId
-        })
-            .from(actorFilm)
-            .innerJoin(actor, eq(actorFilm.actorId, actor.actorId))
-            .groupBy(actorFilm.filmId)
-    )
-
-const filmsQuery = db
-    .with(tagSubQuery, actorSubQuery)
-    .select({
-        ...getTableColumns(film),
-        studioName: studio.name,
-        tags: sql<string> `coalesce(tags, '[]')`.as("tags"),
-        actors: sql<string> `coalesce(actors, '[]')`.as("actors")
-    })
-    .from(film)
-    .leftJoin(studio, eq(studio.studioId, film.studioId))
-    .leftJoin(tagSubQuery, eq(tagSubQuery.filmId, film.filmId))
-    .leftJoin(actorSubQuery, eq(actorSubQuery.filmId, film.filmId))
+const filmsQuery = cte
+    .selectFrom("film")
+    .leftJoin("studio", "film.studioId", "studio.studioId")
+    .leftJoin("tq", "tq.filmId", "film.filmId")
+    .leftJoin("aq", "aq.filmId", "film.filmId")
+    .selectAll("film")
+    .select([
+        "studio.name as studioName",
+        sql<string>`coalesce(tags, '[]')`.as("tags"),
+        sql<string>`coalesce(actors, '[]')`.as("actors")
+    ])
     .orderBy(sql`LOWER(title)`)
-    .$dynamic()
 
 export function allFilms() {
-    return filmsQuery
+
+    return filmsQuery.execute()
 }
 
 export function filmsByTag(tag: string) {
-    const filter = db.select({ filmId: filmTag.filmId }).from(filmTag).where(eq(filmTag.tag, tag))
-    return filmsQuery
-        .where(inArray(film.filmId, filter))
+    const filter = db.selectFrom("filmTag").select("filmTag.filmId").where("filmTag.tag", "=", tag)
+    return filmsQuery.where("film.filmId", "in", filter).execute()
 }
 
 export function filmsByActor(actorId: number) {
-    const filter = db.select({ filmId: actorFilm.filmId }).from(actorFilm).where(eq(actorFilm.actorId, actorId))
-    return filmsQuery.where(inArray(film.filmId, filter))
+
+    const filter = db.selectFrom("actorFilm").select("actorFilm.filmId").where("actorFilm.actorId", "=", actorId)
+    return filmsQuery.where("film.filmId", "in", filter).execute()
 }
 
 export function filmsByStudio(studioId: number) {
-    return filmsQuery.where(eq(film.studioId, studioId))
+    return filmsQuery.where("film.studioId", "=", studioId).execute()
 }
 
 export async function filmsByPath(path: string) {
-    return (await filmsQuery.where(eq(film.path, path))).at(0)
+    return filmsQuery.where("film.path", "=", path).executeTakeFirst()
 }
 
 export function moviesByCostars(actorAId: number, actorBId: number) {
-    const af1 = alias(actorFilm, 'af1')
-    const af2 = alias(actorFilm, 'af2')
-    const filter = db.select({
-        filmId: af1.filmId
-    })
-    .from(af1)
-    .innerJoin(
-        af2,
-        and(
-            eq(af1.filmId, af2.filmId),
-            ne(af1.actorId, af2.actorId)
-        )
-    )
-    .where(
-        and(
-            eq(af1.actorId, actorAId),
-            eq(af2.actorId, actorBId)
-        )
-    )
-    return filmsQuery.where(inArray(film.filmId, filter))
+    const filter = db
+        .selectFrom("actorFilm as af1")
+        .innerJoin("actorFilm as af2", "af1.filmId", "af2.filmId")
+        .select("af1.filmId")
+        .where("af1.actorId", "=", actorAId)
+        .where("af2.actorId", "=", actorBId)
+
+    return filmsQuery.where("film.filmId", "in", filter).execute()
 }
 
 export function editFilmStudio(filmId: number, studioId: number | null) {
-    return db.update(film).set({studioId}).where(eq(film.filmId, filmId))
+    return db.updateTable("film").set({studioId}).where("film.filmId", "=", filmId).execute()
 }
 
-export function updateFilm(f: Partial<Omit<Film, "filmId">>, filmId: number) {
-    return db.update(film).set(f).where(eq(film.filmId, filmId))
+export function updateFilm(f: Partial<Omit<TFilm, "filmId">>, filmId: number) {
+    return db.updateTable("film").set(f).where("film.filmId", "=", filmId).execute()
 }
 
-export function addFilms(files: {title: string, path: string}[]) {
-    return db.insert(film).values(files).onConflictDoNothing({
-        target: film.path
-    })
+export async function addFilms(files: { title: string, path: string }[]) {
+    try {
+        return db.insertInto("film").values(files).onConflict(oc => oc.column("path").doNothing()).execute()
+        
+    } catch (error) {
+        console.error
+    }
 }
 
 export function deleteByPaths(paths: string[]) {
-    return db.delete(film).where(inArray(film.path, paths))
+    return db.deleteFrom("film").where("path", "in", paths)
 }

@@ -1,24 +1,12 @@
-import { InferSelectModel } from "drizzle-orm";
-import { actor, actorFilm, film, filmTag, studio } from "./drizzle/schema";
+import { Generated } from "kysely";
+import { Actor, ActorFilm, Film, FilmTag, Studio } from "./kysely/schema";
 
-export type Film = InferSelectModel<typeof film>
-export type Actor = InferSelectModel<typeof actor>
-export type Studio = InferSelectModel<typeof studio>
-export type ActorFilm = InferSelectModel<typeof actorFilm>
-export type FilmTag = InferSelectModel<typeof filmTag>
-
-export type DetailedFilm = Film & {
-    actors: Actor[]
-    studio_name: string | null;
-    tags: string[]
+type KyselyToClient<T> = {
+    [K in keyof T]: T[K] extends Generated<infer X> ? X : T[K]
 }
 
-export type PairingResult = {
-    actorA: string
-    actorAId: number
-    actorAImage: string
-    actorB: string
-    actorBId: number
-    together: number
-    actorBImage: string
-}
+export type TFilm = KyselyToClient<Film>
+export type TStudio = KyselyToClient<Studio>
+export type TActor = KyselyToClient<Actor>
+export type TACtorFilm = KyselyToClient<ActorFilm>
+export type TFilmTag = KyselyToClient<FilmTag>

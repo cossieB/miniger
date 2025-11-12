@@ -1,12 +1,12 @@
 import { Accessor, createResource, Setter, Suspense } from "solid-js";
-import { Actor } from "../../../datatypes";
+import { TActor } from "../../../datatypes";
 import { appDataDir, sep } from "@tauri-apps/api/path";
 import { convertFileSrc } from "@tauri-apps/api/core";
 
 type Props = {
-    actor: Actor;
-    rowActors: Accessor<Actor[]>;
-    setRowActors: Setter<Actor[]>;
+    actor: TActor;
+    rowActors: Accessor<TActor[]>;
+    setRowActors: Setter<TActor[]>;
 };
 
 const [dir] = createResource(async () => {
@@ -38,7 +38,7 @@ export function ActorItem(props: Props) {
     );
 }
 
-export function ActorItem2(props: { actor: Pick<Actor, 'image' | 'name'> }) {
+export function ActorItem2(props: { actor: Pick<TActor, 'image' | 'name'> }) {
 
     return (
         <Suspense>

@@ -1,10 +1,10 @@
 import { Accessor } from "solid-js";
-import { Actor } from "../../../datatypes";
+import { TActor } from "../../../datatypes";
 import { editFilmActors } from "../../../api/mutations";
 import { useAction } from "@solidjs/router";
 
 type Props = {
-    rowActors: Accessor<Actor[]>;
+    rowActors: Accessor<TActor[]>;
     filmId: number;
     stopEditing(): void;
 };

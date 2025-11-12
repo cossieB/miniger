@@ -7,7 +7,7 @@ import { createStore } from "solid-js/store";
 import { AgGridSolidRef } from "ag-grid-solid";
 import { addActor, editActor } from "../api/mutations";
 import { ImageEditor } from "~/components/CellEditors/ImageEditor";
-import { Actor } from "~/datatypes";
+import { TActor } from "~/datatypes";
 import { fixPinnedRowHeight, useAdded, useFilter } from "~/utils/pinnedUtils";
 import { PinnedRowButtons } from "~/components/PinnedRowButtons";
 import { GridWrapper } from "~/components/GridWrapper";
@@ -25,7 +25,7 @@ export default function Actors() {
         selectedName: "",
         pos: { x: 0, y: 0 },
     })
-    const [input, setInput] = createStore<Omit<Actor, 'actorId'>>({
+    const [input, setInput] = createStore<Omit<TActor, 'actorId'>>({
         name: "",
         dob: null,
         gender: null,

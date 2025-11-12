@@ -1,18 +1,17 @@
-import { inArray } from "drizzle-orm";
-import type { SQLiteColumn, SQLiteTable } from "drizzle-orm/sqlite-core";
-import { db } from "~/drizzle/database";
-import { actor, film, studio } from "~/drizzle/schema";
+import { db } from "~/kysely/database"
 
-export function deleteItemsFromDb(ids: number[], label: string) {
+export async function deleteItemsFromDb(ids: number[], label: string) {console.log(ids, label)
     const [table, id] = getTable(label)
-    return db.delete(table).where(inArray(id, ids))
+    const deleted = await db.deleteFrom(table).where(id, "in", ids).returningAll().execute()
+    console.log(deleted)
+    return deleted
 }
 
-function getTable(table: string): [SQLiteTable, SQLiteColumn] {
+function getTable(table: string) {
     switch (table) {
-        case "film": return [film, film.filmId]
-        case "actor": return [actor, actor.actorId]
-        case "studio": return [studio, studio.studioId]
+        case "film": return [table, "film.filmId"] as const
+        case "actor": return [table, "actor.actorId"] as const
+        case "studio": return [table, "studio.studioId"] as const
         default: throw new Error("Unhandled table: " + table)
     }
 }

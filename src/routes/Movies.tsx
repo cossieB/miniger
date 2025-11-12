@@ -30,6 +30,7 @@ export function Movies(props: Props) {
             isOnDb: true,
         })))
     })
+    
     type MovieTableData = NonNullable<ReturnType<typeof data>>[number]
 
     const [contextMenu, setContextMenu] = createStore({
