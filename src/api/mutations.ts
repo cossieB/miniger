@@ -1,12 +1,12 @@
 import { action, json } from "@solidjs/router";
 import { state } from "../state";
 import { getActors, getFilms, getFilmsByTag, getInaccessible, getStudios, getTags } from "./data";
-import * as tagRepo from "./tags"
-import * as actorRepo from "./actors"
-import * as studioRepo from "./studios"
-import * as filmRepo from "./films"
+import * as tagRepo from "../repositories/tagRepository"
+import * as actorRepo from "../repositories/actorsRepository"
+import * as studioRepo from "../repositories/studioRepository"
+import * as filmRepo from "../repositories/filmsRepository"
 import { OptionalExcept } from "~/lib/utilityTypes";
-import { deleteItemsFromDb } from "./deleteItems";
+import { deleteItemsFromDb } from "../repositories/deleteItems";
 import { TActor, TFilm, TStudio } from "~/datatypes";
 
 export const updateTag = action(async (filmId: number, tags: string[]) => {

@@ -1,9 +1,9 @@
 import { query } from "@solidjs/router"
 import { invoke } from "@tauri-apps/api/core"
-import { allFilms, filmsByActor, filmsByPath, filmsByStudio, filmsByTag, moviesByCostars } from "./films"
-import { allActors, allPairings, costarsOf } from "./actors"
-import { allStudios } from "./studios"
-import { allTags } from "./tags"
+import { allFilms, filmsByActor, filmsByPath, filmsByStudio, filmsByTag, moviesByCostars } from "../repositories/filmsRepository"
+import { allActors, allPairings, costarsOf } from "../repositories/actorsRepository"
+import { allStudios } from "../repositories/studioRepository"
+import { allTags } from "../repositories/tagRepository"
 
 export const getFilms = query(async () => {
     return await allFilms()

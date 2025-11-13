@@ -13,6 +13,15 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {
+
+            // create images folder
+            let app_data_dir = app.path().app_data_dir().unwrap();
+            let img_dir = app_data_dir.join("images");
+            if !img_dir.exists() {
+                std::fs::create_dir_all(img_dir).unwrap()
+            }
+
+            //submenus
             let app_submenu = SubmenuBuilder::new(app, "App")
                 .text("load_playlist", "Load Playlist File")
                 .text("load_videos", "Load Videos")
@@ -33,7 +42,7 @@ fn main() {
 
             let main = app.get_webview_window("main").unwrap();
             main.set_menu(menu)?;
-
+            
             Ok(())
         })
         .on_menu_event(|app, event| {

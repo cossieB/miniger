@@ -9,7 +9,7 @@ import MoviesContextMenu from "../components/MoviesContextMenu"
 import { editFilm, updateTag } from "../api/mutations"
 import { ActorItem2 } from "~/components/CellEditors/ActorCellEditor/ActorItem"
 import { GridWrapper } from "~/components/GridWrapper"
-import { DetailedDbFilm } from "~/api/films"
+import { DetailedDbFilm } from "~/repositories/filmsRepository"
 
 type Props = {
     fetcher(): Promise<DetailedDbFilm[] | undefined>
