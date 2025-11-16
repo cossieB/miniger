@@ -10,6 +10,10 @@
     }
 }
 
+:root {
+    interpolate-size: allow-keywords;
+}
+
 * {
     user-select: none;
 }
@@ -17,14 +21,17 @@
 #gridContainer {
     container-type: inline-size;
 }
+
 .actorsList {
     grid-template-columns: repeat(1, minmax(0, 1fr));
 }
+
 @container (min-width: 768px) {
     .actorsList {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
+
 @container (min-width: 1024px) {
     .actorsList {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -42,6 +49,7 @@
     from {
         rotate: 0deg;
     }
+
     to {
         rotate: 360deg;
     }
@@ -49,35 +57,36 @@
 
 input[type=range] {
     -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
-  cursor: pointer;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
 }
 
 /***** Chrome, Safari, Opera, and Edge Chromium *****/
 input[type="range"]::-webkit-slider-runnable-track {
     background: #053a5f;
     height: 0.5rem;
-  }
-  
-  /******** Firefox ********/
-  input[type="range"]::-moz-range-track {
+}
+
+/******** Firefox ********/
+input[type="range"]::-moz-range-track {
     background: #053a5f;
     height: 0.5rem;
-  }
+}
 
-  /***** Thumb Styles *****/
+/***** Thumb Styles *****/
 /***** Chrome, Safari, Opera, and Edge Chromium *****/
 input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none; /* Override default look */
+    -webkit-appearance: none;
+    /* Override default look */
     appearance: none;
     background-color: #EA580C;
     height: 1rem;
-    width: 1rem;   
-    border-radius: 50%; 
+    width: 1rem;
+    border-radius: 50%;
     margin-top: -4px;
     top: 50%;
- }
+}
 
 /* width */
 ::-webkit-scrollbar {
@@ -98,4 +107,23 @@ input[type="range"]::-webkit-slider-thumb {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+.holdBtn {
+    &::after {
+        content: "";
+        inset: 0;
+        position: absolute;
+        z-index: -10;
+        @apply bg-slate-800;
+    }
+
+    &::before {
+        content: "";
+        inset: 0;
+        position: absolute;
+        z-index: -5;
+        @apply bg-orange-500;
+        translate: calc(var(--time)*-1%);
+    }
 }

@@ -36,7 +36,10 @@ export function ActorSelector(props: ICellEditorParams) {
             <SubmitBtn
                 filmId={props.data.filmId}
                 rowActors={rowActors}
-                stopEditing={props.stopEditing}
+                stopEditing={() => {
+                    setInput("")
+                    props.stopEditing()
+                }}
             />
             <Show when={rowActors().length > 0}>
                 <ul class="bg-slate-800 grid text-center p-2 gap-2 max-h-[50vh] overflow-auto w-[50vw] actorsList">

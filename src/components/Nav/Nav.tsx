@@ -35,8 +35,3 @@ export function Nav() {
         </nav>
     )
 }
-
-
-
-
-

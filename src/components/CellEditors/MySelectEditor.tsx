@@ -1,9 +1,9 @@
-import { For, Setter, Show, Suspense, createEffect, createSignal, on } from "solid-js";
+import { Accessor, For, Setter, Show, Suspense, createEffect, createSignal, on } from "solid-js";
 import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
 import { getStudios } from "../../api/data";
-import { CirclePlusSvg } from "../../icons";
 import { createStudio, updateFilmStudio } from "../../api/mutations";
 import { createAsync, useAction } from "@solidjs/router";
+import { HoldClickBtn } from "../HoldClickBtn";
 
 export function MySelectEditor(props: ICellEditorParams) {
     const studios = createAsync(() => getStudios())
@@ -37,7 +37,7 @@ export function MySelectEditor(props: ICellEditorParams) {
             />
             <ul
                 id="studio-list"
-                class="w-full h-full bg-slate-800 max-h-[50vh] overflow-y-scroll"
+                class="w-full h-full bg-slate-800 max-h-[50vh] overflow-y-scroll isolate"
             >
                 <Option
                     text="Unknown"
@@ -58,15 +58,10 @@ export function MySelectEditor(props: ICellEditorParams) {
                 </For>
                 <Show when={input().length > 0}>
                     <AddStudioBtn
-                        input={input()}
-                        stopEditing={(id: number) => {
-                            setSelectedStudio({
-                                name: input(),
-                                id
-                            })
-                            props.stopEditing()
-                        }}
+                        input={input}
+                        stopEditing={props.stopEditing}
                         filmId={props.data.filmId}
+                        clearInput={() => setInput("")}
                     />
                 </Show>
             </ul>
@@ -107,24 +102,24 @@ function Option(props: Props) {
 }
 
 type P1 = {
-    input: string
-    stopEditing: (id: number) => void
+    input: Accessor<string>
+    stopEditing: () => void
     filmId: number
+    clearInput: () => void
 }
 
 function AddStudioBtn(props: P1) {
     const createAction = useAction(createStudio)
     const updateAction = useAction(updateFilmStudio)
     return (
-        <button
-            type="button"
-            onclick={async () => {
-                const studioId = await createAction(props.input)
+        <HoldClickBtn
+            action={async () => {
+                const studioId = await createAction(props.input())
                 await updateAction(props.filmId, studioId)
-                props.stopEditing(studioId);
+                props.stopEditing();
             }}
-        >
-            <CirclePlusSvg />
-        </button>
+            clearInput={props.clearInput}
+            input={props.input}
+        />
     )
 }

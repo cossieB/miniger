@@ -28,7 +28,7 @@ export function ParentNode(props: P) {
                 </Icon>
                 {props.label}
             </div>
-            <ul class="overflow-hidden" classList={{ "h-0": !isOpen() }}>
+            <ul class="overflow-hidden transition-[height_2s_ease]" classList={{ "h-0": !isOpen(), "h-[calc-size(auto)]": isOpen() }}>
                 {props.children}
             </ul>
         </li>
