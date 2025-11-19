@@ -7,7 +7,7 @@ export function allActors() {
         .selectFrom("actor")
         .leftJoin("actorFilm", "actor.actorId", "actorFilm.actorId")
         .selectAll("actor")
-        .select(db.fn.count("actor.actorId").as("appearances"))
+        .select(db.fn.count("actorFilm.actorId").as("appearances"))
         .groupBy("actor.actorId")
         .orderBy(sql`LOWER(name)`)
         .execute()

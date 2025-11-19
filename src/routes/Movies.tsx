@@ -3,7 +3,7 @@ import type { ITooltipParams } from "ag-grid-community"
 import { createMemo, Suspense, Show, createUniqueId, For } from "solid-js"
 import { createStore } from "solid-js/store"
 import { state } from "../state"
-import { ActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSelector"
+import { AgActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSelector"
 import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
 import MoviesContextMenu from "../components/MoviesContextMenu"
 import { editFilm, updateTag } from "../api/mutations"
@@ -104,7 +104,7 @@ export function Movies(props: Props) {
                         valueFormatter: params => params.value.map((x: any) => x.name).join(", "),
                         filter: true,
                         editable: true,
-                        cellEditor: ActorSelector,
+                        cellEditor: AgActorSelector,
                         cellEditorPopup: true,
                         cellEditorPopupPosition: "over",
                         tooltipComponentParams: {
