@@ -10,6 +10,7 @@ import { editFilm, updateTag } from "../api/mutations"
 import { ActorItem2 } from "~/components/CellEditors/ActorCellEditor/ActorItem"
 import { GridWrapper } from "~/components/GridWrapper"
 import { DetailedDbFilm } from "~/repositories/filmsRepository"
+import { AgTagSelector } from "~/components/TagSelector"
 
 type Props = {
     fetcher(): Promise<DetailedDbFilm[] | undefined>
@@ -120,14 +121,11 @@ export function Movies(props: Props) {
                     }, {
                         field: "tags",
                         editable: true,
+                        cellEditor: AgTagSelector,
+                        cellEditorPopupPosition: "over",
+                        cellEditorPopup: true,
                         onCellValueChanged: async params => {
-                            try {
-                                const arr = (params.newValue as string[]).filter(x => !!x) // remove empty strings
-                                await updateTagAction(params.data.filmId, arr);
-                            }
-                            catch (error) {
-
-                            }
+                            await updateTagAction(params.data.filmId, params.newValue);
                         },
                         valueParser: params => params.newValue.trim().split(/\s*[,;]+\s*/)
                     }, {

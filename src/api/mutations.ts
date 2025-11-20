@@ -11,8 +11,14 @@ import { TActor, TFilm, TStudio } from "~/datatypes";
 
 export const updateTag = action(async (filmId: number, tags: string[]) => {
     try {
-        tags = Array.from(new Set(tags));
-        await tagRepo.updateTags(filmId, tags)
+        const filterTags: string[] = []
+        for (const tag of tags) {
+            const trimmed = tag.trim()
+            if (!trimmed || filterTags.includes(trimmed)) continue
+            filterTags.push(trimmed)
+        }
+        
+        await tagRepo.updateTags(filmId, filterTags)
         return json(undefined, {revalidate: [getFilms.key, getTags.key, getFilmsByTag.key]})
     }
     catch (error) {

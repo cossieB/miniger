@@ -1,7 +1,53 @@
 import { ReactiveSet } from "@solid-primitives/set"
 import { createAsync } from "@solidjs/router"
-import { createEffect, For } from "solid-js"
+import { ICellEditor, ICellEditorParams } from "ag-grid-community"
+import { createEffect, createSignal, For } from "solid-js"
 import { getTags } from "~/api/data"
+import { CancelSvg, CheckmarkSvg } from "~/icons"
+
+export function AgTagSelector(props: ICellEditorParams) {
+    const [tags, setTags] = createSignal<string[]>(props.value)
+    let ref!: HTMLInputElement
+    const api: ICellEditor = {
+        getValue: () => ref.value.split(/[,;]/)
+    };
+    (props as any).ref(api);
+
+    return (
+        <div class="bg-slate-800 w-[50vw] fixed left-1/2 -translate-x-1/2">
+            <input
+                ref={ref}
+                class="ag-input-field-input ag-text-field-input h-10"
+                type="text"
+                value={tags().join(", ")}
+                placeholder="Enter tags separated by a comma"
+            />
+            <div class="flex justify-around my-3">
+                <button
+                    class="rounded-full p-1 bg-red-500"
+                    onclick={() => {
+                        setTags(props.data.tags)
+                        props.stopEditing()
+                    }}
+                >
+                    <CancelSvg />
+                </button>
+                <button
+                    class="rounded-full p-1 bg-lime-500"
+                    onclick={() => {
+                        props.stopEditing()
+                    }}
+                >
+                    <CheckmarkSvg />
+                </button>
+            </div>
+            <TagSelector
+                selectedTags={tags()}
+                setTags={setTags}
+            />
+        </div>
+    )
+}
 
 type Props = {
     selectedTags: string[]

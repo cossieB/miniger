@@ -30,6 +30,7 @@ export function AgActorSelector(props: ICellEditorParams) {
             close={() => props.stopEditing()}
             handleSubmit={handleSubmit}
             getValue={cb}
+            initialActors={props.data.actors}
         />
     );
 }
@@ -38,7 +39,7 @@ type P = {
     close: () => void
     allowAddActor: boolean
     handleSubmit: (actors: TActor[]) => void
-    initialActors?: TActor[]
+    initialActors: TActor[]
     getValue: () => TActor[]
 }
 
