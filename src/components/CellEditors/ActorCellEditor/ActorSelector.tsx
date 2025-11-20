@@ -70,7 +70,8 @@ export function ActorSelector(props: P) {
                         class="ag-input-field-input ag-text-field-input h-10 shrink-0! grow-0!"
                         placeholder="Filter actors"
                     />
-                    <button class="flex p-3 w-full items-center justify-center bg-green-600"
+                    <button 
+                        class="flex p-3 w-full items-center justify-center bg-green-600"
                         onclick={() => props.handleSubmit(rowActors())}
                     >
                         SUBMIT
@@ -83,11 +84,14 @@ export function ActorSelector(props: P) {
                         </ul>
                         <div class="w-full h-0.5 shrink-0 bg-amber-400" />
                     </Show>
-                    <ul class="bg-slate-800 grid text-center p-2 gap-2 h-1/2 overflow-auto grow actorsList">
+                    <div class="bg-slate-800 overflow-auto grow ">
+
+                    <ul class=" grid text-center p-2 gap-2 actorsList">
                         <For each={filteredActors()}>
                             {actor => <ActorItem actor={actor} rowActors={rowActors} setRowActors={setRowActors} />}
                         </For>
                     </ul>
+                    </div>
                     <Show when={props.allowAddActor}>
                         <AddActorToDatabaseBtn
                             input={input}

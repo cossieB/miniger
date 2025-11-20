@@ -18,6 +18,8 @@ import { DragDrop } from "./windows/DragDrop";
 import { readSession } from "./readSettings";
 import { Tags } from "./routes/Tags";
 import { Costars } from "./routes/Costars";
+import { Search } from "./routes/Search";
+import { search } from "./repositories/search";
 
 render(() => (
     <Router  >
@@ -54,14 +56,15 @@ render(() => (
                     component={Inaccessible}
                     preload={() => getInaccessible()}
                 />
+                <Route
+                    path="/search"
+                    component={props => <Movies fetcher={() => search(props.params.filters)} />}
+                />
             </Route>
             <Route path="/actors" >
                 <Route path="/" component={Actors} preload={() => getActors()} />
                 <Route path=":a" component={() => <Navigate href={"/actors"} />} />
             </Route>
-            <Route path="/studios" component={Studios} preload={() => getStudios()} />
-            <Route path="/tags" component={Tags} preload={() => getTags()} />
-            <Route path="/play" component={VideoPlayer} />
             <Route path="/costars">
                 <Route
                     path="/"
@@ -72,6 +75,10 @@ render(() => (
                     component={props => <Costars fetcher={() => getCostars(Number(props.params.actorId))} />}
                 />
             </Route>
+            <Route path="/studios" component={Studios} preload={() => getStudios()} />
+            <Route path="/tags" component={Tags} preload={() => getTags()} />
+            <Route path="/play" component={VideoPlayer} />
+            <Route path="/search" component={Search} />
         </Route>
         <Route path="/settings" component={Settings} />
         <Route path="/convert" component={Convert} />

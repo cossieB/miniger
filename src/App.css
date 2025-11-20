@@ -22,6 +22,10 @@
     container-type: inline-size;
 }
 
+.ctis {
+    container-type: inline-size;
+}
+
 .actorsList {
     grid-template-columns: repeat(1, minmax(0, 1fr));
 }

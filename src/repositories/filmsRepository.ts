@@ -24,7 +24,7 @@ const cte = db
         .groupBy("filmId")
     )
 
-const filmsQuery = cte
+export const filmsQuery = cte
     .selectFrom("film")
     .leftJoin("studio", "film.studioId", "studio.studioId")
     .leftJoin("tq", "tq.filmId", "film.filmId")

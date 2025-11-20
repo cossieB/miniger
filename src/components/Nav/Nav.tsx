@@ -2,7 +2,7 @@ import { createAsync } from "@solidjs/router"
 import { For } from "solid-js"
 import { getStudios, getTags } from "../../api/data"
 import { state } from "../../state"
-import { CameraSvg, FilmstripSvg, QuestionMarkSvg, TagSvg, TheatreSvg } from "~/icons"
+import { CameraSvg, FilmstripSvg, QuestionMarkSvg, SearchSvg, TagSvg, TheatreSvg } from "~/icons"
 import { ParentNode } from "./ParentNode"
 import { LinkNode } from "./LinkNode"
 
@@ -31,6 +31,7 @@ export function Nav() {
                 </ParentNode>
                 <LinkNode label="Actors" href="/actors" icon={<TheatreSvg />} />
                 <LinkNode label="Studios" href="/studios" icon={<CameraSvg />} />
+                <LinkNode label="Search" href="/search" icon={<SearchSvg />} />
             </ul>
         </nav>
     )
