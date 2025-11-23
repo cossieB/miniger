@@ -4,25 +4,37 @@ import { ActorSelector } from "~/components/CellEditors/ActorCellEditor/ActorSel
 import { TagSelector } from "~/components/TagSelector";
 import { TActor } from "~/datatypes";
 import { useNavigate } from "@solidjs/router";
+import { StudioSelector } from "~/components/CellEditors/StudioSelector/StudioSelector";
 
-const [state, setState] = createStore({
+const [filters, setFilters] = createStore({
     actors: [] as TActor[],
-    showActors: false,
     tags: [] as string[],
     afterDate: "",
-    beforeDate: ""
+    beforeDate: "",
+    studio: {
+        name: "",
+        studioId: null as number | null
+    }
 })
+
+const [state, setState] = createStore({
+    showActors: false,
+    showStudios: false
+})
+
 export function Search(props: { children?: JSXElement }) {
     const navigate = useNavigate()
-    
+
     function handleClick() {
         const searchParams = new URLSearchParams();
-        for (const actor of state.actors)
+        for (const actor of filters.actors)
             searchParams.append("actorIds", actor.actorId.toString())
-        for (const tag of state.tags)
+        for (const tag of filters.tags)
             searchParams.append("tags", tag)
-        searchParams.append("afterDate", state.afterDate)
-        searchParams.append("beforeDate", state.beforeDate)
+        searchParams.append("afterDate", filters.afterDate)
+        searchParams.append("beforeDate", filters.beforeDate)
+        filters.studio.studioId &&
+        searchParams.append("studioId", filters.studio.studioId.toString())
 
         navigate("/movies/search?" + searchParams.toString())
     }
@@ -31,30 +43,52 @@ export function Search(props: { children?: JSXElement }) {
             <h1 class="text-center text-3xl">Search Movies</h1>
             <div>
                 <h2 class="font-bold">Actors</h2>
-                <button class="bg-amber-500 p-1" onclick={() => setState({ showActors: true })} >Select Actors</button>
-                <span class="ml-2">{new Intl.ListFormat(undefined, { type: 'conjunction' }).format(state.actors.map(a => a.name))}</span>
+                <button
+                    class="bg-amber-500 p-1"
+                    onclick={() => setState({ showActors: true })}
+                >
+                    Select Actors
+
+                </button>
+                <span class="ml-2">{new Intl.ListFormat(undefined, { type: 'conjunction' }).format(filters.actors.map(a => a.name))}</span>
             </div>
             <h2 class="py-2">Tags</h2>
             <span class="h-10 bg-slate-700 mt-1 mb-3 px-1 flex items-center">
-                {state.tags.join(", ")}
+                {filters.tags.join(", ")}
             </span>
             <TagSelector
-                selectedTags={state.tags}
-                setTags={tags => setState({ tags })}
+                selectedTags={filters.tags}
+                setTags={tags => setFilters({ tags })}
 
             />
             <div class="flex justify-around my-5">
                 <label >
                     Released After
-                    <input type="date" class="ml-5" value={state.afterDate} onchange={(e) => setState("afterDate", e.target.value)} />
+                    <input type="date" class="ml-5" value={filters.afterDate} onchange={(e) => setFilters("afterDate", e.target.value)} />
                 </label>
                 <label >
                     Released Before
-                    <input type="date" class="ml-5" value={state.beforeDate} onchange={(e) => setState("beforeDate", e.target.value)} />
+                    <input type="date" class="ml-5" value={filters.beforeDate} onchange={(e) => setFilters("beforeDate", e.target.value)} />
                 </label>
             </div>
-
-            
+            <button
+                class="bg-amber-500 p-1"
+                onclick={() => setState("showStudios", prev => !prev)}
+            >
+                Select Studio
+            </button>
+            <span> {filters.studio.name} </span>
+            <div
+                class="mt-5 z-500 overflow-hidden transition-[height_2s_ease] "
+                classList={{ "h-[calc-size(auto)]!": state.showStudios, "h-0": !state.showStudios }}
+            >
+                <StudioSelector
+                    setSelectedStudio={studio => {
+                        setFilters("studio", studio)
+                        setState("showStudios", false)
+                    }}
+                />
+            </div>
 
             <Show when={state.showActors}>
                 <ActorSelector
@@ -64,16 +98,17 @@ export function Search(props: { children?: JSXElement }) {
                     }}
                     getValue={() => []}
                     handleSubmit={(actors) => {
-                        setState({ actors, showActors: false })
+                        setState({ showActors: false })
+                        setFilters({ actors })
                     }}
-                    initialActors={state.actors}
+                    initialActors={filters.actors}
                 />
             </Show>
 
             <button
                 class="flex p-3 w-full items-center justify-center bg-green-600 mt-5 disabled:bg-green-200 disabled:text-black"
                 onclick={handleClick}
-                disabled={state.actors.length + state.tags.length === 0}
+                disabled={(filters.actors.length + filters.tags.length === 0) && !filters.studio.studioId}
             >
                 SEARCH
             </button>

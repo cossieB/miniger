@@ -1,6 +1,6 @@
 import { Accessor, For, Show, Suspense, createEffect, createSignal, on } from "solid-js";
 import { getStudios } from "../../../api/data";
-import { createStudio, updateFilmStudio } from "../../../api/mutations";
+import { createStudio, editFilm } from "../../../api/mutations";
 import { createAsync, useAction } from "@solidjs/router";
 import { HoldClickBtn } from "../../HoldClickBtn";
 import { Option } from "./StudioOption";
@@ -29,6 +29,7 @@ export function StudioSelector(props: P) {
             <input
                 type="text"
                 class="ag-input-field-input ag-text-field-input h-10"
+                placeholder="Filter Studios"
                 oninput={e => setInput(e.target.value)}
                 value={input()}
                 ref={refInput}
@@ -40,7 +41,7 @@ export function StudioSelector(props: P) {
                 <Option
                     text="Unknown"
                     value={null}
-                    handleChange={() => props.setSelectedStudio({ name: "", studioId: null })}
+                    handleChange={() => props.setSelectedStudio({ name: "Unknown", studioId: null })}
                 />
                 <For each={filtered()}>
                     {studio =>
@@ -71,12 +72,12 @@ type P1 = {
 
 function AddStudioBtn(props: P1) {
     const createAction = useAction(createStudio)
-    const updateAction = useAction(updateFilmStudio)
+    const updateAction = useAction(editFilm)
     return (
         <HoldClickBtn
             action={async () => {
                 const studioId = await createAction(props.input())
-                await updateAction(props.filmId, studioId)
+                await updateAction({filmId: props.filmId, studioId})
                 props.setSelectedStudio({
                     name: props.input(), studioId
                 })

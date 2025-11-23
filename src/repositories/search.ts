@@ -8,6 +8,7 @@ type Q = {
     tags: string[],
     beforeDate?: string,
     afterDate?: string
+    studioId?: number
 }
 
 export async function search(params: string) {
@@ -17,7 +18,8 @@ export async function search(params: string) {
         actorIds: typeof searchParams.actorIds == 'string' ? [Number(searchParams.actorIds)] : searchParams.actorIds?.map(Number) ?? [],
         tags: typeof searchParams.tags == "string" ? [searchParams.tags] : searchParams.tags ?? [],
         beforeDate: typeof searchParams.beforeDate == "string" ? searchParams.beforeDate : undefined,
-        afterDate: typeof searchParams.afterDate == "string" ? searchParams.afterDate : undefined
+        afterDate: typeof searchParams.afterDate == "string" ? searchParams.afterDate : undefined,
+        studioId: typeof searchParams.studioId == "string" ? Number(searchParams.studioId) : undefined
     }
 
     let query = db
@@ -50,5 +52,6 @@ export async function search(params: string) {
         .where("film.filmId", "in", query)
         .$if(!!filters.afterDate, qb => qb.where("film.releaseDate", ">=", filters.afterDate!))
         .$if(!!filters.beforeDate, qb => qb.where("film.releaseDate", "<=", filters.beforeDate!))
+        .$if(!!filters.studioId, qb => qb.where("film.studioId", "=", filters.studioId!))
         .execute()
 }

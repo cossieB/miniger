@@ -41,19 +41,6 @@ export const addActor = action(async (partialActor: string | Omit<TActor, 'actor
     }
 })
 
-export const updateFilmStudio = action(async (filmId: number, studioId: number | null) => {
-    if (studioId === -1)
-        studioId = null
-    try {
-        await filmRepo.editFilmStudio(filmId, studioId)
-    }
-    catch (error) {
-        console.error(error);
-        state.status.setStatus(String(error))
-        throw json(undefined, {revalidate: []});
-    }
-})
-
 export const createStudio = action(async (studio: string | Omit<TStudio, "studioId">) => {
     const studioObj = typeof studio === "string" ?  {name: studio, website: null} : studio
     try {

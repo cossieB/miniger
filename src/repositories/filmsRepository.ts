@@ -72,10 +72,6 @@ export function moviesByCostars(actorAId: number, actorBId: number) {
     return filmsQuery.where("film.filmId", "in", filter).execute()
 }
 
-export function editFilmStudio(filmId: number, studioId: number | null) {
-    return db.updateTable("film").set({studioId}).where("film.filmId", "=", filmId).execute()
-}
-
 export function updateFilm(f: Partial<Omit<TFilm, "filmId">>, filmId: number) {
     return db.updateTable("film").set(f).where("film.filmId", "=", filmId).execute()
 }
