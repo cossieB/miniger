@@ -15,16 +15,16 @@ export function AgTagSelector(props: ICellEditorParams) {
 
     return (
         <div class="bg-slate-800 w-[50vw] fixed left-1/2 -translate-x-1/2 shadow-[0_0_5px_5px_black]">
-            <input
-                ref={ref}
-                class="ag-input-field-input ag-text-field-input h-10"
-                type="text"
-                value={tags().join(", ")}
-                placeholder="Enter tags separated by a comma"
-            />
             <div class="flex justify-end my-3">
+                <input
+                    ref={ref}
+                    class="ag-input-field-input ag-text-field-input h-10"
+                    type="text"
+                    value={tags().join(", ")}
+                    placeholder="Enter tags separated by a comma"
+                />
                 <button
-                    class="rounded-full p-1 bg-red-500 mr-1"
+                    class="p-1 bg-red-500 w-10 justify-center items-center flex"
                     onclick={() => {
                         setTags(props.data.tags)
                         props.stopEditing()
@@ -33,7 +33,7 @@ export function AgTagSelector(props: ICellEditorParams) {
                     <CancelSvg />
                 </button>
                 <button
-                    class="rounded-full p-1 bg-lime-500 mr-1"
+                    class="p-1 bg-lime-500 w-10 justify-center items-center flex"
                     onclick={() => {
                         props.stopEditing()
                     }}
@@ -42,11 +42,11 @@ export function AgTagSelector(props: ICellEditorParams) {
                 </button>
             </div>
             <div class="p-1">
-            <TagSelector
-                selectedTags={tags()}
-                setTags={setTags}
+                <TagSelector
+                    selectedTags={tags()}
+                    setTags={setTags}
                 />
-                </div>
+            </div>
         </div>
     )
 }
@@ -95,7 +95,7 @@ function TagItem(props: P) {
             props.selectedTags.add(props.tag)
     }
     return (
-        <li class="bg-slate-400 p-1" classList={{ "bg-slate-700 ": isSelected() }} onclick={toggleTag}>
+        <li class="bg-gray-600 h-8 p-2 flex-1 whitespace-nowrap flex items-center justify-center" classList={{ "bg-slate-950!": isSelected() }} onclick={toggleTag}>
             {props.tag}
         </li>
     )

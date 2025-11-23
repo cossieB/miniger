@@ -8,17 +8,21 @@ import { useNavigate } from "@solidjs/router";
 const [state, setState] = createStore({
     actors: [] as TActor[],
     showActors: false,
-    tags: [] as string[]
+    tags: [] as string[],
+    afterDate: "",
+    beforeDate: ""
 })
 export function Search(props: { children?: JSXElement }) {
     const navigate = useNavigate()
+    
     function handleClick() {
-
-        const searchParams = new URLSearchParams()
+        const searchParams = new URLSearchParams();
         for (const actor of state.actors)
             searchParams.append("actorIds", actor.actorId.toString())
         for (const tag of state.tags)
             searchParams.append("tags", tag)
+        searchParams.append("afterDate", state.afterDate)
+        searchParams.append("beforeDate", state.beforeDate)
 
         navigate("/movies/search?" + searchParams.toString())
     }
@@ -31,7 +35,7 @@ export function Search(props: { children?: JSXElement }) {
                 <span class="ml-2">{new Intl.ListFormat(undefined, { type: 'conjunction' }).format(state.actors.map(a => a.name))}</span>
             </div>
             <h2 class="py-2">Tags</h2>
-            <span class="h-10 outline-2 mt-1 mb-3 px-1 flex items-center">
+            <span class="h-10 bg-slate-700 mt-1 mb-3 px-1 flex items-center">
                 {state.tags.join(", ")}
             </span>
             <TagSelector
@@ -39,6 +43,19 @@ export function Search(props: { children?: JSXElement }) {
                 setTags={tags => setState({ tags })}
 
             />
+            <div class="flex justify-around my-5">
+                <label >
+                    Released After
+                    <input type="date" class="ml-5" value={state.afterDate} onchange={(e) => setState("afterDate", e.target.value)} />
+                </label>
+                <label >
+                    Released Before
+                    <input type="date" class="ml-5" value={state.beforeDate} onchange={(e) => setState("beforeDate", e.target.value)} />
+                </label>
+            </div>
+
+            
+
             <Show when={state.showActors}>
                 <ActorSelector
                     allowAddActor={false}

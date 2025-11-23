@@ -5,7 +5,9 @@ import { filmsQuery } from "./filmsRepository";
 
 type Q = {
     actorIds: number[]
-    tags: string[]
+    tags: string[],
+    beforeDate?: string,
+    afterDate?: string
 }
 
 export async function search(params: string) {
@@ -13,7 +15,9 @@ export async function search(params: string) {
     
     const filters: Q = {
         actorIds: typeof searchParams.actorIds == 'string' ? [Number(searchParams.actorIds)] : searchParams.actorIds?.map(Number) ?? [],
-        tags: typeof searchParams.tags == "string" ? [searchParams.tags] : searchParams.tags ?? []
+        tags: typeof searchParams.tags == "string" ? [searchParams.tags] : searchParams.tags ?? [],
+        beforeDate: typeof searchParams.beforeDate == "string" ? searchParams.beforeDate : undefined,
+        afterDate: typeof searchParams.afterDate == "string" ? searchParams.afterDate : undefined
     }
 
     let query = db
@@ -42,5 +46,9 @@ export async function search(params: string) {
                 .on(sql.raw(`${alias}.tag`), 'not in', prev)
         )
     }
-    return filmsQuery.where("film.filmId", "in", query).execute()
+    return filmsQuery
+        .where("film.filmId", "in", query)
+        .$if(!!filters.afterDate, qb => qb.where("film.releaseDate", ">=", filters.afterDate!))
+        .$if(!!filters.beforeDate, qb => qb.where("film.releaseDate", "<=", filters.beforeDate!))
+        .execute()
 }

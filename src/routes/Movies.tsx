@@ -4,7 +4,8 @@ import { createMemo, Suspense, Show, createUniqueId, For } from "solid-js"
 import { createStore } from "solid-js/store"
 import { state } from "../state"
 import { AgActorSelector } from "../components/CellEditors/ActorCellEditor/ActorSelector"
-import { MySelectEditor } from "../components/CellEditors/MySelectEditor"
+import { StudioSelector } from "../components/CellEditors/StudioSelector/StudioSelector"
+import { AgStudioSelector } from "~/components/CellEditors/StudioSelector/AgStudioSelector"
 import MoviesContextMenu from "../components/MoviesContextMenu"
 import { editFilm, updateTag } from "../api/mutations"
 import { ActorItem2 } from "~/components/CellEditors/ActorCellEditor/ActorItem"
@@ -91,7 +92,7 @@ export function Movies(props: Props) {
                         field: "studioName",
                         editable: true,
                         headerName: "Studio",
-                        cellEditor: MySelectEditor,
+                        cellEditor: AgStudioSelector,
                         cellEditorPopup: true,
                         valueSetter: (params) => {
                             const value = JSON.parse(params.newValue);
