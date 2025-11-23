@@ -17,6 +17,8 @@ const [filters, setFilters] = createStore({
     }
 })
 
+export type Filters = typeof filters
+
 const [state, setState] = createStore({
     showActors: false,
     showStudios: false
@@ -26,17 +28,9 @@ export function Search(props: { children?: JSXElement }) {
     const navigate = useNavigate()
 
     function handleClick() {
-        const searchParams = new URLSearchParams();
-        for (const actor of filters.actors)
-            searchParams.append("actorIds", actor.actorId.toString())
-        for (const tag of filters.tags)
-            searchParams.append("tags", tag)
-        searchParams.append("afterDate", filters.afterDate)
-        searchParams.append("beforeDate", filters.beforeDate)
-        filters.studio.studioId &&
-        searchParams.append("studioId", filters.studio.studioId.toString())
+        sessionStorage.setItem("filters", JSON.stringify(filters))
 
-        navigate("/movies/search?" + searchParams.toString())
+        navigate("/movies/search")
     }
     return (
         <div class="ctis p-5">
@@ -77,7 +71,7 @@ export function Search(props: { children?: JSXElement }) {
             >
                 Select Studio
             </button>
-            <span> {filters.studio.name} </span>
+            <span> {filters.studio.name == "Unknown" ? "" : filters.studio.name} </span>
             <div
                 class="mt-5 z-500 overflow-hidden transition-[height_2s_ease] "
                 classList={{ "h-[calc-size(auto)]!": state.showStudios, "h-0": !state.showStudios }}
@@ -96,7 +90,6 @@ export function Search(props: { children?: JSXElement }) {
                     close={() => {
                         setState({ showActors: false })
                     }}
-                    getValue={() => []}
                     handleSubmit={(actors) => {
                         setState({ showActors: false })
                         setFilters({ actors })

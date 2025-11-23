@@ -1,4 +1,4 @@
-import { For, Show, Suspense, createEffect, createSignal, on } from "solid-js";
+import { For, Show, Suspense, createEffect, createSignal, on, onMount } from "solid-js";
 import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
 import { TActor } from "../../../datatypes";
 import { getActors } from "../../../api/data";
@@ -9,12 +9,12 @@ import clickOutside from "~/lib/clickOutside";
 import { editFilmActors } from "~/api/mutations";
 false && clickOutside
 
+let cb: () => TActor[];
 export function AgActorSelector(props: ICellEditorParams) {
-
     const editFilmActorsAction = useAction(editFilmActors);
-    let cb = () => []
     const api: ICellEditor = {
-        getValue: cb
+        getValue: () => cb(),
+        
     };
 
     (props as any).ref(api);
@@ -29,7 +29,6 @@ export function AgActorSelector(props: ICellEditorParams) {
             allowAddActor
             close={() => props.stopEditing()}
             handleSubmit={handleSubmit}
-            getValue={cb}
             initialActors={props.data.actors}
         />
     );
@@ -40,16 +39,17 @@ type P = {
     allowAddActor: boolean
     handleSubmit: (actors: TActor[]) => void
     initialActors: TActor[]
-    getValue: () => TActor[]
 }
 
 export function ActorSelector(props: P) {
     let ref!: HTMLInputElement
     const [input, setInput] = createSignal("");
-    const [rowActors, setRowActors] = createSignal(props.initialActors ?? []);
+    const [selectedActors, setSelectedActors] = createSignal(props.initialActors ?? []);
+    onMount(() => {
+        cb = () => selectedActors()
+    })
     const actors = createAsync(() => getActors())
-    const filteredActors = () => actors()?.filter(actor => actor.name.toLowerCase().includes(input().toLowerCase()))
-    props.getValue = () => rowActors()
+    const filteredActors = () => actors()?.filter(actor => actor.name.toLowerCase().includes(input().toLowerCase()));
     createEffect(on(actors, () => {
         ref?.focus();
     }));
@@ -73,14 +73,14 @@ export function ActorSelector(props: P) {
                     />
                     <button 
                         class="flex p-3 w-full items-center justify-center bg-green-600"
-                        onclick={() => props.handleSubmit(rowActors())}
+                        onclick={() => props.handleSubmit(selectedActors())}
                     >
                         SUBMIT
                     </button>
-                    <Show when={rowActors().length > 0}>
+                    <Show when={selectedActors().length > 0}>
                         <ul class="bg-slate-800 grid text-center p-2 gap-2 overflow-auto max-h-[1/2] shrink-0 grow-0 actorsList">
-                            <For each={rowActors()}>
-                                {actor => <ActorItem actor={actor} rowActors={rowActors} setRowActors={setRowActors} />}
+                            <For each={selectedActors()}>
+                                {actor => <ActorItem actor={actor} rowActors={selectedActors} setRowActors={setSelectedActors} />}
                             </For>
                         </ul>
                         <div class="w-full h-0.5 shrink-0 bg-amber-400" />
@@ -89,14 +89,14 @@ export function ActorSelector(props: P) {
 
                     <ul class=" grid text-center p-2 gap-2 actorsList">
                         <For each={filteredActors()}>
-                            {actor => <ActorItem actor={actor} rowActors={rowActors} setRowActors={setRowActors} />}
+                            {actor => <ActorItem actor={actor} rowActors={selectedActors} setRowActors={setSelectedActors} />}
                         </For>
                     </ul>
                     </div>
                     <Show when={props.allowAddActor}>
                         <AddActorToDatabaseBtn
                             input={input}
-                            setRowActors={setRowActors}
+                            setRowActors={setSelectedActors}
                             clearInput={() => setInput("")}
                         />
                     </Show>
