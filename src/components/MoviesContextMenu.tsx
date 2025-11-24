@@ -1,13 +1,13 @@
 import { createUniqueId, For, Show, Suspense } from "solid-js";
 import { state } from "../state";
 import { ContextMenu } from "./ContextMenu/ContextMenu";
-import { openPath } from "@tauri-apps/plugin-opener";
 import { invoke } from "@tauri-apps/api/core";
 import { createAsync, useAction, useNavigate } from "@solidjs/router";
 import { addDirectoriesToDatabase } from "~/api/mutations";
 import { getFilmByPath } from "~/api/data";
 import { TActor } from "~/datatypes";
-import { CameraSvg, PlayCircleSvg, PlayFillSvg, PlayListSvg, PlaySvg, TagSvg, TheatreSvg, WindowSvg } from "~/icons";
+import { CameraSvg, CurvedArrowSvg, PlayCircleSvg, PlayFillSvg, PlayListSvg, PlaySvg, TagSvg, TheatreSvg, WindowSvg } from "~/icons";
+import { createTempPlaylist } from "~/utils/createTempPlaylist";
 
 type F = {
     title: string;
@@ -84,14 +84,14 @@ export default function MoviesContextMenu(props: P) {
                 <ContextMenu.Item
                     onClick={async () => {
                         try {
-                            await openPath(props.contextMenu.data.path)
+                            await createTempPlaylist(props.contextMenu.selections)
                         } catch (error) {
                             console.error(error)
                             state.status.setStatus("File Not Found")
                         }
-                    }} 
+                    }}
                     icon={<PlayCircleSvg />}
-                    >
+                >
                     Open With Default Player
                 </ContextMenu.Item>
                 <Show when={tags().length > 0}>
@@ -139,6 +139,17 @@ export default function MoviesContextMenu(props: P) {
                 >
                     Show In Explorer
                 </ContextMenu.Item>
+                <Show when={actors().length > 0}>
+                    <ContextMenu.SubMenu label="Goto Actor" icon={<CurvedArrowSvg />}>
+                    <For each={actors()}>
+                        {actor =>
+                            <ContextMenu.Link href={`/actors?gridId=${actor.actorId}`}>
+                                {actor.name}
+                            </ContextMenu.Link>
+                        }
+                    </For>
+                    </ContextMenu.SubMenu>
+                </Show>
             </ContextMenu>
         </Suspense>
     )

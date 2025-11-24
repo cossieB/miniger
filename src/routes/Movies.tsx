@@ -53,7 +53,7 @@ export function Movies(props: Props) {
             >
                 <GridWrapper
                     gridId={location.pathname}
-                    getRowId={params => params.data.path}
+                    getRowId={params => params.data.filmId.toString()}
                     rowSelection="multiple"
                     rowData={data()}
                     onSelectionChanged={(params) => {

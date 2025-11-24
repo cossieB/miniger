@@ -1,4 +1,5 @@
-import { Setter, Show } from "solid-js"
+import { useSearchParams } from "@solidjs/router"
+import { Show } from "solid-js"
 import { Portal } from "solid-js/web"
 import { state } from "~/state"
 
@@ -7,10 +8,10 @@ type Props<T> = {
     key: string & keyof T
     addAction: (...params: any[]) => Promise<number>
     reset: () => void
-    setAdded: Setter<number | undefined>
 }
 
 export function PinnedRowButtons<T>(props: Props<T>) {
+    const [_, setSearchParams] = useSearchParams()
     return (
         <Show when={props.input[props.key]} >
         <Portal mount={document.querySelector('section')!} >
@@ -21,7 +22,7 @@ export function PinnedRowButtons<T>(props: Props<T>) {
                     onclick={async () => {
                         const id = await props.addAction(props.input);
                         props.reset();
-                        props.setAdded(id)
+                        setSearchParams({gridId: id})
                     }}
                 >
                     SAVE

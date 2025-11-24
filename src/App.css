@@ -64,53 +64,31 @@ input[type=range] {
     appearance: none;
     background: transparent;
     cursor: pointer;
-}
 
-/***** Chrome, Safari, Opera, and Edge Chromium *****/
-input[type="range"]::-webkit-slider-runnable-track {
-    background: #053a5f;
-    height: 0.5rem;
-}
+    /* Chrome, Safari, Opera, and Edge Chromium */
+    &::-webkit-slider-runnable-track {
+        background: #053a5f;
+        height: 0.5rem;
+    }
 
-/******** Firefox ********/
-input[type="range"]::-moz-range-track {
-    background: #053a5f;
-    height: 0.5rem;
-}
+    /* Firefox */
+    &::-moz-range-track {
+        background: #053a5f;
+        height: 0.5rem;
+    }
 
-/***** Thumb Styles *****/
-/***** Chrome, Safari, Opera, and Edge Chromium *****/
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    /* Override default look */
-    appearance: none;
-    background-color: #EA580C;
-    height: 1rem;
-    width: 1rem;
-    border-radius: 50%;
-    margin-top: -4px;
-    top: 50%;
-}
-
-/* width */
-::-webkit-scrollbar {
-    width: var(--scrollbarWidth);
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-    background: #2c3e50;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 10px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    /* Thumb Styles - Chrome, Safari, Opera, and Edge Chromium */
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        /* Override default look */
+        appearance: none;
+        background-color: #EA580C;
+        height: 1rem;
+        width: 1rem;
+        border-radius: 50%;
+        margin-top: -4px;
+        top: 50%;
+    }
 }
 
 .holdBtn {
@@ -129,5 +107,29 @@ input[type="range"]::-webkit-slider-thumb {
         z-index: -5;
         @apply bg-orange-500;
         translate: calc(var(--time)*-1%);
+    }
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.thin-scrollbar {
+    scrollbar-gutter: stable;
+
+    &::-webkit-scrollbar {
+        width: 10px;
+        /* Width for vertical scrollbar */
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+        /* Makes the track invisible */
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.3);
+        /* Semi-transparent thumb */
+        border-radius: 5px;
     }
 }

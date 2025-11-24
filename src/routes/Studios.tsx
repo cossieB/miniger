@@ -5,7 +5,7 @@ import { ContextMenu } from "../components/ContextMenu/ContextMenu";
 import { AgGridSolidRef } from "ag-grid-solid";
 import { createStudio, updateStudio } from "../api/mutations";
 import { createAsync, useAction } from "@solidjs/router";
-import { fixPinnedRowHeight, useAdded, useFilter } from "~/utils/pinnedUtils";
+import { fixPinnedRowHeight, useFilter } from "~/utils/pinnedUtils";
 import { PinnedRowButtons } from "~/components/PinnedRowButtons";
 import { GridWrapper } from "~/components/GridWrapper";
 
@@ -26,7 +26,7 @@ export default function Studios() {
     })
 
     useFilter(ref, 'name', () => input.name)
-    const setAdded = useAdded(studios, 'studioId', ref)
+
     function reset() {
         ref()?.api.setFilterModel(null);
         ref()?.api.setGridOption("pinnedBottomRowData", [{ name: "Add Studio..." }]);
@@ -94,7 +94,6 @@ export default function Studios() {
                 </Show>
                 <PinnedRowButtons
                     input={input}
-                    setAdded={setAdded}
                     key="name"
                     reset={reset}
                     addAction={addStudioAction}

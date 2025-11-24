@@ -8,12 +8,11 @@ import { AgGridSolidRef } from "ag-grid-solid";
 import { addActor, editActor } from "../api/mutations";
 import { ImageEditor } from "~/components/CellEditors/ImageEditor";
 import { TActor } from "~/datatypes";
-import { fixPinnedRowHeight, useAdded, useFilter } from "~/utils/pinnedUtils";
+import { fixPinnedRowHeight, useFilter } from "~/utils/pinnedUtils";
 import { PinnedRowButtons } from "~/components/PinnedRowButtons";
 import { GridWrapper } from "~/components/GridWrapper";
 
 export default function Actors() {
-    // let ref!: AgGridSolidRef
     let [ref, setRef] = createSignal<AgGridSolidRef>()
     const updateActorAction = useAction(editActor)
     const addActorAction = useAction(addActor)
@@ -34,8 +33,6 @@ export default function Actors() {
     })
 
     useFilter(ref, 'name', () => input.name)
-
-    const setAdded = useAdded(actors, 'actorId', ref)
 
     function reset() {
         ref()?.api.setFilterModel(null);
@@ -135,7 +132,6 @@ export default function Actors() {
                     input={input}
                     key="name"
                     reset={reset}
-                    setAdded={setAdded}
                 />
             </div>
         </Suspense>

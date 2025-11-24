@@ -60,6 +60,7 @@ export function ActorSelector(props: P) {
                 <div
                     class="w-[65vw] h-screen flex flex-col z-100 ml-[50%] -translate-x-[50%]"
                     use:clickOutside={() => {
+                        setSelectedActors(props.initialActors ?? [])
                         props.close()
                     }}
                 >

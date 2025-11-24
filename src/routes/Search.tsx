@@ -5,6 +5,7 @@ import { TagSelector } from "~/components/TagSelector";
 import { TActor } from "~/datatypes";
 import { useNavigate } from "@solidjs/router";
 import { StudioSelector } from "~/components/CellEditors/StudioSelector/StudioSelector";
+import { CaretIcon } from "~/components/CaretIcon";
 
 const [filters, setFilters] = createStore({
     actors: [] as TActor[],
@@ -33,7 +34,7 @@ export function Search(props: { children?: JSXElement }) {
         navigate("/movies/search")
     }
     return (
-        <div class="ctis p-5">
+        <div class="ctis p-5 h-full overflow-auto thin-scrollbar">
             <h1 class="text-center text-3xl">Search Movies</h1>
             <div>
                 <h2 class="font-bold">Actors</h2>
@@ -66,15 +67,16 @@ export function Search(props: { children?: JSXElement }) {
                 </label>
             </div>
             <button
-                class="bg-amber-500 p-1"
+                class="bg-amber-500 p-1 flex text-nowrap items-center [&>svg]:h-5"
                 onclick={() => setState("showStudios", prev => !prev)}
             >
-                Select Studio
+                Select Studio &nbsp;
+                <CaretIcon isOpen={() => state.showStudios} />
             </button>
             <span> {filters.studio.name == "Unknown" ? "" : filters.studio.name} </span>
             <div
                 class="mt-5 z-500 overflow-hidden transition-[height_2s_ease] "
-                classList={{ "h-[calc-size(auto)]!": state.showStudios, "h-0": !state.showStudios }}
+                classList={{ "h-auto!": state.showStudios, "h-0": !state.showStudios }}
             >
                 <StudioSelector
                     setSelectedStudio={studio => {

@@ -7,9 +7,9 @@ import { getFilms } from "~/api/data";
 import { loadPlaylist, loadVideos } from "~/utils/loadPlaylist";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { invoke } from "@tauri-apps/api/core";
-import { appDataDir, join, tempDir, } from "@tauri-apps/api/path";
-import { open } from "@tauri-apps/plugin-shell";
+import { appDataDir, } from "@tauri-apps/api/path";
 import { openPath } from "@tauri-apps/plugin-opener";
+import { createTempPlaylist } from "~/utils/createTempPlaylist";
 
 export type SessionJSON = {
     list: typeof state['sidePanel']['list'],
@@ -91,16 +91,7 @@ getAllWindows().then(windows => {
         })
     })
     mainWindow.listen("play_playlist", async () => {
-        try {
-            const path = await join(await tempDir(), "mngr_temp.m3u")
-            await invoke("save_playlist", {
-                path,
-                files: state.sidePanel.list
-            })
-            open(path)
-        } catch (error) {
-            state.status.setStatus(String(error))
-        }
+        await createTempPlaylist(state.sidePanel.list)
     })
     mainWindow.listen("open_drag_drop", () => {
         const window = new WebviewWindow("drag-drop", {

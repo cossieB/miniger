@@ -28,7 +28,7 @@ export default function Inaccessible() {
             <div id='gridContainer' class='ag-theme-alpine-dark h-full relative' >
 
                 <GridWrapper
-                    getRowId={params => params.data.path}
+                    getRowId={params => params.data.filmId.toString()}
                     rowSelection="multiple"
                     rowData={data()}
                     columnDefs={[{

@@ -1,6 +1,7 @@
 import { createSignal, JSXElement } from "solid-js";
 import { useLevel } from "./calculateLevel";
 import { Icon } from "./Icon";
+import { CaretIcon } from "../CaretIcon";
 
 type P = {
     label: string,
@@ -10,7 +11,7 @@ type P = {
 
 export function ParentNode(props: P) {
     const [isOpen, setIsOpen] = createSignal(false);
-    const {level, setRef} = useLevel()
+    const { level, setRef } = useLevel()
     return (
         <li
             class="tree-node"
@@ -22,13 +23,11 @@ export function ParentNode(props: P) {
                 style={{ "padding-left": level() + 'rem' }}
             >
                 <Icon>
-                    <svg classList={{ "rotate-90": isOpen() }} xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-caret-right-fill transition-[rotate]" viewBox="0 0 16 16">
-                        <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
-                    </svg>
+                    <CaretIcon isOpen={isOpen} />
                 </Icon>
                 {props.label}
             </div>
-            <ul class="overflow-hidden transition-[height_2s_ease]" classList={{ "h-0": !isOpen(), "h-[calc-size(auto)]": isOpen() }}>
+            <ul class="overflow-hidden transition-[height_2s_ease]" classList={{ "h-0": !isOpen(), "h-auto": isOpen() }}>
                 {props.children}
             </ul>
         </li>

@@ -19,7 +19,7 @@ export const getActors = query(async () => {
 
 export const getInaccessible = query(async () => {
     const films = await allFilms()
-    return await invoke('get_inaccessible', { playlist: films }) as { title: string, path: string, film_id: number }[]
+    return await invoke('get_inaccessible', { playlist: films }) as { title: string, path: string, filmId: number }[]
 }, 'inaccessible')
 
 export const getFilmsByTag = query(async (tag: string) => {
