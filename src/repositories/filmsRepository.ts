@@ -86,5 +86,5 @@ export async function addFilms(files: { title: string, path: string }[]) {
 }
 
 export function deleteByPaths(paths: string[]) {
-    return db.deleteFrom("film").where("path", "in", paths)
+    return db.deleteFrom("film").where("path", "in", paths).execute()
 }

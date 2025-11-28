@@ -1,7 +1,7 @@
 import { JSXElement, Show } from "solid-js";
 import { createStore } from "solid-js/store";
 import { ActorSelector } from "~/components/CellEditors/ActorCellEditor/ActorSelector";
-import { TagSelector } from "~/components/TagSelector";
+import { TagSelector } from "~/components/CellEditors/TagSelector";
 import { TActor } from "~/datatypes";
 import { useNavigate } from "@solidjs/router";
 import { StudioSelector } from "~/components/CellEditors/StudioSelector/StudioSelector";
@@ -53,7 +53,7 @@ export function Search(props: { children?: JSXElement }) {
             </span>
             <TagSelector
                 selectedTags={filters.tags}
-                setTags={tags => setFilters({ tags })}
+                setTags={tags => setFilters('tags', tags )}
 
             />
             <div class="flex justify-around my-5">

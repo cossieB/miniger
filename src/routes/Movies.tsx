@@ -10,7 +10,8 @@ import { editFilm, updateTag } from "../api/mutations"
 import { ActorItem2 } from "~/components/CellEditors/ActorCellEditor/ActorItem"
 import { GridWrapper } from "~/components/GridWrapper"
 import { DetailedDbFilm } from "~/repositories/filmsRepository"
-import { AgTagSelector } from "~/components/TagSelector"
+import { AgTagSelector } from "~/components/CellEditors/TagSelector"
+import { compareArrays } from "~/lib/compareArrays"
 
 type Props = {
     fetcher(): Promise<DetailedDbFilm[] | undefined>
@@ -18,7 +19,7 @@ type Props = {
 
 export function Movies(props: Props) {
     const films = createAsync(() => props.fetcher())
-    const updateTagAction = useAction(updateTag)
+
     const updateFilmAction = useAction(editFilm)
 
     const data = createMemo(() => {
@@ -117,17 +118,17 @@ export function Movies(props: Props) {
                         field: "releaseDate",
                         editable: true,
                         cellEditor: "agDateStringCellEditor",
-                        onCellValueChanged: params => updateFilmAction({releaseDate: params.newValue, filmId: params.data.filmId})
+                        onCellValueChanged: params => updateFilmAction({
+                            releaseDate: params.newValue, 
+                            filmId: params.data.filmId                            
+                        })
                     }, {
                         field: "tags",
                         editable: true,
                         cellEditor: AgTagSelector,
                         cellEditorPopupPosition: "over",
                         cellEditorPopup: true,
-                        onCellValueChanged: async params => {
-                            await updateTagAction(params.data.filmId, params.newValue);
-                        },
-                        valueParser: params => params.newValue.trim().split(/\s*[,;]+\s*/)
+                        valueFormatter: params => params.value.join(", "),
                     }, {
                         field: "path",
                     }, {
@@ -152,3 +153,4 @@ function Tooltip(params: ITooltipParams) {
         </ul>
     )
 }
+

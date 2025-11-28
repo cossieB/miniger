@@ -1,4 +1,4 @@
-import { For, Show, Suspense, createEffect, createSignal, on, onMount } from "solid-js";
+import { For, Show, Suspense, createEffect, createSignal, on } from "solid-js";
 import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
 import { TActor } from "../../../datatypes";
 import { getActors } from "../../../api/data";
@@ -45,9 +45,7 @@ export function ActorSelector(props: P) {
     let ref!: HTMLInputElement
     const [input, setInput] = createSignal("");
     const [selectedActors, setSelectedActors] = createSignal(props.initialActors ?? []);
-    onMount(() => {
-        cb = () => selectedActors()
-    })
+    cb = () => selectedActors()
     const actors = createAsync(() => getActors())
     const filteredActors = () => actors()?.filter(actor => actor.name.toLowerCase().includes(input().toLowerCase()));
     createEffect(on(actors, () => {

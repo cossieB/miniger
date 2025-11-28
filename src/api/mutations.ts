@@ -13,13 +13,13 @@ export const updateTag = action(async (filmId: number, tags: string[]) => {
     try {
         const filterTags: string[] = []
         for (const tag of tags) {
-            const trimmed = tag.trim()
+            const trimmed = tag.trim().toLowerCase()
             if (!trimmed || filterTags.includes(trimmed)) continue
             filterTags.push(trimmed)
         }
         
         await tagRepo.updateTags(filmId, filterTags)
-        return json(undefined, {revalidate: [getFilms.key, getTags.key, getFilmsByTag.key]})
+        return json(filterTags)
     }
     catch (error) {
         state.status.setStatus(String(error))
