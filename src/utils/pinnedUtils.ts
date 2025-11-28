@@ -1,5 +1,5 @@
-import { AgGridSolidRef } from "ag-grid-solid";
-import { Accessor, createEffect, on } from "solid-js";
+import { type AgGridSolidRef } from "ag-grid-solid";
+import { type Accessor, createEffect, on } from "solid-js";
 
 /**
  * Fix bug with AG Grid library that sets height of pinned rows to 0
@@ -19,6 +19,6 @@ export function useFilter(ref: Accessor<AgGridSolidRef | undefined>, key: string
                 type: "includes",
                 filter: accessor()
             }
-        })   
+        })
     }))
 }

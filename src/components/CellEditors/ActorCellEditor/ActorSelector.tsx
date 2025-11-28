@@ -1,7 +1,7 @@
 import { For, Show, Suspense, createEffect, createSignal, on } from "solid-js";
 import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
-import { TActor } from "../../../datatypes";
-import { getActors } from "../../../api/data";
+import type { TActor } from "~/datatypes";
+import { getActors } from "~/api/data";
 import { ActorItem } from "./ActorItem";
 import { AddActorToDatabaseBtn } from "./AddActorToDatabaseBtn";
 import { createAsync, useAction } from "@solidjs/router";

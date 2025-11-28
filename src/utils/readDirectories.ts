@@ -1,6 +1,6 @@
 import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
-import { PlaylistFile, state } from "../state";
+import { type PlaylistFile, state } from "../state";
 
 export async function readDirectories(dirs?: string[]) {
     let directories = dirs;

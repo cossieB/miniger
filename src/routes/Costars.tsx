@@ -1,5 +1,5 @@
 import { A, createAsync } from "@solidjs/router"
-import { ICellRendererParams, ITooltipParams } from "ag-grid-community"
+import { type ICellRendererParams, type ITooltipParams } from "ag-grid-community"
 import { Show, Suspense } from "solid-js"
 import { createStore } from "solid-js/store"
 import { allPairings } from "~/repositories/actorsRepository"

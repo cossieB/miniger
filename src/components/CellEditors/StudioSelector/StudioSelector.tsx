@@ -1,4 +1,4 @@
-import { Accessor, For, Show, Suspense, createEffect, createSignal, on } from "solid-js";
+import { type Accessor, For, Show, Suspense, createEffect, createSignal, on } from "solid-js";
 import { getStudios } from "../../../api/data";
 import { createStudio, editFilm } from "../../../api/mutations";
 import { createAsync, useAction } from "@solidjs/router";

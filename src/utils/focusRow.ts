@@ -1,4 +1,4 @@
-import { GridApi } from "ag-grid-community";
+import { type GridApi } from "ag-grid-community";
 
 export function focusRow(id: string, gridApi: GridApi) {
     const node = gridApi.getRowNode(id);

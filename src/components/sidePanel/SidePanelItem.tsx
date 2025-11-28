@@ -1,4 +1,4 @@
-import { createMemo, JSX, splitProps } from "solid-js";
+import { createMemo, type JSX, splitProps } from "solid-js";
 import { state } from "../../state";
 import { useLocation, useNavigate, useSearchParams } from "@solidjs/router";
 

@@ -1,6 +1,6 @@
-import { Accessor, Setter, Show } from "solid-js";
-import { TActor } from "../../../datatypes";
-import { addActor } from "../../../api/mutations";
+import { type Accessor, type Setter, Show } from "solid-js";
+import type { TActor } from "~/datatypes";
+import { addActor } from "~/api/mutations";
 import { useAction } from "@solidjs/router";
 import { HoldClickBtn } from "~/components/HoldClickBtn";
 

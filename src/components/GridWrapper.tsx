@@ -1,6 +1,6 @@
 import { useMatch, useSearchParams } from "@solidjs/router";
-import { GridApi, GridOptions, GridState, Module } from "ag-grid-community";
-import AgGridSolid, { AgGridSolidRef } from "ag-grid-solid";
+import type { GridApi, GridOptions, GridState, Module } from "ag-grid-community";
+import AgGridSolid, { type AgGridSolidRef } from "ag-grid-solid";
 import { createEffect } from "solid-js";
 import { state } from "~/state";
 import { focusRow } from "~/utils/focusRow";

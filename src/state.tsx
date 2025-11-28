@@ -1,8 +1,8 @@
-import { GridApi } from "ag-grid-community";
+import { type GridApi } from "ag-grid-community";
 import { createStore } from "solid-js/store";
 import shuffleArray from "./lib/shuffleArray";
 import { createUniqueId } from "solid-js";
-import { Require } from "./lib/utilityTypes";
+import { type Require } from "./lib/utilityTypes";
 
 export type PlaylistFile = {
     title: string;

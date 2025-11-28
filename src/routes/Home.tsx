@@ -1,4 +1,4 @@
-import { JSXElement } from "solid-js";
+import { type JSXElement } from "solid-js";
 import { useAction } from "@solidjs/router";
 import { addDirectoriesToDatabase } from "~/api/mutations";
 import { addFolderToSidebar, readDirectories } from "~/utils/readDirectories";

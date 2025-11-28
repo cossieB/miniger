@@ -1,11 +1,11 @@
 import { readTextFile, BaseDirectory } from "@tauri-apps/plugin-fs";
 import { state } from "./state";
-import { SessionJSON } from "./events/mainWindow";
-import { WatchJSON } from "./windows/Settings";
+import { type SessionJSON } from "./events/mainWindow";
+import { type WatchJSON } from "./windows/Settings";
 import { readDirectories } from "./utils/readDirectories";
 import { filterMap } from "./lib/filterMap";
 import { onMount } from "solid-js";
-import { createAsync, useAction, useNavigate } from "@solidjs/router";
+import { useAction, useNavigate } from "@solidjs/router";
 import { addDirectoriesToDatabase } from "./api/mutations";
 import { sleep } from "./lib/sleep";
 import { getFilms } from "./api/data";
@@ -47,14 +47,14 @@ async function readWatchJson() {
 }
 
 export function useWatchJson() {
-    const films = createAsync(() => getFilms())
     const action = useAction(addDirectoriesToDatabase)
     onMount(async () => {
         try {
             const files = await readWatchJson()
             if (!files?.length) return
+            const films = await getFilms()
             state.status.setStatus("Reading files....")
-            const paths = new Set((films.latest ?? []).map(f => f.path))
+            const paths = new Set(films.map(f => f.path))
             const newFiles = files.filter(f => !paths.has(f.path))
             await action(newFiles)
             state.status.clear()

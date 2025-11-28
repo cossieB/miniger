@@ -1,5 +1,5 @@
-import { Accessor, createResource, Setter, Suspense } from "solid-js";
-import { TActor } from "../../../datatypes";
+import { type Accessor, createResource, type Setter, Suspense } from "solid-js";
+import type { TActor } from "../../../datatypes";
 import { appDataDir, sep } from "@tauri-apps/api/path";
 import { convertFileSrc } from "@tauri-apps/api/core";
 

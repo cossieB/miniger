@@ -1,5 +1,5 @@
 import { sql } from "kysely";
-import { TFilm } from "~/datatypes";
+import type { TFilm } from "~/datatypes";
 import { db } from "~/kysely/database";
 
 

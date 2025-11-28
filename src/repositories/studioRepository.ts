@@ -1,6 +1,6 @@
 import { sql } from "kysely";
 import { db } from "~/kysely/database";
-import { Studio } from "~/kysely/schema";
+import { type Studio } from "~/kysely/schema";
 
 export function allStudios() {
     return db.selectFrom("studio").selectAll().orderBy(sql`LOWER(name)`).execute();

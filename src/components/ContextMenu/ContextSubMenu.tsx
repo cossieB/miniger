@@ -1,4 +1,4 @@
-import { JSX, Show, createEffect, createSignal, on, untrack } from "solid-js";
+import { type JSX, Show, createEffect, createSignal, on, untrack } from "solid-js";
 import { ChevronRight } from "../../icons";
 import { useContextMenuContext } from "./useContextMenuContext";
 import { Menu } from "./Menu";

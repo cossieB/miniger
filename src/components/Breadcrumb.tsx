@@ -1,6 +1,6 @@
 import { A, useLocation, useNavigate, useSearchParams } from "@solidjs/router"
 import { ChevronRight, HouseSvg } from "../icons"
-import { Accessor, For, Show, createMemo } from "solid-js"
+import { type Accessor, For, Show, createMemo } from "solid-js"
 import titleCase from "../lib/titleCase"
 
 export function Breadcrumbs() {

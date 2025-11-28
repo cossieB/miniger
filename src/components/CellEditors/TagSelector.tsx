@@ -1,6 +1,6 @@
 import { createAsync, useAction } from "@solidjs/router"
-import { ICellEditor, ICellEditorParams } from "ag-grid-community"
-import { createSignal, For, Setter, Suspense } from "solid-js"
+import { type ICellEditor, type ICellEditorParams } from "ag-grid-community"
+import { createSignal, For, type Setter, Suspense } from "solid-js"
 import { getTags } from "~/api/data"
 import { CancelSvg, CheckmarkSvg } from "~/icons"
 import { updateTag } from "~/api/mutations"
@@ -34,7 +34,6 @@ export function AgTagSelector(props: ICellEditorParams) {
                     type="text"
                     value={tags().join(", ")}
                     onchange={e => {
-                        console.log(e.currentTarget.value)
                         setTags(e.currentTarget.value.trim().split(/[,;]+\s*/).filter(x => !!x))
                     }}
 

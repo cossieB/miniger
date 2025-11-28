@@ -5,7 +5,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { createAsync, useAction, useNavigate } from "@solidjs/router";
 import { addDirectoriesToDatabase } from "~/api/mutations";
 import { getFilmByPath } from "~/api/data";
-import { TActor } from "~/datatypes";
+import type { TActor } from "~/datatypes";
 import { CameraSvg, CurvedArrowSvg, PlayCircleSvg, PlayFillSvg, PlayListSvg, PlaySvg, TagSvg, TheatreSvg, WindowSvg } from "~/icons";
 import { createTempPlaylist } from "~/utils/createTempPlaylist";
 

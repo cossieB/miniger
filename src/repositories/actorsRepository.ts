@@ -1,5 +1,5 @@
 import { sql } from "kysely";
-import { TActor } from "~/datatypes";
+import type { TActor } from "~/datatypes";
 import { db } from "~/kysely/database";
 
 export function allActors() {

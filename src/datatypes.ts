@@ -1,5 +1,5 @@
-import { Generated } from "kysely";
-import { Actor, ActorFilm, Film, FilmTag, Studio } from "./kysely/schema";
+import { type Generated } from "kysely";
+import type { Actor, ActorFilm, Film, FilmTag, Studio } from "./kysely/schema";
 
 type KyselyToClient<T> = {
     [K in keyof T]: T[K] extends Generated<infer X> ? X : T[K]

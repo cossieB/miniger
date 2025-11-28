@@ -1,8 +1,8 @@
-import { JSXElement, Show } from "solid-js";
+import { type JSXElement, Show } from "solid-js";
 import { createStore } from "solid-js/store";
 import { ActorSelector } from "~/components/CellEditors/ActorCellEditor/ActorSelector";
 import { TagSelector } from "~/components/CellEditors/TagSelector";
-import { TActor } from "~/datatypes";
+import { type TActor } from "~/datatypes";
 import { useNavigate } from "@solidjs/router";
 import { StudioSelector } from "~/components/CellEditors/StudioSelector/StudioSelector";
 import { CaretIcon } from "~/components/CaretIcon";

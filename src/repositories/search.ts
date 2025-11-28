@@ -1,13 +1,13 @@
 import { sql } from "kysely";
 import { db } from "~/kysely/database";
 import { filmsQuery } from "./filmsRepository";
-import { Filters } from "~/routes/Search";
+import { type Filters } from "~/routes/Search";
 import { useNavigate } from "@solidjs/router";
 
-export async function search() {
+export async function search(p0: any) {
     const navigate = useNavigate()
     const result = sessionStorage.getItem("filters")
-    if (!result) return navigate("/search")
+    if (!result) return navigate("/search") as never
     const filters: Filters = JSON.parse(result)
     
     let subquery = (function () {

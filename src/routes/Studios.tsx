@@ -2,7 +2,7 @@ import { createSignal, Show, Suspense } from "solid-js";
 import { getStudios } from "../api/data";
 import { createStore } from "solid-js/store";
 import { ContextMenu } from "../components/ContextMenu/ContextMenu";
-import { AgGridSolidRef } from "ag-grid-solid";
+import { type AgGridSolidRef } from "ag-grid-solid";
 import { createStudio, updateStudio } from "../api/mutations";
 import { createAsync, useAction } from "@solidjs/router";
 import { fixPinnedRowHeight, useFilter } from "~/utils/pinnedUtils";

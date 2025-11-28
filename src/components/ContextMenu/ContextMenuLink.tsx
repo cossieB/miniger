@@ -1,4 +1,4 @@
-import { JSX, splitProps } from "solid-js";
+import { type JSX, splitProps } from "solid-js";
 import { A } from "@solidjs/router";
 
 export function ContextMenuLink(props: JSX.HTMLAttributes<HTMLLIElement> & { href: string; icon?: JSX.Element }) {

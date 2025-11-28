@@ -1,4 +1,4 @@
-import { JSX, createContext, onMount } from "solid-js"
+import { type JSX, createContext, onMount } from "solid-js"
 import clickOutside from "../../lib/clickOutside"
 import { Portal } from "solid-js/web"
 import { ContextSubMenu } from "./ContextSubMenu"

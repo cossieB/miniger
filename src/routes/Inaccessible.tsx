@@ -1,5 +1,5 @@
 import { Suspense, onCleanup, onMount } from "solid-js";
-import { ICellEditorParams } from "ag-grid-community";
+import { type ICellEditorParams } from "ag-grid-community";
 import { open, } from "@tauri-apps/plugin-dialog";
 import { getInaccessible } from "../api/data";
 import { createAsync, useAction } from "@solidjs/router";

@@ -1,5 +1,5 @@
 import { TopBar } from "../components/TopBar/TopBar";
-import { JSXElement, createEffect, on, onCleanup, onMount } from "solid-js";
+import { type JSXElement, createEffect, on, onCleanup, onMount } from "solid-js";
 import { SidePanel } from "../components/sidePanel/SidePanel";
 import { state } from "../state";
 import { BottomBar } from "../components/BottomBar";

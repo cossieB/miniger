@@ -1,13 +1,13 @@
 import { action, json } from "@solidjs/router";
 import { state } from "../state";
-import { getActors, getFilms, getFilmsByTag, getInaccessible, getStudios, getTags } from "./data";
+import { getActors, getFilms, getInaccessible, getStudios } from "./data";
 import * as tagRepo from "../repositories/tagRepository"
 import * as actorRepo from "../repositories/actorsRepository"
 import * as studioRepo from "../repositories/studioRepository"
 import * as filmRepo from "../repositories/filmsRepository"
-import { OptionalExcept } from "~/lib/utilityTypes";
+import { type OptionalExcept } from "~/lib/utilityTypes";
 import { deleteItemsFromDb } from "../repositories/deleteItems";
-import { TActor, TFilm, TStudio } from "~/datatypes";
+import type { TActor, TFilm, TStudio } from "~/datatypes";
 
 export const updateTag = action(async (filmId: number, tags: string[]) => {
     try {
@@ -19,11 +19,11 @@ export const updateTag = action(async (filmId: number, tags: string[]) => {
         }
         
         await tagRepo.updateTags(filmId, filterTags)
-        return json(filterTags)
+        return json(undefined)
     }
     catch (error) {
         state.status.setStatus(String(error))
-        throw json(undefined, {revalidate: [getFilms.key]})
+        throw json(undefined)
     }
 })
 
