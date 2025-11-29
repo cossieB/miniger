@@ -64,6 +64,7 @@ const [state, setState] = createStore({
                 state.sidePanel.selections.all.forEach(num => {
                     state.sidePanel.setField(num, "isSelected", false)
                 })
+                state.sidePanel.selections.all.clear();
                 state.sidePanel.setField(i, "isSelected", true)
                 state.sidePanel.selections.all.add(i);
                 state.sidePanel.selections.setLastSelection(i)
@@ -93,6 +94,9 @@ const [state, setState] = createStore({
             unselect: (i: number) => {
                 state.sidePanel.selections.all.delete(i)
                 state.sidePanel.setField(i, 'isSelected', false);
+            },
+            getAll: () => {
+                return Array.from(state.sidePanel.selections.all).map(i => state.sidePanel.list[i])
             }
         },
 

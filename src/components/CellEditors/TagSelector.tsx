@@ -12,7 +12,7 @@ export function AgTagSelector(props: ICellEditorParams) {
     const [tags, setTags] = createSignal<string[]>(props.value)
 
     async function handleSubmit() {
-        await updateTagAction(props.data.filmId, tags())
+        updateTagAction(props.data.filmId, tags())
         props.stopEditing()
     }
 

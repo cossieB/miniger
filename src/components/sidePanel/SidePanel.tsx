@@ -19,6 +19,7 @@ export function SidePanel() {
             setContextMenu('isOpen', false)
         },
         data: {} as {title: string, path: string},
+        selections: state.sidePanel.selections.getAll(),
     })
 
     return (
@@ -74,7 +75,7 @@ export function SidePanel() {
             </ul>
             <Show when={contextMenu.isOpen}>
                 <MoviesContextMenu
-                    contextMenu={{...contextMenu, selections: []}}
+                    contextMenu={{...contextMenu, selections: state.sidePanel.selections.getAll()}}
                     isMainPanel={false}
                 />
             </Show>

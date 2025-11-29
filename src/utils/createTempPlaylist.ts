@@ -5,6 +5,7 @@ import { state } from "~/state"
 
 export async function createTempPlaylist(files: {title: string, path: string}[]) {
     try {
+        if (files.length === 0) throw new Error("No files to create playlist")
         const path = await join(await tempDir(), "mngr_temp.m3u")
         await invoke("save_playlist", {
             path,

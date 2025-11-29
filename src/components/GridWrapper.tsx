@@ -1,5 +1,5 @@
-import { useMatch, useSearchParams } from "@solidjs/router";
-import type { GridApi, GridOptions, GridState, Module } from "ag-grid-community";
+import { useSearchParams } from "@solidjs/router";
+import type { GridApi, GridOptions, Module } from "ag-grid-community";
 import AgGridSolid, { type AgGridSolidRef } from "ag-grid-solid";
 import { createEffect } from "solid-js";
 import { state } from "~/state";
@@ -16,12 +16,11 @@ type Props<TData = any> = AgGridSolidProps<TData> & {
     additionalSetup?: () => void;
 }
 
-const cache: Record<string, GridState> = {}
+// const cache: Record<string, GridState> = {}
 
 export function GridWrapper<TData = any>(props: Props<TData>) {
     let gridApi: GridApi
     const [searchParams] = useSearchParams()
-    const match = useMatch(() => "/:table/*")
 
     createEffect(() => {
         if (typeof searchParams.gridId !== "string" || !gridApi) return
@@ -35,12 +34,6 @@ export function GridWrapper<TData = any>(props: Props<TData>) {
                 props.additionalSetup?.();
                 if (typeof searchParams.gridId !== "string") return
                 focusRow(searchParams.gridId as string, params.api as any)
-            }}
-            //@ts-expect-error
-            initialState={cache[match()?.params.table]}
-            onStateUpdated={e => {
-                //@ts-expect-error
-                cache[match()?.params.table] = e.api.getState()
             }}
             {...props}
         />

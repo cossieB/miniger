@@ -8,6 +8,7 @@ import { getFilmByPath } from "~/api/data";
 import type { TActor } from "~/datatypes";
 import { CameraSvg, CurvedArrowSvg, PlayCircleSvg, PlayFillSvg, PlayListSvg, PlaySvg, TagSvg, TheatreSvg, WindowSvg } from "~/icons";
 import { createTempPlaylist } from "~/utils/createTempPlaylist";
+import { unwrap } from "solid-js/store";
 
 type F = {
     title: string;
@@ -32,6 +33,9 @@ export default function MoviesContextMenu(props: P) {
     const addAction = useAction(addDirectoriesToDatabase)
     const actors = () => data() ? JSON.parse(data()!.actors) as TActor[] : []
     const tags = () => data() ? JSON.parse(data()!.tags) as string[] : []
+
+    const selections = unwrap(props.contextMenu.selections)
+
     return (
         <Suspense>
             <ContextMenu close={props.contextMenu.close} pos={{ x: props.contextMenu.x, y: props.contextMenu.y }} >
@@ -84,7 +88,7 @@ export default function MoviesContextMenu(props: P) {
                 <ContextMenu.Item
                     onClick={async () => {
                         try {
-                            await createTempPlaylist(props.contextMenu.selections)
+                            await createTempPlaylist(selections)
                         } catch (error) {
                             console.error(error)
                             state.status.setStatus("File Not Found")
