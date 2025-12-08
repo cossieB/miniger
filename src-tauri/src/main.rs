@@ -1,9 +1,10 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use miniger::{commands, db::get_migrations};
+use miniger::{commands, db::get_migrations, utils::create_dirs};
+use std::process::Command;
 use tauri::{
-    menu::{MenuBuilder, SubmenuBuilder},
+    menu::{MenuBuilder, SubmenuBuilder, MenuItemBuilder, MenuId},
     Emitter, Manager,
 };
 
@@ -16,10 +17,7 @@ fn main() {
 
             // create images folder
             let app_data_dir = app.path().app_data_dir().unwrap();
-            let img_dir = app_data_dir.join("images");
-            if !img_dir.exists() {
-                std::fs::create_dir_all(img_dir).unwrap()
-            }
+            create_dirs(app_data_dir);
 
             //submenus
             let app_submenu = SubmenuBuilder::new(app, "App")
@@ -28,6 +26,7 @@ fn main() {
                 .text("scan_folders", "Scan Folders")
                 .text("play_playlist", "Play Playlist")
                 .text("open_drag_drop", "Drop Files")
+                .item(&MenuItemBuilder::new("FFMPEG").id(MenuId::new("ffmpeg")).enabled(Command::new("ffmpeg").output().is_ok()).build(app)?)
                 .quit()
                 .build()?;
 
@@ -39,6 +38,7 @@ fn main() {
             let menu = MenuBuilder::new(app)
                 .items(&[&app_submenu, &tools_submenu])
                 .build()?;
+
 
             let main = app.get_webview_window("main").unwrap();
             main.set_menu(menu)?;
@@ -65,8 +65,10 @@ fn main() {
             commands::get_inaccessible,
             commands::load_directory,
             commands::open_explorer,
-            commands::convert_playlist
+            commands::convert_playlist,
+            commands::generate_thumbnails
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
+

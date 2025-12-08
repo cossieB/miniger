@@ -20,6 +20,7 @@ import { Tags } from "./routes/Tags";
 import { Costars } from "./routes/Costars";
 import { Search } from "./routes/Search";
 import { search } from "./repositories/search";
+import { FfmpegPage } from "./routes/Ffmpeg";
 
 render(() => (
     <Router  >
@@ -79,6 +80,7 @@ render(() => (
             <Route path="/tags" component={Tags} preload={() => getTags()} />
             <Route path="/play" component={VideoPlayer} />
             <Route path="/search" component={Search} />
+            <Route path="/ffmpeg" component={FfmpegPage} />
         </Route>
         <Route path="/settings" component={Settings} />
         <Route path="/convert" component={Convert} />
