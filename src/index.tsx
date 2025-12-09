@@ -80,12 +80,12 @@ render(() => (
             <Route path="/tags" component={Tags} preload={() => getTags()} />
             <Route path="/play" component={VideoPlayer} />
             <Route path="/search" component={Search} />
-            <Route path="/ffmpeg" component={FfmpegPage} />
         </Route>
         <Route path="/settings" component={Settings} />
         <Route path="/convert" component={Convert} />
         <Route path="/dragdrop" component={DragDrop} />
         <Route path="/splash" component={Splash} />
+        <Route path="/thumbs" component={FfmpegPage} />
 
         {/* Redirects */}
         <Route path="/movies/actors" component={() => <Navigate href="/actors" />} />

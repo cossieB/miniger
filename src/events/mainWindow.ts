@@ -2,7 +2,7 @@ import { getAllWindows } from "@tauri-apps/api/window";
 import { BaseDirectory, writeTextFile } from "@tauri-apps/plugin-fs";
 import { unwrap } from "solid-js/store";
 import { state } from "~/state";
-import { revalidate, useNavigate } from "@solidjs/router"
+import { revalidate } from "@solidjs/router"
 import { getFilms } from "~/api/data";
 import { loadPlaylist, loadVideos } from "~/utils/loadPlaylist";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
@@ -123,7 +123,10 @@ getAllWindows().then(windows => {
             console.error(error)
         }
     })
-    mainWindow.listen("ffmpeg", async () => {
-        location.href = "/ffmpeg"
+    mainWindow.listen("thumbs", async () => {
+        const window = new WebviewWindow("thumbs", {
+            url: "/thumbs",
+            center: true
+        })
     })
 })

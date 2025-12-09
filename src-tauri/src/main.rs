@@ -26,7 +26,6 @@ fn main() {
                 .text("scan_folders", "Scan Folders")
                 .text("play_playlist", "Play Playlist")
                 .text("open_drag_drop", "Drop Files")
-                .item(&MenuItemBuilder::new("FFMPEG").id(MenuId::new("ffmpeg")).enabled(Command::new("ffmpeg").output().is_ok()).build(app)?)
                 .quit()
                 .build()?;
 
@@ -35,8 +34,14 @@ fn main() {
                 .text("data_dir", "Show data folder")
                 .build()?;
 
+            let ffmpeg_submenu = SubmenuBuilder::new(app, "FFMpeg")
+                .text("thumbs", "Generate Thumbnails")
+                .text("metadata", "Get Metadata")
+                .enabled(Command::new("ffmpeg").output().is_ok())
+                .build()?;
+
             let menu = MenuBuilder::new(app)
-                .items(&[&app_submenu, &tools_submenu])
+                .items(&[&app_submenu, &tools_submenu, &ffmpeg_submenu])
                 .build()?;
 
 
@@ -66,7 +71,8 @@ fn main() {
             commands::load_directory,
             commands::open_explorer,
             commands::convert_playlist,
-            commands::generate_thumbnails
+            commands::generate_thumbnails,
+            commands::get_metadata
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
