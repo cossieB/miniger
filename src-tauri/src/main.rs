@@ -4,7 +4,7 @@
 use miniger::{commands, db::get_migrations, utils::create_dirs};
 use std::process::Command;
 use tauri::{
-    menu::{MenuBuilder, SubmenuBuilder, MenuItemBuilder, MenuId},
+    menu::{MenuBuilder, SubmenuBuilder},
     Emitter, Manager,
 };
 

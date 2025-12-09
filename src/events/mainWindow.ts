@@ -10,6 +10,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { appDataDir, } from "@tauri-apps/api/path";
 import { openPath } from "@tauri-apps/plugin-opener";
 import { createTempPlaylist } from "~/utils/createTempPlaylist";
+import { updateMetadata } from "~/utils/updateMetadata";
 
 export type SessionJSON = {
     list: typeof state['sidePanel']['list'],
@@ -123,10 +124,14 @@ getAllWindows().then(windows => {
             console.error(error)
         }
     })
-    mainWindow.listen("thumbs", async () => {
-        const window = new WebviewWindow("thumbs", {
+    mainWindow.listen("thumbs", () => {
+        new WebviewWindow("thumbs", {
             url: "/thumbs",
-            center: true
+            center: true,
+            title: "Thumbnails",
+            maximized: true
         })
     })
+    mainWindow.listen("metadata", updateMetadata)
 })
+

@@ -30,6 +30,7 @@ export interface Film {
   releaseDate: string | null;
   studioId: number | null;
   title: string;
+  metadata: string | null
 }
 
 export interface FilmTag {

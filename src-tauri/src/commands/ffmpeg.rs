@@ -3,6 +3,8 @@ use std::{process::Command, thread};
 use serde::{Deserialize, Serialize};
 use tauri::{Emitter, Manager};
 
+use crate::AppError;
+
 #[derive(Serialize, Deserialize)]
 #[allow(non_snake_case)]
 pub struct F {
@@ -35,7 +37,6 @@ pub async fn generate_thumbnails(app_handle: tauri::AppHandle, videos: Vec<F>) {
         }
     });
     handle.join().unwrap();
-    println!("DONE");
 }
 
 #[derive(Serialize, Deserialize)]
@@ -56,13 +57,27 @@ pub struct FFprobeFormat {
 #[derive(Serialize, Deserialize)]
 pub struct FfprobeMetadata {
     streams: Vec<FFprobeStream>,
-    format: FFprobeFormat
+    format: FFprobeFormat,
+}
+
+#[derive(Serialize, Deserialize)]
+#[allow(non_snake_case)]
+pub struct Response {
+    filmId: i32,
+    metadata: FfprobeMetadata,
 }
 
 #[tauri::command]
-pub async fn get_metadata(app: tauri::AppHandle, videos: Vec<F>) -> Vec<Option<FfprobeMetadata>> {
-    let mut vec: Vec<Option<FfprobeMetadata>> = Vec::with_capacity(videos.len());
-    
+pub async fn get_metadata(
+    app: tauri::AppHandle,
+    videos: Vec<F>,
+) -> Result<Vec<Response>, AppError> {
+    let ffprobe = Command::new("ffprobe").arg("-version").output();
+    if let Err(_) = ffprobe {
+        return Err(AppError::new("ffprobe is not installed".to_string()));
+    }
+
+    let mut vec: Vec<Response> = Vec::with_capacity(videos.len());
     for (i, video) in videos.iter().enumerate() {
         let mut cmd = Command::new("ffprobe");
         cmd.arg("-v")
@@ -75,27 +90,31 @@ pub async fn get_metadata(app: tauri::AppHandle, videos: Vec<F>) -> Vec<Option<F
 
         let result = cmd.output();
         if i % 50 == 0 {
-            let _ = app.emit_to("main", "set-status", format!("Getting metadata .... {}%",  (100 * (i + 1)) as f64 / videos.len() as f64));
+            let percentage = (100 * (i + 1)) as f64 / videos.len() as f64;
+            update_frontend(&app, percentage);
         }
-        match result {
-            Ok(out) => {
-                let o = out.stdout;
-                let o = String::from_utf8(o);
-                match o {
-                    Ok(v) => {
-                        println!("{v}");
-                        let data: Option<FfprobeMetadata> = serde_json::from_str(&v).ok();
-                        vec.push(data);
-                    },
-                    Err(_) => {
-                        vec.push(None);
-                    },
+
+        if let Ok(out) = result {
+            let temp = out.stdout;
+            let o = String::from_utf8(temp);
+            if let Ok(str) = o {
+                if let Ok(metadata) = serde_json::from_str::<FfprobeMetadata>(&str) {
+                    vec.push(Response {
+                        filmId: video.filmId,
+                        metadata,
+                    });
                 }
-            },
-            Err(_) => todo!(),
+            }
         }
     }
-    
-    return vec;
+    update_frontend(&app, 100.into());
+    return Ok(vec);
 }
 
+fn update_frontend(app: &tauri::AppHandle, percentage: f64) {
+    let _ = app.emit_to(
+        "main",
+        "set-status",
+        format!("Getting metadata .... {percentage}%"),
+    );
+}

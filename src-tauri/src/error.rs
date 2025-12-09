@@ -6,6 +6,11 @@ use serde::{Deserialize, Serialize};
 pub struct AppError {
     message: String,
 }
+impl AppError {
+    pub fn new(message: String) -> Self {
+        AppError{message}
+    }
+}
 
 impl Into<String> for AppError {
     fn into(self) -> String {

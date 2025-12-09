@@ -20,7 +20,7 @@ import { Tags } from "./routes/Tags";
 import { Costars } from "./routes/Costars";
 import { Search } from "./routes/Search";
 import { search } from "./repositories/search";
-import { FfmpegPage } from "./routes/Ffmpeg";
+import { Thumbnails as Thumbnails } from "./routes/Thumbs";
 
 render(() => (
     <Router  >
@@ -85,7 +85,7 @@ render(() => (
         <Route path="/convert" component={Convert} />
         <Route path="/dragdrop" component={DragDrop} />
         <Route path="/splash" component={Splash} />
-        <Route path="/thumbs" component={FfmpegPage} />
+        <Route path="/thumbs" component={Thumbnails} />
 
         {/* Redirects */}
         <Route path="/movies/actors" component={() => <Navigate href="/actors" />} />
