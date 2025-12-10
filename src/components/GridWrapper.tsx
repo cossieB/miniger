@@ -28,6 +28,7 @@ export function GridWrapper<TData = any>(props: Props<TData>) {
     })
     return (
         <AgGridSolid
+            // @ts-expect-error
             onGridReady={params => {
                 state.setGridApi(params.api as any);
                 gridApi = params.api as any

@@ -10,5 +10,4 @@ export const [mainPanel, setMainpanel] = createStore({
     setSelectedItems: (selectedItems: PlaylistFile[]) => {
         setMainpanel({selectedItems})
     }
-
 })

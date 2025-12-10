@@ -54,6 +54,7 @@ export async function updateMetadata() {
             .addColumn("metadata", "text")
             .execute()
 
+        // @ts-expect-error 
         await db.insertInto("temp_film").values(arr).execute()
         await sql`UPDATE film SET metadata = temp.metadata FROM temp_film temp WHERE film.film_id = temp.film_id`.execute(db)
         state.status.setStatus("✓ Updated metadata", true)

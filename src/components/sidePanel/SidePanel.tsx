@@ -4,7 +4,7 @@ import clickOutside from "../../lib/clickOutside";
 import { SidePanelItem } from "./SidePanelItem";
 
 import { createStore } from "solid-js/store";
-import { Miniplayer } from "../Miniplayer";
+import { Miniplayer, Thumbnail } from "../Miniplayer";
 import MoviesContextMenu from "../MoviesContextMenu";
 
 false && clickOutside
@@ -62,6 +62,7 @@ export function SidePanel() {
                 </Index>
                 <SidePanelItem
                     data={{
+                        filmId: -1,
                         path: "",
                         title: "",
                         rowId: "",
@@ -79,7 +80,10 @@ export function SidePanel() {
                     isMainPanel={false}
                 />
             </Show>
+            <div class="mt-auto">
             <Miniplayer />
+            <Thumbnail />
+            </div>
         </section>
     );
 }

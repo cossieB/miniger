@@ -1,21 +1,20 @@
 import { TopBar } from "../components/TopBar/TopBar";
-import { type JSXElement, createEffect, on, onCleanup, onMount } from "solid-js";
+import { type JSXElement, onCleanup, onMount } from "solid-js";
 import { SidePanel } from "../components/sidePanel/SidePanel";
 import { state } from "../state";
 import { BottomBar } from "../components/BottomBar";
 import Resizer from "../components/Resizer";
 import { handleResize } from "../events";
-import { useLocation } from "@solidjs/router";
+import { useBeforeLeave } from "@solidjs/router";
 import { Nav } from "../components/Nav/Nav";
 import { useWatchJson } from "../readSettings";
 import "~/events/mainWindow"
 
 function App(props: { children?: JSXElement }) {
-    const location = useLocation()
     useWatchJson()
-    createEffect(on(() => location.pathname, () => {
+    useBeforeLeave(() => {
         state.setGridApi(undefined)
-    }))
+    })
 
     onMount(() => {
         window.addEventListener("resize", handleResize);
@@ -27,7 +26,7 @@ function App(props: { children?: JSXElement }) {
     return (
         <div oncontextmenu={e => e.preventDefault()} class="h-screen w-screen text-white">
             <TopBar />
-            <div class="w-screen flex relative" style={{ height: "calc(100vh - 4rem" }}>
+            <div class="w-screen flex relative h-[calc(100%-4rem)]" >
                 <Nav />
                 <Resizer
                     min={0}

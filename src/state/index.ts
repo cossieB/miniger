@@ -6,8 +6,10 @@ import { tree } from "./tree";
 import {status} from "./status"
 import { windowDimensions } from "./windowDimension";
 import { miniplayer } from "./miniplayer";
+import { settings } from "./settings";
 
 export type PlaylistFile = {
+    filmId?: number;
     title: string;
     path: string;
     cantPlay?: boolean,
@@ -35,5 +37,6 @@ export const state = {
     mainPanel,
     tree,
     windowDimensions,
-    miniplayer
+    miniplayer,
+    settings
 }
