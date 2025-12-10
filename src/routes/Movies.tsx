@@ -11,6 +11,8 @@ import { ActorItem2 } from "~/components/CellEditors/ActorCellEditor/ActorItem"
 import { GridWrapper } from "~/components/GridWrapper"
 import { type DetailedDbFilm } from "~/repositories/filmsRepository"
 import { AgTagSelector } from "~/components/CellEditors/TagSelector"
+import type { FfprobeMetadata } from "~/utils/updateMetadata"
+import { secondsToTime } from "~/utils/secondsToTime"
 
 type Props = {
     fetcher(): Promise<DetailedDbFilm[] | undefined>
@@ -29,6 +31,7 @@ export function Movies(props: Props) {
             actors: JSON.parse(film.actors),
             rowId: createUniqueId(),
             isOnDb: true,
+            metadata: film.metadata ? JSON.parse(film.metadata) as FfprobeMetadata["metadata"] : null
         })))
     })
     
@@ -133,7 +136,38 @@ export function Movies(props: Props) {
                     }, {
                         field: "dateAdded",
                         valueFormatter: param => new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: "medium" }).format(new Date(param.value + " UTC"))
-                    }]}
+                    }, 
+                    {
+                        headerName: "Length",
+                        valueGetter: param => param.data?.metadata?.format.duration,
+                        valueFormatter: param => {
+                            if (!param.value) return "";
+                            return secondsToTime(param.value)
+                        }
+                    },
+                    {
+                        headerName: "Size",
+                        valueGetter: param => param.data?.metadata?.format.size
+                    },
+                    {
+                        headerName: "Bit Rate",
+                        valueGetter: param => param.data?.metadata?.format.bit_rate
+                    },
+                    {
+                        headerName: "Format",                        
+                        valueGetter: param => {
+                            return param.data?.metadata?.streams.find(x => x.codec_type == "video")?.codec_name
+                        }
+                    },
+                    {
+                        headerName: "Resolution",
+                        valueGetter: param => {
+                            const videoStream = param.data?.metadata?.streams.find(x => x.codec_type == "video")
+                            if (!videoStream) return null
+                            return `${videoStream.width}x${videoStream.height}`
+                        }
+                    }
+                ]}
                 />
                 <Show when={contextMenu.isOpen}>
                     <MoviesContextMenu isMainPanel contextMenu={contextMenu} />

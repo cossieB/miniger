@@ -18,7 +18,7 @@ export function SidePanel() {
         close() {
             setContextMenu('isOpen', false)
         },
-        data: {} as {title: string, path: string},
+        data: {} as { title: string, path: string },
         selections: state.sidePanel.selections.getAll(),
     })
 
@@ -32,8 +32,8 @@ export function SidePanel() {
                 if (e.key == 'Delete') {
                     state.sidePanel.selections.deleteSelections()
                 }
-            
-                if (e.key == "a" && e.ctrlKey ) {
+
+                if (e.key == "a" && e.ctrlKey) {
                     for (let i = 0; i < state.sidePanel.list.length; i++) {
                         state.sidePanel.selections.add(i)
                     }
@@ -75,13 +75,11 @@ export function SidePanel() {
             </ul>
             <Show when={contextMenu.isOpen}>
                 <MoviesContextMenu
-                    contextMenu={{...contextMenu, selections: state.sidePanel.selections.getAll()}}
+                    contextMenu={{ ...contextMenu, selections: state.sidePanel.selections.getAll() }}
                     isMainPanel={false}
                 />
             </Show>
-            <Show when={state.miniplayer}>
-                <Miniplayer />
-            </Show>
+            <Miniplayer />
         </section>
     );
 }

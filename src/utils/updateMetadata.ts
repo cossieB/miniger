@@ -1,18 +1,25 @@
+import { revalidate } from "@solidjs/router"
 import { invoke } from "@tauri-apps/api/core"
 import { sql } from "kysely"
+import { getFilms, getFilmsByActor, getFilmsByStudio, getFilmsByTag } from "~/api/data"
 import { db } from "~/kysely/database"
 import { getFilmsWithoutMetadata } from "~/repositories/filmsRepository"
 import { state } from "~/state"
 
-type FfprobeMetadata = {
+export type FfprobeMetadata = {
     filmId: number,
     metadata: {
-        streams: {
+        streams: ({
             codec_name: string,
-            code_type: string,
-            width: number | null,
-            height: number | null
-        }[]
+            codec_type: "video",
+            width: number,
+            height: number
+        } | {
+            codec_name: string,
+            codec_type: "audio",
+            width: null,
+            height: null
+        })[]
         format: {
             duration: string,
             size: string,
@@ -48,10 +55,9 @@ export async function updateMetadata() {
             .execute()
 
         await db.insertInto("temp_film").values(arr).execute()
-
         await sql`UPDATE film SET metadata = temp.metadata FROM temp_film temp WHERE film.film_id = temp.film_id`.execute(db)
-
-        state.status.setStatus("metadata complete")
+        state.status.setStatus("✓ Updated metadata", true)
+        revalidate([getFilms.key, getFilmsByStudio.key, getFilmsByActor.key, getFilmsByTag.key])
     } catch (error) {
         console.error(error)
         state.status.setStatus("Failure")

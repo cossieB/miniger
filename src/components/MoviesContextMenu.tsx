@@ -82,7 +82,7 @@ export default function MoviesContextMenu(props: P) {
                 </Show>
                 <ContextMenu.Item
                     icon={<PlayFillSvg />}
-                    onClick={() => state.setMiniplayer({ path: props.contextMenu.data.path, title: props.contextMenu.data.title })}>
+                    onClick={() => state.miniplayer.setVideo({ path: props.contextMenu.data.path, title: props.contextMenu.data.title })}>
                     Play In Miniplayer
                 </ContextMenu.Item>
                 <ContextMenu.Item
