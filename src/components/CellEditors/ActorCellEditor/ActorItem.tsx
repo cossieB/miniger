@@ -1,4 +1,4 @@
-import { type Accessor, createResource, type Setter, Suspense } from "solid-js";
+import { type Accessor, type Setter, Suspense } from "solid-js";
 import type { TActor } from "../../../datatypes";
 import { appDataDir, sep } from "@tauri-apps/api/path";
 import { convertFileSrc } from "@tauri-apps/api/core";
@@ -9,10 +9,8 @@ type Props = {
     setRowActors: Setter<TActor[]>;
 };
 
-const [dir] = createResource(async () => {
-    const d = await appDataDir()
-    return d + sep() + "images" + sep()
-})
+const d = await appDataDir()
+const dir = d + sep() + "images" + sep()
 
 export function ActorItem(props: Props) {
     function handleClick() {
@@ -30,7 +28,13 @@ export function ActorItem(props: Props) {
                 classList={{ 'border-2 border-green-500': props.rowActors().some((x: any) => x.actorId === props.actor.actorId) }}
             >
                 <div class="h-[90%] overflow-hidden">
-                    <img src={props.actor.image ? convertFileSrc(dir()! + props.actor.image) : "/Question_Mark.svg"} class="object-cover object-top h-full w-full" loading="lazy" alt="" onerror={e => e.currentTarget.src = "/Question_Mark.svg"} />
+                    <img
+                        src={props.actor.image ? convertFileSrc(dir + props.actor.image) : "/Question_Mark.svg"}
+                        class="object-cover object-top h-full w-full"
+                        loading="lazy"
+                        alt=""
+                        onerror={e => e.currentTarget.src = "/Question_Mark.svg"}
+                    />
                 </div>
                 <span class="flex-1 flex items-center justify-center">{props.actor.name}</span>
             </li>
@@ -47,7 +51,7 @@ export function ActorItem2(props: { actor: Pick<TActor, 'image' | 'name'> }) {
             >
                 <div class="h-[90%] overflow-hidden">
                     <img
-                        src={props.actor.image ? convertFileSrc(dir()! + props.actor.image) : "/Question_Mark.svg"}
+                        src={props.actor.image ? convertFileSrc(dir + props.actor.image) : "/Question_Mark.svg"}
                         class="object-cover object-top h-full w-full"
                         loading="lazy" alt=""
                         onerror={e => e.currentTarget.src = "/Question_Mark.svg"}

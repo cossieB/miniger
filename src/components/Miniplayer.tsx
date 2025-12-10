@@ -1,6 +1,6 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { state } from "../state";
-import { createResource, Show } from "solid-js";
+import { Show } from "solid-js";
 import { appDataDir, sep } from "@tauri-apps/api/path";
 
 export function Miniplayer() {
@@ -14,7 +14,7 @@ export function Miniplayer() {
         </Show>
     )
 }
-const [dir] = createResource(() => appDataDir())
+const dir = await appDataDir()
 
 export function Thumbnail() {
     const film = () => state.mainPanel.selectedItems.at(0)
@@ -22,7 +22,7 @@ export function Thumbnail() {
         <Show when={state.settings.showThumbnail && film()}>
             <div class="mt-auto bg-black">
                 <button class="absolute z-50" onclick={() => state.settings.toggleSetting("showThumbnail")}>X</button>
-                <img class="mt-auto" src={convertFileSrc(`${dir()}${sep()}thumbs${sep()}${film()!.filmId}.jpg`)} alt="" />
+                <img class="mt-auto" src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film()!.filmId}.jpg`)} alt="" />
             </div>
         </Show>
     )

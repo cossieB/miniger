@@ -15,7 +15,7 @@
     "@libsql/client": "^0.15.15",
     "@solid-primitives/set": "^0.7.1",
     "@solidjs/router": "^0.15.3",
-    "@tauri-apps/api": "^2.9.0",
+    "@tauri-apps/api": "^2.9.1",
     "@tauri-apps/plugin-dialog": "^2.2.1",
     "@tauri-apps/plugin-fs": "^2.2.1",
     "@tauri-apps/plugin-opener": "^2.5.2",
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.7",
-    "@tauri-apps/cli": "^2.9.2",
+    "@tauri-apps/cli": "^2.9.6",
     "@types/node": "^24.9.2",
     "autoprefixer": "^10.4.21",
     "kysely-codegen": "^0.19.0",

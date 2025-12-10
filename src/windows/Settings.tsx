@@ -20,7 +20,7 @@ export function Settings() {
     const submissions = useSubmission(addDirectoriesToDatabase)
     return (
         <div 
-            class="w-screen h-screen bg-slate-800 z-[999] absolute p-2 overflow-y-auto scroll text-white"
+            class="w-screen h-screen bg-slate-800 z-999 absolute p-2 overflow-y-auto scroll text-white"
             style={{ "scrollbar-gutter": "stable" }}
         >
             <span>Folders</span>

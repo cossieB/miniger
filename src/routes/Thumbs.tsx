@@ -3,10 +3,10 @@ import { action, createAsync, json, useAction } from "@solidjs/router"
 import { convertFileSrc, invoke } from "@tauri-apps/api/core"
 import { appDataDir, sep } from "@tauri-apps/api/path"
 import { confirm } from "@tauri-apps/plugin-dialog"
-import { createResource, createSignal, For, onCleanup, Show, Suspense } from "solid-js"
+import { createSignal, For, onCleanup, Show, Suspense } from "solid-js"
 import { getFilms } from "~/api/data"
 
-const [dir] = createResource(() => appDataDir())
+const dir = await appDataDir()
 
 type NewType = {
     path: string
@@ -96,7 +96,7 @@ export function Thumbnails() {
                                 <img
                                     class="aspect-video object-cover"
                                     loading="lazy"
-                                    src={convertFileSrc(`${dir()}${sep()}thumbs${sep()}${film.filmId}.jpg`) + `?a=${a()}`}
+                                    src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.jpg`) + `?a=${a()}`}
                                     alt=""
                                     onerror={e => {
                                         e.currentTarget.src = "/Question_Mark.svg"

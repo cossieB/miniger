@@ -5,6 +5,8 @@ import type { MovieData, MovieTableData } from "~/types";
 import MoviesContextMenu from "./MoviesContextMenu";
 import { createStore } from "solid-js/store";
 import { ReactiveSet } from "@solid-primitives/set";
+import { useNavigate } from "@solidjs/router";
+import { state } from "~/state";
 
 const dir = await appDataDir()
 
@@ -29,7 +31,7 @@ function useMoviesContextMenu() {
 export function MovieGrid(props: P) {
     const { contextMenu, setContextMenu } = useMoviesContextMenu()
     const selections = new ReactiveSet<number>()
-
+    const navigate = useNavigate()
     createEffect(() => {
         setContextMenu('selections', Array.from(selections).map(i => props.data[i]))
     })
@@ -44,11 +46,12 @@ export function MovieGrid(props: P) {
                         <div
                             classList={{ "outline-1": selections.has(i()) }}
                             oncontextmenu={(e) => {
+                                selections.add(i())
                                 setContextMenu({
                                     isOpen: true,
                                     data: film,
                                     x: e.clientX,
-                                    y: e.clientY
+                                    y: e.clientY,
                                 })
                             }}
                             onclick={() => {
@@ -56,6 +59,10 @@ export function MovieGrid(props: P) {
                                     selections.delete(i())
                                 else 
                                     selections.add(i())
+                            }}
+                            ondblclick={() => {
+                                state.sidePanel.setFiles([film])
+                                navigate("/play?rowId=" + film.rowId)
                             }}
                             class="flex flex-col bg-gray-800 outline-amber-300"
                         >

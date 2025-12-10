@@ -1,5 +1,5 @@
-import { createAsync } from "@solidjs/router"
-import { createMemo, Suspense, createUniqueId, createSignal, Show } from "solid-js"
+import { createAsync, useSearchParams } from "@solidjs/router"
+import { createMemo, Suspense, createUniqueId, createSignal, Show, createEffect } from "solid-js"
 import { type DetailedDbFilm } from "~/repositories/filmsRepository"
 import type { FfprobeMetadata } from "~/utils/updateMetadata"
 import { MoviesTable } from "~/components/MoviesTable"
@@ -20,8 +20,15 @@ const views = [{
 }]
 
 export function Movies(props: Props) {
+    const [queryParams, setQueryParams] = useSearchParams()
     const films = createAsync(() => props.fetcher())
-    const [activeView, setActiveView] = createSignal(0)
+    
+    const [activeView, setActiveView] = createSignal(Number(queryParams.view) || 0)
+
+    createEffect(() => {
+        setQueryParams({view: activeView()})
+    })
+    
     const data = createMemo(() => {
         if (!films()) return undefined
         return films()!.map((film => ({

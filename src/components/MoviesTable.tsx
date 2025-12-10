@@ -35,6 +35,10 @@ export function MoviesTable(props: { data: MovieData }) {
                 gridId={location.pathname}
                 getRowId={params => params.data.filmId.toString()}
                 rowSelection="multiple"
+                autoSizeStrategy={{
+                    type: "fitCellContents",
+                    colIds: ["length", "size", "bitrate", "format", "res", "release", "studio"]
+                }}
                 rowData={props.data}
                 onSelectionChanged={(params) => {
                     const selection = params.api.getSelectedRows();
@@ -69,6 +73,7 @@ export function MoviesTable(props: { data: MovieData }) {
                     tooltipField: 'title'
                 }, {
                     field: "studioName",
+                    colId: "studio",
                     editable: true,
                     headerName: "Studio",
                     cellEditor: AgStudioSelector,
@@ -95,6 +100,7 @@ export function MoviesTable(props: { data: MovieData }) {
                     tooltipComponent: Tooltip
                 }, {
                     field: "releaseDate",
+                    colId: "release",
                     editable: true,
                     cellEditor: "agDateStringCellEditor",
                     onCellValueChanged: params => updateFilmAction({
@@ -116,6 +122,7 @@ export function MoviesTable(props: { data: MovieData }) {
                 },
                 {
                     headerName: "Length",
+                    colId: "length",
                     valueGetter: param => param.data?.metadata?.format.duration,
                     valueFormatter: param => {
                         if (!param.value) return "";
@@ -124,20 +131,28 @@ export function MoviesTable(props: { data: MovieData }) {
                 },
                 {
                     headerName: "Size",
-                    valueGetter: param => param.data?.metadata?.format.size
+                    colId: "size",
+                    valueGetter: param => param.data?.metadata?.format.size,
+                    valueFormatter: param => param.value ? new Intl.NumberFormat(undefined, {useGrouping: true}).format(param.value) : "",
+                    cellClass: "text-right"
                 },
                 {
                     headerName: "Bit Rate",
-                    valueGetter: param => param.data?.metadata?.format.bit_rate
+                    colId: "bitrate",
+                    valueGetter: param => param.data?.metadata?.format.bit_rate,
+                    valueFormatter: param => param.value ? new Intl.NumberFormat(undefined, {useGrouping: true}).format(param.value) : "",
+                    cellClass: "text-right"
                 },
                 {
                     headerName: "Format",
+                    colId: "format",
                     valueGetter: param => {
                         return param.data?.metadata?.streams.find(x => x.codec_type == "video")?.codec_name
-                    }
+                    },
                 },
                 {
                     headerName: "Resolution",
+                    colId: "res",
                     valueGetter: param => {
                         const videoStream = param.data?.metadata?.streams.find(x => x.codec_type == "video")
                         if (!videoStream) return null

@@ -34,7 +34,7 @@ export function VideoPlayer() {
                     isPlaying={isPlaying()}
                 />
             </div>
-            <div class="w-full flex justify-center gap-5 h-20 flex-shrink-0 relative">
+            <div class="w-full flex justify-center gap-5 h-20 shrink-0 relative">
                 <div class="flex-1">
                     {/* TODO: loop, repeat, random video controls etc */}
                 </div>
