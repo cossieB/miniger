@@ -2,7 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use miniger::{commands, db::get_migrations, utils::create_dirs};
-use std::process::Command;
+use std::{os::windows::process::CommandExt, process::Command};
 use tauri::{
     menu::{MenuBuilder, SubmenuBuilder},
     Emitter, Manager,
@@ -37,7 +37,7 @@ fn main() {
             let ffmpeg_submenu = SubmenuBuilder::new(app, "FFMpeg")
                 .text("thumbs", "Generate Thumbnails")
                 .text("metadata", "Get Metadata")
-                .enabled(Command::new("ffmpeg").output().is_ok())
+                .enabled(Command::new("ffmpeg").creation_flags(0x08000000).output().is_ok())
                 .build()?;
 
             let menu = MenuBuilder::new(app)

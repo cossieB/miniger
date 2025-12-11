@@ -1,4 +1,4 @@
-use std::{process::Command, thread};
+use std::{os::windows::process::CommandExt, process::Command, thread};
 
 use serde::{Deserialize, Serialize};
 use tauri::{Emitter, Manager};
@@ -72,23 +72,27 @@ pub async fn get_metadata(
     app: tauri::AppHandle,
     videos: Vec<F>,
 ) -> Result<Vec<Response>, AppError> {
-    let ffprobe = Command::new("ffprobe").arg("-version").output();
+    let ffprobe = Command::new("ffprobe")
+        .creation_flags(0x08000000)
+        .arg("-version")
+        .output();
     if let Err(_) = ffprobe {
         return Err(AppError::new("ffprobe is not installed".to_string()));
     }
 
     let mut vec: Vec<Response> = Vec::with_capacity(videos.len());
     for (i, video) in videos.iter().enumerate() {
-        let mut cmd = Command::new("ffprobe");
-        cmd.arg("-v")
+        let result = Command::new("ffprobe")
+            .creation_flags(0x08000000)
+            .arg("-v")
             .arg("quiet")
             .arg("-print_format")
             .arg("json")
             .arg("-show_format")
             .arg("-show_streams")
-            .arg(format!("{}", video.path));
+            .arg(format!("{}", video.path))
+            .output();
 
-        let result = cmd.output();
         if i % 50 == 0 {
             let percentage = (100 * (i + 1)) as f64 / videos.len() as f64;
             update_frontend(&app, percentage);
