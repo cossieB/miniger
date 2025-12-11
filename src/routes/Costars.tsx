@@ -6,6 +6,7 @@ import { allPairings } from "~/repositories/actorsRepository"
 import { ActorItem2 } from "~/components/CellEditors/ActorCellEditor/ActorItem"
 import { ContextMenu } from "~/components/ContextMenu/ContextMenu"
 import { GridWrapper } from "~/components/GridWrapper"
+import { enc } from "~/utils/encodeDecode"
 
 type P = ReturnType<Awaited<typeof allPairings>>
 
@@ -67,14 +68,14 @@ export function Costars(props: Props) {
                         field: "together",
                         headerName: "Movies",
                     }, {                        
-                        cellRenderer: (params: ICellRendererParams) => <A href={`/movies/actors/${params.data.actorAid}/${params.data.actorBid}?${params.data.actorAid}=${params.data.actorA}&${params.data.actorBid}=${params.data.actorB}`}>View Movies</A>
+                        cellRenderer: (params: ICellRendererParams) => <A href={`/movies/actors/${enc({id: contextMenu.actorAid, display: contextMenu.actorA})}/${enc({id: contextMenu.actorBid, display: contextMenu.actorB})}`}>View Movies</A>
                     }]}
                 />
             </div>
             <Show when={contextMenu.isOpen}>
                 <ContextMenu pos={contextMenu.pos} close={() => setContextMenu('isOpen', false)} >
-                    <ContextMenu.Link href={`/movies/actors/${contextMenu.actorAid}?${contextMenu.actorAid}=${contextMenu.actorA}`}> <span class="font-bold whitespace-pre">{contextMenu.actorA} </span>Movies </ContextMenu.Link>
-                    <ContextMenu.Link href={`/movies/actors/${contextMenu.actorBid}?${contextMenu.actorBid}=${contextMenu.actorB}`}> <span class="font-bold whitespace-pre">{contextMenu.actorB} </span>Movies </ContextMenu.Link>
+                    <ContextMenu.Link href={`/movies/actors/${enc({id: contextMenu.actorAid, display: contextMenu.actorA})}`}> <span class="font-bold whitespace-pre">{contextMenu.actorA} </span>Movies </ContextMenu.Link>
+                    <ContextMenu.Link href={`/movies/actors/${enc({id: contextMenu.actorBid, display: contextMenu.actorB})}`}> <span class="font-bold whitespace-pre">{contextMenu.actorB} </span>Movies </ContextMenu.Link>
                 </ContextMenu>
             </Show>
         </Suspense>

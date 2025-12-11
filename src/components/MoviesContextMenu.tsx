@@ -9,6 +9,7 @@ import type { TActor } from "~/datatypes";
 import { CameraSvg, CurvedArrowSvg, PlayCircleSvg, PlayFillSvg, PlayListSvg, PlaySvg, TagSvg, TheatreSvg, WindowSvg } from "~/icons";
 import { createTempPlaylist } from "~/utils/createTempPlaylist";
 import { unwrap } from "solid-js/store";
+import { enc } from "~/utils/encodeDecode";
 
 type F = {
     title: string;
@@ -113,7 +114,7 @@ export default function MoviesContextMenu(props: P) {
                     <ContextMenu.SubMenu label="More From Actor" icon={<TheatreSvg width={16} />} >
                         <For each={actors()}>
                             {actor =>
-                                <ContextMenu.Link href={`/movies/actors/${actor.actorId}?${actor.actorId}=${actor.name}`}>
+                                <ContextMenu.Link href={`/movies/actors/${enc({display:actor.name, id:actor.actorId})}`}>
                                     {actor.name}
                                 </ContextMenu.Link>
                             }
@@ -122,7 +123,7 @@ export default function MoviesContextMenu(props: P) {
                 </Show>
                 <Show when={data()?.studioId}>
                     <ContextMenu.Link
-                        href={`/movies/studios/${data()?.studioId}?${data()?.studioId}=${data()?.studioName}`}
+                        href={`/movies/studios/${enc({display:data()!.studioName!, id: data()!.studioId!})}`}
                         icon={<CameraSvg />}
                     >
 

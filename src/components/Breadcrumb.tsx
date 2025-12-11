@@ -2,6 +2,7 @@ import { A, useLocation, useNavigate, useSearchParams } from "@solidjs/router"
 import { ChevronRight, HouseSvg } from "../icons"
 import { type Accessor, For, Show, createMemo } from "solid-js"
 import titleCase from "../lib/titleCase"
+import { deco } from "~/utils/encodeDecode"
 
 export function Breadcrumbs() {
     const location = useLocation()
@@ -31,13 +32,13 @@ type P = {
 }
 
 function Crumb(props: P) {
-    const location = useLocation()
-    const [search] = useSearchParams()
+    const segment = deco(props.segment)
+    const display = typeof segment === "string" ? segment : segment.display
     return (
         <>
             <li>
-                <A href={props.segments().slice(0, props.i() + 1).map(encodeURI).join("/") + location.search} >
-                    {titleCase(decodeURI(search[props.segment] as string | undefined ?? props.segment))}
+                <A href={props.segments().slice(0, props.i() + 1).map(encodeURI).join("/")} >
+                    {titleCase(display)}
                 </A>
             </li>
             <Show when={props.i() < props.segments().length - 1}>

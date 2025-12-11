@@ -34,23 +34,23 @@ render(() => (
                 />
                 <Route
                     path="/tags/:tag"
-                    component={(props) => <Movies fetcher={() => getFilmsByTag(props.params.tag)} />}
-                    preload={(args) => getFilmsByTag(args.params.tag)}
+                    component={(props) => <Movies fetcher={() => getFilmsByTag(props.params.tag!)} />}
+                    preload={(args) => getFilmsByTag(args.params.tag!)}
                 />
                 <Route
-                    path="/actors/:actorId"
-                    component={props => <Movies fetcher={() => getFilmsByActor(Number(props.params.actorId))} />}
-                    preload={(args) => getFilmsByActor(Number(args.params.actorId))}
+                    path="/actors/:actor"
+                    component={props => <Movies fetcher={() => getFilmsByActor(props.params.actor!)} />}
+                    preload={(args) => getFilmsByActor(args.params.actor!)}
                 />
                 <Route
-                    path="/actors/:actorId/:costarId"
-                    component={props => <Movies fetcher={() => getMoviesByCostars(Number(props.params.actorId), Number(props.params.costarId))} />}
-                    preload={(args) => getFilmsByActor(Number(args.params.actorId))}
+                    path="/actors/:actor/:costar"
+                    component={props => <Movies fetcher={() => getMoviesByCostars(props.params.actor!, props.params.costar!)} />}
+                    preload={(args) => getMoviesByCostars(args.params.actor!, args.params.costar!)}
                 />
                 <Route
-                    path="/studios/:studioId"
-                    component={props => <Movies fetcher={() => getFilmsByStudio(Number(props.params.studioId))} />}
-                    preload={args => getFilmsByStudio(Number(args.params.studioId))}
+                    path="/studios/:studio"
+                    component={props => <Movies fetcher={() => getFilmsByStudio(props.params.studio!)} />}
+                    preload={args => getFilmsByStudio(args.params.studio!)}
                 />
                 <Route
                     path="/inaccessible"
@@ -69,11 +69,11 @@ render(() => (
             <Route path="/costars">
                 <Route
                     path="/"
-                    component={props => <Costars fetcher={() => getPairings()} />}
+                    component={() => <Costars fetcher={() => getPairings()} />}
                 />
                 <Route
-                    path="/:actorId"
-                    component={props => <Costars fetcher={() => getCostars(Number(props.params.actorId))} />}
+                    path="/:actor"
+                    component={props => <Costars fetcher={() => getCostars(props.params.actor!)} />}
                 />
             </Route>
             <Route path="/studios" component={Studios} preload={() => getStudios()} />

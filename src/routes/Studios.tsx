@@ -8,6 +8,7 @@ import { createAsync, useAction } from "@solidjs/router";
 import { fixPinnedRowHeight, useFilter } from "~/utils/pinnedUtils";
 import { PinnedRowButtons } from "~/components/PinnedRowButtons";
 import { GridWrapper } from "~/components/GridWrapper";
+import { enc } from "~/utils/encodeDecode";
 
 export default function Studios() {
     const studios = createAsync(() => getStudios())
@@ -89,7 +90,7 @@ export default function Studios() {
                 />
                 <Show when={contextMenu.isOpen}>
                     <ContextMenu pos={contextMenu.pos} close={() => setContextMenu('isOpen', false)} >
-                        <ContextMenu.Link href={`/movies/studios/${contextMenu.selectedId}?${contextMenu.selectedId}=${contextMenu.selectedName}`}> Go To Movies </ContextMenu.Link>
+                        <ContextMenu.Link href={`/movies/studios/${enc({display:contextMenu.selectedName, id: contextMenu.selectedId})}`}> Go To Movies </ContextMenu.Link>
                     </ContextMenu>
                 </Show>
                 <PinnedRowButtons

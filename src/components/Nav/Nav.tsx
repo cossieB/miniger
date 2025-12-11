@@ -3,6 +3,7 @@ import { state } from "../../state"
 import { CameraSvg, FilmstripSvg, QuestionMarkSvg, SearchSvg, TagSvg, TheatreSvg } from "~/icons"
 import { AsyncParentNode, ParentNode } from "./ParentNode"
 import { LinkNode } from "./LinkNode"
+import { enc } from "~/utils/encodeDecode"
 
 export function Nav() {
 
@@ -27,7 +28,7 @@ export function Nav() {
                         {studio =>
                             <LinkNode
                                 label={studio.name}
-                                href={`/movies/studios/${studio.studioId}?${studio.studioId}=${studio.name}`}
+                                href={`/movies/studios/${enc({display:studio.name!, id: studio.studioId!})}`}
                                 icon={<CameraSvg />}
                             />}
                     </AsyncParentNode>

@@ -37,7 +37,8 @@ export function MoviesTable(props: { data: MovieData }) {
                 rowSelection="multiple"
                 autoSizeStrategy={{
                     type: "fitCellContents",
-                    colIds: ["length", "size", "bitrate", "format", "res", "release", "studio"]
+                    colIds: ["length", "size", "bitrate", "format", "res", "release", "studio"],
+                    skipHeader: true
                 }}
                 rowData={props.data}
                 onSelectionChanged={(params) => {

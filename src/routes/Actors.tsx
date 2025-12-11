@@ -11,6 +11,7 @@ import type { TActor } from "~/datatypes";
 import { fixPinnedRowHeight, useFilter } from "~/utils/pinnedUtils";
 import { PinnedRowButtons } from "~/components/PinnedRowButtons";
 import { GridWrapper } from "~/components/GridWrapper";
+import { enc } from "~/utils/encodeDecode";
 
 export default function Actors() {
     let [ref, setRef] = createSignal<AgGridSolidRef>()
@@ -123,8 +124,8 @@ export default function Actors() {
                 />
                 <Show when={contextMenu.isOpen}>
                     <ContextMenu pos={contextMenu.pos} close={() => setContextMenu('isOpen', false)} >
-                        <ContextMenu.Link href={`/movies/actors/${contextMenu.selectedId}?${contextMenu.selectedId}=${contextMenu.selectedName}`}> Go To Movies </ContextMenu.Link>
-                        <ContextMenu.Link href={`/costars/${contextMenu.selectedId}?${contextMenu.selectedId}=${contextMenu.selectedName}`} >See Co-stars</ContextMenu.Link>
+                        <ContextMenu.Link href={`/movies/actors/${enc({display: contextMenu.selectedName, id: contextMenu.selectedId})}`}> Go To Movies </ContextMenu.Link>
+                        <ContextMenu.Link href={`/costars/${enc({display: contextMenu.selectedName, id: contextMenu.selectedId})}`} >See Co-stars</ContextMenu.Link>
                     </ContextMenu>
                 </Show>
                 <PinnedRowButtons

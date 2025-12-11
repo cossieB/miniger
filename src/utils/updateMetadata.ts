@@ -44,7 +44,7 @@ export async function updateMetadata() {
         })
     }))
     if (arr.length == 0) {
-        state.status.setStatus("metadata complete")
+        state.status.setStatus("✓ Updated metadata", true)
         return
     }
     try {
