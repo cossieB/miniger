@@ -1,5 +1,5 @@
+import { Volume2Icon, VolumeX } from "lucide-solid";
 import { createEffect, createSignal, Show } from "solid-js";
-import { MuteSvg, VolumeSvg } from "../../icons";
 
 type Props = {
     video: HTMLVideoElement;
@@ -26,8 +26,8 @@ export function VolumeControl(props: Props) {
                     }
                 }}
             >
-                <Show when={isMuted()} fallback={<VolumeSvg class="h-6 w-6" />} >
-                    <MuteSvg class="h-6 w-6" />
+                <Show when={isMuted()} fallback={<Volume2Icon class="h-6 w-6" />} >
+                    <VolumeX class="h-6 w-6" />
                 </Show>
             </button>
             <input

@@ -1,4 +1,4 @@
-import { ClearSVG } from "../../icons";
+import { CircleXIcon } from "lucide-solid";
 import { state } from "../../state";
 
 export function ClearPlaylistBtn() {
@@ -10,7 +10,7 @@ export function ClearPlaylistBtn() {
                 state.sidePanel.clear()
             }}
         >
-            <ClearSVG
+            <CircleXIcon
                 class="mr-5"
                 classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
             />

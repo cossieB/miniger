@@ -1,5 +1,5 @@
+import { CirclePlusIcon } from "lucide-solid";
 import { type Accessor, createSignal, onCleanup } from "solid-js";
-import { CirclePlusSvg } from "~/icons";
 
 type Props = {
     action: () => Promise<unknown>
@@ -39,7 +39,7 @@ export function HoldClickBtn(props: Props) {
             }}
         >
             <span class="flex items-center w-full justify-center">
-                <CirclePlusSvg />&nbsp;
+                <CirclePlusIcon />&nbsp;
                 Hold to add<span class="font-bold italic">&nbsp;{props.input()}&nbsp;</span>to the database
             </span>
         </button>

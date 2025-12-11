@@ -1,9 +1,9 @@
 import { getStudios, getTags } from "../../api/data"
 import { state } from "../../state"
-import { CameraSvg, FilmstripSvg, QuestionMarkSvg, SearchSvg, TagSvg, TheatreSvg } from "~/icons"
 import { AsyncParentNode, ParentNode } from "./ParentNode"
 import { LinkNode } from "./LinkNode"
 import { enc } from "~/utils/encodeDecode"
+import { CameraIcon, DramaIcon, FileQuestionMarkIcon, FilmIcon, SearchIcon, TagIcon } from "lucide-solid"
 
 export function Nav() {
 
@@ -14,14 +14,14 @@ export function Nav() {
         >
             <ul id="tree-root">
                 <ParentNode label="Movies">
-                    <LinkNode label="All Movies" href="/movies" icon={<FilmstripSvg />} />
-                    <LinkNode label="Inaccessible" href="/movies/inaccessible" icon={<QuestionMarkSvg />} />
+                    <LinkNode label="All Movies" href="/movies" icon={<FilmIcon />} />
+                    <LinkNode label="Inaccessible" href="/movies/inaccessible" icon={<FileQuestionMarkIcon />} />
                     <AsyncParentNode label="Tags" fetcher={() => getTags()} >
                         {tag =>
                             <LinkNode
                                 label={tag.tag}
                                 href={`/movies/tags/${tag.tag}`}
-                                icon={<TagSvg />}
+                                icon={<TagIcon />}
                             />}
                     </AsyncParentNode>
                     <AsyncParentNode label="Studios" fetcher={() => getStudios()}>
@@ -29,13 +29,13 @@ export function Nav() {
                             <LinkNode
                                 label={studio.name}
                                 href={`/movies/studios/${enc({display:studio.name!, id: studio.studioId!})}`}
-                                icon={<CameraSvg />}
+                                icon={<CameraIcon />}
                             />}
                     </AsyncParentNode>
                 </ParentNode>
-                <LinkNode label="Actors" href="/actors" icon={<TheatreSvg />} />
-                <LinkNode label="Studios" href="/studios" icon={<CameraSvg />} />
-                <LinkNode label="Search" href="/search" icon={<SearchSvg />} />
+                <LinkNode label="Actors" href="/actors" icon={<DramaIcon />} />
+                <LinkNode label="Studios" href="/studios" icon={<CameraIcon />} />
+                <LinkNode label="Search" href="/search" icon={<SearchIcon />} />
             </ul>
         </nav>
     )

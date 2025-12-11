@@ -1,6 +1,6 @@
 import { useAction } from "@solidjs/router";
+import { DatabaseIcon } from "lucide-solid";
 import { addDirectoriesToDatabase } from "~/api/mutations";
-import { AddToDatabaseSvg } from "~/icons";
 import { state } from "~/state";
 
 
@@ -15,7 +15,7 @@ export function AddPlaylistFilesToDatabaseBtn() {
                 await addAction(files)
             }}
         >
-            <AddToDatabaseSvg
+            <DatabaseIcon
                 classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
             />
         </button>

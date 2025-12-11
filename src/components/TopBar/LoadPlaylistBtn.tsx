@@ -1,4 +1,4 @@
-import { PlayListSvg } from "../../icons";
+import { ListIcon } from "lucide-solid";
 import { loadPlaylist } from "../../utils/loadPlaylist";
 
 export function LoadPlaylistBtn() {
@@ -7,7 +7,7 @@ export function LoadPlaylistBtn() {
             title="Load Playlist"
             onclick={loadPlaylist}
         >
-            <PlayListSvg />
+            <ListIcon />
         </button>
     )
 

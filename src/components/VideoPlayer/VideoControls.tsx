@@ -1,6 +1,6 @@
 import { Show } from "solid-js";
-import { SkipBackSvg, PauseSvg, PlaySvg, SkipForwardSvg } from "../../icons";
 import { useControls } from "./useControls";
+import { CirclePauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon } from "lucide-solid";
 
 type P = {
     video: HTMLVideoElement;
@@ -20,7 +20,7 @@ export function VideoControls(props: P) {
                     playPrevious()
                 }}
             >
-                <SkipBackSvg class="h-6 w-6" />
+                <SkipBackIcon class="h-6 w-6" />
             </button>
             <button
             class="active:scale-90 hover:text-orange-500"
@@ -34,15 +34,15 @@ export function VideoControls(props: P) {
                     }
                 }}
             >
-                <Show when={!props.isPlaying()} fallback={<PauseSvg class="h-10 w-10" />}>
-                    <PlaySvg class="h-10 w-10" />
+                <Show when={!props.isPlaying()} fallback={<CirclePauseIcon class="h-10 w-10" />}>
+                    <PlayIcon class="h-10 w-10" />
                 </Show>
             </button>
             <button 
             class="active:scale-90 hover:text-orange-500"
             onclick={playNext} 
             >
-                <SkipForwardSvg class="h-6 w-6" />
+                <SkipForwardIcon class="h-6 w-6" />
             </button>
         </div>
     );

@@ -1,9 +1,9 @@
 import { useAction, useLocation } from "@solidjs/router";
-import { TrashSvg } from "../../icons";
 import { state } from "../../state";
 import { Show } from "solid-js";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { deleteItems } from "../../api/mutations";
+import { Trash2Icon } from "lucide-solid";
 
 export function DeleteBtn() {
     const deleteAction = useAction(deleteItems)
@@ -45,7 +45,7 @@ export function DeleteBtn() {
                     }
                 }}
             >
-                <TrashSvg />
+                <Trash2Icon />
             </button>
         </Show>
     )

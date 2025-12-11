@@ -1,6 +1,6 @@
 import { Show } from "solid-js";
-import { ClearSVG } from "../icons";
 import { state } from "../state";
+import { CircleXIcon } from "lucide-solid";
 
 
 export function BottomBar() {
@@ -15,7 +15,7 @@ export function BottomBar() {
 function ClearMessageBtn() {
     return (
         <Show when={!!state.status.message}>
-            <ClearSVG
+            <CircleXIcon
                 class="mr-5"
                 onclick={state.status.clear}
             />

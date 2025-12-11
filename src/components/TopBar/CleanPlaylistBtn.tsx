@@ -1,6 +1,6 @@
-import { BroomSvg } from "../../icons";
 import { invoke } from "@tauri-apps/api/core";
 import { state } from "../../state";
+import { BrushCleaningIcon } from "lucide-solid";
 
 export function CleanPlaylistBtn() {
     return (
@@ -12,7 +12,7 @@ export function CleanPlaylistBtn() {
                 state.sidePanel.setFiles(filtered);
             }}
         >
-            <BroomSvg
+            <BrushCleaningIcon
                 classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
             />
         </button>

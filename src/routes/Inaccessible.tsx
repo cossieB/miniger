@@ -5,8 +5,8 @@ import { getInaccessible } from "../api/data";
 import { createAsync, useAction } from "@solidjs/router";
 import { editFilm } from "../api/mutations";
 import videoExtensions from "~/videoExtensions.json"
-import { SearchSvg } from "~/icons";
 import { GridWrapper } from "~/components/GridWrapper";
+import { SearchIcon } from "lucide-solid";
 
 export default function Inaccessible() {
     const data = createAsync(() => getInaccessible())
@@ -47,7 +47,7 @@ export default function Inaccessible() {
                         width: 50,
                         cellRenderer: () => (
                             <div class="h-full flex items-center" title="Find this file" aria-label="Find this file">
-                                <SearchSvg />
+                                <SearchIcon />
                             </div>
                         )
                     }]}

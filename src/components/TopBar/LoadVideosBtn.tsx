@@ -1,4 +1,4 @@
-import { FilmstripSvg } from "~/icons";
+import { Film } from "lucide-solid";
 import { loadVideos } from "~/utils/loadPlaylist";
 
 export function LoadVideosBtn() {
@@ -7,7 +7,7 @@ export function LoadVideosBtn() {
             title="Load Videos"
             onclick={loadVideos}
         >
-            <FilmstripSvg />
+            <Film />
         </button>
     )
 

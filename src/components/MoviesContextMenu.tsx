@@ -6,10 +6,10 @@ import { createAsync, useAction, useNavigate } from "@solidjs/router";
 import { addDirectoriesToDatabase } from "~/api/mutations";
 import { getFilmByPath } from "~/api/data";
 import type { TActor } from "~/datatypes";
-import { CameraSvg, CurvedArrowSvg, PlayCircleSvg, PlayFillSvg, PlayListSvg, PlaySvg, TagSvg, TheatreSvg, WindowSvg } from "~/icons";
 import { createTempPlaylist } from "~/utils/createTempPlaylist";
 import { unwrap } from "solid-js/store";
 import { enc } from "~/utils/encodeDecode";
+import { CameraIcon, CornerRightUpIcon, DramaIcon, FilePlayIcon, FilesIcon, ListVideoIcon, PlayIcon, TagIcon } from "lucide-solid";
 
 type F = {
     title: string;
@@ -53,7 +53,7 @@ export default function MoviesContextMenu(props: P) {
                         const rowId = playlist.find(file => file.path === props.contextMenu.data.path)!.rowId
                         navigate("/play?rowId=" + rowId)
                     }}
-                    icon={<PlaySvg />}
+                    icon={<PlayIcon />}
                 >
                     Play
                 </ContextMenu.Item>
@@ -69,7 +69,7 @@ export default function MoviesContextMenu(props: P) {
                             }))
                             state.sidePanel.push(playlist)
                         }}
-                        icon={<PlayListSvg />}
+                        icon={<ListVideoIcon />}
                     >
                         Add To Playlist
                     </ContextMenu.Item>
@@ -82,7 +82,7 @@ export default function MoviesContextMenu(props: P) {
                     </ContextMenu.Item>
                 </Show>
                 <ContextMenu.Item
-                    icon={<PlayFillSvg />}
+                    icon={<PlayIcon />}
                     onClick={() => state.miniplayer.setVideo({ path: props.contextMenu.data.path, title: props.contextMenu.data.title })}>
                     Play In Miniplayer
                 </ContextMenu.Item>
@@ -95,12 +95,12 @@ export default function MoviesContextMenu(props: P) {
                             state.status.setStatus("File Not Found")
                         }
                     }}
-                    icon={<PlayCircleSvg />}
+                    icon={<FilePlayIcon />}
                 >
                     Open With Default Player
                 </ContextMenu.Item>
                 <Show when={tags().length > 0}>
-                    <ContextMenu.SubMenu label="More From Genre" icon={<TagSvg />} >
+                    <ContextMenu.SubMenu label="More From Genre" icon={<TagIcon />} >
                         <For each={tags()}>
                             {tag =>
                                 <ContextMenu.Link href={`/movies/tags/${tag}`}>
@@ -111,7 +111,7 @@ export default function MoviesContextMenu(props: P) {
                     </ContextMenu.SubMenu>
                 </Show>
                 <Show when={actors().length > 0}>
-                    <ContextMenu.SubMenu label="More From Actor" icon={<TheatreSvg width={16} />} >
+                    <ContextMenu.SubMenu label="More From Actor" icon={<DramaIcon />} >
                         <For each={actors()}>
                             {actor =>
                                 <ContextMenu.Link href={`/movies/actors/${enc({display:actor.name, id:actor.actorId})}`}>
@@ -124,14 +124,14 @@ export default function MoviesContextMenu(props: P) {
                 <Show when={data()?.studioId}>
                     <ContextMenu.Link
                         href={`/movies/studios/${enc({display:data()!.studioName!, id: data()!.studioId!})}`}
-                        icon={<CameraSvg />}
+                        icon={<CameraIcon />}
                     >
 
                         More From {data()?.studioName}
                     </ContextMenu.Link>
                 </Show>
                 <ContextMenu.Item
-                    icon={<WindowSvg />}
+                    icon={<FilesIcon />}
                     onClick={async () => {
                         try {
                             await invoke("open_explorer", {
@@ -145,7 +145,7 @@ export default function MoviesContextMenu(props: P) {
                     Show In Explorer
                 </ContextMenu.Item>
                 <Show when={actors().length > 0}>
-                    <ContextMenu.SubMenu label="Goto Actor" icon={<CurvedArrowSvg />}>
+                    <ContextMenu.SubMenu label="Goto Actor" icon={<CornerRightUpIcon />}>
                     <For each={actors()}>
                         {actor =>
                             <ContextMenu.Link href={`/actors?gridId=${actor.actorId}`}>

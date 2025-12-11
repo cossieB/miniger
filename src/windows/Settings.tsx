@@ -2,9 +2,9 @@ import { useAction, useSubmission } from "@solidjs/router"
 import { getCurrentWindow } from "@tauri-apps/api/window"
 import { open } from "@tauri-apps/plugin-dialog"
 import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs"
+import { Trash2Icon } from "lucide-solid"
 import { createResource, createSignal, For, onMount, Show } from "solid-js"
 import { addDirectoriesToDatabase } from "~/api/mutations"
-import { TrashSvg } from "~/icons"
 import { readDirectories } from "~/utils/readDirectories"
 
 export function Settings() {
@@ -84,7 +84,7 @@ export function Settings() {
                                             mutate(p => p.filter((_, j) => j != i()))
                                             setHasChanged(true);
                                         }}>
-                                        <TrashSvg color="red" />
+                                        <Trash2Icon color="red" />
                                     </button>
                                 </td>
                             </tr>

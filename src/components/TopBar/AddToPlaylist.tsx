@@ -1,7 +1,7 @@
 import { useMatch } from "@solidjs/router";
-import { AddToPlaylistSvg } from "../../icons";
 import { Show } from "solid-js";
 import { state } from "../../state";
+import { ListVideoIcon } from "lucide-solid";
 
 export function AddToPlaylistBtn() {
     const match = useMatch(() => "/movies/**")
@@ -13,7 +13,7 @@ export function AddToPlaylistBtn() {
                     state.sidePanel.push(state.mainPanel.selectedItems)
                 }}
             >
-                <AddToPlaylistSvg
+                <ListVideoIcon
                     classList={{ 'fill-zinc-500': state.mainPanel.selectedItems.length == 0 }}
                 />
             </button>

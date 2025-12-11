@@ -1,8 +1,8 @@
 import { type JSX, Show, createEffect, createSignal, on, untrack } from "solid-js";
-import { ChevronRight } from "../../icons";
 import { useContextMenuContext } from "./useContextMenuContext";
 import { Menu } from "./Menu";
 import { ContextMenuItem } from "./ContextMenuItem";
+import { ChevronRightIcon } from "lucide-solid";
 
 type Props = {
     label: string;
@@ -60,7 +60,7 @@ export function ContextSubMenu(props: Props) {
 
             >
                 <span>{props.label} </span>
-                <span class="ml-auto"><ChevronRight /></span>
+                <span class="ml-auto"><ChevronRightIcon /></span>
                 <Show when={showMenu()}>
                     <Menu
                         pos={{ x: x(), y: y() }}

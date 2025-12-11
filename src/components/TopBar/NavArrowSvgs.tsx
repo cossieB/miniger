@@ -1,5 +1,5 @@
 import { useNavigate } from "@solidjs/router";
-import { BackArrowSvg, ForwardArrowSvg } from "~/icons";
+import { CircleArrowLeftIcon, CircleArrowRightIcon } from "lucide-solid";
 
 export function BackBtn() {
     const navigate = useNavigate();
@@ -8,7 +8,7 @@ export function BackBtn() {
             title="Back"
             onclick={() => navigate(-1)}
         >
-            <BackArrowSvg />
+            <CircleArrowLeftIcon />
         </button>
     )
 }
@@ -20,7 +20,7 @@ export function ForwardBtn() {
             title="Forward"
             onclick={() => navigate(1)}
         >
-            <ForwardArrowSvg />
+            <CircleArrowRightIcon />
         </button>
     )
 }

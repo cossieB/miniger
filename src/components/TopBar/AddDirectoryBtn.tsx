@@ -1,7 +1,7 @@
-import { AddFolderSvg, OpenFolderSvg } from "../../icons";
 import { addDirectoriesToDatabase } from "../../api/mutations";
 import { useAction } from "@solidjs/router";
 import { addFolderToSidebar, readDirectories } from "../../utils/readDirectories";
+import { FolderInputIcon, FolderOpenIcon } from "lucide-solid";
 
 export function AddDirectoryBtn() {
     return (
@@ -9,7 +9,7 @@ export function AddDirectoryBtn() {
             title="Open Folder"
             onclick={addFolderToSidebar}
         >
-            <OpenFolderSvg />
+            <FolderOpenIcon />
         </button>
     )
 }
@@ -24,7 +24,7 @@ export function AddDirectoryToDatabase() {
                 files && await addAction(files)
             }}
         >
-            <AddFolderSvg />
+            <FolderInputIcon />
         </button>
     )
 }

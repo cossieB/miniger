@@ -2,8 +2,8 @@ import { type JSXElement } from "solid-js";
 import { useAction } from "@solidjs/router";
 import { addDirectoriesToDatabase } from "~/api/mutations";
 import { addFolderToSidebar, readDirectories } from "~/utils/readDirectories";
-import { AddFolderSvg, FilmstripSvg, OpenFolderSvg, PlayListSvg } from "../icons";
 import { loadPlaylist, loadVideos } from "~/utils/loadPlaylist";
+import { Film, FolderInput, FolderOpen, ListVideo } from "lucide-solid";
 
 export function Home() {
     const addAction = useAction(addDirectoriesToDatabase)
@@ -12,11 +12,11 @@ export function Home() {
             <h1 class="text-center text-2xl my-2.5">Welcome To Miniger!</h1>
             <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2">
                 <Btn
-                    icon={<OpenFolderSvg fill={undefined} />}
+                    icon={<FolderOpen fill={undefined} />}
                     label="Add folder to your sidebar playlist"
                     onclick={addFolderToSidebar}
                 />
-                <Btn icon={<AddFolderSvg fill={undefined} />}
+                <Btn icon={<FolderInput fill={undefined} />}
                     label="Add folder to your database"
                     onclick={async () => {
                         const files = await readDirectories()
@@ -24,12 +24,12 @@ export function Home() {
                     }}
                 />
                 <Btn
-                    icon={<PlayListSvg />}
+                    icon={<ListVideo />}
                     label="Load Playlist File"
                     onclick={loadPlaylist}
                 />
                 <Btn
-                    icon={<FilmstripSvg />}
+                    icon={<Film />}
                     label="Load Videos"
                     onclick={loadVideos}
                 />

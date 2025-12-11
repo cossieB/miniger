@@ -1,8 +1,8 @@
 import { createAsync, useAction } from "@solidjs/router"
 import { type ICellEditor, type ICellEditorParams } from "ag-grid-community"
+import { CheckIcon, XIcon } from "lucide-solid"
 import { createSignal, For, type Setter, Suspense } from "solid-js"
 import { getTags } from "~/api/data"
-import { CancelSvg, CheckmarkSvg } from "~/icons"
 import { updateTag } from "~/api/mutations"
 import clickOutside from "~/lib/clickOutside"
 false && clickOutside
@@ -46,13 +46,13 @@ export function AgTagSelector(props: ICellEditorParams) {
                         props.stopEditing()
                     }}
                 >
-                    <CancelSvg />
+                    <XIcon />
                 </button>
                 <button
                     class="p-1 bg-lime-500 w-10 justify-center items-center flex"
                     onclick={handleSubmit}
                 >
-                    <CheckmarkSvg />
+                    <CheckIcon />
                 </button>
             </div>
             <div class="p-1">

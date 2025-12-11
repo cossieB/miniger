@@ -1,6 +1,6 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { appDataDir, sep } from "@tauri-apps/api/path";
-import { createEffect, For, Show } from "solid-js";
+import { batch, createEffect, For, Show } from "solid-js";
 import type { MovieData, MovieTableData } from "~/types";
 import MoviesContextMenu from "./MoviesContextMenu";
 import { createStore } from "solid-js/store";
@@ -33,7 +33,7 @@ export function MovieGrid(props: P) {
     const selections = new ReactiveSet<number>()
     const navigate = useNavigate()
     createEffect(() => {
-        setContextMenu('selections', Array.from(selections).map(i => props.data[i]))
+        setContextMenu('selections', Array.from(selections).map(i => props.data[i]).reverse())
     })
 
     return (
@@ -46,7 +46,11 @@ export function MovieGrid(props: P) {
                         <div
                             classList={{ "outline-1": selections.has(i()) }}
                             oncontextmenu={(e) => {
-                                selections.add(i())
+                                batch(() => {
+                                    //make sure the right clicked item is the last item in the array
+                                    selections.delete(i())
+                                    selections.add(i())
+                                })
                                 setContextMenu({
                                     isOpen: true,
                                     data: film,
@@ -54,10 +58,12 @@ export function MovieGrid(props: P) {
                                     y: e.clientY,
                                 })
                             }}
-                            onclick={() => {
-                                if (selections.has(i())) 
+                            onclick={(e) => {
+                                if (!e.ctrlKey)
+                                    selections.clear()
+                                if (selections.has(i()))
                                     selections.delete(i())
-                                else 
+                                else
                                     selections.add(i())
                             }}
                             ondblclick={() => {
@@ -82,7 +88,7 @@ export function MovieGrid(props: P) {
             <Show when={contextMenu.isOpen}>
                 <MoviesContextMenu
                     contextMenu={contextMenu}
-                    isMainPanel={false}
+                    isMainPanel
                 />
             </Show>
         </div>

@@ -1,7 +1,7 @@
-import { SaveSvg } from "../../icons";
 import { save } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { state } from "../../state";
+import { SaveIcon } from "lucide-solid";
 
 export function SavePlaylistBtn() {
     return (
@@ -34,7 +34,7 @@ export function SavePlaylistBtn() {
                 }
             }}
         >
-            <SaveSvg
+            <SaveIcon
                 classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
             />
         </button>

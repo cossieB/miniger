@@ -1,8 +1,8 @@
-import { A, useLocation, useNavigate, useSearchParams } from "@solidjs/router"
-import { ChevronRight, HouseSvg } from "../icons"
+import { A, useLocation, useNavigate } from "@solidjs/router"
 import { type Accessor, For, Show, createMemo } from "solid-js"
 import titleCase from "../lib/titleCase"
 import { deco } from "~/utils/encodeDecode"
+import { ChevronRightIcon, HouseIcon } from "lucide-solid"
 
 export function Breadcrumbs() {
     const location = useLocation()
@@ -16,7 +16,7 @@ export function Breadcrumbs() {
     return (
         <ol class="h-full flex items-center" >
             <li>
-                <HouseSvg onclick={() => navigate("/")} />
+                <HouseIcon onclick={() => navigate("/")} />
             </li>
             <For each={segments()}>
                 {(segment, i) => <Crumb segment={segment} i={i} segments={segments}/>}
@@ -42,7 +42,7 @@ function Crumb(props: P) {
                 </A>
             </li>
             <Show when={props.i() < props.segments().length - 1}>
-                <ChevronRight />
+                <ChevronRightIcon />
             </Show>
         </>
     )

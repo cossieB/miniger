@@ -1,4 +1,4 @@
-import { ShuffleSvg } from "~/icons";
+import { ShuffleIcon } from "lucide-solid";
 import { state } from "~/state";
 
 export function ShufflePlaylistBtn() {
@@ -7,7 +7,7 @@ export function ShufflePlaylistBtn() {
             title="Shuffle Playlist"
             onClick={state.sidePanel.shuffle}            >
 
-            <ShuffleSvg
+            <ShuffleIcon
                 classList={{ 'fill-zinc-500': state.sidePanel.list.length == 0 }}
             />
         </button>
