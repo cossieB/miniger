@@ -26,11 +26,12 @@ export function GridWrapper<TData = any>(props: Props<TData>) {
         if (typeof searchParams.gridId !== "string" || !gridApi) return
         setTimeout(() => focusRow(searchParams.gridId as string, gridApi), 50) // wait for grid to render added rows
     })
+
     return (
         <AgGridSolid
             // @ts-expect-error
             onGridReady={params => {
-                state.setGridApi(params.api as any);
+                state.getSelections = params.api.getSelectedRows.bind(params.api)
                 gridApi = params.api as any
                 props.additionalSetup?.();
                 if (typeof searchParams.gridId !== "string") return

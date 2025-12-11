@@ -13,7 +13,6 @@ export function AgStudioSelector(props: ICellEditorParams) {
     });
     const api: ICellEditor = {
         getValue: () => {
-            console.log(selectedStudio())
             return JSON.stringify(selectedStudio())
         }
     };

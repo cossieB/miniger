@@ -1,9 +1,9 @@
-import { createAsync, useSearchParams } from "@solidjs/router"
-import { createMemo, Suspense, createUniqueId, createSignal, Show, createEffect } from "solid-js"
+import { createAsync } from "@solidjs/router"
+import { createMemo, Suspense, createUniqueId, createSignal, Match, Switch } from "solid-js"
 import { type DetailedDbFilm } from "~/repositories/filmsRepository"
 import type { FfprobeMetadata } from "~/utils/updateMetadata"
 import { MoviesTable } from "~/components/MoviesTable"
-import { Grid3x3, List } from "lucide-solid"
+import { Grid3x3, List, LoaderCircleIcon } from "lucide-solid"
 import { ModeToggle } from "../components/ModeToggle"
 import { MovieGrid } from "~/components/MovieGrid"
 
@@ -19,16 +19,12 @@ const views = [{
     id: "grid"
 }]
 
-export function Movies(props: Props) {
-    const [queryParams, setQueryParams] = useSearchParams()
-    const films = createAsync(() => props.fetcher())
-    
-    const [activeView, setActiveView] = createSignal(Number(queryParams.view) || 0)
+const [activeView, setActiveView] = createSignal(0)
 
-    createEffect(() => {
-        setQueryParams({view: activeView()})
-    })
-    
+export function Movies(props: Props) {
+
+    const films = createAsync(() => props.fetcher())
+
     const data = createMemo(() => {
         if (!films()) return undefined
         return films()!.map((film => ({
@@ -42,16 +38,23 @@ export function Movies(props: Props) {
     })
 
     return (
-        <>
+        <Suspense>
             <ModeToggle
                 modes={views}
                 active={activeView()}
-                setActive={setActiveView} />
-            <Suspense>
-                <Show when={activeView() == 0} fallback={<MovieGrid data={data()!} />}>
+                setActive={setActiveView}
+            />
+            <Switch>
+                <Match when={activeView() == 0}>
                     <MoviesTable data={data()!} />
-                </Show>
-            </Suspense>
-        </>
+                </Match>
+                <Match when={activeView() == 1 && data()}>
+                    <MovieGrid data={data()!} />
+                </Match>
+                <Match when={activeView() == 1 && !data()}>
+                    <div class="w-full h-full flex items-center justify-center"><LoaderCircleIcon class="animate-spin" size={250} /></div>
+                </Match>
+            </Switch>
+        </Suspense>
     )
 }

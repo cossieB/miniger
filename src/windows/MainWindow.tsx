@@ -13,7 +13,7 @@ import "~/events/mainWindow"
 function App(props: { children?: JSXElement }) {
     useWatchJson()
     useBeforeLeave(() => {
-        state.setGridApi(undefined)
+        state.getSelections = () => []
     })
 
     onMount(() => {

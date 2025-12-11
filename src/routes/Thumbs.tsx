@@ -67,7 +67,7 @@ export function Thumbnails() {
                                     await send(arr)
                                 }}
                             >
-                                Generate missing thumbs (&gt; {errored.size} videos)
+                                Generate missing thumbs (≈ {errored.size} videos)
                             </button>
                         </Show>
                         <Show when={selected.size > 0}>
@@ -108,7 +108,6 @@ export function Thumbnails() {
                             >
                                 <img
                                     class="aspect-video object-cover"
-                                    loading="lazy"
                                     src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.jpg`) + `?a=${a()}`}
                                     alt=""
                                     onerror={e => {

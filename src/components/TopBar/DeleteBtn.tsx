@@ -22,10 +22,8 @@ export function DeleteBtn() {
                 id="topbar-delete-btn"
                 title="Delete selected items"
                 onclick={async () => {
-                    const gridApi = state.gridApi;
-                    if (!gridApi) return;
+                    const sel = state.getSelections();
 
-                    const sel = gridApi.getSelectedRows()
                     if (sel.length === 0) return;
 
                     const confirmed = await confirm(`Remove ${sel.length} item${sel.length != 1 ? "s" : ""} from the database?`, { kind: "warning" });
@@ -45,7 +43,9 @@ export function DeleteBtn() {
                     }
                 }}
             >
-                <Trash2Icon />
+                <Trash2Icon
+                    classList={{ 'text-zinc-500': state.mainPanel.selectedIds.length == 0 }}  
+                />
             </button>
         </Show>
     )

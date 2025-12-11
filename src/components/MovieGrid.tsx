@@ -1,6 +1,6 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { appDataDir, sep } from "@tauri-apps/api/path";
-import { batch, createEffect, For, Show } from "solid-js";
+import { batch, createEffect, For, onMount, Show } from "solid-js";
 import type { MovieData, MovieTableData } from "~/types";
 import MoviesContextMenu from "./MoviesContextMenu";
 import { createStore } from "solid-js/store";
@@ -29,13 +29,19 @@ function useMoviesContextMenu() {
 }
 
 export function MovieGrid(props: P) {
+
     const { contextMenu, setContextMenu } = useMoviesContextMenu()
     const selections = new ReactiveSet<number>()
     const navigate = useNavigate()
     createEffect(() => {
         setContextMenu('selections', Array.from(selections).map(i => props.data[i]).reverse())
+        const id = contextMenu.selections.at(0)?.filmId
+        const arr = id ? [id] : []
+        state.mainPanel.setSelectedIds(arr)
     })
-
+    onMount(() => {
+        state.getSelections = () => contextMenu.selections
+    })
     return (
         <div class="w-full overflow-y-scroll relative overflow-scroll h-full">
             <div
@@ -59,12 +65,14 @@ export function MovieGrid(props: P) {
                                 })
                             }}
                             onclick={(e) => {
-                                if (!e.ctrlKey)
-                                    selections.clear()
-                                if (selections.has(i()))
-                                    selections.delete(i())
-                                else
-                                    selections.add(i())
+                                batch(() => {
+                                    if (!e.ctrlKey)
+                                        selections.clear()
+                                    if (selections.has(i()))
+                                        selections.delete(i())
+                                    else
+                                        selections.add(i())
+                                })
                             }}
                             ondblclick={() => {
                                 state.sidePanel.setFiles([film])

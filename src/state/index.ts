@@ -1,4 +1,3 @@
-import { type GridApi } from "ag-grid-community";
 import { type Require } from "../lib/utilityTypes";
 import { mainPanel } from "./mainPanel";
 import { sidePanel } from "./sidePanel";
@@ -25,18 +24,12 @@ export type ExtraProps = {
 export type SidepanelFile = ExtraProps & Require<PlaylistFile, 'rowId'>
 
 export const state = {
-    _gridApi: undefined as GridApi<any> | undefined,
-    setGridApi: (g: GridApi<any> | undefined) => {
-        state._gridApi = g
-    },
-    get gridApi () {
-        return state._gridApi
-    },
     status,
     sidePanel,
     mainPanel,
     tree,
     windowDimensions,
     miniplayer,
-    settings
+    settings,
+    getSelections: () => [] as any[]
 }

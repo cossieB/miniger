@@ -10,11 +10,11 @@ export function AddToPlaylistBtn() {
             <button
                 title="Add to playlist"
                 onclick={() => {
-                    state.sidePanel.push(state.mainPanel.selectedItems)
+                    state.sidePanel.push(state.getSelections())
                 }}
             >
                 <ListVideoIcon
-                    classList={{ 'fill-zinc-500': state.mainPanel.selectedItems.length == 0 }}
+                    classList={{ 'text-zinc-500': state.mainPanel.selectedIds.length == 0 }}                    
                 />
             </button>
         </Show>

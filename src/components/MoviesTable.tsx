@@ -43,7 +43,7 @@ export function MoviesTable(props: { data: MovieData }) {
                 rowData={props.data}
                 onSelectionChanged={(params) => {
                     const selection = params.api.getSelectedRows();
-                    state.mainPanel.setSelectedItems(selection)
+                    state.mainPanel.setSelectedIds(selection.map(x => (x.filmId)))
                 }}
                 onCellContextMenu={params => {
                     setContextMenu({

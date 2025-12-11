@@ -9,7 +9,7 @@ import { deco } from "~/utils/encodeDecode"
 function getId(str: string, redirectTo: string) {
     const decoded = deco(str); 
     const s = typeof decoded == "string" ? str : decoded.id
-    const num = Number(s); console.log(num, s)
+    const num = Number(s);
     if (Number.isNaN(num)) throw redirect(redirectTo)
     return num
 }

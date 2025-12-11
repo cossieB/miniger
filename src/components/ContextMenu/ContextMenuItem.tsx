@@ -14,7 +14,7 @@ export function ContextMenuItem(props: ContextMenuProps) {
             class="flex items-center h-8 p-2 hover:bg-slate-500"
             {...others}
         >
-            <span class="w-6"> {partial.icon} </span>
+            <span class="w-8"> {partial.icon} </span>
             {props.children}
         </li>
     );
