@@ -17,8 +17,9 @@ pub async fn generate_thumbnails(app_handle: tauri::AppHandle, videos: Vec<F>) {
     let dir = app_handle.path().app_data_dir().unwrap().join("thumbs");
     let handle = thread::spawn(move || {
         for video in &videos {
-            let mut cmd = Command::new("ffmpeg");
-            cmd.arg("-y")
+            let output = Command::new("ffmpeg")
+                .creation_flags(0x08000000)
+                .arg("-y")
                 .arg("-ss")
                 .arg("00:02:00")
                 .arg("-i")
@@ -27,9 +28,9 @@ pub async fn generate_thumbnails(app_handle: tauri::AppHandle, videos: Vec<F>) {
                 .arg("scale=720:-1")
                 .arg("-vframes")
                 .arg("1")
-                .arg(dir.join(format!("{}{}", video.filmId, ".jpg")));
+                .arg(dir.join(format!("{}{}", video.filmId, ".jpg")))
+                .output();
 
-            let output = cmd.output();
 
             if let Err(e) = output {
                 println!("{:?}", e)
