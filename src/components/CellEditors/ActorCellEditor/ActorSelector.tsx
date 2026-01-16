@@ -1,4 +1,4 @@
-import { For, Show, Suspense, createEffect, createSignal, on } from "solid-js";
+import { For, Show, Suspense, createEffect, createSignal, on, onCleanup, onMount } from "solid-js";
 import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
 import type { TActor } from "~/datatypes";
 import { getActors } from "~/api/data";
@@ -43,6 +43,7 @@ type P = {
 }
 
 export function ActorSelector(props: P) {
+    const abortController = new AbortController()
     let ref!: HTMLInputElement
     const [input, setInput] = createSignal("");
     const [selectedActors, setSelectedActors] = createSignal(props.initialActors ?? []);
@@ -52,7 +53,17 @@ export function ActorSelector(props: P) {
     createEffect(on(actors, () => {
         ref?.focus();
     }));
-
+    onMount(() => {
+        document.addEventListener("keyup", (e) => {
+            if (e.key == "Escape") {
+                setSelectedActors(props.initialActors ?? [])
+                props.close()
+            }
+        }, { signal: abortController.signal })
+    })
+    onCleanup(() => {
+        abortController.abort()
+    })
     return (
         <Suspense>
             <Portal>

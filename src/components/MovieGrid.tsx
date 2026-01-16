@@ -43,7 +43,7 @@ export function MovieGrid(props: P) {
         state.getSelections = () => contextMenu.selections
     })
     return (
-        <div class="w-full overflow-y-scroll relative overflow-scroll h-full">
+        <div class="w-full overflow-y-scroll relative overflow-scroll h-full" style={{"content-visibility": "auto"}}>
             <div
                 class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-1"
             >

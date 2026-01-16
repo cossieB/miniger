@@ -68,7 +68,7 @@ export function Costars(props: Props) {
                         field: "together",
                         headerName: "Movies",
                     }, {                        
-                        cellRenderer: (params: ICellRendererParams) => <A href={`/movies/actors/${enc({id: contextMenu.actorAid, display: contextMenu.actorA})}/${enc({id: contextMenu.actorBid, display: contextMenu.actorB})}`}>View Movies</A>
+                        cellRenderer: (params: ICellRendererParams) => <A href={`/movies/actors/${enc({id: params.data.actorAid, display: params.data.actorA})}/${enc({id: params.data.actorBid, display: params.data.actorB})}`}>View Movies</A>
                     }]}
                 />
             </div>
