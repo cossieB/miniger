@@ -1,2 +1,0 @@
-ALTER TABLE film 
-ADD COLUMN metadata TEXT;

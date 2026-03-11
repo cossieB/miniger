@@ -8,11 +8,5 @@ pub fn get_migrations() -> Vec<Migration> {
             sql: include_str!("migrations/schema.sql"),
             kind: MigrationKind::Up,
         },
-        Migration {
-            version: 2,
-            description: "add film.metadata column",
-            sql: include_str!("migrations/add_metadata.sql"),
-            kind: MigrationKind::Up,
-        },
     ]
 }

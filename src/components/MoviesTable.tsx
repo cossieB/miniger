@@ -105,7 +105,7 @@ export function MoviesTable(props: { data: MovieData }) {
                     editable: true,
                     cellEditor: "agDateStringCellEditor",
                     onCellValueChanged: params => updateFilmAction({
-                        releaseDate: params.newValue,
+                        releaseDate: params.newValue ?? null,
                         filmId: params.data.filmId
                     })
                 }, {

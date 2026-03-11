@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS actor (
     dob TEXT,
     nationality TEXT,
     gender TEXT,
-    image TEXT
+    image TEXT,
+    metadata TEXT
 );
 
 CREATE TABLE IF NOT EXISTS studio (

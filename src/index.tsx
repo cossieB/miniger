@@ -20,7 +20,7 @@ import { Tags } from "./routes/Tags";
 import { Costars } from "./routes/Costars";
 import { Search } from "./routes/Search";
 import { search } from "./repositories/search";
-import { Thumbnails as Thumbnails } from "./routes/Thumbs";
+import { Thumbnails } from "./routes/Thumbs";
 
 render(() => (
     <Router  >
@@ -35,27 +35,27 @@ render(() => (
                 <Route
                     path="/tags/:tag"
                     component={(props) => <Movies fetcher={() => getFilmsByTag(props.params.tag!)} />}
-                    preload={(args) => getFilmsByTag(args.params.tag!)}
+                    preload={(args) => void getFilmsByTag(args.params.tag!)}
                 />
                 <Route
                     path="/actors/:actor"
                     component={props => <Movies fetcher={() => getFilmsByActor(props.params.actor!)} />}
-                    preload={(args) => getFilmsByActor(args.params.actor!)}
+                    preload={(args) => void getFilmsByActor(args.params.actor!)}
                 />
                 <Route
                     path="/actors/:actor/:costar"
                     component={props => <Movies fetcher={() => getMoviesByCostars(props.params.actor!, props.params.costar!)} />}
-                    preload={(args) => getMoviesByCostars(args.params.actor!, args.params.costar!)}
+                    preload={(args) => void getMoviesByCostars(args.params.actor!, args.params.costar!)}
                 />
                 <Route
                     path="/studios/:studio"
                     component={props => <Movies fetcher={() => getFilmsByStudio(props.params.studio!)} />}
-                    preload={args => getFilmsByStudio(args.params.studio!)}
+                    preload={args => void getFilmsByStudio(args.params.studio!)}
                 />
                 <Route
                     path="/inaccessible"
                     component={Inaccessible}
-                    preload={() => getInaccessible()}
+                    preload={() => void getInaccessible()}
                 />
                 <Route
                     path="/search"
@@ -63,7 +63,7 @@ render(() => (
                 />
             </Route>
             <Route path="/actors" >
-                <Route path="/" component={Actors} preload={() => getActors()} />
+                <Route path="/" component={Actors} preload={() => void getActors()} />
                 <Route path=":a" component={() => <Navigate href={"/actors"} />} />
             </Route>
             <Route path="/costars">
