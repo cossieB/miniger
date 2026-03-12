@@ -101,9 +101,10 @@ export const addDirectoriesToDatabase = action(async (files: {title: string, pat
     }
 })
 
-export const removeByPaths = action(async (selection: { path: string }[]) => {
+export const removeByPaths = action(async (selection: { path: string }[] | string[]) => {
     try {
-        await filmRepo.deleteByPaths(selection.map(s => s.path))
+        const array = selection.map(elem => typeof elem == 'string' ? elem : elem.path)
+        await filmRepo.deleteByPaths(array)
         return json(undefined, {revalidate: [getFilms.key, getInaccessible.key]});
     }
     catch (error) {

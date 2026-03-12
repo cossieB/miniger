@@ -72,7 +72,8 @@ fn main() {
             commands::open_explorer,
             commands::convert_playlist,
             commands::generate_thumbnails,
-            commands::get_metadata
+            commands::get_metadata,
+            commands::recycle
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

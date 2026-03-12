@@ -12,7 +12,7 @@ export function AddPlaylistFilesToDatabaseBtn() {
             onclick={async () => {
                 const files = state.sidePanel.list
                 if (files.length == 0) return
-                await addAction(files)
+                await addAction(files.map(f => ({path: f.path, title: f.title})))
             }}
         >
             <DatabaseIcon
