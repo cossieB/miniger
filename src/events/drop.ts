@@ -3,20 +3,13 @@ import { sep } from "@tauri-apps/api/path";
 import { state } from "../state";
 import videoExtensions from "../videoExtensions.json"
 import { getAllWindows } from "@tauri-apps/api/window";
-
-type E = {
-    paths: string[];
-    position: {
-        x: number;
-        y: number;
-    }
-}
+import type { DropPayload } from "./types";
 
 let prevElem: HTMLElement | null = null;
 
 getAllWindows().then(async windows => {
     const dropWindow = windows.find(w => w.label === "drag-drop")
-    const unlisten = await dropWindow?.listen<E>("tauri://drag-drop", async event => {
+    const unlisten = await dropWindow?.listen<DropPayload>("tauri://drag-drop", async event => {
         prevElem?.classList.remove("pt-5")
         prevElem = null;
         const pos = event.payload.position
@@ -46,7 +39,7 @@ getAllWindows().then(async windows => {
         }
     })
 
-    await dropWindow?.listen<E>("tauri://drag-over", e => {
+    await dropWindow?.listen<DropPayload>("tauri://drag-over", e => {
         const pos = e.payload.position
         const target = document.elementFromPoint(pos.x, pos.y) as HTMLLIElement | null;
 
@@ -60,7 +53,7 @@ getAllWindows().then(async windows => {
         prevElem = target
     })
 
-    await dropWindow?.listen<E>("tauri://drag-leave", e => {
+    await dropWindow?.listen<DropPayload>("tauri://drag-leave", e => {
         prevElem?.classList.remove("pt-5")
         prevElem = null;
     })

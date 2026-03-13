@@ -37,6 +37,7 @@ fn main() {
             let ffmpeg_submenu = SubmenuBuilder::new(app, "FFMpeg")
                 .text("thumbs", "Generate Thumbnails")
                 .text("metadata", "Get Metadata")
+                .text("transcode", "Convert Videos")
                 .enabled(Command::new("ffmpeg").creation_flags(0x08000000).output().is_ok())
                 .build()?;
 
@@ -73,7 +74,8 @@ fn main() {
             commands::convert_playlist,
             commands::generate_thumbnails,
             commands::get_metadata,
-            commands::recycle
+            commands::recycle,
+            commands::transcode,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

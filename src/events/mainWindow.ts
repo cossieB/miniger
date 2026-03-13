@@ -133,5 +133,13 @@ getAllWindows().then(windows => {
         })
     })
     mainWindow.listen("metadata", updateMetadata)
+    mainWindow.listen("transcode", () => {
+        const window = new WebviewWindow("transcode", {
+            url: "/transcode",
+            dragDropEnabled: true,
+            title: "Convert videos",
+            maximized: true
+        })
+    })
 })
 

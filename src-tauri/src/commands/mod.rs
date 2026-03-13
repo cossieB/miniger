@@ -6,6 +6,7 @@ mod inaccessible;
 mod load_directory;
 mod playlist;
 mod recycle;
+mod convert;
 
 pub use clean::{__cmd__cleanup_playlist, cleanup_playlist};
 pub use echo::{__cmd__echo, echo};
@@ -20,3 +21,4 @@ pub use playlist::{
     read_playlist, save_playlist,
 };
 pub use recycle::{__cmd__recycle, recycle};
+pub use convert::{__cmd__transcode, transcode};

@@ -32,10 +32,10 @@ export default function Inaccessible() {
                     getRowId={params => params.data.filmId.toString()}
                     rowSelection="multiple"
                     rowData={data()}
-                onSelectionChanged={(params) => {
-                    const selection = params.api.getSelectedRows();
-                    state.mainPanel.setSelectedIds(selection.map(x => (x.filmId)))
-                }}
+                    onSelectionChanged={(params) => {
+                        const selection = params.api.getSelectedRows();
+                        state.mainPanel.setSelectedIds(selection.map(x => (x.filmId)))
+                    }}
                     columnDefs={[{
                         checkboxSelection: true,
                         headerCheckboxSelection: true,
@@ -72,7 +72,7 @@ function Find(props: ICellEditorParams) {
             }]
         })
         if (!sel) return props.stopEditing()
-        await action({path: sel, filmId: props.data.filmId}, [getInaccessible.key])
+        await action({ path: sel, filmId: props.data.filmId }, [getInaccessible.key])
         props.stopEditing()
     })
     return null

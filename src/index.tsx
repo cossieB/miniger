@@ -21,6 +21,7 @@ import { Costars } from "./routes/Costars";
 import { Search } from "./routes/Search";
 import { search } from "./repositories/search";
 import { Thumbnails } from "./routes/Thumbs";
+import Transcode from "./routes/Transcode";
 
 render(() => (
     <Router  >
@@ -86,6 +87,7 @@ render(() => (
         <Route path="/dragdrop" component={DragDrop} />
         <Route path="/splash" component={Splash} />
         <Route path="/thumbs" component={Thumbnails} />
+        <Route path="/transcode" component={Transcode} />
 
         {/* Redirects */}
         <Route path="/movies/actors" component={() => <Navigate href="/actors" />} />
