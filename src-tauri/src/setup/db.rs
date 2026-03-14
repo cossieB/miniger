@@ -5,7 +5,7 @@ pub fn get_migrations() -> Vec<Migration> {
         Migration {
             version: 1,
             description: "create_initial_tables",
-            sql: include_str!("migrations/schema.sql"),
+            sql: include_str!("../migrations/schema.sql"),
             kind: MigrationKind::Up,
         },
     ]

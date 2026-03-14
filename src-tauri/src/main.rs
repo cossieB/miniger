@@ -1,55 +1,17 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use miniger::{commands, db::get_migrations, utils::create_dirs};
-use std::{os::windows::process::CommandExt, process::Command};
-use tauri::{
-    menu::{MenuBuilder, SubmenuBuilder},
-    Emitter, Manager,
-};
+use miniger::{commands, setup};
+use tauri::{Emitter};
 
 fn main() {
-    let migrations = get_migrations();
+    let migrations = setup::db::get_migrations();
 
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {
-
-            // create images folder
-            let app_data_dir = app.path().app_data_dir().unwrap();
-            create_dirs(app_data_dir);
-
-            //submenus
-            let app_submenu = SubmenuBuilder::new(app, "App")
-                .text("load_playlist", "Load Playlist File")
-                .text("load_videos", "Load Videos")
-                .text("scan_folders", "Scan Folders")
-                .text("play_playlist", "Play Playlist")
-                .text("open_drag_drop", "Drop Files")
-                .quit()
-                .build()?;
-
-            let tools_submenu = SubmenuBuilder::new(app, "Tools")
-                .text("convert_playlist", "Convert Playlist")
-                .text("data_dir", "Show data folder")
-                .build()?;
-
-            let ffmpeg_submenu = SubmenuBuilder::new(app, "FFMpeg")
-                .text("thumbs", "Generate Thumbnails")
-                .text("metadata", "Get Metadata")
-                .text("transcode", "Convert Videos")
-                .enabled(Command::new("ffmpeg").creation_flags(0x08000000).output().is_ok())
-                .build()?;
-
-            let menu = MenuBuilder::new(app)
-                .items(&[&app_submenu, &tools_submenu, &ffmpeg_submenu])
-                .build()?;
-
-
-            let main = app.get_webview_window("main").unwrap();
-            main.set_menu(menu)?;
-
-            Ok(())
+            setup::create_dirs(app);
+            setup::create_menus(app)
         })
         .on_menu_event(|app, event| {
             app.emit_to("main", &event.id.as_ref(), 1).unwrap();
@@ -80,4 +42,3 @@ fn main() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-
