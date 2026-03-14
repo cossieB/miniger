@@ -1,38 +1,45 @@
-use std::{os::windows::process::CommandExt, process::Command};
-
-use tauri::Manager;
+use std::process::Command;
 
 use crate::AppError;
 
 #[tauri::command]
-pub async fn transcode(app: tauri::AppHandle, src: String, dest: String) -> Result<(), AppError> {
-    let dir = app.path().app_data_dir().unwrap();
-    let t = dir.join("progress.txt");
-
-    let output = Command::new("ffmpeg")
-        .creation_flags(0x08000000)
-        .arg("-progress")
-        .arg(t.to_str().unwrap())
-        .arg("-i")
-        .arg(src.clone())
-        .arg("-c:v")
-        .arg("libx264")
-        .arg("-preset")
-        .arg("fast")
-        .arg("-crf")
-        .arg("23")
-        .arg("-c:a")
-        .arg("copy")
-        .arg(dest.clone())
-        .output();
-
-    match output {
-        Ok(output) => {
-            println!("{:#?}", String::from_utf8(output.stdout));
-            println!("{:#?}", String::from_utf8(output.stderr));
-            Ok(())
-        }
-        Err(err) => Err(err.into()),
-    }
-        
+pub async fn transcode(src: String, dest: String) -> Result<(), AppError> {
+    process(&src, &dest);
+    Ok(())
 }
+
+fn process(src: &String, dest: &String) {
+    let args = [
+            "ffmpeg", 
+            "-i", src, 
+            "-c:v", "libx264", 
+            "-preset", "fast", 
+            "-crf", "23", 
+            "-c:a", "copy", 
+            dest];
+    #[cfg(target_os = "windows")]
+    {
+        Command::new("cmd")
+        .arg("/C")
+        .arg("start")
+        .args(&args)
+        .output()
+        .expect("Couldn't start FFMPEG");
+    }
+    #[cfg(target_os = "macos")] 
+    {
+        Command::new("osascript")
+        .args(&["-e", format!("tell app \"Terminal\" to do script \"ffmpeg -i '{}' -c:v libx264 -preset fast -crf 23 -c:a copy '{}'\"", src, dest)])
+        .output()
+        .expect("Couldn't start FFMPEG")
+    }
+    #[cfg(target_os = "linux")]
+    {
+        Command::new("xterm")
+        .arg("-e")
+        .args(&args)
+        .output()
+        .expect("Couldn't start FFMPEG")
+    }
+}
+

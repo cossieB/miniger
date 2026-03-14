@@ -139,7 +139,7 @@ getAllWindows().then(windows => {
             dragDropEnabled: true,
             title: "Convert videos",
             maximized: true
-        })
+        })        
     })
 })
 

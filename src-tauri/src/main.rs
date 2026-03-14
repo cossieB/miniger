@@ -48,7 +48,7 @@ fn main() {
 
             let main = app.get_webview_window("main").unwrap();
             main.set_menu(menu)?;
-            
+
             Ok(())
         })
         .on_menu_event(|app, event| {
