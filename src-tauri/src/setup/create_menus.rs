@@ -8,7 +8,7 @@ pub fn create_menus(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     let app_submenu = SubmenuBuilder::new(app, "App")
         .text("load_playlist", "Load Playlist File")
         .text("load_videos", "Load Videos")
-        .text("scan_folders", "Scan Folders")
+        .text("settings", "Scan Folders")
         .text("play_playlist", "Play Playlist")
         .text("open_drag_drop", "Drop Files")
         .quit()

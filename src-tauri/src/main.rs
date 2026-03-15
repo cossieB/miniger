@@ -1,8 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use miniger::{commands, setup};
-use tauri::{Emitter};
+use miniger::{commands, events::handle_menu_event, setup};
 
 fn main() {
     let migrations = setup::db::get_migrations();
@@ -13,9 +12,7 @@ fn main() {
             setup::create_dirs(app);
             setup::create_menus(app)
         })
-        .on_menu_event(|app, event| {
-            app.emit_to("main", &event.id.as_ref(), 1).unwrap();
-        })
+        .on_menu_event(handle_menu_event)
         .plugin(tauri_plugin_sql::Builder::new().build())
         .plugin(tauri_plugin_fs::init())
         .plugin(
