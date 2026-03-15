@@ -1,5 +1,6 @@
 use tauri::menu::MenuEvent;
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle, Emitter, Manager};
+use tauri_plugin_opener::open_path;
 
 use crate::window;
 
@@ -72,6 +73,14 @@ pub fn handle_menu_event(app: &AppHandle, event: MenuEvent) {
                 },
             );            
         }
-        _ => app.emit_to("main", &event.id.as_ref(), 1).unwrap(),
+        "data_dir" => {
+            let dir = app.path().app_data_dir();
+            if let Ok(dir) = dir {
+                let _ = open_path(dir, None::<&str>);
+            }
+        }
+        _ => {
+            let _ = app.emit_to("main", &event.id.as_ref(), 1);
+        }
     }
 }

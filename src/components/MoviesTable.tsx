@@ -125,6 +125,9 @@ export function MoviesTable(props: { data: MovieData }) {
                     headerName: "Length",
                     colId: "length",
                     valueGetter: param => param.data?.metadata?.format.duration,
+                    cellStyle: {
+                        "text-align": "right"
+                    },
                     valueFormatter: param => {
                         if (!param.value) return "";
                         return secondsToTime(param.value)

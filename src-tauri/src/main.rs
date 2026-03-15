@@ -22,6 +22,17 @@ fn main() {
         )
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .targets([
+                    tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::Stdout),
+                    tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::LogDir {file_name: Some("miniger.log".to_string())}),
+                    tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::Webview)
+                ])
+                .level(tauri_plugin_log::log::LevelFilter::Warn)
+                .max_file_size(2_u128.pow(30))
+                .build(),
+        )
         .invoke_handler(tauri::generate_handler![
             commands::echo,
             commands::read_playlist,

@@ -5,8 +5,6 @@ import { state } from "~/state";
 import { revalidate } from "@solidjs/router"
 import { getFilms } from "~/api/data";
 import { loadPlaylist, loadVideos } from "~/utils/loadPlaylist";
-import { appDataDir, } from "@tauri-apps/api/path";
-import { openPath } from "@tauri-apps/plugin-opener";
 import { createTempPlaylist } from "~/utils/createTempPlaylist";
 import { updateMetadata } from "~/utils/updateMetadata";
 
@@ -58,14 +56,7 @@ getAllWindows().then(windows => {
     mainWindow.listen<typeof state['sidePanel']['list']>("files-dropped", e => {
         state.sidePanel.setFiles(e.payload);
     })
-    mainWindow.listen("data_dir", async () => {
-        try {
-            openPath(await appDataDir())
-        } 
-        catch (error) {
-            console.error(error)
-        }
-    })
+
     mainWindow.listen("metadata", updateMetadata)
 })
 

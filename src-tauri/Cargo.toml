@@ -21,3 +21,4 @@ tauri-plugin-dialog = "2"
 playzer = {path = "./playzer"}
 tauri-plugin-opener = "2"
 trash = "5.2.5"
+tauri-plugin-log = "2"

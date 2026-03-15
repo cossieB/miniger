@@ -2,8 +2,9 @@ use std::{os::windows::process::CommandExt, process::Command, thread};
 
 use serde::{Deserialize, Serialize};
 use tauri::{Emitter, Manager};
+use tauri_plugin_log::log::warn;
 
-use crate::AppError;
+use crate::{logger::CrashLogger, AppError};
 
 #[derive(Serialize, Deserialize)]
 #[allow(non_snake_case)]
@@ -14,7 +15,11 @@ pub struct F {
 
 #[tauri::command]
 pub async fn generate_thumbnails(app_handle: tauri::AppHandle, videos: Vec<F>) {
-    let dir = app_handle.path().app_data_dir().unwrap().join("thumbs");
+    let dir = app_handle
+        .path()
+        .app_data_dir()
+        .unwrap_or_log_fatal()
+        .join("thumbs");
     let handle = thread::spawn(move || {
         for video in &videos {
             let output = Command::new("ffmpeg")
@@ -30,7 +35,6 @@ pub async fn generate_thumbnails(app_handle: tauri::AppHandle, videos: Vec<F>) {
                 .arg("1")
                 .arg(dir.join(format!("{}{}", video.filmId, ".jpg")))
                 .output();
-
 
             if let Err(e) = output {
                 println!("{:?}", e)
@@ -98,18 +102,32 @@ pub async fn get_metadata(
             let percentage = (100 * (i + 1)) as f64 / videos.len() as f64;
             update_frontend(&app, percentage);
         }
+        let Ok(out) = result else {
+            println!("{:#?}", result);
+            continue;
+        };
 
-        if let Ok(out) = result {
-            let temp = out.stdout;
-            let o = String::from_utf8(temp);
-            if let Ok(str) = o {
-                if let Ok(metadata) = serde_json::from_str::<FfprobeMetadata>(&str) {
-                    vec.push(Response {
-                        filmId: video.filmId,
-                        metadata,
-                    });
-                }
+        let temp = out.stdout;
+        let o = String::from_utf8(temp);
+
+        let Ok(str) = o else {
+            println!("{:#?}", o);
+            continue;
+        };
+        let json = serde_json::from_str::<FfprobeMetadata>(&str);
+        match json {
+            Ok(metadata) => {
+                vec.push(Response { filmId: video.filmId, metadata });
+            },
+            Err(e) => {
+                warn!("{} at path {}", e, video.path);
             }
+        }
+        if let Ok(metadata) = serde_json::from_str::<FfprobeMetadata>(&str) {
+            vec.push(Response {
+                filmId: video.filmId,
+                metadata,
+            });
         }
     }
     update_frontend(&app, 100.into());

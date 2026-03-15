@@ -1,5 +1,7 @@
 use tauri::{AppHandle, Emitter, Listener, Manager, WebviewUrl, WebviewWindow};
 
+use crate::logger::logger;
+
 pub fn create_window(app: &AppHandle, label: &str, url: &str, options: super::WindowSettings) {
     let builder = WebviewWindow::builder(app, label, WebviewUrl::App(url.into()));
     let mut builder = builder
@@ -10,7 +12,7 @@ pub fn create_window(app: &AppHandle, label: &str, url: &str, options: super::Wi
         .always_on_top(options.always_on_top)
         .minimizable(options.minimizable)
         .maximizable(options.maximizable);
-        
+
     if options.center {
         builder = builder.center();
     }
@@ -19,9 +21,7 @@ pub fn create_window(app: &AppHandle, label: &str, url: &str, options: super::Wi
     match window {
         Ok(window) => {
             let main_window = app.get_webview_window("main").unwrap();
-            if options.lock_main {
-                let _ = main_window.set_enabled(false);
-            }
+            let _ = main_window.set_enabled(false);
             window.listen("tauri://close-requested", move |_| {
                 let _ = main_window.set_enabled(true);
             });
@@ -29,7 +29,10 @@ pub fn create_window(app: &AppHandle, label: &str, url: &str, options: super::Wi
         Err(error) => match error {
             | tauri::Error::WindowLabelAlreadyExists(_)
             | tauri::Error::WebviewLabelAlreadyExists(_) => {
-                let _ = app.emit_to("main", "set-status", "Window already open");
+                let existing_window = app.get_webview_window(label);
+                if let Some(existing) = existing_window {
+                    let _ = existing.set_focus();
+                }
             }
             _ => {
                 let _ = app.emit_to(
@@ -37,6 +40,7 @@ pub fn create_window(app: &AppHandle, label: &str, url: &str, options: super::Wi
                     "set-status",
                     "Could not open window. Please try again",
                 );
+                logger(app, error.to_string().as_bytes());
             }
         },
     }
