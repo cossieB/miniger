@@ -23,13 +23,13 @@ pub async fn get_metadata(
     for (i, video) in videos.iter().enumerate() {
         let result = Command::new("ffprobe")
             .creation_flags(0x08000000)
-            .arg("-v")
-            .arg("quiet")
-            .arg("-print_format")
-            .arg("json")
-            .arg("-show_format")
-            .arg("-show_streams")
-            .arg(format!("{}", video.path))
+            .args([
+                "-v", "quiet",
+                "-print_format", "json",
+                "-show_format",
+                "-show_streams",
+                &video.path
+            ])
             .output();
 
         if i % 50 == 0 {

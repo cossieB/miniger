@@ -15,16 +15,14 @@ pub async fn generate_thumbnails(app_handle: tauri::AppHandle, videos: Vec<super
         for video in &videos {
             let output = Command::new("ffmpeg")
                 .creation_flags(0x08000000)
-                .arg("-y")
-                .arg("-ss")
-                .arg("00:02:00")
-                .arg("-i")
-                .arg(video.path.clone())
-                .arg("-vf")
-                .arg("scale=720:-1")
-                .arg("-vframes")
-                .arg("1")
-                .arg(dir.join(format!("{}{}", video.filmId, ".jpg")))
+                .args([
+                    "-y",
+                    "-ss", "00:02:00",
+                    "-i", &video.path,
+                    "-vf", "scale=720:-1",
+                    "-vframes", "1",
+                    dir.join(format!("{}{}", video.filmId, ".jpg")).to_str().unwrap()
+                ])
                 .output();
 
             if let Err(e) = output {

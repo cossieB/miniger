@@ -4,13 +4,19 @@ use crate::error::AppError;
 
 #[tauri::command]
 pub fn open_explorer(path: String) -> Result<(), AppError> {
-    let os = std::env::consts::OS;
-    if os == "windows" {
+    #[cfg(target_os = "windows")]
+    {
         Command::new("explorer").args(["/select,", &path]).spawn()?;
         return Ok(());
-    } else if os == "macos" {
+    } 
+    #[cfg(target_os = "macos")]
+    {
         Command::new("open").args(["-R", &path]).spawn()?;
         return Ok(());
     }
-    Err("Unsupported platform".to_string().into())
+    #[cfg(target_os = "linux")]
+    {
+        Command::new("xdg-open").arg(&path).spawn()?;
+        return Ok(());
+    }
 }
