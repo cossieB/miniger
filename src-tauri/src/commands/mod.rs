@@ -1,4 +1,5 @@
 mod clean;
+mod convert;
 mod echo;
 mod explorer;
 mod ffmpeg;
@@ -6,19 +7,13 @@ mod inaccessible;
 mod load_directory;
 mod playlist;
 mod recycle;
-mod convert;
 
-pub use clean::{__cmd__cleanup_playlist, cleanup_playlist};
-pub use echo::{__cmd__echo, echo};
-pub use explorer::{__cmd__open_explorer, open_explorer};
-pub use ffmpeg::{
-    __cmd__generate_thumbnails, __cmd__get_metadata, generate_thumbnails, get_metadata,
-};
-pub use inaccessible::{__cmd__get_inaccessible, get_inaccessible};
-pub use load_directory::{__cmd__load_directory, load_directory};
-pub use playlist::{
-    __cmd__convert_playlist, __cmd__read_playlist, __cmd__save_playlist, convert_playlist,
-    read_playlist, save_playlist,
-};
-pub use recycle::{__cmd__recycle, recycle};
-pub use convert::{__cmd__transcode, transcode};
+pub use clean::*;
+pub use convert::*;
+pub use echo::*;
+pub use explorer::*;
+pub use ffmpeg::*;
+pub use inaccessible::*;
+pub use load_directory::*;
+pub use playlist::*;
+pub use recycle::*;
