@@ -1,18 +1,16 @@
-import { useAction } from "@solidjs/router";
 import { DatabaseIcon } from "lucide-solid";
-import { addDirectoriesToDatabase } from "~/api/mutations";
+import { useAddFiles } from "~/hooks/useAddFiles";
 import { state } from "~/state";
 
-
 export function AddPlaylistFilesToDatabaseBtn() {
-    const addAction = useAction(addDirectoriesToDatabase)
+    const addAction = useAddFiles()
     return (
         <button
             title="Add to database"
             onclick={async () => {
                 const files = state.sidePanel.list
                 if (files.length == 0) return
-                await addAction(files.map(f => ({path: f.path, title: f.title})))
+                await addAction(files.map(f => ({ path: f.path, title: f.title })))
             }}
         >
             <DatabaseIcon

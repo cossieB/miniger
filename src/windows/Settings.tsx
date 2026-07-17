@@ -4,7 +4,7 @@ import { open } from "@tauri-apps/plugin-dialog"
 import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs"
 import { Trash2Icon } from "lucide-solid"
 import { createResource, createSignal, For, onMount, Show } from "solid-js"
-import { addDirectoriesToDatabase } from "~/api/mutations"
+import { addFilesToDatabase } from "~/api/mutations"
 import { readDirectories } from "~/utils/readDirectories"
 
 export function Settings() {
@@ -16,8 +16,8 @@ export function Settings() {
     onMount(() => {
         scanNowBtn.focus()
     })
-    const action = useAction(addDirectoriesToDatabase)
-    const submissions = useSubmission(addDirectoriesToDatabase)
+    const action = useAction(addFilesToDatabase)
+    const submissions = useSubmission(addFilesToDatabase)
     return (
         <div 
             class="w-screen h-screen bg-slate-800 z-999 absolute p-2 overflow-y-auto scroll text-white"

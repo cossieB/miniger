@@ -1,7 +1,6 @@
-import { addDirectoriesToDatabase } from "../../api/mutations";
-import { useAction } from "@solidjs/router";
 import { addFolderToSidebar, readDirectories } from "../../utils/readDirectories";
 import { FolderInputIcon, FolderOpenIcon } from "lucide-solid";
+import { useAddFiles } from "~/hooks/useAddFiles";
 
 export function AddDirectoryBtn() {
     return (
@@ -15,13 +14,14 @@ export function AddDirectoryBtn() {
 }
 
 export function AddDirectoryToDatabase() {
-    const addAction = useAction(addDirectoriesToDatabase)
+    const addAction = useAddFiles()
     return (
         <button
             title="Add Folder To Database"
             onClick={async () => {
                 const files = await readDirectories()
-                files && await addAction(files)
+                if (!files) return;
+                await addAction(files)                
             }}
         >
             <FolderInputIcon />

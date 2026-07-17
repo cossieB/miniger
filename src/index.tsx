@@ -31,7 +31,7 @@ render(() => (
                 <Route
                     path="/"
                     component={() => <Movies fetcher={() => getFilms()} />}
-                    preload={void getFilms}
+                    preload={() => void getFilms()}
                 />
                 <Route
                     path="/tags/:tag"

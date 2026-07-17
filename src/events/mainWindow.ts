@@ -7,6 +7,7 @@ import { getFilms } from "~/api/data";
 import { loadPlaylist, loadVideos } from "~/utils/loadPlaylist";
 import { createTempPlaylist } from "~/utils/createTempPlaylist";
 import { updateMetadata } from "~/utils/updateMetadata";
+import { getFilmsWithoutMetadata } from "~/repositories/filmsRepository";
 
 export type SessionJSON = {
     list: typeof state['sidePanel']['list'],
@@ -45,7 +46,7 @@ getAllWindows().then(windows => {
     mainWindow.listen("load_videos", async () => {
         loadVideos()
     })
-    
+
     mainWindow.listen("play_playlist", async () => {
         await createTempPlaylist(state.sidePanel.list)
     })
@@ -57,6 +58,9 @@ getAllWindows().then(windows => {
         state.sidePanel.setFiles(e.payload);
     })
 
-    mainWindow.listen("metadata", updateMetadata)
+    mainWindow.listen("metadata", async () => {
+        const videos = await getFilmsWithoutMetadata()
+        updateMetadata(videos)
+    })
 })
 

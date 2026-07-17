@@ -6,7 +6,7 @@ import { readDirectories } from "./utils/readDirectories";
 import { filterMap } from "./lib/filterMap";
 import { onMount } from "solid-js";
 import { useAction, useNavigate } from "@solidjs/router";
-import { addDirectoriesToDatabase } from "./api/mutations";
+import { addFilesToDatabase } from "./api/mutations";
 import { sleep } from "./lib/sleep";
 import { getFilms } from "./api/data";
 
@@ -47,7 +47,7 @@ async function readWatchJson() {
 }
 
 export function useWatchJson() {
-    const action = useAction(addDirectoriesToDatabase)
+    const action = useAction(addFilesToDatabase)
     onMount(async () => {
         try {
             const files = await readWatchJson()

@@ -89,10 +89,10 @@ export const editFilmActors = action(async (actors: TActor[], filmId: number) =>
     }
 })
 
-export const addDirectoriesToDatabase = action(async (files: {title: string, path: string}[]) => {
+export const addFilesToDatabase = action(async (files: {title: string, path: string}[]) => {
     try {
-        await filmRepo.addFilms(files)
-        return json(undefined, {revalidate: [getFilms.key]})
+        const res = await filmRepo.addFilms(files)
+        return json(res, {revalidate: [getFilms.key]})
     }
     catch (error) {
         console.log(error);

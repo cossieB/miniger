@@ -1,12 +1,12 @@
 import { type JSXElement } from "solid-js";
 import { useAction } from "@solidjs/router";
-import { addDirectoriesToDatabase } from "~/api/mutations";
+import { addFilesToDatabase } from "~/api/mutations";
 import { addFolderToSidebar, readDirectories } from "~/utils/readDirectories";
 import { loadPlaylist, loadVideos } from "~/utils/loadPlaylist";
 import { Film, FolderInput, FolderOpen, ListVideo } from "lucide-solid";
 
 export function Home() {
-    const addAction = useAction(addDirectoriesToDatabase)
+    const addAction = useAction(addFilesToDatabase)
     return (
         <div class="mx-1">
             <h1 class="text-center text-2xl my-2.5">Welcome To Miniger!</h1>

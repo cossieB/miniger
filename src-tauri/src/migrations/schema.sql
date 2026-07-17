@@ -4,8 +4,7 @@ CREATE TABLE IF NOT EXISTS actor (
     dob TEXT,
     nationality TEXT,
     gender TEXT,
-    image TEXT,
-    metadata TEXT
+    image TEXT
 );
 
 CREATE TABLE IF NOT EXISTS studio (
@@ -21,7 +20,8 @@ CREATE TABLE IF NOT EXISTS film (
     studio_id INTEGER,
     release_date DATETIME,
     date_added DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
+    metadata TEXT,
+    
     FOREIGN KEY (studio_id) REFERENCES studio(studio_id) ON DELETE SET NULL
 );
 

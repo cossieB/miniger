@@ -78,7 +78,7 @@ export function updateFilm(f: Partial<Omit<TFilm, "filmId">>, filmId: number) {
 
 export async function addFilms(files: { title: string, path: string }[]) {
     try {
-        return db.insertInto("film").values(files).onConflict(oc => oc.column("path").doNothing()).execute()
+        return db.insertInto("film").values(files).onConflict(oc => oc.column("path").doNothing()).returningAll().execute()
         
     } catch (error) {
         console.error

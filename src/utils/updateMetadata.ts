@@ -1,10 +1,8 @@
-import { revalidate } from "@solidjs/router"
 import { invoke } from "@tauri-apps/api/core"
 import { sql } from "kysely"
-import { getFilms, getFilmsByActor, getFilmsByStudio, getFilmsByTag } from "~/api/data"
 import { db } from "~/kysely/database"
-import { getFilmsWithoutMetadata } from "~/repositories/filmsRepository"
 import { state } from "~/state"
+import { refetchFilms } from "./refetchFilms"
 
 export type FfprobeMetadata = {
     filmId: number,
@@ -28,9 +26,12 @@ export type FfprobeMetadata = {
     }
 }
 
-export async function updateMetadata() {
-    const videos = await getFilmsWithoutMetadata()
-    const result: FfprobeMetadata[] = await invoke("get_metadata", { videos: videos })
+export async function updateMetadata(videos: {
+    filmId: number;
+    path: string;
+}[]) {
+
+    const result: FfprobeMetadata[] = await invoke("get_metadata", { videos })
     state.status.setStatus("Updating database")
     const arr = result.map(x => ({
         filmId: x.filmId,
@@ -57,8 +58,9 @@ export async function updateMetadata() {
         // @ts-expect-error 
         await db.insertInto("temp_film").values(arr).execute()
         await sql`UPDATE film SET metadata = temp.metadata FROM temp_film temp WHERE film.film_id = temp.film_id`.execute(db)
+        await db.schema.dropTable("temp_film").execute()
         state.status.setStatus("✓ Updated metadata", true)
-        revalidate([getFilms.key, getFilmsByStudio.key, getFilmsByActor.key, getFilmsByTag.key])
+        refetchFilms()
     } catch (error) {
         console.error(error)
         state.status.setStatus("Failure")

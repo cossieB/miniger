@@ -1,3 +1,3 @@
-[] menu bar
+[x] menu bar
 
-[] performance improvements for large playlists
+[x] performance improvements for large playlists
