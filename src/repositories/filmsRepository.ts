@@ -5,37 +5,41 @@ import { db } from "~/kysely/database";
 
 export type DetailedDbFilm = Awaited<ReturnType<typeof allFilms>>[0]
 
-const cte = db
-    .with("tq", db => db
-        .selectFrom("filmTag")
-        .select([
-            sql<string>`JSON_GROUP_ARRAY(tag)`.as("tags"),
-            'filmId'
-        ])
-        .groupBy('filmId')
-    )
-    .with("aq", db => db
-        .selectFrom("actorFilm")
-        .select([
-            sql`JSON_GROUP_ARRAY(JSON_OBJECT('actorId', actor.actor_id, 'name', name, 'image', image, 'dob', dob, 'nationality', nationality, 'gender', gender) ORDER BY name)`.as('actors'),
-            "filmId"
-        ])
-        .innerJoin("actor", "actorFilm.actorId", "actor.actorId")
-        .groupBy("filmId")
-    )
-
-export const filmsQuery = cte
+export const filmsQuery = db
     .selectFrom("film")
     .leftJoin("studio", "film.studioId", "studio.studioId")
-    .leftJoin("tq", "tq.filmId", "film.filmId")
-    .leftJoin("aq", "aq.filmId", "film.filmId")
-    .selectAll("film")
-    .select([
+    .select((eb) => [
+        // Base
+        "film.filmId",
+        "film.title",
+        "film.path",
+        "film.releaseDate",
+        "film.dateAdded",
         "studio.name as studioName",
-        sql<string>`coalesce(tags, '[]')`.as("tags"),
-        sql<string>`coalesce(actors, '[]')`.as("actors")
+        
+        // Tags
+        eb.selectFrom("filmTag")
+            .select(sql<string>`COALESCE(JSON_GROUP_ARRAY(tag), '[]')`.as("tags"))
+            .whereRef("filmTag.filmId", "=", "film.filmId")
+            .as("tags"),
+
+        // Actors
+        eb.selectFrom("actorFilm")
+            .innerJoin("actor", "actorFilm.actorId", "actor.actorId")
+            .select(
+                sql<string>`COALESCE(JSON_GROUP_ARRAY(JSON_OBJECT(
+                    'actorId', actor.actor_id, 
+                    'name', name, 
+                    'image', image, 
+                    'dob', dob, 
+                    'nationality', nationality, 
+                    'gender', gender
+                ) ORDER BY name), '[]')`.as("actors")
+            )
+            .whereRef("actorFilm.filmId", "=", "film.filmId")
+            .as("actors")
     ])
-    .orderBy(sql`LOWER(title)`)
+    .orderBy(sql`LOWER(film.title)`);
 
 export function allFilms() {
 

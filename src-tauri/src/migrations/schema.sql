@@ -41,3 +41,8 @@ CREATE TABLE IF NOT EXISTS film_tag (
     PRIMARY KEY(film_id, tag),
     FOREIGN KEY (film_id) REFERENCES film(film_id) ON DELETE CASCADE
 );
+
+CREATE INDEX idx_film_title_lower ON film(LOWER(title));
+CREATE INDEX idx_actor_film_film_actor ON actor_film(film_id, actor_id);
+CREATE INDEX idx_film_tag_tag_film ON film_tag(tag, film_id);
+CREATE INDEX idx_film_studio_id ON film(studio_id);
