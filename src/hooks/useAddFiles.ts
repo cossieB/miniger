@@ -11,13 +11,12 @@ export function useAddFiles() {
     return async function (files: Parameters<typeof addFilesToDatabase>[0]) {
         const res = await addAction(files.map(f => ({ path: f.path, title: f.title })))
         if (!res) return;
-        await Promise.all([
-            updateMetadata(res),
-            invoke("generate_thumbnails", {
-                videos: res
-            })
-        ])
+        // running these metadata and thumbnail processes sequentially to prevent PC slowdowns
+        await updateMetadata(res),
         await refetchFilms()
+        await invoke("generate_thumbnails", {
+            videos: res
+        })        
         state.status.setStatus("")
     }
 }
