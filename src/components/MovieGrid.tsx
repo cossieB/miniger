@@ -83,7 +83,7 @@ export function MovieGrid(props: P) {
                             <img
                                 class="aspect-video object-cover"
                                 loading="lazy"
-                                src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.jpg`)}
+                                src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`)}
                                 alt=""
                                 onerror={e => {
                                     e.currentTarget.src = "/Question_Mark.svg"

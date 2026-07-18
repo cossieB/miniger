@@ -19,7 +19,7 @@ const views = [{
     id: "grid"
 }]
 
-const [activeView, setActiveView] = createSignal(0)
+const [activeView, setActiveView] = createSignal(1)
 
 export function Movies(props: Props) {
 
@@ -27,6 +27,7 @@ export function Movies(props: Props) {
 
     const data = createMemo(() => {
         if (!films()) return undefined
+
         return films()!.map((film => ({
             ...film,
             tags: JSON.parse(film.tags),

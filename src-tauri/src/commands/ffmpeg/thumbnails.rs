@@ -19,9 +19,9 @@ pub async fn generate_thumbnails(app_handle: tauri::AppHandle, videos: Vec<super
                     "-y",
                     "-ss", "00:02:00",
                     "-i", &video.path,
-                    "-vf", "scale=720:-1",
+                    "-vf", "scale=1280:-1",
                     "-vframes", "1",
-                    dir.join(format!("{}{}", video.filmId, ".jpg")).to_str().unwrap()
+                    dir.join(format!("{}{}", video.filmId, ".webp")).to_str().unwrap()
                 ])
                 .output();
 

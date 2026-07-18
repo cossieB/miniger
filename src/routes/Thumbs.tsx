@@ -108,7 +108,7 @@ export function Thumbnails() {
                             >
                                 <img
                                     class="aspect-video object-cover"
-                                    src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.jpg`) + `?a=${a()}`}
+                                    src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`) + `?a=${a()}`}
                                     alt=""
                                     onerror={e => {
                                         errored.add(i())
