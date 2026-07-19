@@ -5,7 +5,7 @@ import MainWindow from "./windows/MainWindow";
 import { Navigate, Route, Router } from "@solidjs/router";
 import Actors from "./routes/Actors";
 import Studios from "./routes/Studios";
-import { getActors, getCostars, getFilms, getFilmsByActor, getFilmsByStudio, getFilmsByTag, getInaccessible, getMoviesByCostars, getPairings, getStudios, getTags } from "./api/data";
+import { getActors, getCostars, getFilms, getInaccessible, getMoviesByCostars, getPairings, getStudios, getTags } from "./api/data";
 import 'ag-grid-community/styles/ag-grid.css'; // grid core CSS
 import "ag-grid-community/styles/ag-theme-alpine.css"; // optional theme
 import { Movies } from "./routes/Movies";
@@ -22,6 +22,8 @@ import { Search } from "./routes/Search";
 import { search } from "./repositories/search";
 import { Thumbnails } from "./routes/Thumbs";
 import Transcode from "./routes/Transcode";
+import { getId } from "./utils/getIdFromParam";
+
 
 render(() => (
     <Router  >
@@ -35,13 +37,13 @@ render(() => (
                 />
                 <Route
                     path="/tags/:tag"
-                    component={(props) => <Movies fetcher={() => getFilmsByTag(props.params.tag!)} />}
-                    preload={(args) => void getFilmsByTag(args.params.tag!)}
+                    component={(props) => <Movies fetcher={() => getFilms({tags: [decodeURI(props.params.tag!)]})} />}
+                    preload={(args) => void getFilms({tags: [decodeURI(args.params.tag!)]})}
                 />
                 <Route
                     path="/actors/:actor"
-                    component={props => <Movies fetcher={() => getFilmsByActor(props.params.actor!)} />}
-                    preload={(args) => void getFilmsByActor(args.params.actor!)}
+                    component={props => <Movies fetcher={() => getFilms({actorIds: [getId(props.params.actor!, "/movies")]})} />}
+                    preload={(args) => void getFilms({actorIds: [getId(args.params.actor!, "/movies")]})}
                 />
                 <Route
                     path="/actors/:actor/:costar"
@@ -50,8 +52,8 @@ render(() => (
                 />
                 <Route
                     path="/studios/:studio"
-                    component={props => <Movies fetcher={() => getFilmsByStudio(props.params.studio!)} />}
-                    preload={args => void getFilmsByStudio(args.params.studio!)}
+                    component={props => <Movies fetcher={() => getFilms({studioId: getId(props.params.studio!, "/studios")})} />}
+                    preload={args => void getFilms({studioId: getId(args.params.studio!, "/studios")})}
                 />
                 <Route
                     path="/inaccessible"
@@ -60,7 +62,7 @@ render(() => (
                 />
                 <Route
                     path="/search"
-                    component={props => <Movies fetcher={() => search(props.params.filters)} />}
+                    component={props => <Movies fetcher={() => search()} />}
                 />
             </Route>
             <Route path="/actors" >

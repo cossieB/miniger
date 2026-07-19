@@ -2,8 +2,7 @@ import { sql } from "kysely";
 import type { TFilm } from "~/datatypes";
 import { db } from "~/kysely/database";
 
-
-export type DetailedDbFilm = Awaited<ReturnType<typeof allFilms>>[0]
+export type DetailedDbFilm = Awaited<ReturnType<typeof findFilms>>[0]
 
 export const filmsQuery = db
     .selectFrom("film")
@@ -16,6 +15,8 @@ export const filmsQuery = db
         "film.releaseDate",
         "film.dateAdded",
         "studio.name as studioName",
+        "film.studioId",
+        "film.metadata",
         
         // Tags
         eb.selectFrom("filmTag")
@@ -41,24 +42,43 @@ export const filmsQuery = db
     ])
     .orderBy(sql`LOWER(film.title)`);
 
-export function allFilms() {
-
-    return filmsQuery.execute()
+export type FilmFilters = {
+    actorIds?: number[]
+    tags?: string[]
+    studioId?: number | null
+    afterDate?: string | null;
+    beforeDate?: string | null;    
 }
 
-export function filmsByTag(tag: string) {
-    const filter = db.selectFrom("filmTag").select("filmTag.filmId").where("filmTag.tag", "=", tag)
-    return filmsQuery.where("film.filmId", "in", filter).execute()
-}
+export function findFilms(filters: FilmFilters = {}) {
+    return filmsQuery
+        .$if(!!filters.afterDate, qb => qb.where("film.releaseDate", ">=", filters.afterDate!))
+        .$if(!!filters.beforeDate, qb => qb.where("film.releaseDate", "<=", filters.beforeDate!))
+        .$if(!!filters.studioId, (qb) => qb.where("film.studioId", "=", filters.studioId!))
 
-export function filmsByActor(actorId: number) {
-
-    const filter = db.selectFrom("actorFilm").select("actorFilm.filmId").where("actorFilm.actorId", "=", actorId)
-    return filmsQuery.where("film.filmId", "in", filter).execute()
-}
-
-export function filmsByStudio(studioId: number) {
-    return filmsQuery.where("film.studioId", "=", studioId).execute()
+        .$if(!!filters.tags?.length, (qb) =>
+            qb.where(
+                "film.filmId",
+                "in",
+                db.selectFrom("filmTag")
+                    .select("filmTag.filmId")
+                    .where("filmTag.tag", "in", filters.tags!)
+                    .groupBy("filmTag.filmId")
+                    .having(sql`COUNT(DISTINCT tag)`, "=", filters.tags!.length)
+            )
+        )
+        .$if(!!filters.actorIds?.length, (qb) =>
+            qb.where(
+                "film.filmId",
+                "in",
+                db.selectFrom("actorFilm")
+                    .select("actorFilm.filmId")
+                    .where("actorFilm.actorId", "in", filters.actorIds!)
+                    .groupBy("actorFilm.filmId")
+                    .having(sql`COUNT(DISTINCT actor_id)`, "=", filters.actorIds!.length)
+            )
+        )
+        .execute()
 }
 
 export async function filmsByPath(path: string) {

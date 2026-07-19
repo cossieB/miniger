@@ -30,8 +30,8 @@ export function Movies(props: Props) {
 
         return films()!.map((film => ({
             ...film,
-            tags: JSON.parse(film.tags),
-            actors: JSON.parse(film.actors),
+            tags: JSON.parse(film.tags as string),
+            actors: JSON.parse(film.actors as string),
             rowId: createUniqueId(),
             isOnDb: true,
             metadata: film.metadata ? JSON.parse(film.metadata) as FfprobeMetadata["metadata"] : null
