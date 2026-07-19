@@ -1,12 +1,13 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { appDataDir, sep } from "@tauri-apps/api/path";
 import { batch, createEffect, For, onMount, Show } from "solid-js";
-import type { MovieData, MovieTableData } from "~/types";
+import type { MovieData } from "~/types";
 import MoviesContextMenu from "./MoviesContextMenu";
-import { createStore } from "solid-js/store";
 import { ReactiveSet } from "@solid-primitives/set";
 import { useNavigate } from "@solidjs/router";
 import { state } from "~/state";
+import { useGetThumbnails } from "~/hooks/useGenerateThumbnails";
+import { useMoviesContextMenu } from "~/hooks/useMoviesContextMenu";
 
 const dir = await appDataDir()
 
@@ -14,22 +15,8 @@ type P = {
     data: MovieData
 }
 
-function useMoviesContextMenu() {
-    const [contextMenu, setContextMenu] = createStore({
-        isOpen: false,
-        x: 0,
-        y: 0,
-        close() {
-            setContextMenu('isOpen', false)
-        },
-        data: {} as MovieTableData,
-        selections: [] as MovieTableData[]
-    })
-    return { contextMenu, setContextMenu }
-}
-
 export function MovieGrid(props: P) {
-
+    const {addThumbnail, cacheBuster} = useGetThumbnails()
     const { contextMenu, setContextMenu } = useMoviesContextMenu()
     const selections = new ReactiveSet<number>()
     const navigate = useNavigate()
@@ -43,9 +30,9 @@ export function MovieGrid(props: P) {
         state.getSelections = () => contextMenu.selections
     })
     return (
-        <div class="w-full overflow-y-scroll relative overflow-scroll h-full" style={{"content-visibility": "auto"}}>
+        <div class="w-full overflow-y-scroll relative overflow-scroll h-full" style={{ "content-visibility": "auto" }}>
             <div
-                class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-1"
+                class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-1"
             >
                 <For each={props.data}>
                     {(film, i) =>
@@ -83,9 +70,10 @@ export function MovieGrid(props: P) {
                             <img
                                 class="aspect-video object-cover"
                                 loading="lazy"
-                                src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`)}
+                                src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`) + `?=${cacheBuster()}`}
                                 alt=""
                                 onerror={e => {
+                                    addThumbnail({filmId: film.filmId, path: film.path})
                                     e.currentTarget.src = "/Question_Mark.svg"
                                 }} />
                             <label class="overflow-hidden text-nowrap text-center"> {film.title} </label>
@@ -102,3 +90,4 @@ export function MovieGrid(props: P) {
         </div>
     )
 }
+

@@ -1,6 +1,6 @@
-use std::sync::atomic::{AtomicUsize, Ordering};
+use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use serde::{Serialize, Deserialize};
+use std::sync::atomic::{AtomicUsize, Ordering};
 use tauri::Emitter;
 use tauri_plugin_log::log;
 use tokio::process::Command;
@@ -13,11 +13,14 @@ pub async fn get_metadata(
     app: tauri::AppHandle,
     videos: Vec<super::F>,
 ) -> Result<Vec<Response>, AppError> {
-    let ffprobe = Command::new("ffprobe")
-        .creation_flags(0x08000000)
-        .arg("-version")
-        .output()
-        .await;
+    let mut cmd = Command::new("ffprobe");
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        cmd.as_std_mut().creation_flags(0x08000000);
+    }
+    let ffprobe = cmd.arg("-version").output().await;
+
     if ffprobe.is_err() {
         return Err(AppError::new("ffprobe is not installed".to_string()));
     }
@@ -61,15 +64,20 @@ pub async fn get_metadata(
     Ok(vec)
 }
 
-async fn probe_one(
-    video: super::F,
-    completed: Arc<AtomicUsize>,
-) -> Option<Response> {
-    let result = Command::new("ffprobe")
-        .creation_flags(0x08000000)
+async fn probe_one(video: super::F, completed: Arc<AtomicUsize>) -> Option<Response> {
+    let mut cmd = Command::new("ffprobe");
+
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        cmd.as_std_mut().creation_flags(0x08000000);
+    }
+    let result = cmd
         .args([
-            "-v", "quiet",
-            "-print_format", "json",
+            "-v",
+            "quiet",
+            "-print_format",
+            "json",
             "-show_format",
             "-show_streams",
             &video.path,

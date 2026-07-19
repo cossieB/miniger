@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{process::Command, sync::Arc};
 
 use tauri::Manager;
 use tokio::task::JoinSet;
@@ -7,6 +7,20 @@ use crate::logger::CrashLogger;
 
 #[tauri::command]
 pub async fn generate_thumbnails(app_handle: tauri::AppHandle, videos: Vec<super::F>) {
+    let mut cmd = Command::new("ffmpeg");
+
+    // Apply the flag only on Windows (0x08000000 is CREATE_NO_WINDOW)
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        cmd.creation_flags(0x08000000);
+    }
+
+    let ffmpeg = cmd.arg("-version").output();
+
+    if ffmpeg.is_err() {
+        return;
+    }
     let dir = Arc::new(
         app_handle
             .path()
@@ -43,15 +57,24 @@ async fn generate_one(dir: Arc<std::path::PathBuf>, video: super::F) {
         return;
     }
 
-    let result = tokio::process::Command::new("ffmpeg")
-        .creation_flags(0x08000000)
+    let mut cmd = tokio::process::Command::new("ffmpeg");
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        cmd.as_std_mut().creation_flags(0x08000000);
+    }
+    let result = cmd
         .args([
             "-y",
-            "-ss", "00:02:00",
-            "-i", &video.path,
+            "-ss",
+            "00:02:00",
+            "-i",
+            &video.path,
             "-an",
-            "-vf", "scale=1280:-1",
-            "-vframes", "1",
+            "-vf",
+            "scale=1280:-1",
+            "-vframes",
+            "1",
         ])
         .arg(&out_path)
         .output()

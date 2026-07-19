@@ -1,7 +1,6 @@
-use std::{os::windows::process::CommandExt, process::Command};
-
 use tauri::{
-    App, Manager, menu::{MenuBuilder, SubmenuBuilder}
+    App, Manager,
+    menu::{MenuBuilder, SubmenuBuilder},
 };
 
 pub fn create_menus(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
@@ -23,12 +22,17 @@ pub fn create_menus(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
         .text("thumbs", "Generate Thumbnails")
         .text("metadata", "Get Metadata")
         .text("transcode", "Convert Videos")
-        .enabled(
-            Command::new("ffmpeg")
-                .creation_flags(0x08000000)
-                .output()
-                .is_ok(),
-        )
+        .enabled({
+            let mut cmd = std::process::Command::new("ffmpeg");
+
+            #[cfg(windows)]
+            {
+                use std::os::windows::process::CommandExt;
+                cmd.creation_flags(0x08000000); // CREATE_NO_WINDOW
+            }
+
+            cmd.output().is_ok()
+        })
         .build()?;
 
     let menu = MenuBuilder::new(app)

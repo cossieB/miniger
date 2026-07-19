@@ -36,8 +36,8 @@ export default function MoviesContextMenu(props: P) {
     const data = createAsync(() => getFilmByPath(props.contextMenu.data.path))
     const navigate = useNavigate()
     const addAction = useAction(addFilesToDatabase)
-    const actors = () => data() ? JSON.parse(data()!.actors) as TActor[] : []
-    const tags = () => data() ? JSON.parse(data()!.tags) as string[] : []
+    const actors = () => data() ? JSON.parse(data()!.actors as string) as TActor[] : []
+    const tags = () => data() ? JSON.parse(data()!.tags as string) as string[] : []
     const deleteAction = useAction(removeByPaths)
     const updateAction = useAction(editFilm)
 
