@@ -5,6 +5,7 @@ mod thumbnails;
 
 pub use metadata::*;
 pub use thumbnails::*;
+use tokio::sync::Mutex;
 
 #[derive(Serialize, Deserialize)]
 pub struct FFprobeStream {
@@ -33,3 +34,5 @@ pub struct F {
     path: String,
     filmId: i32,
 }
+
+pub struct ProcessingLock(pub Mutex<()>);

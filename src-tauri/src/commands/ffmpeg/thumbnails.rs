@@ -3,10 +3,15 @@ use std::{process::Command, sync::Arc};
 use tauri::Manager;
 use tokio::task::JoinSet;
 
-use crate::logger::CrashLogger;
+use crate::{AppError, logger::CrashLogger};
 
 #[tauri::command]
-pub async fn generate_thumbnails(app_handle: tauri::AppHandle, videos: Vec<super::F>) {
+pub async fn generate_thumbnails(
+    app_handle: tauri::AppHandle,
+    videos: Vec<super::F>,
+    lock: tauri::State<'_, super::ProcessingLock>,
+) -> Result<(), AppError> {
+    let _guard = lock.0.lock().await;
     let mut cmd = Command::new("ffmpeg");
 
     // Apply the flag only on Windows (0x08000000 is CREATE_NO_WINDOW)
@@ -19,7 +24,7 @@ pub async fn generate_thumbnails(app_handle: tauri::AppHandle, videos: Vec<super
     let ffmpeg = cmd.arg("-version").output();
 
     if ffmpeg.is_err() {
-        return;
+        return Err(AppError::new("FFMPEG is not installed".to_string()));
     }
     let dir = Arc::new(
         app_handle
@@ -49,6 +54,7 @@ pub async fn generate_thumbnails(app_handle: tauri::AppHandle, videos: Vec<super
             set.spawn(generate_one(dir, video));
         }
     }
+    Ok(())
 }
 
 async fn generate_one(dir: Arc<std::path::PathBuf>, video: super::F) {

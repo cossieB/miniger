@@ -12,7 +12,9 @@ use crate::AppError;
 pub async fn get_metadata(
     app: tauri::AppHandle,
     videos: Vec<super::F>,
+    lock: tauri::State<'_, super::ProcessingLock>,
 ) -> Result<Vec<Response>, AppError> {
+    let _guard = lock.0.lock().await;
     let mut cmd = Command::new("ffprobe");
     #[cfg(windows)]
     {
@@ -74,10 +76,8 @@ async fn probe_one(video: super::F, completed: Arc<AtomicUsize>) -> Option<Respo
     }
     let result = cmd
         .args([
-            "-v",
-            "quiet",
-            "-print_format",
-            "json",
+            "-v", "quiet",
+            "-print_format", "json",
             "-show_format",
             "-show_streams",
             &video.path,

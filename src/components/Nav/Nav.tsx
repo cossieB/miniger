@@ -1,12 +1,15 @@
 import { getStudios, getTags } from "../../api/data"
 import { state } from "../../state"
-import { AsyncParentNode, ParentNode } from "./ParentNode"
+import { ParentNode } from "./ParentNode"
 import { LinkNode } from "./LinkNode"
 import { enc } from "~/utils/encodeDecode"
 import { CameraIcon, DramaIcon, FileQuestionMarkIcon, FilmIcon, SearchIcon, TagIcon } from "lucide-solid"
+import { createAsync } from "@solidjs/router"
+import { For, Suspense } from "solid-js"
 
 export function Nav() {
-
+    const tags = createAsync(() => getTags())
+    const studios = createAsync(() => getStudios())
     return (
         <nav
             class="top-0 left-0 h-full bg-slate-950 text-orange-50 shrink-0 overflow-y-auto text-sm"
@@ -16,22 +19,31 @@ export function Nav() {
                 <ParentNode label="Movies">
                     <LinkNode label="All Movies" href="/movies" icon={<FilmIcon />} />
                     <LinkNode label="Inaccessible" href="/movies/inaccessible" icon={<FileQuestionMarkIcon />} />
-                    <AsyncParentNode label="Tags" fetcher={() => getTags()} >
-                        {tag =>
-                            <LinkNode
-                                label={tag.tag}
-                                href={`/movies/tags/${tag.tag}`}
-                                icon={<TagIcon />}
-                            />}
-                    </AsyncParentNode>
-                    <AsyncParentNode label="Studios" fetcher={() => getStudios()}>
-                        {studio =>
-                            <LinkNode
-                                label={studio.name}
-                                href={`/movies/studios/${enc({display:studio.name!, id: studio.studioId!})}`}
-                                icon={<CameraIcon />}
-                            />}
-                    </AsyncParentNode>
+                    <ParentNode label="Tags">
+                        <Suspense>
+                            <For each={tags.latest}>
+                                {tag =>
+                                    <LinkNode
+                                        label={tag.tag}
+                                        href={`/movies/tags/${tag.tag}`}
+                                        icon={<TagIcon />}
+                                    />}
+                            </For>
+                        </Suspense>
+                    </ParentNode>
+
+                    <ParentNode label="Studios">
+                        <Suspense>
+                            <For each={studios.latest}>
+                                {studio =>
+                                    <LinkNode
+                                        label={studio.name}
+                                        href={`/movies/studios/${enc({ display: studio.name, id: studio.studioId! })}`}
+                                        icon={<CameraIcon />}
+                                    />}
+                            </For>
+                        </Suspense>
+                    </ParentNode>
                 </ParentNode>
                 <LinkNode label="Actors" href="/actors" icon={<DramaIcon />} />
                 <LinkNode label="Studios" href="/studios" icon={<CameraIcon />} />
@@ -40,3 +52,4 @@ export function Nav() {
         </nav>
     )
 }
+
