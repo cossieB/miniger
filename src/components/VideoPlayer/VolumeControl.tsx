@@ -1,13 +1,16 @@
-import { Volume2Icon, VolumeX } from "lucide-solid";
+import { Volume2Icon, VolumeXIcon } from "lucide-solid";
 import { createEffect, createSignal, Show } from "solid-js";
 
 type Props = {
     video: HTMLVideoElement;
 };
 export function VolumeControl(props: Props) {
-    let previousVolume = 50
-    const [volume, setVolume] = createSignal(previousVolume)
-
+    let previousVolume = Number(localStorage.getItem("volume")) || 50
+    const [volume, setVolume] = createSignal(previousVolume);
+    const changeVolume = (vol: number) => {
+        setVolume(vol)
+        localStorage.setItem("volume", String(vol))
+    }
     const isMuted = () => volume() == 0
 
     createEffect(() => {
@@ -19,15 +22,15 @@ export function VolumeControl(props: Props) {
             <button
                 onclick={() => {
                     if (isMuted()) {
-                        setVolume(previousVolume)
+                        changeVolume(previousVolume || 50)
                     }
                     else {
-                        setVolume(0)
+                        changeVolume(0)
                     }
                 }}
             >
                 <Show when={isMuted()} fallback={<Volume2Icon class="h-6 w-6" />} >
-                    <VolumeX class="h-6 w-6" />
+                    <VolumeXIcon class="h-6 w-6" />
                 </Show>
             </button>
             <input
@@ -37,7 +40,7 @@ export function VolumeControl(props: Props) {
                 max={100}
                 value={volume()}
                 oninput={e => {
-                    setVolume(Number(e.currentTarget.value))
+                    changeVolume(Number(e.currentTarget.value))
                     previousVolume = Number(e.currentTarget.value)
                 }} 
                 />

@@ -11,14 +11,13 @@ export function useGetThumbnails() {
     const hasProcessed = new ReactiveSet<number>()
     const [cacheBuster, setCachebuster] = createSignal(Date.now())
     const [videos, setVideos] = createSignal<Video[]>([])
-    let working = false
+
     let timer = -1
-    
+
     async function getThumbnails() {
-        if (working) return;
+
         const vids = videos().filter(vid => !hasProcessed.has(vid.filmId));
         if (vids.length == 0) return;
-        working = true
         await invoke("generate_thumbnails", {
             videos: vids
         })
@@ -27,7 +26,6 @@ export function useGetThumbnails() {
         const difference = videos().filter(vid => !set.has(vid.filmId));
         setVideos(difference);
         setCachebuster(Date.now())
-        working = false
     }
 
     function addThumbnail(video: Video) {
@@ -35,6 +33,6 @@ export function useGetThumbnails() {
         setVideos(prev => [...prev, video])
         timer = window.setTimeout(getThumbnails, 2000)
     }
-
-    return {cacheBuster, addThumbnail}
+    
+    return { cacheBuster, addThumbnail }
 }
