@@ -1,57 +1,44 @@
-import { createSignal, onMount } from "solid-js";
+import { onCleanup } from "solid-js";
 
 type Props = {
-    min: number;
-    max: number;
-    length: number
-    pivot: "left" | "right" 
-    setDimension: (dimension: number) => void
-} 
+    x: number;
+    min: number
+    max: number
+    onMove: (x: number, y: number) => void
+    vertical?: boolean
+}
 
 export default function Resizer(props: Props) {
-    const [mouseDown, setMouseDown] = createSignal(false)
-    const style = () => {
-        if (props.pivot === "right") 
-            return {
-                left: props.min + props.length + "px",
-            }
-        else 
-            return {
-                left: props.max - props.length + "px",
-            }
-    }
+    const abortController = new AbortController
     
-    onMount(() => {
-        document.addEventListener("mousemove", e => {
-            if (!mouseDown()) return;
-            let width = 0;
-            if (props.pivot === "right") {
-                width = e.clientX - props.min
+    document.addEventListener("mouseup", e => {
+        e.preventDefault();        
+        document.removeEventListener("mousemove", handleMouseMove)
+    }, { signal: abortController.signal })
 
-            }
-            if (props.pivot === "left"){
-                width = props.max - e.clientX
-            }
-            props.setDimension(width)
-        })
+    onCleanup(() => {
+        abortController.abort()
     })
+
+    const handleMouseMove = (e: MouseEvent) => {
+        e.preventDefault()
+        const newX = props.vertical ? 0 : Math.max(props.min, Math.min(props.max, e.clientX))
+        props.onMove(newX, e.clientY)
+    }
     return (
         <div
-            class="h-10 w-2 bg-orange-600 cursor-ew-resize absolute top-1/2 -translate-y-1/2 -translate-x-1/2 transition-[height] z-50 rounded-sm"
-            style={style()}
+            class="bg-orange-600 cursor-ew-resize absolute top-1/2  transition-[height] z-50 rounded-sm"
             classList={{
-                "h-screen": mouseDown()
+                "h-10 w-2 -translate-y-1/2 -translate-x-1/2": !props.vertical,
+                "w-10 h-2 -translate-x-1/2 -translate-y-1/2": !!props.vertical
             }}
             onMouseDown={e => {
-                e.preventDefault()
-                setMouseDown(true)
+                e.preventDefault();
+                document.addEventListener("mousemove", handleMouseMove);
             }}
-            onMouseUp={e => {
-                e.preventDefault()
-                setMouseDown(false)
+            style={{
+                left: props.x + "px"
             }}
-        >
-
-        </div>
+        />
     )
 }

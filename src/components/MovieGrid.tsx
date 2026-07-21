@@ -35,7 +35,7 @@ export function MovieGrid(props: GridProps) {
                 ref = elem
             }}
             id='mg'
-            class="grid-container"
+            class="grid-container scrollbar-gutter-stable"
             style={{
                 height: (state.windowDimensions.height - 60) + "px",  // Required fixed viewport height
                 "overflow-y": 'auto', // Required scroll container property
