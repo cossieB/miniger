@@ -1,21 +1,121 @@
-import { convertFileSrc } from "@tauri-apps/api/core";
-import { appDataDir, sep } from "@tauri-apps/api/path";
-import { batch, createEffect, For, onMount, Show } from "solid-js";
-import type { MovieData } from "~/types";
-import MoviesContextMenu from "./MoviesContextMenu";
-import { ReactiveSet } from "@solid-primitives/set";
-import { useNavigate } from "@solidjs/router";
-import { state } from "~/state";
-import { useGetThumbnails } from "~/hooks/useGenerateThumbnails";
-import { useMoviesContextMenu } from "~/hooks/useMoviesContextMenu";
+import { createVirtualizer, Virtualizer, type VirtualItem } from '@tanstack/solid-virtual';
+import { convertFileSrc } from '@tauri-apps/api/core';
+import { appDataDir, sep } from '@tauri-apps/api/path';
+import { createMemo, For } from 'solid-js';
+import { useMovieGridDimensions } from '~/hooks/useMovieGridDimensions';
+import { state } from '~/state';
+import type { MovieData } from '~/types';
+
+interface GridProps {
+    data: MovieData;
+}
 
 const dir = await appDataDir()
 
-type P = {
-    data: MovieData
+export function MovieGrid(props: GridProps) {
+
+    let ref!: HTMLDivElement    
+    const { columns, setParentRef, cellHeight } = useMovieGridDimensions()
+    const rowCount = () => Math.ceil(props.data.length / columns());
+    
+    const rowVirtualizer = createMemo(() => {        
+        return createVirtualizer({
+            count: rowCount(),
+            getScrollElement: () => ref as HTMLDivElement,
+            estimateSize: () => cellHeight, 
+            overscan: 5,
+            gap: 8,
+        })
+    });
+   
+    return (
+        <div
+            ref={elem => {
+                setParentRef(elem);
+                ref = elem
+            }}
+            id='mg'
+            class="grid-container"
+            style={{
+                height: (state.windowDimensions.height - 60) + "px",  // Required fixed viewport height
+                "overflow-y": 'auto', // Required scroll container property
+                position: 'relative',
+                display: "block",
+            }}
+        >
+            {/* Absolute sizer canvas providing the fake scroll height */}
+            <div
+
+                style={{
+                    height: `${rowVirtualizer().getTotalSize()}px`,
+                    width: '100%',
+                    position: 'relative',
+                }}
+            >
+                <For each={rowVirtualizer().getVirtualItems()}>
+                    {virtualRow =>
+                        <Row
+                            virtualRow={virtualRow}
+                            data={props.data}
+                            rowVirtualizer={rowVirtualizer()}
+                            columns={columns()}
+                        />
+                    }
+                </For>
+
+            </div>
+        </div>
+    );
 }
 
-export function MovieGrid(props: P) {
+type P = {
+    virtualRow: VirtualItem
+    data: GridProps['data']
+    rowVirtualizer: Virtualizer<HTMLDivElement, Element>
+    columns: number
+}
+
+function Row(props: P) {
+    const { cellWidth } = useMovieGridDimensions()
+    const startIdx = () => props.virtualRow.index * props.columns;
+    const rowItems = () => props.data.slice(startIdx(), startIdx() + props.columns);
+
+    return (
+        <div
+            data-index={props.virtualRow.index}
+            // ref={props.rowVirtualizer.measureElement}
+            style={{
+                position: 'absolute',
+                transform: `translateY(${props.virtualRow.start}px)`,
+                display: "flex",
+                height: props.virtualRow.size + "px"
+            }}
+            class='absolute flex gap-1'
+        >
+            <For each={rowItems()}>
+
+                {(film) => (
+                    <div
+                        class='bg-slate-950 text-center flex flex-col'
+                        style={{
+                            width: cellWidth + "px",
+                            // height: cellHeight + "px"
+                        }}
+                    >
+                        <img
+                            src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`)} alt=""
+                            class="object-cover h-5/6"
+                        />
+                        <span class='flex-1 truncate'>{film.title} - {film.filmId}</span>
+                    </div>
+                )}
+            </For>
+        </div>
+    );
+}
+
+/**
+ export function MovieGrid(props: P) {
     const {addThumbnail, cacheBuster} = useGetThumbnails()
     const { contextMenu, setContextMenu } = useMoviesContextMenu()
     const selections = new ReactiveSet<number>()
@@ -91,3 +191,5 @@ export function MovieGrid(props: P) {
     )
 }
 
+
+ */
