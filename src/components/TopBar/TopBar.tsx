@@ -10,11 +10,17 @@ import { DeleteBtn } from "./DeleteBtn";
 import { LoadVideosBtn } from "./LoadVideosBtn";
 import { ShufflePlaylistBtn } from "./ShufflePlaylistBtn";
 import { BackBtn, ForwardBtn } from "./NavArrowSvgs";
+import { TOP_BAR_HEIGHT } from "~/constants";
 
 export function TopBar() {
 
     return (
-        <nav class="w-full h-8 bg-orange-500 flex pl-5 gap-5 [&>svg]:h-full text-orange-50">
+        <nav 
+        class="w-full bg-orange-500 flex pl-5 gap-5 [&>svg]:h-full text-orange-50"
+            style={{
+                height: TOP_BAR_HEIGHT + "px"
+            }}
+        >
             <div class="flex-1 flex h-full justify-start items-center gap-3">
                 {/* Left Part */}
                 <BackBtn />

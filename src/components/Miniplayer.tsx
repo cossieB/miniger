@@ -6,12 +6,13 @@ import { appDataDir, sep } from "@tauri-apps/api/path";
 export function Miniplayer() {
     const src = () => convertFileSrc(state.miniplayer.video?.path ?? "");
     return (
-        <Show when={!!state.miniplayer.video}>
-            <div class="mt-auto bg-black">
-                <button class="absolute z-50" onclick={() => state.miniplayer.setVideo(null)}>X</button>
-                <video class="h-full w-full" autoplay src={src()} onplay={(e) => e.currentTarget.volume = 0} controls></video>
-            </div>
-        </Show>
+        <div 
+            class="mt-auto bg-black grow-0"
+            style={{height: (state.miniplayer.height) + "px"}}
+            >
+            <button class="absolute z-50" onclick={() => state.miniplayer.setVideo(null)}>X</button>
+            <video class="h-full w-full" autoplay src={src()} onplay={(e) => e.currentTarget.volume = 0} controls></video>
+        </div>
     )
 }
 const dir = await appDataDir()

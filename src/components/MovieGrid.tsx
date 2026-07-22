@@ -2,6 +2,7 @@ import { createVirtualizer, Virtualizer, type VirtualItem } from '@tanstack/soli
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { appDataDir, sep } from '@tauri-apps/api/path';
 import { createMemo, For } from 'solid-js';
+import { BOTTOM_BAR_HEIGHT, TOP_BAR_HEIGHT } from '~/constants';
 import { useMovieGridDimensions } from '~/hooks/useMovieGridDimensions';
 import { state } from '~/state';
 import type { MovieData } from '~/types';
@@ -37,7 +38,7 @@ export function MovieGrid(props: GridProps) {
             id='mg'
             class="grid-container scrollbar-gutter-stable"
             style={{
-                height: (state.windowDimensions.height - 60) + "px",  // Required fixed viewport height
+                height: (state.windowDimensions.height - TOP_BAR_HEIGHT - BOTTOM_BAR_HEIGHT) + "px",  // Required fixed viewport height
                 "overflow-y": 'auto', // Required scroll container property
                 position: 'relative',
                 display: "block",

@@ -9,6 +9,7 @@ import { useBeforeLeave } from "@solidjs/router";
 import { Nav } from "../components/Nav/Nav";
 import { useWatchJson } from "../readSettings";
 import "~/events/mainWindow"
+import { BOTTOM_BAR_HEIGHT, TOP_BAR_HEIGHT } from "~/constants";
 
 function App(props: { children?: JSXElement }) {
     useWatchJson()
@@ -26,27 +27,30 @@ function App(props: { children?: JSXElement }) {
     return (
         <div oncontextmenu={e => e.preventDefault()} class="h-screen w-screen text-white">
             <TopBar />
-            <div class="w-screen flex relative h-[calc(100%-4rem)]" >
+            <div class="w-screen flex relative"
+                style={{
+                    height: (state.windowDimensions.height - TOP_BAR_HEIGHT - BOTTOM_BAR_HEIGHT) + "px"
+                }}
+            >
                 <Nav />
-                <Resizer
-                    
-                    x={state.tree.width}
-                    onMove={(x, y) => {
+                <Resizer                    
+                    displacement={state.tree.width}
+                    onMove={(x) => {
                         state.tree.setWidth(x)
                     }}
-                    min={50}
-                    max={state.windowDimensions.width - state.sidePanel.width - 600}
+                    minDisplacement={50}
+                    maxDisplacement={state.windowDimensions.width - state.sidePanel.width - 600}
                 />
                 <main class="overflow-hidden bg-slate-900" style={{ width: state.mainPanel.width() + "px" }}>
                     {props.children}
                 </main>
                 <Resizer
-                    x={state.tree.width + state.mainPanel.width()}
-                    onMove={(x, y) => {
+                    displacement={state.tree.width + state.mainPanel.width()}
+                    onMove={(x) => {
                         state.sidePanel.setWidth(window.innerWidth - x)
                     }}
-                    min={state.tree.width + 600}
-                    max={state.windowDimensions.width - 50}
+                    minDisplacement={state.tree.width + 600}
+                    maxDisplacement={state.windowDimensions.width - 50}
                 />
                 <SidePanel />
             </div>

@@ -2,10 +2,11 @@ import { Index, Show } from "solid-js";
 import { state } from "../../state";
 import clickOutside from "../../lib/clickOutside";
 import { SidePanelItem } from "./SidePanelItem";
-
 import { createStore } from "solid-js/store";
 import { Miniplayer, Thumbnail } from "../Miniplayer";
 import MoviesContextMenu from "../MoviesContextMenu";
+import Resizer from "../Resizer";
+import { BOTTOM_BAR_HEIGHT, TOP_BAR_HEIGHT } from "~/constants";
 
 false && clickOutside
 
@@ -24,8 +25,11 @@ export function SidePanel() {
 
     return (
         <section
-            class="bg-slate-950 overflow-x-hidden select-none shrink-0 droppable h-[calc(100vh - 4rem)] flex flex-col relative"
-            style={{ width: state.sidePanel.width + "px" }}
+            class="bg-slate-950 overflow-x-hidden select-none shrink-0 droppable flex flex-col relative"
+            style={{
+                width: state.sidePanel.width + "px",
+                height: (state.windowDimensions.height - TOP_BAR_HEIGHT - BOTTOM_BAR_HEIGHT) + "px"
+            }}
             tabindex={0}
             onkeyup={e => {
                 e.preventDefault();
@@ -41,7 +45,7 @@ export function SidePanel() {
             }}
         >
             <ul
-                class="overflow-y-auto overflow-x-hidden droppable shrink"
+                class="overflow-y-auto overflow-x-hidden droppable"
                 use:clickOutside={state.sidePanel.selections.clearSelections}
             >
                 <Index each={state.sidePanel.list}>
@@ -81,9 +85,21 @@ export function SidePanel() {
                 />
             </Show>
             <div class="mt-auto">
-            <Miniplayer />
-            <Thumbnail />
+                <Show when={!!state.miniplayer.video}>
+                    <Resizer
+                        vertical
+                        displacement={state.windowDimensions.height - state.miniplayer.height - BOTTOM_BAR_HEIGHT - TOP_BAR_HEIGHT}
+                        maxDisplacement={state.windowDimensions.height - BOTTOM_BAR_HEIGHT - 50}
+                        minDisplacement={TOP_BAR_HEIGHT + 50}
+                        onMove={displacement => {
+                            state.miniplayer.setHeight(state.windowDimensions.height - displacement - BOTTOM_BAR_HEIGHT)
+                        }}
+                    />
+                    <Miniplayer />
+                </Show>
+                <Thumbnail />
             </div>
         </section>
     );
 }
+
