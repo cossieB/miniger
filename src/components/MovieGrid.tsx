@@ -1,11 +1,15 @@
-import { createVirtualizer, Virtualizer, type VirtualItem } from '@tanstack/solid-virtual';
+import { useNavigate } from '@solidjs/router';
+import { type VirtualItem } from '@tanstack/solid-virtual';
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { appDataDir, sep } from '@tauri-apps/api/path';
-import { createMemo, For } from 'solid-js';
+import { FilmIcon } from 'lucide-solid';
+import { batch, createMemo, For, Show, type Accessor } from 'solid-js';
 import { BOTTOM_BAR_HEIGHT, TOP_BAR_HEIGHT } from '~/constants';
-import { useMovieGridDimensions } from '~/hooks/useMovieGridDimensions';
+import { useGetThumbnails } from '~/hooks/useGenerateThumbnails';
+import { useMovieGridContext } from '~/hooks/useMovieGridContext';
 import { state } from '~/state';
 import type { MovieData } from '~/types';
+import MoviesContextMenu from './MoviesContextMenu';
 
 interface GridProps {
     data: MovieData;
@@ -14,21 +18,10 @@ interface GridProps {
 const dir = await appDataDir()
 
 export function MovieGrid(props: GridProps) {
+    const { addThumbnail, cacheBuster } = useGetThumbnails()
+    let ref!: HTMLDivElement
+    const { setParentRef, rowVirtualizer } = useMovieGridContext()
 
-    let ref!: HTMLDivElement    
-    const { columns, setParentRef, cellHeight } = useMovieGridDimensions()
-    const rowCount = () => Math.ceil(props.data.length / columns());
-    
-    const rowVirtualizer = createMemo(() => {        
-        return createVirtualizer({
-            count: rowCount(),
-            getScrollElement: () => ref as HTMLDivElement,
-            estimateSize: () => cellHeight, 
-            overscan: 5,
-            gap: 8,
-        })
-    });
-   
     return (
         <div
             ref={elem => {
@@ -36,10 +29,10 @@ export function MovieGrid(props: GridProps) {
                 ref = elem
             }}
             id='mg'
-            class="grid-container scrollbar-gutter-stable"
+            class="grid-container"
             style={{
-                height: (state.windowDimensions.height - TOP_BAR_HEIGHT - BOTTOM_BAR_HEIGHT) + "px",  // Required fixed viewport height
-                "overflow-y": 'auto', // Required scroll container property
+                height: (state.windowDimensions.height - TOP_BAR_HEIGHT - BOTTOM_BAR_HEIGHT) + "px",
+                "overflow-y": 'auto',
                 position: 'relative',
                 display: "block",
             }}
@@ -49,17 +42,16 @@ export function MovieGrid(props: GridProps) {
 
                 style={{
                     height: `${rowVirtualizer().getTotalSize()}px`,
-                    width: '100%',
                     position: 'relative',
+
                 }}
             >
                 <For each={rowVirtualizer().getVirtualItems()}>
                     {virtualRow =>
                         <Row
                             virtualRow={virtualRow}
-                            data={props.data}
-                            rowVirtualizer={rowVirtualizer()}
-                            columns={columns()}
+                            addThumbnail={addThumbnail}
+                            cacheBuster={cacheBuster}
                         />
                     }
                 </For>
@@ -71,46 +63,94 @@ export function MovieGrid(props: GridProps) {
 
 type P = {
     virtualRow: VirtualItem
-    data: GridProps['data']
-    rowVirtualizer: Virtualizer<HTMLDivElement, Element>
-    columns: number
+    cacheBuster: Accessor<number>
+    addThumbnail: (video: {
+        filmId: number
+        path: string
+    }) => void
 }
 
 function Row(props: P) {
-    const { cellWidth } = useMovieGridDimensions()
-    const startIdx = () => props.virtualRow.index * props.columns;
-    const rowItems = () => props.data.slice(startIdx(), startIdx() + props.columns);
+    const navigate = useNavigate()
+    const { cellWidth, columns, data } = useMovieGridContext()
+    const startIdx = createMemo(() => props.virtualRow.index * columns());
+    const rowItems = createMemo(() => (data.slice(startIdx(), startIdx() + columns())));
+    const { setContextMenu, selections, contextMenu } = useMovieGridContext()
+    const j = (i: number) => props.virtualRow.index * columns() + i
 
     return (
         <div
             data-index={props.virtualRow.index}
             // ref={props.rowVirtualizer.measureElement}
             style={{
-                position: 'absolute',
                 transform: `translateY(${props.virtualRow.start}px)`,
-                display: "flex",
                 height: props.virtualRow.size + "px"
             }}
             class='absolute flex gap-1'
         >
             <For each={rowItems()}>
 
-                {(film) => (
+                {(film, i) => (
                     <div
-                        class='bg-slate-950 text-center flex flex-col'
+                        class='text-center flex flex-col bg-slate-800 flex-1'
                         style={{
-                            width: cellWidth + "px",
-                            // height: cellHeight + "px"
+                            width: cellWidth + "px"
+                        }}
+                        classList={{ "outline-1": selections.has(j(i())) }}
+                        oncontextmenu={(e) => {
+                            batch(() => {
+                                //make sure the right clicked item is the last item in the array
+                                selections.delete(j(i()))
+                                selections.add(j(i()))
+                            })
+                            setContextMenu({
+                                isOpen: true,
+                                data: film,
+                                x: e.clientX,
+                                y: e.clientY,
+                            })
+                        }}
+                        onclick={(e) => {
+                            batch(() => {
+                                if (!e.ctrlKey)
+                                    selections.clear()
+                                if (selections.has(j(i())))
+                                    selections.delete(j(i()))
+                                else
+                                    selections.add(j(i()))
+                            })
+                        }}
+                        ondblclick={() => {
+                            state.sidePanel.setFiles([film])
+                            navigate("/play?rowId=" + film.rowId)
                         }}
                     >
-                        <img
-                            src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`)} alt=""
-                            class="object-cover h-5/6"
-                        />
-                        <span class='flex-1 truncate'>{film.title} - {film.filmId}</span>
+                        <div class='h-5/6 w-full relative'>
+                            <FilmIcon
+                                class='w-full h-1/2 top-1/2 -translate-y-1/2 absolute z-1'
+                            />
+                            <img
+                                src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`) + `?=${props.cacheBuster()}`}
+                                class="object-cover w-full h-full z-2 relative"
+                                onerror={e => {
+                                    props.addThumbnail({ filmId: film.filmId, path: film.path })
+                                }}
+                            />
+                        </div>
+                        <div class='flex-1 flex items-center px-2'>
+                            <span class='truncate text-ellipsis w-full text-nowrap'>
+                                {film.title}
+                            </span>
+                        </div>
                     </div>
                 )}
             </For>
+            <Show when={contextMenu.isOpen}>
+                <MoviesContextMenu
+                    contextMenu={contextMenu}
+                    isMainPanel
+                />
+            </Show>
         </div>
     );
 }

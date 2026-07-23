@@ -6,6 +6,7 @@ import { MoviesTable } from "~/components/MoviesTable"
 import { Grid3x3, List, LoaderCircleIcon } from "lucide-solid"
 import { ModeToggle } from "../components/ModeToggle"
 import { MovieGrid } from "~/components/MovieGrid"
+import { MovieGridProvider } from "~/contexts/MovieGridContext"
 
 type Props = {
     fetcher(): Promise<DetailedDbFilm[] | undefined>
@@ -50,7 +51,9 @@ export function Movies(props: Props) {
                     <MoviesTable data={data()!} />
                 </Match>
                 <Match when={activeView() == 1 && data()}>
-                    <MovieGrid data={data()!} />
+                    <MovieGridProvider data={data()!}>
+                        <MovieGrid data={data()!} />
+                    </MovieGridProvider>
                 </Match>
                 <Match when={activeView() == 1 && !data()}>
                     <div class="w-full h-full flex items-center justify-center"><LoaderCircleIcon class="animate-spin" size={250} /></div>
