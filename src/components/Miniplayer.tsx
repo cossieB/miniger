@@ -18,12 +18,12 @@ export function Miniplayer() {
 const dir = await appDataDir()
 
 export function Thumbnail() {
-    const filmId = () => state.mainPanel.selectedIds.at(0)
+    const film = () => state.mainPanel.getSelections().at(0)
     return (
-        <Show when={state.settings.showThumbnail && filmId()}>
+        <Show when={state.settings.showThumbnail && film()}>
             <div class="mt-auto bg-black">
                 <button class="absolute z-50" onclick={() => state.settings.toggleSetting("showThumbnail")}>X</button>
-                <img class="mt-auto" src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${filmId()}.jpg`)} alt="" />
+                <img class="mt-auto" src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film()}.jpg`)} alt="" />
             </div>
         </Show>
     )

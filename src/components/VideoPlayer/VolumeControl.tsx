@@ -5,7 +5,8 @@ type Props = {
     video: HTMLVideoElement;
 };
 export function VolumeControl(props: Props) {
-    let previousVolume = Number(localStorage.getItem("volume")) || 50
+    const storedVolume = Number(localStorage.getItem("volume"))
+    let previousVolume = Number.isNaN(storedVolume) ? 50 : storedVolume
     const [volume, setVolume] = createSignal(previousVolume);
     const changeVolume = (vol: number) => {
         setVolume(vol)

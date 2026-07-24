@@ -31,7 +31,7 @@ export function GridWrapper<TData = any>(props: Props<TData>) {
         <AgGridSolid
             // @ts-expect-error
             onGridReady={params => {
-                state.getSelections = params.api.getSelectedRows.bind(params.api)
+                state.mainPanel.selectionsFn(params.api.getSelectedRows.bind(params.api))
                 gridApi = params.api as any
                 props.additionalSetup?.();
                 if (typeof searchParams.gridId !== "string") return

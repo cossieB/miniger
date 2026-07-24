@@ -52,11 +52,11 @@ export function Movies(props: Props) {
                 </Match>
                 <Match when={activeView() == 1 && data()}>
                     <MovieGridProvider data={data()!}>
-                        <MovieGrid data={data()!} />
+                        <MovieGrid />
                     </MovieGridProvider>
                 </Match>
                 <Match when={activeView() == 1 && !data()}>
-                    <div class="w-full h-full flex items-center justify-center"><LoaderCircleIcon class="animate-spin" size={250} /></div>
+                    <div class="w-full h-full flex items-center justify-center"><LoaderCircleIcon class="animate-spin" size={25} /></div>
                 </Match>
             </Switch>
         </Suspense>

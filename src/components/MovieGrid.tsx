@@ -8,42 +8,49 @@ import { BOTTOM_BAR_HEIGHT, TOP_BAR_HEIGHT } from '~/constants';
 import { useGetThumbnails } from '~/hooks/useGenerateThumbnails';
 import { useMovieGridContext } from '~/hooks/useMovieGridContext';
 import { state } from '~/state';
-import type { MovieData } from '~/types';
 import MoviesContextMenu from './MoviesContextMenu';
-
-interface GridProps {
-    data: MovieData;
-}
 
 const dir = await appDataDir()
 
-export function MovieGrid(props: GridProps) {
+export function MovieGrid() {
     const { addThumbnail, cacheBuster } = useGetThumbnails()
-    let ref!: HTMLDivElement
-    const { setParentRef, rowVirtualizer } = useMovieGridContext()
+    const { setParentRef, rowVirtualizer, selections, data, contextMenu } = useMovieGridContext()
 
     return (
         <div
             ref={elem => {
                 setParentRef(elem);
-                ref = elem
             }}
             id='mg'
             class="grid-container"
+            tabIndex={-1}
             style={{
                 height: (state.windowDimensions.height - TOP_BAR_HEIGHT - BOTTOM_BAR_HEIGHT) + "px",
                 "overflow-y": 'auto',
                 position: 'relative',
                 display: "block",
             }}
+            onkeydown={async e => {
+                e.preventDefault();
+                if (e.key === "a" && e.ctrlKey) {
+                    return batch(() => {
+                        for (let i = 0; i < data().length; i++) {
+                            selections.add(i)
+                        }                            
+                    })
+                }
+                if (e.key === "Escape") {
+                    contextMenu.close()
+                    selections.clear();
+                    return
+                }
+            }}
         >
             {/* Absolute sizer canvas providing the fake scroll height */}
             <div
-
                 style={{
                     height: `${rowVirtualizer().getTotalSize()}px`,
                     position: 'relative',
-
                 }}
             >
                 <For each={rowVirtualizer().getVirtualItems()}>
@@ -55,10 +62,9 @@ export function MovieGrid(props: GridProps) {
                         />
                     }
                 </For>
-
             </div>
         </div>
-    );
+    )
 }
 
 type P = {
@@ -74,7 +80,7 @@ function Row(props: P) {
     const navigate = useNavigate()
     const { cellWidth, columns, data } = useMovieGridContext()
     const startIdx = createMemo(() => props.virtualRow.index * columns());
-    const rowItems = createMemo(() => (data.slice(startIdx(), startIdx() + columns())));
+    const rowItems = createMemo(() => (data().slice(startIdx(), startIdx() + columns())));
     const { setContextMenu, selections, contextMenu } = useMovieGridContext()
     const j = (i: number) => props.virtualRow.index * columns() + i
 
@@ -96,13 +102,15 @@ function Row(props: P) {
                         style={{
                             width: cellWidth + "px"
                         }}
-                        classList={{ "outline-1": selections.has(j(i())) }}
+                        tabIndex={1}
+                        classList={{ "outline-1 outline-amber-600": selections.has(j(i())) }}
                         oncontextmenu={(e) => {
-                            batch(() => {
-                                //make sure the right clicked item is the last item in the array
-                                selections.delete(j(i()))
-                                selections.add(j(i()))
-                            })
+                            if (!selections.has(j(i()))) {
+                                batch(() => {
+                                    selections.clear();
+                                    selections.add(j(i()));
+                                })
+                            }
                             setContextMenu({
                                 isOpen: true,
                                 data: film,
@@ -112,6 +120,13 @@ function Row(props: P) {
                         }}
                         onclick={(e) => {
                             batch(() => {
+                                if (e.shiftKey) {
+                                    const num = Array.from(selections).at(-1) ?? 0;
+                                    const [start, end] = [Math.min(num ?? 0, j(i())), Math.max(num ?? 0, j(i()))]
+                                    for (let idx = start; idx <= end; idx++) 
+                                        selections.add(idx)
+                                    return;
+                                }
                                 if (!e.ctrlKey)
                                     selections.clear()
                                 if (selections.has(j(i())))
@@ -132,7 +147,7 @@ function Row(props: P) {
                             <img
                                 src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`) + `?=${props.cacheBuster()}`}
                                 class="object-cover w-full h-full z-2 relative"
-                                onerror={e => {
+                                onerror={() => {
                                     props.addThumbnail({ filmId: film.filmId, path: film.path })
                                 }}
                             />
@@ -154,83 +169,3 @@ function Row(props: P) {
         </div>
     );
 }
-
-/**
- export function MovieGrid(props: P) {
-    const {addThumbnail, cacheBuster} = useGetThumbnails()
-    const { contextMenu, setContextMenu } = useMoviesContextMenu()
-    const selections = new ReactiveSet<number>()
-    const navigate = useNavigate()
-    createEffect(() => {
-        setContextMenu('selections', Array.from(selections).map(i => props.data[i]).reverse())
-        const id = contextMenu.selections.at(0)?.filmId
-        const arr = id ? [id] : []
-        state.mainPanel.setSelectedIds(arr)
-    })
-    onMount(() => {
-        state.getSelections = () => contextMenu.selections
-    })
-    return (
-        <div class="w-full overflow-y-scroll relative overflow-scroll h-full" style={{ "content-visibility": "auto" }}>
-            <div
-                class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-1"
-            >
-                <For each={props.data}>
-                    {(film, i) =>
-                        <div
-                            classList={{ "outline-1": selections.has(i()) }}
-                            oncontextmenu={(e) => {
-                                batch(() => {
-                                    //make sure the right clicked item is the last item in the array
-                                    selections.delete(i())
-                                    selections.add(i())
-                                })
-                                setContextMenu({
-                                    isOpen: true,
-                                    data: film,
-                                    x: e.clientX,
-                                    y: e.clientY,
-                                })
-                            }}
-                            onclick={(e) => {
-                                batch(() => {
-                                    if (!e.ctrlKey)
-                                        selections.clear()
-                                    if (selections.has(i()))
-                                        selections.delete(i())
-                                    else
-                                        selections.add(i())
-                                })
-                            }}
-                            ondblclick={() => {
-                                state.sidePanel.setFiles([film])
-                                navigate("/play?rowId=" + film.rowId)
-                            }}
-                            class="flex flex-col bg-gray-800 outline-amber-300"
-                        >
-                            <img
-                                class="aspect-video object-cover"
-                                loading="lazy"
-                                src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`) + `?=${cacheBuster()}`}
-                                alt=""
-                                onerror={e => {
-                                    addThumbnail({filmId: film.filmId, path: film.path})
-                                    e.currentTarget.src = "/Question_Mark.svg"
-                                }} />
-                            <label class="overflow-hidden text-nowrap text-center"> {film.title} </label>
-                        </div>
-                    }
-                </For>
-            </div>
-            <Show when={contextMenu.isOpen}>
-                <MoviesContextMenu
-                    contextMenu={contextMenu}
-                    isMainPanel
-                />
-            </Show>
-        </div>
-    )
-}
-
-
- */

@@ -7,7 +7,6 @@ import { editFilm } from "../api/mutations";
 import videoExtensions from "~/videoExtensions.json"
 import { GridWrapper } from "~/components/GridWrapper";
 import { SearchIcon } from "lucide-solid";
-import { state } from "~/state";
 
 export default function Inaccessible() {
     const data = createAsync(() => getInaccessible())
@@ -32,10 +31,6 @@ export default function Inaccessible() {
                     getRowId={params => params.data.filmId.toString()}
                     rowSelection="multiple"
                     rowData={data()}
-                    onSelectionChanged={(params) => {
-                        const selection = params.api.getSelectedRows();
-                        state.mainPanel.setSelectedIds(selection.map(x => (x.filmId)))
-                    }}
                     columnDefs={[{
                         checkboxSelection: true,
                         headerCheckboxSelection: true,

@@ -1,4 +1,4 @@
-import { createUniqueId, For, Show, Suspense } from "solid-js";
+import { For, Show, Suspense } from "solid-js";
 import { state } from "../state";
 import { ContextMenu } from "./ContextMenu/ContextMenu";
 import { invoke } from "@tauri-apps/api/core";
@@ -13,6 +13,7 @@ import { CameraIcon, CornerRightUpIcon, DramaIcon, FilePlayIcon, FilesIcon, List
 import { confirm, open } from "@tauri-apps/plugin-dialog";
 import { rename, writeTextFile } from "@tauri-apps/plugin-fs";
 import { BaseDirectory, sep } from "@tauri-apps/api/path";
+import { addSelectionToPlaylist } from "./TopBar/AddToPlaylist";
 
 type F = {
     title: string;
@@ -48,13 +49,7 @@ export default function MoviesContextMenu(props: P) {
             <ContextMenu close={props.contextMenu.close} pos={{ x: props.contextMenu.x, y: props.contextMenu.y }} >
                 <ContextMenu.Item
                     onClick={() => {
-                        const playlist = props.contextMenu.selections.map(file => ({
-                            ...file,
-                            rowId: createUniqueId(),
-                            isSelected: false,
-                            selectedLast: false,
-                            lastDraggedOver: false
-                        }))
+                        const playlist = state.mainPanel.getSelections();
                         state.sidePanel.setFiles(playlist)
                         const rowId = playlist.find(file => file.path === props.contextMenu.data.path)!.rowId
                         navigate("/play?rowId=" + rowId)
@@ -65,16 +60,7 @@ export default function MoviesContextMenu(props: P) {
                 </ContextMenu.Item>
                 <Show when={props.isMainPanel}>
                     <ContextMenu.Item
-                        onClick={() => {
-                            const playlist = props.contextMenu.selections.map(file => ({
-                                ...file,
-                                rowId: createUniqueId(),
-                                isSelected: false,
-                                selectedLast: false,
-                                lastDraggedOver: false
-                            }))
-                            state.sidePanel.push(playlist)
-                        }}
+                        onClick={addSelectionToPlaylist}
                         icon={<ListVideoIcon />}
                     >
                         Add To Playlist

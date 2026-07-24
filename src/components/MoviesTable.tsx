@@ -1,6 +1,5 @@
 import { createStore } from "solid-js/store";
 import { GridWrapper } from "./GridWrapper";
-import { state } from "~/state";
 import { For, Show } from "solid-js";
 import MoviesContextMenu from "./MoviesContextMenu";
 import { secondsToTime } from "~/utils/secondsToTime";
@@ -15,7 +14,7 @@ import type { MovieData, MovieTableData } from "~/types";
 
 export function MoviesTable(props: { data: MovieData }) {
     const updateFilmAction = useAction(editFilm)
-
+    
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
         x: 0,
@@ -42,8 +41,8 @@ export function MoviesTable(props: { data: MovieData }) {
                 }}
                 rowData={props.data}
                 onSelectionChanged={(params) => {
-                    const selection = params.api.getSelectedRows();
-                    state.mainPanel.setSelectedIds(selection.map(x => (x.filmId)))
+                    // const selection = params.api.getSelectedRows();
+                    // state.mainPanel.setSelectedIds(selection.map(x => (x.filmId)))
                 }}
                 onCellContextMenu={params => {
                     setContextMenu({

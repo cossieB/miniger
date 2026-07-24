@@ -31,5 +31,4 @@ export const state = {
     windowDimensions,
     miniplayer,
     settings,
-    getSelections: () => [] as any[]
 }

@@ -14,7 +14,7 @@ import { BOTTOM_BAR_HEIGHT, TOP_BAR_HEIGHT } from "~/constants";
 function App(props: { children?: JSXElement }) {
     useWatchJson()
     useBeforeLeave(() => {
-        state.getSelections = () => []
+        state.mainPanel.selectionsFn(() => [])
     })
 
     onMount(() => {

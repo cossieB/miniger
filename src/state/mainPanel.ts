@@ -5,8 +5,11 @@ import { windowDimensions } from "./windowDimension";
 
 export const [mainPanel, setMainpanel] = createStore({
     width: () => windowDimensions.width - tree.width - sidePanel.width,
-    selectedIds: [] as number[],
-    setSelectedIds: (selectedItems: number[]) => {
-        setMainpanel({selectedIds: selectedItems})
+
+    getSelections: () => [] as any[],
+    selectionsFn: (cb: () => any[]) => {
+        setMainpanel({
+            getSelections: cb
+        })
     }
 })

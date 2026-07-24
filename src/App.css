@@ -121,27 +121,30 @@ input[type=range] {
     }
 }
 
-.grid-container {
-  scrollbar-gutter: stable;
-  
-  scrollbar-color: oklch(70.5% 0.213 47.604) transparent;
-  
+.scrollable {
+    scrollbar-gutter: stable;
 }
 
-.grid-container::-webkit-scrollbar {
-  width: 15px; 
-  height: 15px;
+html {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(70.5% 0.213 47.604) transparent;
 }
 
-.grid-container::-webkit-scrollbar-track {
-  background: transparent; 
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
 }
 
-.grid-container::-webkit-scrollbar-thumb {
-  @apply bg-orange-500;
-  border-radius: 4px;
+::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
 }
 
-.grid-container::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0, 0, 0, 0.6); 
+::-webkit-scrollbar-thumb {
+    @apply bg-orange-500;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.6);
 }
