@@ -12,5 +12,5 @@ export const db = new Kysely<DB>({
         }
     }),
     plugins: [new CamelCasePlugin()],
-    log: ["query", "error"]
+    log: ["error"]
 })

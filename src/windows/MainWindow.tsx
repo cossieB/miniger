@@ -12,16 +12,17 @@ import "~/events/mainWindow"
 import { BOTTOM_BAR_HEIGHT, TOP_BAR_HEIGHT } from "~/constants";
 
 function App(props: { children?: JSXElement }) {
+    const abortController = new AbortController
     useWatchJson()
     useBeforeLeave(() => {
         state.mainPanel.selectionsFn(() => [])
     })
 
     onMount(() => {
-        window.addEventListener("resize", handleResize);
+        window.addEventListener("resize", handleResize, {signal: abortController.signal});
     })
     onCleanup(() => {
-        window.removeEventListener("resize", handleResize)
+        abortController.abort()
     })
 
     return (

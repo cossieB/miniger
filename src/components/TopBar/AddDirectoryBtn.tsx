@@ -18,6 +18,7 @@ export function AddDirectoryToDatabase() {
     return (
         <button
             title="Add Folder To Database"
+            id="add-dir-btn"
             onClick={async () => {
                 const files = await readDirectories()
                 if (!files) return;

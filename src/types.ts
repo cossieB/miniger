@@ -1,6 +1,8 @@
+import type { TActor } from "./datatypes";
+
 export type MovieData = {
-    tags: any;
-    actors: any;
+    tags: string[];
+    actors: TActor[];
     rowId: string;
     isOnDb: boolean;
     metadata: {

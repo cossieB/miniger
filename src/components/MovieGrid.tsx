@@ -31,7 +31,8 @@ export function MovieGrid() {
                 display: "block",
             }}
             onkeydown={async e => {
-                e.preventDefault();
+                e.preventDefault(); 
+                if (e.repeat) return
                 if (e.key === "a" && e.ctrlKey) {
                     return batch(() => {
                         for (let i = 0; i < data().length; i++) {
@@ -122,7 +123,7 @@ function Row(props: P) {
                             batch(() => {
                                 if (e.shiftKey) {
                                     const num = Array.from(selections).at(-1) ?? 0;
-                                    const [start, end] = [Math.min(num ?? 0, j(i())), Math.max(num ?? 0, j(i()))]
+                                    const [start, end] = [Math.min(num, j(i())), Math.max(num, j(i()))]
                                     for (let idx = start; idx <= end; idx++) 
                                         selections.add(idx)
                                     return;

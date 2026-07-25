@@ -15,7 +15,7 @@ export function useGetThumbnails() {
     let timer = -1
 
     async function getThumbnails() {
-
+        
         const vids = videos().filter(vid => !hasProcessed.has(vid.filmId));
         if (vids.length == 0) return;
         await invoke("generate_thumbnails", {

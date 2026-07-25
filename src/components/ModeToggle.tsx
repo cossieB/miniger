@@ -1,14 +1,14 @@
-import { For, type JSXElement, type Setter } from "solid-js";
-import { Portal } from "solid-js/web";
+import type { LucideProps } from "lucide-solid";
+import { For, type JSXElement } from "solid-js";
+import { Dynamic, Portal } from "solid-js/web";
 import titleCase from "~/lib/titleCase";
+import { setActiveView } from "~/routes/Movies";
 
 export type P = {
     modes: {
-        id: string
-        icon: JSXElement
+        label: string
+        icon: (props: LucideProps) => JSXElement
     }[]
-    active: number
-    setActive: Setter<number>
 }
 
 export function ModeToggle(props: P) {
@@ -19,11 +19,11 @@ export function ModeToggle(props: P) {
                 <ul class="flex">
                     <For each={props.modes}>
                         {(mode, i) => <li
-                            title={titleCase(mode.id + " view")}
+                            title={titleCase(mode.label + " view")}
                             class="bg-[#00000070] hover:bg-black transition-bg p-2"
-                            onclick={() => props.setActive(i())}
+                            onclick={() => setActiveView(i())}
                         >
-                            {mode.icon}
+                            <Dynamic component={mode.icon} />
                         </li>}
                     </For>
                 </ul>
