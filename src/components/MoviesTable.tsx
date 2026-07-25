@@ -1,4 +1,4 @@
-import { For, Show, createEffect, createMemo, createSignal, untrack } from "solid-js";
+import { For, Show, createMemo, createSignal } from "solid-js";
 import type { MovieData } from "~/types";
 import {
     createSolidTable,
@@ -7,26 +7,11 @@ import {
     createColumnHelper,
     flexRender,
     type SortingState,
-    type Table,
-    type RowModel,
     type Row,
 } from "@tanstack/solid-table";
 import { createVirtualizer, type VirtualItem } from "@tanstack/solid-virtual";
 import { TABLE_CELL_HEIGHT, TABLE_HEADER_HEIGHT } from "~/constants";
-import { unwrap } from "solid-js/store";
-
-
-
-function formatDate(value: string | null) {
-    if (!value) return "—";
-    const d = new Date(value);
-    if (Number.isNaN(d.getTime())) return "—";
-    return d.toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "2-digit",
-    });
-}
+import { secondsToTime } from "~/utils/conversions";
 
 const columnHelper = createColumnHelper<MovieData[number]>();
 
@@ -34,7 +19,7 @@ const columns = [
     columnHelper.accessor("title", {
         header: "Title",
         enableResizing: true,
-        size: 600,
+        size: 400,
         cell: (info) => (
             <div
                 class="flex flex-col px-2 justify-center overflow-hidden "
@@ -135,7 +120,7 @@ const columns = [
 
                 }}
             >
-                {formatDate(info.getValue())}
+                {info.getValue()}
             </div>
         ),
     }),
@@ -154,8 +139,60 @@ const columns = [
             </div>
         ),
     }),
+    columnHelper.accessor("metadata.format.duration", {
+        header: "Duration",
+        size: 50,
+        cell: info => (
+            <div class="text-right px-2">
+                {info.getValue() && secondsToTime(Number(info.getValue()))}
+            </div>
+        )
+    }),
+    columnHelper.accessor("metadata.format.size", {
+        header: "Size",
+        size: 100,
+        cell: info => {
+            const size = info.getValue()
+            const display = size ? new Intl.NumberFormat(undefined, { useGrouping: true }).format(Number(size)) : null
+            return (
+                <div class="text-right px-2">
+                    {display}
+                </div>
+            )
+        }
+    }),
+    columnHelper.accessor("metadata.format.bit_rate", {
+        header: "Bit Rate",
+        size: 100,
+        cell: info => {
+            const size = info.getValue()
+            const display = size ? new Intl.NumberFormat(undefined, { useGrouping: true }).format(Number(size)) : null
+            return (
+                <div class="text-right px-2">
+                    {display}
+                </div>
+            )
+        }
+    }),
+    columnHelper.accessor("metadata.streams", {
+        header: "Format",
+        size: 50,
+        cell: info => <div class="text-center"> {info.getValue()?.find(x => x.codec_type == 'video')?.codec_name} </div>
+    }),
+    columnHelper.accessor("metadata.streams", {
+        header: "Resolution",
+        size: 50,
+        enableSorting: false,
+        cell: info => {
+            const videoStream = info.getValue()?.find(x => x.codec_type == "video")
+            return (
+                <div class="text-center">
+                    {!videoStream ? null : `${videoStream.width}x${videoStream.height}`}
+                </div>
+            )
+        }
+    })
 ]
-
 
 function SortIcon(props: {
     direction: false | "asc" | "desc";
@@ -187,14 +224,15 @@ function SortIcon(props: {
 }
 
 export function MoviesTable(props: { data: MovieData }) {
-    console.log(props.data.length)
+
     let ref!: HTMLDivElement
     const data = () => props.data
 
     const virtualizer = createMemo(() => createVirtualizer({
         count: data().length,
         estimateSize: () => TABLE_CELL_HEIGHT,
-        getScrollElement: () => ref,        
+        getScrollElement: () => ref,
+        overscan: 20
     }))
     const [sorting, setSorting] = createSignal<SortingState>([
         { id: "title", desc: false },
@@ -222,10 +260,10 @@ export function MoviesTable(props: { data: MovieData }) {
         columnResizeDirection: "ltr"
     });
 
-    const rows = createMemo(() => table.getRowModel().rows); createEffect(() => console.log(unwrap(rows())))
+    const rows = createMemo(() => table.getRowModel().rows)
 
     return (
-        <div ref={ref} class="w-full h-full overflow-scroll rounded-lg border border-zinc-800 bg-zinc-950 relative">
+        <div ref={ref} class="w-full h-full overflow-scroll rounded-lg  bg-zinc-950 relative scrollable">
             <div
                 style={{
                     height: (virtualizer().getTotalSize() + TABLE_HEADER_HEIGHT) + "px",
@@ -235,7 +273,7 @@ export function MoviesTable(props: { data: MovieData }) {
                     <thead class="sticky top-0 z-10 bg-zinc-900">
                         <For each={table.getHeaderGroups()}>
                             {(headerGroup) => (
-                                <tr class="border-b border-zinc-800">
+                                <tr class="">
                                     <For each={headerGroup.headers}>
                                         {(header) => (
                                             <th
@@ -294,15 +332,14 @@ export function MoviesTable(props: { data: MovieData }) {
 }
 
 export function TableRow(props: { virtualRow: VirtualItem, i: number, rows: Row<MovieData[number]>[] }) {
-    
+
     const row = () => props.rows[props.virtualRow.index]
 
     return (
         <tr
-            class="border-b border-zinc-900 hover:bg-zinc-900/60"
+            class="hover:bg-zinc-900/60"
             style={{
-                transform: `translateY(${
-                      props.virtualRow.start - props.i * props.virtualRow.size
+                transform: `translateY(${props.virtualRow.start - props.i * props.virtualRow.size
                     }px)`
             }}
         >

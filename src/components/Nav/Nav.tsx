@@ -12,7 +12,7 @@ export function Nav() {
     const studios = createAsync(() => getStudios())
     return (
         <nav
-            class="top-0 left-0 h-full bg-slate-950 text-orange-50 shrink-0 overflow-y-auto text-sm"
+            class="top-0 left-0 h-full bg-slate-950 text-orange-50 shrink-0 overflow-y-auto text-sm scrollable"
             style={{ width: state.tree.width + "px" }}
         >
             <ul id="tree-root">

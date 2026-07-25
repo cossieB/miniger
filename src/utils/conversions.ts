@@ -1,3 +1,13 @@
+/**
+ * Converts bytes to gigabytes (GB) with two decimal places.
+ * @param bytes - The number of bytes to convert.
+ * @returns The weight in gigabytes.
+ */
+export function bytesToGigabytes(bytes: number): number {
+  const bytesInGigabyte = 1024 * 1024 * 1024;
+  return Math.round((bytes / bytesInGigabyte) * 100) / 100;
+}
+
 export function secondsToTime(s: number): string {
     const pad = (num: number) => num.toString().padStart(2, "0")
 

@@ -22,7 +22,7 @@ export function MovieGrid() {
                 setParentRef(elem);
             }}
             id='mg'
-            class="grid-container"
+            class="grid-container scrollable"
             tabIndex={-1}
             style={{
                 height: (state.windowDimensions.height - TOP_BAR_HEIGHT - BOTTOM_BAR_HEIGHT) + "px",
