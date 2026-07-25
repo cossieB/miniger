@@ -1,4 +1,4 @@
-import { For, Show, createSignal } from "solid-js";
+import { For, Show, createEffect, createMemo, createSignal, untrack } from "solid-js";
 import type { MovieData } from "~/types";
 import {
     createSolidTable,
@@ -7,7 +7,14 @@ import {
     createColumnHelper,
     flexRender,
     type SortingState,
+    type Table,
+    type RowModel,
+    type Row,
 } from "@tanstack/solid-table";
+import { createVirtualizer, type VirtualItem } from "@tanstack/solid-virtual";
+import { TABLE_CELL_HEIGHT, TABLE_HEADER_HEIGHT } from "~/constants";
+import { unwrap } from "solid-js/store";
+
 
 
 function formatDate(value: string | null) {
@@ -68,7 +75,7 @@ const columns = [
                 <div class="flex flex-wrap gap-1 items-center"
                     style={{
                         width: info.column.getSize() + "px",
-                        height: "56px"
+                        height: TABLE_CELL_HEIGHT + "px"
                     }}
                 >
 
@@ -98,7 +105,7 @@ const columns = [
                     class="flex flex-wrap items-center"
                     style={{
                         width: info.column.getSize() + "px",
-                        height: "56px"
+                        height: TABLE_CELL_HEIGHT + "px"
                     }}
                 >
                     <Show
@@ -180,14 +187,22 @@ function SortIcon(props: {
 }
 
 export function MoviesTable(props: { data: MovieData }) {
+    console.log(props.data.length)
+    let ref!: HTMLDivElement
+    const data = () => props.data
 
+    const virtualizer = createMemo(() => createVirtualizer({
+        count: data().length,
+        estimateSize: () => TABLE_CELL_HEIGHT,
+        getScrollElement: () => ref,        
+    }))
     const [sorting, setSorting] = createSignal<SortingState>([
         { id: "title", desc: false },
     ]);
 
     const table = createSolidTable({
         get data() {
-            return props.data;
+            return data();
         },
         columns,
         state: {
@@ -207,76 +222,102 @@ export function MoviesTable(props: { data: MovieData }) {
         columnResizeDirection: "ltr"
     });
 
+    const rows = createMemo(() => table.getRowModel().rows); createEffect(() => console.log(unwrap(rows())))
+
     return (
-        <div class="w-full h-full overflow-scroll rounded-lg border border-zinc-800 bg-zinc-950">
-            <table class="border-collapse text-left text-sm">
-                <thead class="sticky top-0 z-10 bg-zinc-900">
-                    <For each={table.getHeaderGroups()}>
-                        {(headerGroup) => (
-                            <tr class="border-b border-zinc-800">
-                                <For each={headerGroup.headers}>
-                                    {(header) => (
-                                        <th
-                                            class="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-500"
-                                            classList={{
-                                                "cursor-pointer select-none hover:text-zinc-300": header.column.getCanSort(),
-                                            }}
-                                            style={{
-                                                width: header.getSize() + "px"
-                                            }}
-                                            onClick={header.column.getToggleSortingHandler()}
-                                        >
-                                            <div class="flex items-center gap-1.5">
-                                                {flexRender(header.column.columnDef.header, header.getContext())}
-                                                <SortIcon
-                                                    sortable={header.column.getCanSort()}
-                                                    direction={header.column.getIsSorted()}
-                                                />
-                                            </div>
-                                        </th>
-                                    )}
-                                </For>
-                            </tr>
-                        )}
-                    </For>
-                </thead>
-                <tbody>
-                    <Show
-                        when={table.getRowModel().rows.length > 0}
-                        fallback={
-                            <tr>
-                                <td
-                                    colSpan={columns.length}
-                                    class="px-4 py-10 text-center text-zinc-600"
-                                >
-                                    Nothing to show.
-                                </td>
-                            </tr>
-                        }
-                    >
-                        <For each={table.getRowModel().rows}>
-                            {(row) => (
-                                <tr
-                                    class="border-b border-zinc-900 hover:bg-zinc-900/60"
-                                >
-                                    <For each={row.getVisibleCells()}>
-                                        {(cell) => (
-                                            <td>
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext(),
-                                                )}
-                                            </td>
+        <div ref={ref} class="w-full h-full overflow-scroll rounded-lg border border-zinc-800 bg-zinc-950 relative">
+            <div
+                style={{
+                    height: (virtualizer().getTotalSize() + TABLE_HEADER_HEIGHT) + "px",
+                }}
+            >
+                <table class="border-collapse text-left text-sm">
+                    <thead class="sticky top-0 z-10 bg-zinc-900">
+                        <For each={table.getHeaderGroups()}>
+                            {(headerGroup) => (
+                                <tr class="border-b border-zinc-800">
+                                    <For each={headerGroup.headers}>
+                                        {(header) => (
+                                            <th
+                                                class="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-500"
+                                                classList={{
+                                                    "cursor-pointer select-none hover:text-zinc-300": header.column.getCanSort(),
+                                                }}
+                                                style={{
+                                                    width: header.getSize() + "px"
+                                                }}
+                                                onClick={header.column.getToggleSortingHandler()}
+                                            >
+                                                <div class="flex items-center gap-1.5">
+                                                    {flexRender(header.column.columnDef.header, header.getContext())}
+                                                    <SortIcon
+                                                        sortable={header.column.getCanSort()}
+                                                        direction={header.column.getIsSorted()}
+                                                    />
+                                                </div>
+                                            </th>
                                         )}
                                     </For>
                                 </tr>
                             )}
                         </For>
-                    </Show>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <Show
+                            when={table.getRowModel().rows.length > 0}
+                            fallback={
+                                <tr>
+                                    <td
+                                        colSpan={columns.length}
+                                        class="px-4 py-10 text-center text-zinc-600"
+                                    >
+                                        Nothing to show.
+                                    </td>
+                                </tr>
+                            }
+                        >
+                            <For each={virtualizer().getVirtualItems()}>
+                                {(virtualRow, i) => (
+                                    <TableRow
+                                        i={i()}
+                                        rows={rows()}
+                                        virtualRow={virtualRow}
+                                    />
+                                )}
+                            </For>
+                        </Show>
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
+}
+
+export function TableRow(props: { virtualRow: VirtualItem, i: number, rows: Row<MovieData[number]>[] }) {
+    
+    const row = () => props.rows[props.virtualRow.index]
+
+    return (
+        <tr
+            class="border-b border-zinc-900 hover:bg-zinc-900/60"
+            style={{
+                transform: `translateY(${
+                      props.virtualRow.start - props.i * props.virtualRow.size
+                    }px)`
+            }}
+        >
+            <For each={row().getVisibleCells()}>
+                {(cell) => (
+                    <td>
+                        {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                        )}
+                    </td>
+                )}
+            </For>
+        </tr>
+    )
 }
 
 // export function MoviesTable(props: { data: MovieData }) {

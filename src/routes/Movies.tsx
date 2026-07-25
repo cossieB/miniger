@@ -23,26 +23,20 @@ const views = [{
 export const [activeView, setActiveView] = createSignal(0)
 
 export function Movies(props: Props) {
-    const films = createAsync(() => props.fetcher(), { initialValue: [] })
 
-    return (
-        <Suspense fallback={<div class="w-full h-full flex items-center justify-center"><LoaderCircleIcon class="animate-spin" size={25} /></div>}>
-            <MoviesContent films={films} />
-        </Suspense>
-    )
-}
-
-function MoviesContent(props: { films: AccessorWithLatest<DetailedDbFilm[] | undefined> }) {
+    const films = createAsync(() => props.fetcher())
 
     const data = createMemo(() => {
-        return props.films()!.map((film) => ({
+        if (!films()) return undefined
+
+        return films()!.map((film => ({
             ...film,
             tags: JSON.parse(film.tags as string),
             actors: JSON.parse(film.actors as string),
             rowId: createUniqueId(),
             isOnDb: true,
             metadata: film.metadata ? JSON.parse(film.metadata) as FfprobeMetadata["metadata"] : null
-        }))
+        })))
     })
 
     return (
@@ -51,6 +45,9 @@ function MoviesContent(props: { films: AccessorWithLatest<DetailedDbFilm[] | und
                 modes={views}
             />
             <Switch>
+                <Match when={!data()}>
+                    <div class="w-full h-full flex items-center justify-center"><LoaderCircleIcon class="animate-spin" size={25} /></div>
+                </Match>
                 <Match when={activeView() == 0}>
                     <MoviesTable data={data()!} />
                 </Match>
