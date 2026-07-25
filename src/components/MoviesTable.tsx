@@ -26,13 +26,19 @@ const columnHelper = createColumnHelper<MovieData[number]>();
 const columns = [
     columnHelper.accessor("title", {
         header: "Title",
-
+        enableResizing: true,
+        size: 600,
         cell: (info) => (
-            <div class="flex flex-col">
-                <span class="font-medium text-zinc-100 leading-tight">
+            <div
+                class="flex flex-col px-2 justify-center overflow-hidden "
+                style={{
+                    width: info.column.getSize() + "px"
+                }}
+            >
+                <span class="font-medium text-zinc-100 truncate text-ellipsis">
                     {info.getValue()}
                 </span>
-                <span class="text-xs text-zinc-500 truncate max-w-[28ch]">
+                <span class="text-xs text-zinc-500 truncate ">
                     {info.row.original.path}
                 </span>
             </div>
@@ -40,9 +46,17 @@ const columns = [
     }),
     columnHelper.accessor("studioName", {
         header: "Studio",
+        size: 150,
         enableSorting: false,
         cell: (info) => (
-            <span class="text-zinc-400">{info.getValue() ?? "—"}</span>
+            <div
+                class="text-zinc-400 px-2"
+                style={{
+                    width: info.column.getSize() + "px"
+                }}
+            >
+                {info.getValue() ?? "—"}
+            </div>
         ),
     }),
     columnHelper.accessor("actors", {
@@ -51,23 +65,24 @@ const columns = [
         cell: (info) => {
             const actors = info.row.original.actors;
             return (
-                <div class="flex flex-wrap gap-1 max-w-[24ch]">
-                    <Show
-                        when={actors.length > 0}
-                        fallback={<span class="text-zinc-600">—</span>}
-                    >
-                        <For each={actors.slice(0, 3)}>
-                            {(actor) => (
-                                <span class="rounded-full bg-zinc-800 px-2 py-0.5 text-xs text-zinc-300">
-                                    {actor.name}
-                                </span>
-                            )}
-                        </For>
-                        <Show when={actors.length > 3}>
-                            <span class="rounded-full bg-zinc-800/60 px-2 py-0.5 text-xs text-zinc-500">
-                                +{actors.length - 3}
+                <div class="flex flex-wrap gap-1 items-center"
+                    style={{
+                        width: info.column.getSize() + "px",
+                        height: "56px"
+                    }}
+                >
+
+                    <For each={actors.slice(0, 3)}>
+                        {(actor) => (
+                            <span class="rounded-full bg-zinc-800 px-2 py-0.5 text-xs text-zinc-300 grow-0 h-min">
+                                {actor.name}
                             </span>
-                        </Show>
+                        )}
+                    </For>
+                    <Show when={actors.length > 3}>
+                        <span class="rounded-full bg-zinc-800/60 px-2 py-0.5 text-xs text-zinc-500">
+                            +{actors.length - 3}
+                        </span>
                     </Show>
                 </div>
             );
@@ -77,16 +92,22 @@ const columns = [
         header: "Tags",
         enableSorting: false,
         cell: (info) => {
-            const tags = info.getValue<string[]>();
+            const tags = info.getValue();
             return (
-                <div class="flex flex-wrap gap-1 max-w-[20ch]">
+                <div
+                    class="flex flex-wrap items-center"
+                    style={{
+                        width: info.column.getSize() + "px",
+                        height: "56px"
+                    }}
+                >
                     <Show
                         when={tags.length > 0}
                         fallback={<span class="text-zinc-600">—</span>}
                     >
                         <For each={tags}>
                             {(tag) => (
-                                <span class="rounded border border-amber-500/30 px-1.5 py-0.5 text-[11px] uppercase tracking-wide text-amber-400/90">
+                                <span class="rounded border border-amber-500/30 px-1.5 py-0.5 text-[11px] uppercase tracking-wide text-amber-400/90 grow-0 h-min">
                                     {tag}
                                 </span>
                             )}
@@ -98,18 +119,32 @@ const columns = [
     }),
     columnHelper.accessor("releaseDate", {
         header: "Released",
+        size: 100,
         cell: (info) => (
-            <span class="font-mono text-sm text-zinc-400">
+            <div
+                class="font-mono text-sm text-zinc-400"
+                style={{
+                    width: info.column.getSize() + "px",
+
+                }}
+            >
                 {formatDate(info.getValue())}
-            </span>
+            </div>
         ),
     }),
     columnHelper.accessor("dateAdded", {
         header: "Added",
+        size: 175,
         cell: (info) => (
-            <span class="font-mono text-sm text-zinc-500">
-                {formatDate(info.getValue())}
-            </span>
+            <div
+                class="font-mono text-sm text-zinc-500"
+                style={{
+                    width: info.column.getSize() + "px",
+
+                }}
+            >
+                {info.getValue()}
+            </div>
         ),
     }),
 ]
@@ -164,14 +199,18 @@ export function MoviesTable(props: { data: MovieData }) {
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         defaultColumn: {
-            size: 50,
+            size: 250,
+            minSize: 50,
+            enableResizing: true
         },
+        columnResizeMode: "onChange",
+        columnResizeDirection: "ltr"
     });
 
     return (
         <div class="w-full h-full overflow-scroll rounded-lg border border-zinc-800 bg-zinc-950">
             <table class="border-collapse text-left text-sm">
-                <thead>
+                <thead class="sticky top-0 z-10 bg-zinc-900">
                     <For each={table.getHeaderGroups()}>
                         {(headerGroup) => (
                             <tr class="border-b border-zinc-800">
@@ -180,17 +219,15 @@ export function MoviesTable(props: { data: MovieData }) {
                                         <th
                                             class="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-500"
                                             classList={{
-                                                "cursor-pointer select-none hover:text-zinc-300":
-                                                    header.column.getCanSort(),
+                                                "cursor-pointer select-none hover:text-zinc-300": header.column.getCanSort(),
+                                            }}
+                                            style={{
+                                                width: header.getSize() + "px"
                                             }}
                                             onClick={header.column.getToggleSortingHandler()}
                                         >
                                             <div class="flex items-center gap-1.5">
-                                                {flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext(),
-                                                )}
+                                                {flexRender(header.column.columnDef.header, header.getContext())}
                                                 <SortIcon
                                                     sortable={header.column.getCanSort()}
                                                     direction={header.column.getIsSorted()}
@@ -219,10 +256,12 @@ export function MoviesTable(props: { data: MovieData }) {
                     >
                         <For each={table.getRowModel().rows}>
                             {(row) => (
-                                <tr class="border-b border-zinc-900 hover:bg-zinc-900/60 h-10">
+                                <tr
+                                    class="border-b border-zinc-900 hover:bg-zinc-900/60"
+                                >
                                     <For each={row.getVisibleCells()}>
                                         {(cell) => (
-                                            <td class="align-top">
+                                            <td>
                                                 {flexRender(
                                                     cell.column.columnDef.cell,
                                                     cell.getContext(),
