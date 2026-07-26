@@ -4,7 +4,7 @@ import { state } from "../../state";
 import { ListVideoIcon } from "lucide-solid";
 
 export const addSelectionToPlaylist = () => {
-    state.sidePanel.push(state.mainPanel.getSelections() as any);
+    state.sidePanel.push(state.mainPanel.getSelections());
 };
 export function AddToPlaylistBtn() {
     const match = useMatch(() => "/movies/**")

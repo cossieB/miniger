@@ -28,11 +28,11 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.accessor("studioName", {
         header: "Studio",
-        size: 150,
+        size: 100,
         sortFn: "text",
         cell: (info) => (
             <div
-                class="text-zinc-400 px-2"
+                class="text-zinc-400 px-2 truncate"
                 style={{
                     width: info.column.getSize() + "px"
                 }}
@@ -72,6 +72,7 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.accessor("tags", {
         header: "Tags",
+        size: 175,
         enableSorting: false,
         cell: (info) => {
             const tags = info.getValue();
@@ -124,7 +125,6 @@ export const columns = columnHelper.columns([
                 class="font-mono text-sm text-zinc-500"
                 style={{
                     width: info.column.getSize() + "px",
-
                 }}
             >
                 {info.getValue()}
@@ -132,14 +132,19 @@ export const columns = columnHelper.columns([
         ),
     }),
     columnHelper.accessor(row => Number(row.metadata?.format.duration) || null, {
-        header: "Duration",
+        header: "Length",
         id: "duration",
         sortFn: 'basic',
-        size: 50,
+        size: 75,
         cell: info => {
             const dur = info.getValue()
             return (
-                <div class="text-right px-2">
+                <div 
+                class="text-right px-2"
+                style={{
+                    width: info.column.getSize() + "px",
+                }}                
+                >
                     {dur && secondsToTime(dur)}
                 </div>
             )
@@ -153,7 +158,12 @@ export const columns = columnHelper.columns([
             const size = info.getValue()
             const display = size ? new Intl.NumberFormat(undefined, { useGrouping: true }).format(size) : null
             return (
-                <div class="text-right px-2">
+                <div 
+                class="text-right px-2"
+                style={{
+                    width: info.column.getSize() + "px",
+                }}                
+                >
                     {display}
                 </div>
             )
@@ -167,7 +177,12 @@ export const columns = columnHelper.columns([
             const size = info.getValue()
             const display = size ? new Intl.NumberFormat(undefined, { useGrouping: true }).format(Number(size)) : null
             return (
-                <div class="text-right px-2">
+                <div 
+                class="text-right px-2"
+                style={{
+                    width: info.column.getSize() + "px",
+                }}                
+                >
                     {display}
                 </div>
             )
@@ -176,12 +191,12 @@ export const columns = columnHelper.columns([
     columnHelper.accessor(row => row.metadata?.streams?.find(x => x.codec_type == 'video')?.codec_name, {
         header: "Format",
         id: "format",
-        size: 50,
+        size: 100,
         cell: info => <div class="text-center"> {info.getValue()} </div>
     }),
     columnHelper.accessor("metadata.streams", {
         header: "Resolution",
-        size: 50,
+        size: 100,
         enableSorting: false,
         cell: info => {
             const videoStream = info.getValue()?.find(x => x.codec_type == "video")

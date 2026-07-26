@@ -1,74 +1,101 @@
-import { For, Show, createMemo, createSignal } from "solid-js";
+import { For, Show, createMemo, createSignal, createUniqueId } from "solid-js";
 import type { MovieData } from "~/types";
-import { flexRender, type SortingState, type Row } from "@tanstack/solid-table";
+import { type SortingState, type Row, type RowSelectionState, FlexRender } from "@tanstack/solid-table";
 import { createVirtualizer, type VirtualItem } from "@tanstack/solid-virtual";
 import { TABLE_CELL_HEIGHT, TABLE_HEADER_HEIGHT } from "~/constants";
 import { createAppTable, type AppTableFeatures } from "~/utils/createTable";
 import { columns } from "./columns";
 import { SortIcon } from "../SortIcon";
+import { state } from "~/state";
+import { type SidepanelFile } from "~/state";
 
 const [sorting, setSorting] = createSignal<SortingState>([]);
 
 export function MoviesTable(props: { data: MovieData }) {
     let ref!: HTMLDivElement
-    const data = () => props.data
 
-    const virtualizer = createMemo(() => createVirtualizer({
-        count: data().length,
+    const virtualizer = createVirtualizer({
+        get count() {
+            return props.data.length
+        },
         estimateSize: () => TABLE_CELL_HEIGHT,
         getScrollElement: () => ref,
         overscan: 20
-    }))
+    })
+    const [rowSelection, setRowSelection] = createSignal<RowSelectionState>({})
 
     const table = createAppTable<MovieData[number]>({
+        key: "movies",
         get data() {
-            return data();
+            return props.data;
         },
+        getRowId: row => String(row.filmId),
         columns,
         state: {
             get sorting() {
                 return sorting();
             },
+            get rowSelection() {
+                return rowSelection()
+            }
         },
         onSortingChange: setSorting,
         enableSorting: true,
         defaultColumn: {
             size: 250,
-            minSize: 50,
+            minSize: 25,
             enableResizing: true
         },
+        onRowSelectionChange: setRowSelection,
         columnResizeMode: "onChange",
-        columnResizeDirection: "ltr"
+        columnResizeDirection: "ltr",
+        enableRowRangeSelection: true,
     });
-
-    const rows = createMemo(() => table.getRowModel().rows)
-
+    
+    state.mainPanel.selectionsFn(() => table.getSelectedRowIds().map((id): SidepanelFile | undefined => {
+        const file = props.data.find(film => film.filmId === Number(id))
+        if (file) return {
+            ...file,
+            isSelected: false,
+            lastDraggedOver: false,
+            selectedLast: false,
+            rowId: createUniqueId()
+        }
+    }).filter(Boolean))    
+    
+    const rows = createMemo(() => table.getRowModel().rows);
+        
     return (
         <div ref={ref} class="w-full h-full overflow-scroll rounded-lg  bg-zinc-950 relative scrollable">
             <div
                 style={{
-                    height: (virtualizer().getTotalSize() + TABLE_HEADER_HEIGHT) + "px",
+                    height: (virtualizer.getTotalSize() + TABLE_HEADER_HEIGHT) + "px",
                 }}
             >
                 <table class="border-collapse text-left text-sm">
                     <thead class="sticky top-0 z-10 bg-zinc-900">
                         <For each={table.getHeaderGroups()}>
                             {(headerGroup) => (
-                                <tr class="">
+                                <tr style={{
+                                    height: TABLE_HEADER_HEIGHT + "px"
+                                }}>
                                     <For each={headerGroup.headers}>
                                         {(header) => (
                                             <th
-                                                class="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-500"
+                                                class="whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-zinc-500"
                                                 classList={{
                                                     "cursor-pointer select-none hover:text-zinc-300": header.column.getCanSort(),
                                                 }}
-                                                style={{
-                                                    width: header.getSize() + "px"
-                                                }}
+
                                                 onClick={header.column.getToggleSortingHandler()}
                                             >
-                                                <div class="flex items-center gap-1.5">
-                                                    {flexRender(header.column.columnDef.header, header.getContext())}
+                                                <div
+                                                    class="flex h-full justify-center items-center gap-1.5"
+                                                    style={{
+                                                        width: header.getSize() + "px"
+                                                    }}
+                                                >
+                                                    <FlexRender header={header} />
                                                     <SortIcon
                                                         sortable={header.column.getCanSort()}
                                                         direction={header.column.getIsSorted()}
@@ -95,7 +122,7 @@ export function MoviesTable(props: { data: MovieData }) {
                                 </tr>
                             }
                         >
-                            <For each={virtualizer().getVirtualItems()}>
+                            <For each={virtualizer.getVirtualItems()}>
                                 {(virtualRow, i) => (
                                     <TableRow
                                         i={i()}
@@ -115,7 +142,7 @@ export function MoviesTable(props: { data: MovieData }) {
 export function TableRow(props: { virtualRow: VirtualItem, i: number, rows: Row<AppTableFeatures, MovieData[number]>[] }) {
 
     const row = () => props.rows[props.virtualRow.index]
-
+    
     return (
         <tr
             class="hover:bg-zinc-900/60"
@@ -123,14 +150,15 @@ export function TableRow(props: { virtualRow: VirtualItem, i: number, rows: Row<
                 transform: `translateY(${props.virtualRow.start - props.i * props.virtualRow.size
                     }px)`
             }}
+            onClick={row().getToggleSelectedHandler({
+                selectChildren: false
+            })}
+            classList={{ "bg-zinc-800!": row().getIsSelected() }}
         >
             <For each={row().getAllCells()}>
                 {(cell) => (
                     <td>
-                        {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                        )}
+                        <FlexRender cell={cell} />
                     </td>
                 )}
             </For>

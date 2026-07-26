@@ -90,7 +90,10 @@ export function SidePanelItem(props: P) {
             }}
             ondblclick={() => {
                 if (location.pathname === "/dragdrop") return;
-                navigate(`/play?rowId=${props.data.rowId}`)
+                
+                navigate(`/play?rowId=${props.data.rowId}`, {
+                    replace: location.pathname === "/play"
+                })
             }}
             {...attr}
         >

@@ -1,9 +1,10 @@
-import { tableFeatures, columnSizingFeature, rowSortingFeature, columnResizingFeature, createSortedRowModel, sortFn_alphanumeric, sortFn_datetime, sortFn_text, sortFn_basic, createTableHook } from "@tanstack/solid-table"
+import { tableFeatures, columnSizingFeature, rowSortingFeature, columnResizingFeature, createSortedRowModel, sortFn_alphanumeric, sortFn_datetime, sortFn_text, sortFn_basic, createTableHook, rowSelectionFeature } from "@tanstack/solid-table"
 
 const features = tableFeatures({
     columnSizingFeature,
     rowSortingFeature,
     columnResizingFeature,
+    rowSelectionFeature,
     sortedRowModel: createSortedRowModel(),
     sortFns: {
         alphanumeric: sortFn_alphanumeric,
@@ -17,6 +18,7 @@ export const {createAppTable, createAppColumnHelper} = createTableHook({
     features,
     enableColumnResizing: true,
     columnResizeMode: 'onChange',
+    enableRowSelection: true
 })
 
 export type AppTableFeatures = typeof features

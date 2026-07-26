@@ -151,6 +151,7 @@ function Row(props: P) {
                                 onerror={() => {
                                     props.addThumbnail({ filmId: film.filmId, path: film.path })
                                 }}
+                                loading='lazy'
                             />
                         </div>
                         <div class='flex-1 flex items-center px-2'>

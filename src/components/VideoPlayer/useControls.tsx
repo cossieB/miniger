@@ -15,7 +15,7 @@ export function useControls() {
             return setSearchParams({rowId: item.rowId})
         }
         const item = state.sidePanel.list[index() + 1]
-        setSearchParams({rowId: item.rowId});
+        setSearchParams({rowId: item.rowId}, {replace: true});
     }
 
     function playPrevious() {
@@ -23,7 +23,7 @@ export function useControls() {
         const playlist = state.sidePanel.list
         if (playlist.length === 0) return;
         const item = state.sidePanel.list[index() - 1]
-        setSearchParams({rowId: item.rowId});
+        setSearchParams({rowId: item.rowId}, {replace: true});
     }
     
     return {
