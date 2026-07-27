@@ -1,13 +1,16 @@
 import { For, Show, createMemo, createSignal, createUniqueId } from "solid-js";
 import type { MovieData } from "~/types";
-import { type SortingState, type Row, type RowSelectionState, FlexRender } from "@tanstack/solid-table";
-import { createVirtualizer, type VirtualItem } from "@tanstack/solid-virtual";
+import { type SortingState, type RowSelectionState } from "@tanstack/solid-table";
+import { createVirtualizer } from "@tanstack/solid-virtual";
 import { TABLE_CELL_HEIGHT, TABLE_HEADER_HEIGHT } from "~/constants";
-import { createAppTable, type AppTableFeatures } from "~/utils/createTable";
+import { createAppTable } from "~/utils/createTable";
 import { columns } from "./columns";
-import { SortIcon } from "../SortIcon";
 import { state } from "~/state";
 import { type SidepanelFile } from "~/state";
+import { TableRow } from "../table-wrapper/TableRow";
+import { TableHeader } from "../table-wrapper/TableHeader";
+import MoviesContextMenu from "../MoviesContextMenu";
+import { useMoviesContextMenu } from "~/hooks/useMoviesContextMenu";
 
 const [sorting, setSorting] = createSignal<SortingState>([]);
 
@@ -61,53 +64,32 @@ export function MoviesTable(props: { data: MovieData }) {
             selectedLast: false,
             rowId: createUniqueId()
         }
-    }).filter(Boolean))    
-    
+    }).filter(Boolean))
+
     const rows = createMemo(() => table.getRowModel().rows);
-        
+
+    const { contextMenu, setContextMenu } = useMoviesContextMenu()
+
     return (
-        <div ref={ref} class="w-full h-full overflow-scroll rounded-lg  bg-zinc-950 relative scrollable">
+        <div
+            ref={ref}
+            class="w-full h-full overflow-scroll rounded-lg  bg-zinc-950 relative scrollable  border-collapse text-left text-sm"
+            tabIndex={-1}
+            onkeyup={e => {
+                if (e.key == "Escape")
+                    return table.toggleAllRowsSelected(false)
+                if (e.ctrlKey && e.key == "a") {
+                    return table.toggleAllRowsSelected(true)
+                }
+            }}
+        >
             <div
                 style={{
                     height: (virtualizer.getTotalSize() + TABLE_HEADER_HEIGHT) + "px",
                 }}
             >
-                <table class="border-collapse text-left text-sm">
-                    <thead class="sticky top-0 z-10 bg-zinc-900">
-                        <For each={table.getHeaderGroups()}>
-                            {(headerGroup) => (
-                                <tr style={{
-                                    height: TABLE_HEADER_HEIGHT + "px"
-                                }}>
-                                    <For each={headerGroup.headers}>
-                                        {(header) => (
-                                            <th
-                                                class="whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-zinc-500"
-                                                classList={{
-                                                    "cursor-pointer select-none hover:text-zinc-300": header.column.getCanSort(),
-                                                }}
-
-                                                onClick={header.column.getToggleSortingHandler()}
-                                            >
-                                                <div
-                                                    class="flex h-full justify-center items-center gap-1.5"
-                                                    style={{
-                                                        width: header.getSize() + "px"
-                                                    }}
-                                                >
-                                                    <FlexRender header={header} />
-                                                    <SortIcon
-                                                        sortable={header.column.getCanSort()}
-                                                        direction={header.column.getIsSorted()}
-                                                    />
-                                                </div>
-                                            </th>
-                                        )}
-                                    </For>
-                                </tr>
-                            )}
-                        </For>
-                    </thead>
+                <table.AppTable>
+                    <TableHeader />
                     <tbody>
                         <Show
                             when={table.getRowModel().rows.length > 0}
@@ -128,42 +110,23 @@ export function MoviesTable(props: { data: MovieData }) {
                                         i={i()}
                                         rows={rows()}
                                         virtualRow={virtualRow}
+                                        deselectAll={() => table.toggleAllRowsSelected(false)}
+                                        setContextMenu={setContextMenu}
                                     />
                                 )}
                             </For>
                         </Show>
                     </tbody>
-                </table>
+                </table.AppTable>
             </div>
+            <Show when={contextMenu.isOpen}>
+                <MoviesContextMenu
+                    contextMenu={contextMenu}
+                    isMainPanel
+                />
+            </Show>
         </div>
     );
-}
-
-export function TableRow(props: { virtualRow: VirtualItem, i: number, rows: Row<AppTableFeatures, MovieData[number]>[] }) {
-
-    const row = () => props.rows[props.virtualRow.index]
-    
-    return (
-        <tr
-            class="hover:bg-zinc-900/60"
-            style={{
-                transform: `translateY(${props.virtualRow.start - props.i * props.virtualRow.size
-                    }px)`
-            }}
-            onClick={row().getToggleSelectedHandler({
-                selectChildren: false
-            })}
-            classList={{ "bg-zinc-800!": row().getIsSelected() }}
-        >
-            <For each={row().getAllCells()}>
-                {(cell) => (
-                    <td>
-                        <FlexRender cell={cell} />
-                    </td>
-                )}
-            </For>
-        </tr>
-    )
 }
 
 // export function MoviesTable(props: { data: MovieData }) {

@@ -15,7 +15,7 @@ export function AddToPlaylistBtn() {
                 onclick={addSelectionToPlaylist}
             >
                 <ListVideoIcon
-                    classList={{ 'text-zinc-500': state.mainPanel.getSelections().length == 0 }}                    
+                    // classList={{ 'text-zinc-500': state.mainPanel.getSelections().length == 0 }}                    
                 />
             </button>
         </Show>

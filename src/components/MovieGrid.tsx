@@ -4,7 +4,7 @@ import { convertFileSrc } from '@tauri-apps/api/core';
 import { appDataDir, sep } from '@tauri-apps/api/path';
 import { FilmIcon } from 'lucide-solid';
 import { batch, createMemo, For, Show, type Accessor } from 'solid-js';
-import { BOTTOM_BAR_HEIGHT, TOP_BAR_HEIGHT } from '~/constants';
+import { BOTTOM_BAR_HEIGHT, CELL_WIDTH, TOP_BAR_HEIGHT } from '~/constants';
 import { useGetThumbnails } from '~/hooks/useGenerateThumbnails';
 import { useMovieGridContext } from '~/hooks/useMovieGridContext';
 import { state } from '~/state';
@@ -79,10 +79,9 @@ type P = {
 
 function Row(props: P) {
     const navigate = useNavigate()
-    const { cellWidth, columns, data } = useMovieGridContext()
+    const { columns, data, setContextMenu, selections, contextMenu } = useMovieGridContext()
     const startIdx = createMemo(() => props.virtualRow.index * columns());
     const rowItems = createMemo(() => (data().slice(startIdx(), startIdx() + columns())));
-    const { setContextMenu, selections, contextMenu } = useMovieGridContext()
     const j = (i: number) => props.virtualRow.index * columns() + i
 
     return (
@@ -101,7 +100,7 @@ function Row(props: P) {
                     <div
                         class='text-center flex flex-col bg-slate-800 flex-1'
                         style={{
-                            width: cellWidth + "px"
+                            width: CELL_WIDTH + "px"
                         }}
                         tabIndex={1}
                         classList={{ "outline-1 outline-amber-600": selections.has(j(i())) }}

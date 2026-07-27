@@ -14,11 +14,18 @@ const features = tableFeatures({
     },
 })
 
-export const {createAppTable, createAppColumnHelper} = createTableHook({
+export const {
+    createAppTable,
+    createAppColumnHelper,
+    useCellContext,
+    useHeaderContext,
+    useTableContext
+} = createTableHook({
     features,
     enableColumnResizing: true,
     columnResizeMode: 'onChange',
-    enableRowSelection: true
+    enableRowSelection: true,
+
 })
 
 export type AppTableFeatures = typeof features

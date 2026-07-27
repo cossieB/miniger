@@ -13,7 +13,10 @@ export function Nav() {
     return (
         <nav
             class="top-0 left-0 h-full bg-slate-950 text-orange-50 shrink-0 overflow-y-auto text-sm scrollable"
-            style={{ width: state.tree.width + "px" }}
+            style={{ 
+                width: state.tree.width + "px",
+                "scrollbar-gutter": "auto"
+            }}
         >
             <ul id="tree-root">
                 <ParentNode label="Movies">

@@ -19,8 +19,7 @@ export function SidePanel() {
         close() {
             setContextMenu('isOpen', false)
         },
-        data: {} as { title: string, path: string },
-        selections: state.sidePanel.selections.getAll(),
+        data: {} as { title: string, path: string, rowId: string },
     })
 
     return (
@@ -33,6 +32,8 @@ export function SidePanel() {
             tabindex={0}
             onkeyup={e => {
                 e.preventDefault();
+                if (e.key == "Escape")
+                    return state.sidePanel.selections.clearSelections()
                 if (e.key == 'Delete') {
                     state.sidePanel.selections.deleteSelections()
                 }
@@ -46,7 +47,6 @@ export function SidePanel() {
         >
             <ul
                 class="overflow-y-auto overflow-x-hidden droppable"
-                use:clickOutside={state.sidePanel.selections.clearSelections}
             >
                 <Index each={state.sidePanel.list}>
                     {(data, i) =>
@@ -80,7 +80,7 @@ export function SidePanel() {
             </ul>
             <Show when={contextMenu.isOpen}>
                 <MoviesContextMenu
-                    contextMenu={{ ...contextMenu, selections: state.sidePanel.selections.getAll() }}
+                    contextMenu={contextMenu}
                     isMainPanel={false}
                 />
             </Show>

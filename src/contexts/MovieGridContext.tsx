@@ -2,6 +2,7 @@ import { ReactiveSet } from "@solid-primitives/set";
 import { useLocation } from "@solidjs/router";
 import { createVirtualizer, Virtualizer } from "@tanstack/solid-virtual";
 import { createContext, createEffect, createMemo, createSignal, on, type Accessor, type JSXElement, type Setter } from "solid-js";
+import { CELL_WIDTH } from "~/constants";
 import { useMoviesContextMenu } from "~/hooks/useMoviesContextMenu";
 import { state } from "~/state";
 import type { MovieData } from "~/types";
@@ -19,22 +20,20 @@ export function MovieGridProvider(props: { children: JSXElement, data: MovieData
     }))
     
     const { contextMenu, setContextMenu } = useMoviesContextMenu()
-    const cellHeight = 180
-    const cellWidth = cellHeight * 16 / 9;
-    const [_parentRef, setParentRef] = createSignal<HTMLDivElement | null>(null);
-    const columns = () => Math.floor((state.mainPanel.width() - 50) / cellWidth)
-    const rowCount = createMemo(() => Math.ceil(props.data.length / columns()));
-    const rowVirtualizer = createMemo(() => {
 
+    const [_parentRef, setParentRef] = createSignal<HTMLDivElement | null>(null);
+    const columns = () => Math.floor((state.mainPanel.width() - 50) / CELL_WIDTH)
+    const rowCount = createMemo(() => Math.ceil(props.data.length / columns()));
+
+    const rowVirtualizer = createMemo(() => {
         return createVirtualizer({
             count: rowCount(),
             getScrollElement: () => document.getElementById("mg") as HTMLDivElement,
-            estimateSize: () => cellHeight,
+            estimateSize: () => CELL_WIDTH,
             overscan: 5,
             gap: 8,
         })
     });
-
 
     return (
         <MovieGridContext.Provider
@@ -44,7 +43,6 @@ export function MovieGridProvider(props: { children: JSXElement, data: MovieData
                 contextMenu,
                 setContextMenu,
                 columns,
-                cellWidth,
                 selections,
                 data: () => props.data
             }}>
@@ -59,7 +57,6 @@ export type MovieGridContext = {
     contextMenu: ReturnType<typeof useMoviesContextMenu>['contextMenu']
     setContextMenu: ReturnType<typeof useMoviesContextMenu>['setContextMenu']
     columns: () => number
-    cellWidth: number
     selections: ReactiveSet<number>
     data: () => MovieData
 }

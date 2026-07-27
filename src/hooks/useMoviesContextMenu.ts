@@ -10,7 +10,7 @@ export function useMoviesContextMenu() {
             setContextMenu('isOpen', false)
         },
         data: {} as MovieTableData,
-        selections: [] as MovieTableData[]
+        
     })
     return { contextMenu, setContextMenu }
 }

@@ -84,17 +84,17 @@ export const columns = columnHelper.columns([
                         height: TABLE_CELL_HEIGHT + "px"
                     }}
                 >
-                    <Show
-                        when={tags.length > 0}
-                        fallback={<span class="text-zinc-600">—</span>}
-                    >
-                        <For each={tags}>
-                            {(tag) => (
-                                <span class="rounded border border-amber-500/30 px-1.5 py-0.5 text-[11px] uppercase tracking-wide text-amber-400/90 grow-0 h-min">
-                                    {tag}
-                                </span>
-                            )}
-                        </For>
+                    <For each={tags.slice(0, 3)}>
+                        {(tag) => (
+                            <span class="rounded border border-amber-500/30 px-1.5 py-0.5 text-[11px] uppercase tracking-wide text-amber-400/90 grow-0 h-min">
+                                {tag}
+                            </span>
+                        )}
+                    </For>
+                    <Show when={tags.length > 3}>
+                        <span class="rounded border border-amber-500/30 px-1.5 py-0.5 text-[11px] uppercase tracking-wide text-amber-400/90 grow-0 h-min">
+                            +{tags.length - 3}
+                        </span>
                     </Show>
                 </div>
             );
@@ -139,11 +139,11 @@ export const columns = columnHelper.columns([
         cell: info => {
             const dur = info.getValue()
             return (
-                <div 
-                class="text-right px-2"
-                style={{
-                    width: info.column.getSize() + "px",
-                }}                
+                <div
+                    class="text-right px-2"
+                    style={{
+                        width: info.column.getSize() + "px",
+                    }}
                 >
                     {dur && secondsToTime(dur)}
                 </div>
@@ -158,11 +158,11 @@ export const columns = columnHelper.columns([
             const size = info.getValue()
             const display = size ? new Intl.NumberFormat(undefined, { useGrouping: true }).format(size) : null
             return (
-                <div 
-                class="text-right px-2"
-                style={{
-                    width: info.column.getSize() + "px",
-                }}                
+                <div
+                    class="text-right px-2"
+                    style={{
+                        width: info.column.getSize() + "px",
+                    }}
                 >
                     {display}
                 </div>
@@ -177,11 +177,11 @@ export const columns = columnHelper.columns([
             const size = info.getValue()
             const display = size ? new Intl.NumberFormat(undefined, { useGrouping: true }).format(Number(size)) : null
             return (
-                <div 
-                class="text-right px-2"
-                style={{
-                    width: info.column.getSize() + "px",
-                }}                
+                <div
+                    class="text-right px-2"
+                    style={{
+                        width: info.column.getSize() + "px",
+                    }}
                 >
                     {display}
                 </div>
