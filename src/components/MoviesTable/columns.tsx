@@ -17,9 +17,7 @@ export const columns = columnHelper.columns([
                     width: info.column.getSize() + "px"
                 }}
             >
-                <span class="font-medium text-zinc-100 truncate text-ellipsis">
-                    {info.getValue()}
-                </span>
+                <input value={info.getValue()} class="font-medium text-zinc-100 truncate text-ellipsis outline-0" />
                 <span class="text-xs text-zinc-500 truncate ">
                     {info.row.original.path}
                 </span>
@@ -47,13 +45,19 @@ export const columns = columnHelper.columns([
         cell: (info) => {
             const actors = info.row.original.actors;
             return (
-                <div class="flex flex-wrap gap-1 items-center"
+                <div 
+                    class="flex flex-wrap gap-1 items-center"
+                    onClick={e => {
+                        e.stopPropagation()
+                    }}
+                    onDblClick={e => {
+                        e.preventDefault();
+                    }}
                     style={{
                         width: info.column.getSize() + "px",
                         height: TABLE_CELL_HEIGHT + "px"
                     }}
                 >
-
                     <For each={actors.slice(0, 3)}>
                         {(actor) => (
                             <span class="rounded-full bg-zinc-800 px-2 py-0.5 text-xs text-zinc-300 grow-0 h-min">
@@ -78,7 +82,7 @@ export const columns = columnHelper.columns([
             const tags = info.getValue();
             return (
                 <div
-                    class="flex flex-wrap items-center"
+                    class="flex flex-wrap items-center overflow-hidden"
                     style={{
                         width: info.column.getSize() + "px",
                         height: TABLE_CELL_HEIGHT + "px"
@@ -122,7 +126,7 @@ export const columns = columnHelper.columns([
         sortFn: "datetime",
         cell: (info) => (
             <div
-                class="font-mono text-sm text-zinc-500"
+                class="font-mono text-sm text-zinc-500 text-nowrap truncate text-ellipsis"
                 style={{
                     width: info.column.getSize() + "px",
                 }}

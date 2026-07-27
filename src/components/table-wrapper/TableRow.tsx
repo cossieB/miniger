@@ -27,16 +27,13 @@ export function TableRow<T extends RowData>(props: Props<T>) {
                 batch(() => {
                     if (!e.ctrlKey)
                         props.deselectAll()
-                    row().getToggleSelectedHandler()(e)
+                    row()?.getToggleSelectedHandler()(e)
                 })
             }}
             classList={{ "bg-zinc-700!": row().getIsSelected() }}
             onContextMenu={e => {
                 e.preventDefault();
-                batch(() => {
-                    if (!e.ctrlKey) props.deselectAll()
-                    row().toggleSelected(true);
-                })
+                row()?.toggleSelected(true);                
                 props.setContextMenu?.({
                     isOpen: true,
                     data: {
@@ -47,7 +44,7 @@ export function TableRow<T extends RowData>(props: Props<T>) {
                 })
             }}
         >
-            <For each={row().getAllCells()}>
+            <For each={row()?.getAllCells()}>
                 {(cell) => (
                     <td>
                         <FlexRender cell={cell} />

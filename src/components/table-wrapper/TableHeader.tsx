@@ -16,7 +16,7 @@ export function TableHeader() {
                         <For each={headerGroup.headers}>
                             {(header) => (
                                 <th
-                                    class="whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-zinc-500"
+                                    class="whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-zinc-500 overflow-hidden truncate text-ellipsis"
                                     classList={{
                                         "cursor-pointer select-none hover:text-zinc-300": header.column.getCanSort(),
                                     }}
@@ -24,15 +24,23 @@ export function TableHeader() {
                                     onClick={header.column.getToggleSortingHandler()}
                                 >
                                     <div
-                                        class="flex h-full justify-center items-center gap-1.5"
+                                        class="flex h-full justify-center items-center gap-1.5 relative"
                                         style={{
-                                            width: header.getSize() + "px"
+                                            width: header.getSize() + "px",
+                                            height: TABLE_HEADER_HEIGHT + "px"
                                         }}
                                     >
                                         <FlexRender header={header} />
                                         <SortIcon
                                             sortable={header.column.getCanSort()}
                                             direction={header.column.getIsSorted()}
+                                        />
+                                        <div
+                                            class="h-1/2 w-0.5 bg-zinc-500 absolute right-0 top-1/2 -translate-y-1/2 cursor-ew-resize"
+                                            onClick={e => {
+                                                e.stopPropagation()
+                                            }}
+                                            onMouseDown={header.getResizeHandler()} 
                                         />
                                     </div>
                                 </th>

@@ -25,7 +25,7 @@ export const {
     enableColumnResizing: true,
     columnResizeMode: 'onChange',
     enableRowSelection: true,
-
+    
 })
 
 export type AppTableFeatures = typeof features
