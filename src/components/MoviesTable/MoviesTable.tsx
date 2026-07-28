@@ -1,4 +1,4 @@
-import { For, Show, createMemo, createSignal, createUniqueId } from "solid-js";
+import { Show, createSignal, createUniqueId } from "solid-js";
 import type { MovieData } from "~/types";
 import { type SortingState, type RowSelectionState } from "@tanstack/solid-table";
 import { createVirtualizer } from "@tanstack/solid-virtual";
@@ -7,10 +7,10 @@ import { createAppTable } from "~/utils/createTable";
 import { columns } from "./columns";
 import { state } from "~/state";
 import { type SidepanelFile } from "~/state";
-import { TableRow } from "../table-wrapper/TableRow";
 import { TableHeader } from "../table-wrapper/TableHeader";
 import MoviesContextMenu from "../MoviesContextMenu";
 import { useMoviesContextMenu } from "~/hooks/useMoviesContextMenu";
+import { TableBody } from "../table-wrapper/TableBody";
 
 const [sorting, setSorting] = createSignal<SortingState>([]);
 
@@ -54,7 +54,7 @@ export function MoviesTable(props: { data: MovieData }) {
         columnResizeDirection: "ltr",
         enableRowRangeSelection: true,
     });
-    
+
     state.mainPanel.selectionsFn(() => table.getSelectedRowIds().map((id): SidepanelFile | undefined => {
         const file = props.data.find(film => film.filmId === Number(id))
         if (file) return {
@@ -66,10 +66,8 @@ export function MoviesTable(props: { data: MovieData }) {
         }
     }).filter(Boolean))
 
-    const rows = createMemo(() => table.getRowModel().rows);
-
     const { contextMenu, setContextMenu } = useMoviesContextMenu()
-
+    
     return (
         <div
             ref={ref}
@@ -84,39 +82,72 @@ export function MoviesTable(props: { data: MovieData }) {
             }}
         >
             <div
+                class="w-full"
                 style={{
                     height: (virtualizer.getTotalSize() + TABLE_HEADER_HEIGHT) + "px",
                 }}
             >
-                <table.AppTable>
-                    <TableHeader />
-                    <tbody>
-                        <Show
-                            when={table.getRowModel().rows.length > 0}
-                            fallback={
-                                <tr>
-                                    <td
-                                        colSpan={columns.length}
-                                        class="px-4 py-10 text-center text-zinc-600"
-                                    >
-                                        Nothing to show.
-                                    </td>
-                                </tr>
-                            }
-                        >
-                            <For each={virtualizer.getVirtualItems()}>
-                                {(virtualRow, i) => (
-                                    <TableRow
-                                        i={i()}
-                                        rows={rows()}
-                                        virtualRow={virtualRow}
-                                        deselectAll={() => table.toggleAllRowsSelected(false)}
-                                        setContextMenu={setContextMenu}
-                                    />
-                                )}
-                            </For>
-                        </Show>
-                    </tbody>
+                <table.AppTable >
+                    <table>
+                        <TableHeader />
+                        <TableBody
+                            virtualizer={virtualizer}
+                            handleRightClick={data => setContextMenu(data)}
+                        />
+                        {/* <tbody class="relative">
+                            <Show
+                                when={table.getRowModel().rows.length > 0}
+                                fallback={
+                                    <tr>
+                                        <td
+                                            colSpan={columns.length}
+                                            class="px-4 py-10 text-center text-zinc-600"
+                                        >
+                                            Nothing to show.
+                                        </td>
+                                    </tr>
+                                }
+                            >
+                                <For each={virtualizer.getVirtualItems()}>
+                                    {(virtualRow, i) => {
+                                        const deselectAll = () => table.toggleAllRowsSelected(false);
+                                        const row = () => rows()[virtualRow.index]
+                                        return (
+                                            <tr
+                                                class="hover:bg-zinc-900/60"
+                                                style={{
+                                                    position: 'absolute',
+                                                    transform: `translateY(${virtualRow.start}px)`,
+                                                    width: '100%',
+                                                }}
+                                                onClick={e => {
+                                                    batch(() => {
+                                                        if (!e.ctrlKey)
+                                                            deselectAll()
+                                                        row()?.getToggleSelectedHandler()(e)
+                                                    })
+                                                }}
+                                                classList={{ "bg-zinc-700!": row().getIsSelected() }}
+
+                                            >
+                                                <For each={row()?.getAllCells()}>
+                                                    {(cell) => (
+                                                        <table.AppCell cell={cell}>
+                                                            {cell => (
+                                                                <td>
+                                                                    <cell.FlexRender />
+                                                                </td>
+                                                            )}
+                                                        </table.AppCell>
+                                                    )}
+                                                </For>
+                                            </tr>
+                                        )
+                                    }}
+                                </For>
+                            </Show>
+                        </tbody> */}
+                    </table>
                 </table.AppTable>
             </div>
             <Show when={contextMenu.isOpen}>

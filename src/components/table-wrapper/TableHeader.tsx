@@ -40,7 +40,10 @@ export function TableHeader() {
                                             onClick={e => {
                                                 e.stopPropagation()
                                             }}
-                                            onMouseDown={header.getResizeHandler()} 
+                                            onPointerDown={e => {
+                                                e.currentTarget.setPointerCapture(e.pointerId)
+                                                header.getResizeHandler()(e)
+                                            }} 
                                         />
                                     </div>
                                 </th>

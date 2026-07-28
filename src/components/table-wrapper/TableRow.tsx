@@ -21,7 +21,9 @@ export function TableRow<T extends RowData>(props: Props<T>) {
         <tr
             class="hover:bg-zinc-900/60"
             style={{
-                transform: `translateY(${props.virtualRow.start - props.i * props.virtualRow.size}px)`
+                position: 'absolute',
+                transform: `translateY(${props.virtualRow.start}px)`,
+                width: '100%',
             }}
             onClick={e => {
                 batch(() => {
@@ -33,7 +35,11 @@ export function TableRow<T extends RowData>(props: Props<T>) {
             classList={{ "bg-zinc-700!": row().getIsSelected() }}
             onContextMenu={e => {
                 e.preventDefault();
-                row()?.toggleSelected(true);                
+                batch(() => {
+                    if (!row()?.getIsSelected() && !e.ctrlKey)
+                        props.deselectAll()
+                    row()?.toggleSelected(true);
+                })
                 props.setContextMenu?.({
                     isOpen: true,
                     data: {

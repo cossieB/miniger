@@ -1,5 +1,7 @@
 import { For, Show } from "solid-js";
+import { getStudios } from "~/api/data";
 import { TABLE_CELL_HEIGHT } from "~/constants";
+import type { Studio } from "~/kysely/schema";
 import type { MovieData } from "~/types";
 import { secondsToTime } from "~/utils/conversions";
 import { createAppColumnHelper } from "~/utils/createTable";
@@ -10,51 +12,39 @@ export const columns = columnHelper.columns([
         header: "Title",
         size: 400,
         sortFn: "text",
-        cell: (info) => (
-            <div
-                class="flex flex-col px-2 justify-center overflow-hidden "
-                style={{
-                    width: info.column.getSize() + "px"
-                }}
-            >
-                <input value={info.getValue()} class="font-medium text-zinc-100 truncate text-ellipsis outline-0" />
-                <span class="text-xs text-zinc-500 truncate ">
-                    {info.row.original.path}
-                </span>
-            </div>
-        ),
+        cell: props => <props.cell.TextCell onUpdate={async val => console.log(val)} />
     }),
     columnHelper.accessor("studioName", {
         header: "Studio",
         size: 100,
         sortFn: "text",
-        cell: (info) => (
-            <div
-                class="text-zinc-400 px-2 truncate"
-                style={{
-                    width: info.column.getSize() + "px"
-                }}
-            >
-                {info.getValue() ?? "—"}
-            </div>
+        cell: (props) => (
+            <props.cell.AsyncSelectCell
+                getOptions={getStudios}
+                value={props.row.original.studioId ?? undefined}
+                onUpdate={async val => console.log(val)}
+                //@ts-expect-error
+                normalize={(studio: Studio) => ({
+                    label: studio.name,
+                    value: studio.studioId
+                })}                
+            />
         ),
     }),
     columnHelper.accessor("actors", {
         header: "Cast",
         enableSorting: false,
-        cell: (info) => {
-            const actors = info.row.original.actors;
+        cell: (props) => {
+            const actors = props.row.original.actors;
             return (
-                <div 
-                    class="flex flex-wrap gap-1 items-center"
-                    onClick={e => {
-                        e.stopPropagation()
-                    }}
+                <div
+                    class="flex flex-wrap gap-1 items-center overflow-hidden"
+
                     onDblClick={e => {
                         e.preventDefault();
                     }}
                     style={{
-                        width: info.column.getSize() + "px",
+                        width: props.column.getSize() + "px",
                         height: TABLE_CELL_HEIGHT + "px"
                     }}
                 >
@@ -78,13 +68,13 @@ export const columns = columnHelper.columns([
         header: "Tags",
         size: 175,
         enableSorting: false,
-        cell: (info) => {
-            const tags = info.getValue();
+        cell: (props) => {
+            const tags = props.getValue();
             return (
                 <div
                     class="flex flex-wrap items-center overflow-hidden"
                     style={{
-                        width: info.column.getSize() + "px",
+                        width: props.column.getSize() + "px",
                         height: TABLE_CELL_HEIGHT + "px"
                     }}
                 >
@@ -108,30 +98,15 @@ export const columns = columnHelper.columns([
         header: "Released",
         size: 100,
         sortFn: "text",
-        cell: (info) => (
+        cell: (props) => (
             <div
-                class="font-mono text-sm text-zinc-400"
+                class="font-mono text-sm text-zinc-400 truncate"
                 style={{
-                    width: info.column.getSize() + "px",
+                    width: props.column.getSize() + "px",
 
                 }}
             >
-                {info.getValue()}
-            </div>
-        ),
-    }),
-    columnHelper.accessor("dateAdded", {
-        header: "Added",
-        size: 175,
-        sortFn: "datetime",
-        cell: (info) => (
-            <div
-                class="font-mono text-sm text-zinc-500 text-nowrap truncate text-ellipsis"
-                style={{
-                    width: info.column.getSize() + "px",
-                }}
-            >
-                {info.getValue()}
+                {props.getValue()}
             </div>
         ),
     }),
@@ -140,55 +115,33 @@ export const columns = columnHelper.columns([
         id: "duration",
         sortFn: 'basic',
         size: 75,
-        cell: info => {
-            const dur = info.getValue()
-            return (
-                <div
-                    class="text-right px-2"
-                    style={{
-                        width: info.column.getSize() + "px",
-                    }}
-                >
-                    {dur && secondsToTime(dur)}
-                </div>
-            )
+        cell: props => {
+            const dur = props.getValue()
+            return <props.cell.LockedCell class="text-right" value={dur ? secondsToTime(dur) : null} />
         }
     }),
     columnHelper.accessor(row => Number(row.metadata?.format.size) || null, {
         header: "Size",
         id: "size",
         size: 100,
-        cell: info => {
-            const size = info.getValue()
+        cell: props => {
+            const size = props.getValue()
             const display = size ? new Intl.NumberFormat(undefined, { useGrouping: true }).format(size) : null
-            return (
-                <div
-                    class="text-right px-2"
-                    style={{
-                        width: info.column.getSize() + "px",
-                    }}
-                >
-                    {display}
-                </div>
-            )
+            return <props.cell.LockedCell class="text-right" value={display} />
         }
     }),
     columnHelper.accessor("metadata.format.bit_rate", {
         header: "Bit Rate",
         id: "bitrate",
         size: 100,
-        cell: info => {
-            const size = info.getValue()
+        cell: props => {
+            const size = props.getValue()
             const display = size ? new Intl.NumberFormat(undefined, { useGrouping: true }).format(Number(size)) : null
             return (
-                <div
-                    class="text-right px-2"
-                    style={{
-                        width: info.column.getSize() + "px",
-                    }}
-                >
-                    {display}
-                </div>
+                <props.cell.LockedCell
+                    class="text-right px-2 truncate"
+                    value={display}
+                />
             )
         }
     }),
@@ -196,19 +149,25 @@ export const columns = columnHelper.columns([
         header: "Format",
         id: "format",
         size: 100,
-        cell: info => <div class="text-center"> {info.getValue()} </div>
+        cell: props => <props.cell.LockedCell class="text-center" />
     }),
-    columnHelper.accessor("metadata.streams", {
+    columnHelper.accessor(row => {
+        const videoStream = row.metadata?.streams?.find(x => x.codec_type == "video")
+        return !videoStream ? null : `${videoStream.width}x${videoStream.height}`
+    }, {
         header: "Resolution",
+        id: "resolution",
         size: 100,
         enableSorting: false,
-        cell: info => {
-            const videoStream = info.getValue()?.find(x => x.codec_type == "video")
-            return (
-                <div class="text-center">
-                    {!videoStream ? null : `${videoStream.width}x${videoStream.height}`}
-                </div>
-            )
-        }
-    })
+        cell: props => <props.cell.LockedCell class="text-center" />
+    }),
+    columnHelper.accessor("dateAdded", {
+        header: "Added",
+        size: 175,
+        sortFn: "datetime",
+        cell: (props) => <props.cell.LockedCell />,
+    }),
+    columnHelper.accessor("path", {
+        cell: props => <props.cell.LockedCell />
+    })    
 ])

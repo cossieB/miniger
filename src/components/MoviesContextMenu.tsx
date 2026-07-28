@@ -62,23 +62,22 @@ export default function MoviesContextMenu(props: P) {
     return (
         <Suspense>
             <ContextMenu close={props.contextMenu.close} pos={{ x: props.contextMenu.x, y: props.contextMenu.y }} >
-
-                    <ContextMenu.Item
-                        onClick={() => {
-                            let rowId: string
-                            if (props.isMainPanel) {
-                                const playlist = state.mainPanel.getSelections();
-                                state.sidePanel.setFiles(playlist)
-                                rowId = playlist.find(file => file.path === props.contextMenu.data.path)!.rowId
-                            }
-                            else
-                                rowId = props.contextMenu.data.rowId
-                            navigate("/play?rowId=" + rowId)
-                        }}
-                        icon={<PlayIcon />}
-                    >
-                        Play
-                    </ContextMenu.Item>
+                <ContextMenu.Item
+                    onClick={() => {
+                        let rowId: string
+                        if (props.isMainPanel) {
+                            const playlist = state.mainPanel.getSelections();
+                            state.sidePanel.setFiles(playlist)
+                            rowId = playlist.find(file => file.path === props.contextMenu.data.path)!.rowId
+                        }
+                        else
+                            rowId = props.contextMenu.data.rowId
+                        navigate("/play?rowId=" + rowId)
+                    }}
+                    icon={<PlayIcon />}
+                >
+                    Play
+                </ContextMenu.Item>
                 <Show when={props.isMainPanel}>
                     <ContextMenu.Item
                         onClick={addSelectionToPlaylist}
@@ -106,7 +105,7 @@ export default function MoviesContextMenu(props: P) {
                             const selections = props.isMainPanel ? state.mainPanel.getSelections() : state.sidePanel.selections.getAll()
                             console.log(selections)
                             await createTempPlaylist(selections)
-                        } 
+                        }
                         catch (error) {
                             console.error(error)
                             state.status.setStatus("File Not Found")
@@ -143,7 +142,6 @@ export default function MoviesContextMenu(props: P) {
                         href={`/movies/studios/${enc({ display: data()!.studioName!, id: data()!.studioId! })}`}
                         icon={<CameraIcon />}
                     >
-
                         More From {data()?.studioName}
                     </ContextMenu.Link>
                 </Show>
@@ -185,7 +183,6 @@ export default function MoviesContextMenu(props: P) {
                             if (oldPath == newPath) return;
                             await rename(oldPath, newPath)
                             if (!props.contextMenu.data.filmId) return;
-
                             await updateAction({
                                 filmId: props.contextMenu.data.filmId,
                                 path: newPath

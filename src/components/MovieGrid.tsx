@@ -31,13 +31,13 @@ export function MovieGrid() {
                 display: "block",
             }}
             onkeydown={async e => {
-                e.preventDefault(); 
+                e.preventDefault();
                 if (e.repeat) return
                 if (e.key === "a" && e.ctrlKey) {
                     return batch(() => {
                         for (let i = 0; i < data().length; i++) {
                             selections.add(i)
-                        }                            
+                        }
                     })
                 }
                 if (e.key === "Escape") {
@@ -105,12 +105,12 @@ function Row(props: P) {
                         tabIndex={1}
                         classList={{ "outline-1 outline-amber-600": selections.has(j(i())) }}
                         oncontextmenu={(e) => {
-                            if (!selections.has(j(i()))) {
-                                batch(() => {
+                            batch(() => {
+                                if (!selections.has(j(i())) && !e.ctrlKey ) {
                                     selections.clear();
-                                    selections.add(j(i()));
-                                })
-                            }
+                                }
+                                selections.add(j(i()));
+                            })
                             setContextMenu({
                                 isOpen: true,
                                 data: film,
@@ -123,7 +123,7 @@ function Row(props: P) {
                                 if (e.shiftKey) {
                                     const num = Array.from(selections).at(-1) ?? 0;
                                     const [start, end] = [Math.min(num, j(i())), Math.max(num, j(i()))]
-                                    for (let idx = start; idx <= end; idx++) 
+                                    for (let idx = start; idx <= end; idx++)
                                         selections.add(idx)
                                     return;
                                 }
