@@ -1,6 +1,7 @@
 import { createEffect, createSignal, type JSX, Show, type ComponentProps, splitProps } from "solid-js"
 import { TABLE_CELL_HEIGHT } from "~/constants"
 import { useCellContext } from "~/utils/createTable"
+import styles from "./Cells.module.css"
 
 type Props = {
     onUpdate: (val: string) => Promise<void>
@@ -49,7 +50,7 @@ export function TextCell(props: Props) {
 
     return (
         <div
-            class="flex flex-col px-2 justify-center overflow-hidden cursor-pointer"
+            class={styles.cellWrapper}
             style={{
                 width: `${cell.column.getSize()}px`,
                 height: `${TABLE_CELL_HEIGHT}px`
@@ -59,10 +60,7 @@ export function TextCell(props: Props) {
             <Show
                 when={edit()}
                 fallback={
-                    <span
-                        class="font-medium text-zinc-100 truncate text-ellipsis outline-0"
-                        
-                    >
+                    <span class={styles.textValue}>
                         {value()}
                     </span>
                 }
@@ -73,7 +71,7 @@ export function TextCell(props: Props) {
                     value={value()}
                     oninput={e => setValue(e.currentTarget.value)}
                     disabled={loading()}
-                    class="font-medium text-zinc-100 truncate text-ellipsis outline-0 bg-transparent disabled:opacity-50 h-full flex justify-center"
+                    class={styles.textInput}
                     onBlur={handleSave}
                     onKeyDown={e => {
                         if (e.key === "Enter") {
@@ -81,7 +79,7 @@ export function TextCell(props: Props) {
                         }
                         if (e.key === "Escape") {
                             isCancelled = true
-                            setValue(cell.getValue())
+                            setValue(stargingVal())
                             setEdit(false)
                         }
                     }}
@@ -95,7 +93,7 @@ export function LockedCell(props: { value?: string | null, class?: string, style
     const cell = useCellContext<string>()
     return (
         <div
-            class={"flex flex-col px-2 justify-center overflow-hidden text-zinc-500 truncate " + (props.class ?? "")}
+            class={`${styles.lockedCell} ${props.class ?? ""}`}
             style={{
                 ...props.style,
                 width: cell.column.getSize() + "px"
@@ -105,4 +103,3 @@ export function LockedCell(props: { value?: string | null, class?: string, style
         </div>
     )
 }
-

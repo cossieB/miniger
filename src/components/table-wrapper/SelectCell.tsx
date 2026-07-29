@@ -3,6 +3,7 @@ import { splitProps, createSignal, createEffect, Show, For, type ComponentProps,
 import { TABLE_CELL_HEIGHT } from "~/constants";
 import clickOutside from "~/lib/clickOutside";
 import { useCellContext } from "~/utils/createTable";
+import styles from "./SelectCell.module.css";
 
 false && clickOutside
 
@@ -35,6 +36,7 @@ export function SelectCell(props: SelectCellProps) {
     const currentLabel = createMemo(() => {
         return normalizedOptions().find(opt => String(opt.value) === value())?.label;
     });
+    
     createEffect(() => {
         if (edit()) {
             isCancelled = false;
@@ -67,7 +69,7 @@ export function SelectCell(props: SelectCellProps) {
 
     return (
         <div
-            class="flex flex-col justify-center overflow-hidden px-2"
+            class={styles.cellWrapper}
             style={{
                 width: `${cell.column.getSize()}px`,
                 height: `${TABLE_CELL_HEIGHT}px`
@@ -81,29 +83,29 @@ export function SelectCell(props: SelectCellProps) {
                 fallback={
                     <button
                         type="button"
-                        class="group/cell -mx-1.5 flex min-w-0 items-center gap-1.5 rounded px-1.5 py-0.5 text-left outline-none transition-colors duration-100 hover:bg-zinc-800/80 focus-visible:ring-1 focus-visible:ring-zinc-500 h-full"
-                        classList={{ "opacity-60": loading() }}
+                        class={styles.triggerButton}
+                        classList={{ [styles.isLoading]: loading() }}
                         onDblClick={() => setEdit(true)}
                         title="Double click to edit"
                     >
-                        <span class="min-w-0 truncate text-ellipsis font-medium text-zinc-100 transition-colors group-hover/cell:text-white">
-                            {currentLabel() || <span class="italic text-zinc-500">Empty</span>}
+                        <span class={styles.triggerText}>
+                            {currentLabel() || <span class={styles.emptyText}>Empty</span>}
                         </span>
                         <Show when={loading()} fallback={
-                            <ChevronIcon class="shrink-0 text-zinc-600 opacity-0 transition-opacity ml-auto group-hover/cell:opacity-100" />
+                            <ChevronIcon class={styles.iconChevronHover} />
                         }>
-                            <SpinnerIcon class="shrink-0 text-zinc-400" />
+                            <SpinnerIcon class={styles.iconSpinner} />
                         </Show>
                     </button>
                 }
             >
-                <div class="relative h-full -mx-1.5">
+                <div class={styles.selectWrapper}>
                     <select
                         {...selectProps}
                         value={value()}
                         ref={selectRef}
                         disabled={loading() || selectProps.disabled}
-                        class={`w-full h-full cursor-pointer appearance-none truncate text-ellipsis rounded border border-zinc-600 bg-zinc-800 py-0.5 pl-1.5 pr-5 font-medium text-zinc-100 shadow-[0_0_0_3px_rgba(255,255,255,0.04)] outline-none ring-1 ring-inset ring-zinc-500/40 transition-colors focus:border-zinc-400 focus:ring-2 focus:ring-zinc-400/60 disabled:cursor-not-allowed disabled:opacity-50 ${selectProps.class || ""}`}
+                        class={`${styles.selectInput} ${selectProps.class || ""}`}
                         onChange={(e) => {
                             setValue(e.currentTarget.value)
                             selectRef.blur();
@@ -128,7 +130,7 @@ export function SelectCell(props: SelectCellProps) {
                             )}
                         </For>
                     </select>
-                    <ChevronIcon class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400" />
+                    <ChevronIcon class={styles.iconChevronAbsolute} />
                 </div>
             </Show>
         </div>
@@ -181,9 +183,9 @@ function ChevronIcon(props: { class?: string }) {
 
 function SpinnerIcon(props: { class?: string }) {
     return (
-        <svg class={`animate-spin ${props.class ?? ""}`} width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-            <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        <svg class={`${styles.iconSpinner} ${props.class ?? ""}`} width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle opacity="0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <path opacity="0.9" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
         </svg>
     );
 }

@@ -124,9 +124,9 @@ export const columns = columnHelper.columns([
         cell: (props) => (
             <props.cell.TextCell
                 type="date"
-                onUpdate={async val => {
-                    props.table.options.meta!.updateFilm({
-                        releaseDate: val,
+                onUpdate={async val => {                    
+                    await props.table.options.meta!.updateFilm({
+                        releaseDate: val || null,
                         filmId: props.row.original.filmId
                     })
                 }}

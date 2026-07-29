@@ -1,0 +1,26 @@
+:root {
+  /* Colors */
+  --color-text-primary: #f4f4f5; /* zinc-100 */
+  --color-text-secondary: #e4e4e7; /* zinc-200 */
+  --color-text-muted: #a1a1aa; /* zinc-400 */
+  --color-text-faded: #71717a; /* zinc-500 */
+  --color-text-danger: #fca5a5; /* red-300 */
+  
+  --color-bg-base: #27272a; /* zinc-800 */
+  --color-bg-hover: rgba(39, 39, 42, 0.8); /* zinc-800/80 */
+  --color-bg-tag: #3f3f46; /* zinc-700 */
+  --color-bg-tag-muted: rgba(63, 63, 70, 0.7); /* zinc-700/70 */
+  --color-bg-tag-hover: #52525b; /* zinc-600 */
+  --color-bg-dropdown: #27272a; /* zinc-800 */
+  
+  --color-border: #52525b; /* zinc-600 */
+  --color-border-focus: #a1a1aa; /* zinc-400 */
+  
+  --color-ring: rgba(113, 113, 122, 0.4); /* zinc-500/40 */
+  --color-ring-focus: rgba(161, 161, 170, 0.6); /* zinc-400/60 */
+  --color-ring-solid: #71717a; /* zinc-500 */
+  
+  /* Utilities */
+  --shadow-dropdown: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+  --shadow-inner: 0 0 0 3px rgba(255, 255, 255, 0.04);
+}

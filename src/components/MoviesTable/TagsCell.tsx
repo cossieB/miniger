@@ -6,6 +6,7 @@ import { getTags } from "~/api/data";
 import { TABLE_CELL_HEIGHT } from "~/constants";
 import clickOutside from "~/lib/clickOutside";
 import { useCellContext } from "~/utils/createTable";
+import styles from "./TagsCell.module.css";
 
 false && clickOutside
 
@@ -17,9 +18,9 @@ const DELIMITER = /[;,]/;
 
 function SpinnerIcon(props: { class?: string }) {
     return (
-        <svg class={`animate-spin ${props.class ?? ""}`} width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-            <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        <svg style="margin-left: 0.125rem;" class={`${styles.iconSpinner} ${props.class ?? ""}`} width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle opacity="0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <path opacity="0.9" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
         </svg>
     );
 }
@@ -37,7 +38,7 @@ export function TagsCell(props: TagsCellProps) {
     let isCancelled = false;
 
     const [oldValue, setOldValue] = createSignal<string[]>(cell.getValue())
-    
+
     createEffect(() => {
         if (edit()) {
             isCancelled = false;
@@ -75,7 +76,7 @@ export function TagsCell(props: TagsCellProps) {
             const trailing = parts.pop() ?? "";
             addTags(parts);
             setInputValue(trailing);
-        } 
+        }
         else {
             setInputValue(val);
         }
@@ -85,11 +86,11 @@ export function TagsCell(props: TagsCellProps) {
         if (e.key === "Enter") {
             e.preventDefault();
             handleSave()
-            
-        } 
+
+        }
         else if (e.key === "Backspace" && inputValue() === "" && draftTags().length > 0) {
             setDraftTags(prev => prev.slice(0, -1));
-        } 
+        }
         else if (e.key === "Escape") {
             e.preventDefault();
             isCancelled = true;
@@ -115,10 +116,10 @@ export function TagsCell(props: TagsCellProps) {
                 setLoading(true);
                 await props.onUpdate(newTags);
                 setOldValue(newTags)
-            } 
+            }
             catch (error) {
                 console.error("Failed to commit tags cell update:", error);
-            } 
+            }
             finally {
                 setLoading(false);
             }
@@ -129,8 +130,8 @@ export function TagsCell(props: TagsCellProps) {
 
     return (
         <div
-            class="flex flex-col justify-center px-2 relative"
-            classList={{ "overflow-hidden": !edit() }}
+            class={styles.cellWrapper}
+            classList={{ [styles.overflowHidden]: !edit() }}
             style={{
                 width: `${cell.column.getSize()}px`,
                 height: `${TABLE_CELL_HEIGHT}px`,
@@ -142,27 +143,27 @@ export function TagsCell(props: TagsCellProps) {
                 fallback={
                     <button
                         type="button"
-                        class="group/cell -mx-1.5 flex min-w-0 h-full items-center gap-1 rounded px-1.5 py-1 text-left outline-none transition-colors duration-100 hover:bg-zinc-800/80 focus-visible:ring-1 focus-visible:ring-zinc-500"
-                        classList={{ "opacity-60": loading() }}
+                        class={styles.triggerButton}
+                        classList={{ [styles.isLoading]: loading() }}
                         onDblClick={() => setEdit(true)}
                         title="Double click to edit"
                     >
-                        <div class="flex min-w-0 flex-wrap items-center gap-1 overflow-hidden h-full">
+                        <div class={styles.tagContainer}>
                             <For each={oldValue().slice(0, 3)}>
                                 {tag => (
-                                    <span class="shrink-0 truncate rounded-full bg-zinc-700/70 px-2 py-0.5 text-xs font-medium text-zinc-200">
+                                    <span class={styles.tagPill}>
                                         {tag}
                                     </span>
                                 )}
                             </For>
                             <Show when={oldValue().length > 3}>
-                                <span class="shrink-0 truncate rounded-full bg-zinc-700/70 px-2 py-0.5 text-xs font-medium text-zinc-200">
+                                <span class={styles.tagPill}>
                                     +{oldValue().length - 3}
                                 </span>
                             </Show>
                         </div>
                         <Show when={loading()}>
-                            <SpinnerIcon class="ml-0.5 shrink-0 text-zinc-400" />
+                            <SpinnerIcon />
                         </Show>
                     </button>
                 }
@@ -171,60 +172,60 @@ export function TagsCell(props: TagsCellProps) {
                     <div
                         ref={containerRef}
                         tabIndex={-1}
-                        class="absolute z-999 -mx-1.5 flex flex-wrap items-center gap-1 rounded border border-zinc-600 bg-zinc-800 px-1.5 py-1 shadow-[0_0_0_3px_rgba(255,255,255,0.04)] ring-1 ring-inset ring-zinc-500/40 transition-colors focus-within:border-zinc-400 focus-within:ring-2 focus-within:ring-zinc-400/60"
+                        class={styles.portalWrapper}
                         onKeyDown={handleKeyDown}
                         style={{
                             "position-anchor": "--tags-cell" + cell.id,
-                            top: "anchor(top)",
-                            left: "anchor(left)"
                         }}
                         use:clickOutside={() => {
-                            handleSave()
+                            isCancelled = true;
+                            setEdit(false);
                         }}
                         onClick={e => e.stopPropagation()}
                     >
-                        <For each={draftTags()}>
-                            {(tag, i) => (
-                                <span class="flex shrink-0 items-center gap-1 rounded-full bg-zinc-700 py-0.5 pl-2 pr-1 text-xs font-medium text-zinc-100">
-                                    {tag}
-                                    <button
-                                        type="button"
-                                        tabIndex={-1}
-                                        disabled={loading()}
-                                        class="rounded-full p-0.5 text-zinc-400 transition-colors hover:bg-zinc-600 hover:text-red-300 disabled:pointer-events-none"
-                                        onClick={(e) => {
-                                            setDraftTags(prev => prev.filter((_, idx) => idx !== i()));
-                                            e.stopPropagation()
-                                        }}
-                                    >
-                                        <XIcon size={12} />
-                                    </button>
-                                </span>
-                            )}
-                        </For>
-
-                        <input
-                            ref={inputRef}
-                            type="text"
-                            value={inputValue()}
-                            disabled={loading()}
-                            placeholder={draftTags().length === 0 ? "Add tags…" : ""}
-                            class="min-w-16 flex-1 bg-transparent text-sm text-zinc-100 outline-none placeholder:text-zinc-500 disabled:cursor-not-allowed"
-                            onInput={handleInput}
-                        />
+                        <div class={styles.selectedTags}>
+                            <For each={draftTags()}>
+                                {(tag, i) => (
+                                    <span class={styles.editableTag}>
+                                        {tag}
+                                        <button
+                                            type="button"
+                                            tabIndex={-1}
+                                            disabled={loading()}
+                                            class={styles.removeBtn}
+                                            onClick={(e) => {
+                                                setDraftTags(prev => prev.filter((_, idx) => idx !== i()));
+                                                e.stopPropagation()
+                                            }}
+                                        >
+                                            <XIcon size={12} />
+                                        </button>
+                                    </span>
+                                )}
+                            </For>
+                            <input
+                                ref={inputRef}
+                                type="text"
+                                value={inputValue()}
+                                disabled={loading()}
+                                placeholder={draftTags().length === 0 ? "Add tags…" : ""}
+                                class={styles.tagInput}
+                                onInput={handleInput}
+                            />
+                        </div>
 
                         <Show when={loading()}>
-                            <SpinnerIcon class="shrink-0 text-zinc-400" />
+                            <SpinnerIcon />
                         </Show>
 
                         <Show when={filteredSuggestions().length > 0}>
-                            <div class="absolute left-0 top-full mt-1 max-h-48 w-max min-w-full overflow-y-auto rounded border border-zinc-700 bg-zinc-800 py-1 shadow-lg shadow-black/40">
+                            <div class={styles.dropdown}>
                                 <For each={filteredSuggestions()}>
                                     {tag => (
                                         <button
                                             type="button"
                                             tabIndex={-1}
-                                            class="block w-full whitespace-nowrap px-3 py-1 text-left text-sm text-zinc-200 hover:bg-zinc-700"
+                                            class={styles.dropdownItem}
                                             onClick={(e) => {
                                                 addTags([tag]);
                                                 setInputValue("");
