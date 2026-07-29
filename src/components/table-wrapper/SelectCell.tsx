@@ -1,13 +1,17 @@
 import { createAsync } from "@solidjs/router";
 import { splitProps, createSignal, createEffect, Show, For, type ComponentProps, createMemo } from "solid-js";
+import { TABLE_CELL_HEIGHT } from "~/constants";
+import clickOutside from "~/lib/clickOutside";
 import { useCellContext } from "~/utils/createTable";
+
+false && clickOutside
 
 export type SelectOption = { label: string; value: string } | string;
 
 export type SelectCellProps = {
     options: SelectOption[];
     onUpdate: (val: string) => Promise<void>;
-    value?: string | number
+    initialValue?: string | number
 } & Omit<ComponentProps<"select">, "onChange" | "onBlur">;
 
 export function SelectCell(props: SelectCellProps) {
@@ -16,6 +20,8 @@ export function SelectCell(props: SelectCellProps) {
     const cell = useCellContext<string>();
     const [edit, setEdit] = createSignal(false);
     const [loading, setLoading] = createSignal(false);
+    const [startingVal, setStartingVal] = createSignal(String(props.initialValue ?? ""))    
+    const [value, setValue] = createSignal(String(props.initialValue ?? ""))
 
     let selectRef!: HTMLSelectElement;
     let isCancelled = false;
@@ -27,11 +33,8 @@ export function SelectCell(props: SelectCellProps) {
     );
 
     const currentLabel = createMemo(() => {
-        const val = cell.getValue();
-        const match = normalizedOptions().find(opt => opt.value === val);
-        return match ? match.label : val;
+        return normalizedOptions().find(opt => String(opt.value) === value())?.label;
     });
-
     createEffect(() => {
         if (edit()) {
             isCancelled = false;
@@ -43,15 +46,18 @@ export function SelectCell(props: SelectCellProps) {
         if (isCancelled || loading()) return;
 
         const newValue = selectRef.value;
-        const oldValue = cell.getValue();
-        if (newValue === oldValue) return
+
+        if (newValue === startingVal()) return
         try {
             setLoading(true);
+            setValue(newValue)
             await local.onUpdate(newValue);
-        }
+            setStartingVal(newValue)
+        } 
         catch (error) {
+            setValue(String(startingVal()))
             console.error("Failed to commit select cell update:", error);
-        }
+        } 
         finally {
             setLoading(false);
         }
@@ -63,7 +69,11 @@ export function SelectCell(props: SelectCellProps) {
         <div
             class="flex flex-col justify-center overflow-hidden px-2"
             style={{
-                width: `${cell.column.getSize()}px`
+                width: `${cell.column.getSize()}px`,
+                height: `${TABLE_CELL_HEIGHT}px`
+            }}
+            use:clickOutside={() => {
+                setEdit(false)
             }}
         >
             <Show
@@ -71,7 +81,7 @@ export function SelectCell(props: SelectCellProps) {
                 fallback={
                     <button
                         type="button"
-                        class="group/cell -mx-1.5 flex min-w-0 items-center gap-1.5 rounded px-1.5 py-0.5 text-left outline-none transition-colors duration-100 hover:bg-zinc-800/80 focus-visible:ring-1 focus-visible:ring-zinc-500"
+                        class="group/cell -mx-1.5 flex min-w-0 items-center gap-1.5 rounded px-1.5 py-0.5 text-left outline-none transition-colors duration-100 hover:bg-zinc-800/80 focus-visible:ring-1 focus-visible:ring-zinc-500 h-full"
                         classList={{ "opacity-60": loading() }}
                         onDblClick={() => setEdit(true)}
                         title="Double click to edit"
@@ -80,21 +90,22 @@ export function SelectCell(props: SelectCellProps) {
                             {currentLabel() || <span class="italic text-zinc-500">Empty</span>}
                         </span>
                         <Show when={loading()} fallback={
-                            <ChevronIcon class="shrink-0 text-zinc-600 opacity-0 transition-opacity group-hover/cell:opacity-100" />
+                            <ChevronIcon class="shrink-0 text-zinc-600 opacity-0 transition-opacity ml-auto group-hover/cell:opacity-100" />
                         }>
                             <SpinnerIcon class="shrink-0 text-zinc-400" />
                         </Show>
                     </button>
                 }
             >
-                <div class="relative -mx-1.5">
+                <div class="relative h-full -mx-1.5">
                     <select
                         {...selectProps}
-                        value={props.value}
+                        value={value()}
                         ref={selectRef}
                         disabled={loading() || selectProps.disabled}
-                        class={`w-full cursor-pointer appearance-none truncate text-ellipsis rounded border border-zinc-600 bg-zinc-800 py-0.5 pl-1.5 pr-5 font-medium text-zinc-100 shadow-[0_0_0_3px_rgba(255,255,255,0.04)] outline-none ring-1 ring-inset ring-zinc-500/40 transition-colors focus:border-zinc-400 focus:ring-2 focus:ring-zinc-400/60 disabled:cursor-not-allowed disabled:opacity-50 ${selectProps.class || ""}`}
-                        onChange={() => {
+                        class={`w-full h-full cursor-pointer appearance-none truncate text-ellipsis rounded border border-zinc-600 bg-zinc-800 py-0.5 pl-1.5 pr-5 font-medium text-zinc-100 shadow-[0_0_0_3px_rgba(255,255,255,0.04)] outline-none ring-1 ring-inset ring-zinc-500/40 transition-colors focus:border-zinc-400 focus:ring-2 focus:ring-zinc-400/60 disabled:cursor-not-allowed disabled:opacity-50 ${selectProps.class || ""}`}
+                        onChange={(e) => {
+                            setValue(e.currentTarget.value)
                             selectRef.blur();
                         }}
                         onBlur={handleSave}
@@ -110,7 +121,7 @@ export function SelectCell(props: SelectCellProps) {
                             {option => (
                                 <option
                                     value={option.value}
-                                    selected={option.value === props.value}
+                                    selected={String(option.value) === value()}
                                 >
                                     {option.label}
                                 </option>
@@ -128,7 +139,7 @@ type AsyncSelectCellProps<T> = {
     getOptions: () => Promise<T[]>;
     normalize: (item: T) => { label: string; value: string };
     onUpdate: (val: string) => Promise<void>;
-    value?: string | number
+    initialValue?: string | number
 } & Omit<ComponentProps<"select">, "options" | "onChange" | "onBlur">;
 
 export function AsyncSelectCell<T>(props: AsyncSelectCellProps<T>) {
@@ -147,6 +158,7 @@ export function AsyncSelectCell<T>(props: AsyncSelectCellProps<T>) {
             options={normalizedOptions()}
             onUpdate={local.onUpdate}
             disabled={!rawOptions()}
+            initialValue={props.initialValue}
             {...selectProps}
         />
     );

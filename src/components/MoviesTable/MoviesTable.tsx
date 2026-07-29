@@ -11,12 +11,14 @@ import { TableHeader } from "../table-wrapper/TableHeader";
 import MoviesContextMenu from "../MoviesContextMenu";
 import { useMoviesContextMenu } from "~/hooks/useMoviesContextMenu";
 import { TableBody } from "../table-wrapper/TableBody";
+import { useAction } from "@solidjs/router";
+import { editFilm } from "~/api/mutations";
 
 const [sorting, setSorting] = createSignal<SortingState>([]);
 
 export function MoviesTable(props: { data: MovieData }) {
     let ref!: HTMLDivElement
-
+    const updateFilm = useAction(editFilm)
     const virtualizer = createVirtualizer({
         get count() {
             return props.data.length
@@ -53,6 +55,9 @@ export function MoviesTable(props: { data: MovieData }) {
         columnResizeMode: "onChange",
         columnResizeDirection: "ltr",
         enableRowRangeSelection: true,
+        meta: {
+            updateFilm
+        }
     });
 
     state.mainPanel.selectionsFn(() => table.getSelectedRowIds().map((id): SidepanelFile | undefined => {

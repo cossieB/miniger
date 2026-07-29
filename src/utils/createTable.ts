@@ -1,6 +1,8 @@
-import { tableFeatures, columnSizingFeature, rowSortingFeature, columnResizingFeature, createSortedRowModel, sortFn_alphanumeric, sortFn_datetime, sortFn_text, sortFn_basic, createTableHook, rowSelectionFeature } from "@tanstack/solid-table"
+import { tableFeatures, columnSizingFeature, rowSortingFeature, columnResizingFeature, createSortedRowModel, sortFn_alphanumeric, sortFn_datetime, sortFn_text, sortFn_basic, createTableHook, rowSelectionFeature, metaHelper } from "@tanstack/solid-table"
 import { LockedCell, TextCell } from "~/components/table-wrapper/Cells"
 import { AsyncSelectCell, SelectCell } from "~/components/table-wrapper/SelectCell"
+import type { TFilm } from "~/datatypes"
+import type { OptionalExcept } from "~/lib/utilityTypes"
 
 const features = tableFeatures({
     columnSizingFeature,
@@ -14,6 +16,7 @@ const features = tableFeatures({
         text: sortFn_text,
         basic: sortFn_basic
     },
+    tableMeta: metaHelper<MovieMeta>()
 })
 
 export const {
@@ -36,3 +39,7 @@ export const {
 })
 
 export type AppTableFeatures = typeof features
+
+type MovieMeta = {
+    updateFilm: (f: OptionalExcept<TFilm, "filmId">, revalidate?: string[] | undefined) => Promise<undefined>;
+}

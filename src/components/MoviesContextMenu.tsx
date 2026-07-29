@@ -103,7 +103,6 @@ export default function MoviesContextMenu(props: P) {
                     onClick={async () => {
                         try {
                             const selections = props.isMainPanel ? state.mainPanel.getSelections() : state.sidePanel.selections.getAll()
-                            console.log(selections)
                             await createTempPlaylist(selections)
                         }
                         catch (error) {

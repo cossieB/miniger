@@ -1,4 +1,5 @@
 import { createEffect, createSignal, type JSX, Show, type ComponentProps, splitProps } from "solid-js"
+import { TABLE_CELL_HEIGHT } from "~/constants"
 import { useCellContext } from "~/utils/createTable"
 
 type Props = {
@@ -7,11 +8,12 @@ type Props = {
 
 export function TextCell(props: Props) {
     const [local, inputProps] = splitProps(props, ["onUpdate"])
-    
+
     const cell = useCellContext<string>()
     const [edit, setEdit] = createSignal(false)
     const [loading, setLoading] = createSignal(false)
-    
+    const [stargingVal, setStartingVal] = createSignal(cell.getValue())
+    const [value, setValue] = createSignal(cell.getValue())
     let inputRef!: HTMLInputElement
     let isCancelled = false
 
@@ -25,48 +27,53 @@ export function TextCell(props: Props) {
 
     const handleSave = async () => {
         if (isCancelled || loading()) return
-        
-        const newValue = inputRef.value
-        const oldValue = cell.getValue()
 
-        if (newValue !== oldValue) {
-            try {
-                setLoading(true)
-                await local.onUpdate(newValue)
-            } catch (error) {
-                console.error("Failed to commit cell update:", error)
-            } finally {
-                setLoading(false)
-            }
+        const newValue = inputRef.value
+
+        if (newValue == stargingVal()) return
+        try {
+            setLoading(true)
+            await local.onUpdate(newValue)
+            setStartingVal(newValue)
+        } 
+        catch (error) {
+            console.error("Failed to commit cell update:", error)
+            setValue(stargingVal())
+        } 
+        finally {
+            setLoading(false)
         }
-        
+
         setEdit(false)
     }
 
     return (
         <div
-            class="flex flex-col px-2 justify-center overflow-hidden"
+            class="flex flex-col px-2 justify-center overflow-hidden cursor-pointer"
             style={{
-                width: `${cell.column.getSize()}px`
+                width: `${cell.column.getSize()}px`,
+                height: `${TABLE_CELL_HEIGHT}px`
             }}
+            onDblClick={() => setEdit(true)}
         >
             <Show
                 when={edit()}
                 fallback={
                     <span
-                        class="font-medium text-zinc-100 truncate text-ellipsis outline-0 cursor-pointer"
-                        onDblClick={() => setEdit(true)}
+                        class="font-medium text-zinc-100 truncate text-ellipsis outline-0"
+                        
                     >
-                        {cell.getValue()}
+                        {value()}
                     </span>
                 }
             >
                 <input
                     {...inputProps}
                     ref={inputRef}
-                    value={cell.getValue()}
+                    value={value()}
+                    oninput={e => setValue(e.currentTarget.value)}
                     disabled={loading()}
-                    class="font-medium text-zinc-100 truncate text-ellipsis outline-0 bg-transparent disabled:opacity-50"
+                    class="font-medium text-zinc-100 truncate text-ellipsis outline-0 bg-transparent disabled:opacity-50 h-full flex justify-center"
                     onBlur={handleSave}
                     onKeyDown={e => {
                         if (e.key === "Enter") {
@@ -74,6 +81,7 @@ export function TextCell(props: Props) {
                         }
                         if (e.key === "Escape") {
                             isCancelled = true
+                            setValue(cell.getValue())
                             setEdit(false)
                         }
                     }}
@@ -83,7 +91,7 @@ export function TextCell(props: Props) {
     )
 }
 
-export function LockedCell(props: {value?: string | null, class?: string, style?: JSX.CSSProperties}) {
+export function LockedCell(props: { value?: string | null, class?: string, style?: JSX.CSSProperties }) {
     const cell = useCellContext<string>()
     return (
         <div

@@ -35,6 +35,7 @@ export function TableBody(props: Props) {
                 <For each={props.virtualizer.getVirtualItems()}>
                     {(virtualRow, i) => {
                         const row = () => rows()[virtualRow.index]
+                        
                         return (
                             <tr
                                 class="hover:bg-zinc-900/60"
@@ -51,7 +52,7 @@ export function TableBody(props: Props) {
                                     })
                                 }}
                                 classList={{ "bg-zinc-700!": row().getIsSelected() }}
-                                onContextMenu={e => {console.log("here")
+                                onContextMenu={e => {
                                     e.preventDefault();
                                     batch(() => {
                                         if (!row()?.getIsSelected() && !e.ctrlKey)

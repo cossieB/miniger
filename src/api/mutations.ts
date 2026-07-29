@@ -129,7 +129,7 @@ export const updateStudio = action(async (s: OptionalExcept<TStudio, "studioId">
 export const editFilm = action(async (f: OptionalExcept<TFilm, "filmId">, revalidate: string[] = []) => {
     const {filmId, ...rest} = f
     try {
-        await filmRepo.updateFilm(rest, filmId)    
+        await filmRepo.updateFilm(filmId, rest)    
         return json(undefined, {revalidate})
     } 
     catch (error) {

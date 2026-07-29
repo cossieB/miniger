@@ -96,7 +96,7 @@ export function moviesByCostars(actorAId: number, actorBId: number) {
     return filmsQuery.where("film.filmId", "in", filter).execute()
 }
 
-export function updateFilm(f: Partial<Omit<TFilm, "filmId">>, filmId: number) {
+export function updateFilm(filmId: number, f: Partial<Omit<TFilm, "filmId">>) {
     return db.updateTable("film").set(f).where("film.filmId", "=", filmId).execute()
 }
 

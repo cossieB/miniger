@@ -7,12 +7,22 @@ import { secondsToTime } from "~/utils/conversions";
 import { createAppColumnHelper } from "~/utils/createTable";
 
 const columnHelper = createAppColumnHelper<MovieData[number]>();
+
 export const columns = columnHelper.columns([
     columnHelper.accessor("title", {
         header: "Title",
         size: 400,
         sortFn: "text",
-        cell: props => <props.cell.TextCell onUpdate={async val => console.log(val)} />
+        cell: props => (
+            <props.cell.TextCell
+                onUpdate={async val => {
+                    props.table.options.meta!.updateFilm({
+                        title: val,
+                        filmId: props.row.original.filmId
+                    })
+                }}
+            />
+        )
     }),
     columnHelper.accessor("studioName", {
         header: "Studio",
@@ -21,13 +31,19 @@ export const columns = columnHelper.columns([
         cell: (props) => (
             <props.cell.AsyncSelectCell
                 getOptions={getStudios}
-                value={props.row.original.studioId ?? undefined}
-                onUpdate={async val => console.log(val)}
+                initialValue={props.row.original.studioId ?? undefined}
+                onUpdate={async val => {
+                    const newStudioId = Number(val) || null
+                    await props.table.options.meta!.updateFilm({
+                        studioId: newStudioId,
+                        filmId: props.row.original.filmId
+                    });
+                }}
                 //@ts-expect-error
                 normalize={(studio: Studio) => ({
                     label: studio.name,
                     value: studio.studioId
-                })}                
+                })}
             />
         ),
     }),
@@ -99,15 +115,15 @@ export const columns = columnHelper.columns([
         size: 100,
         sortFn: "text",
         cell: (props) => (
-            <div
-                class="font-mono text-sm text-zinc-400 truncate"
-                style={{
-                    width: props.column.getSize() + "px",
-
+            <props.cell.TextCell
+                type="date"
+                onUpdate={async val => {
+                    props.table.options.meta!.updateFilm({
+                        releaseDate: val,
+                        filmId: props.row.original.filmId
+                    })
                 }}
-            >
-                {props.getValue()}
-            </div>
+            />
         ),
     }),
     columnHelper.accessor(row => Number(row.metadata?.format.duration) || null, {
@@ -169,5 +185,5 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.accessor("path", {
         cell: props => <props.cell.LockedCell />
-    })    
+    })
 ])
