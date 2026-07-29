@@ -1,69 +1,8 @@
-import { createAsync, useAction } from "@solidjs/router"
-import { type ICellEditor, type ICellEditorParams } from "ag-grid-community"
-import { CheckIcon, XIcon } from "lucide-solid"
-import { createSignal, For, type Setter, Suspense } from "solid-js"
+import { createAsync } from "@solidjs/router"
+import { For, type Setter, Suspense } from "solid-js"
 import { getTags } from "~/api/data"
-import { updateTag } from "~/api/mutations"
 import clickOutside from "~/lib/clickOutside"
 false && clickOutside
-
-export function AgTagSelector(props: ICellEditorParams) {
-    const updateTagAction = useAction(updateTag)
-    const [tags, setTags] = createSignal<string[]>(props.value)
-
-    async function handleSubmit() {
-        updateTagAction(props.data.filmId, tags())
-        props.stopEditing()
-    }
-
-    let ref!: HTMLInputElement
-
-    const api: ICellEditor = {
-        getValue: () => tags()
-    };
-    (props as any).ref(api);
-
-    return (
-        <div
-            class="bg-slate-800 w-[50vw] shadow-[0_0_5px_5px_black]"
-        >
-            <div class="flex justify-end my-3">
-                <input
-                    ref={ref}
-                    class="ag-input-field-input ag-text-field-input h-10"
-                    type="text"
-                    value={tags().join(", ")}
-                    onchange={e => {
-                        setTags(e.currentTarget.value.trim().split(/[,;]+\s*/).filter(x => !!x))
-                    }}
-
-                    placeholder="Enter tags separated by a comma"
-                />
-                <button
-                    class="p-1 bg-red-500 w-10 justify-center items-center flex"
-                    onclick={() => {
-                        setTags(props.value)
-                        props.stopEditing()
-                    }}
-                >
-                    <XIcon />
-                </button>
-                <button
-                    class="p-1 bg-lime-500 w-10 justify-center items-center flex"
-                    onclick={handleSubmit}
-                >
-                    <CheckIcon />
-                </button>
-            </div>
-            <div class="p-1">
-                <TagSelector
-                    selectedTags={tags()}
-                    setTags={setTags}
-                />
-            </div>
-        </div>
-    )
-}
 
 type Props = {
     selectedTags: string[]

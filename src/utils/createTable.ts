@@ -41,9 +41,17 @@ export type AppTableFeatures = typeof features
 
 type MovieMeta = {
     updateFilm: (f: Partial<Omit<TFilm, "filmId">> & {
-        actorIds?: number[];
-        tags?: string[];
-    } & {
-        filmId: number;
-    }, revalidate?: string[] | undefined) => Promise<undefined>
+    actorIds?: number[];
+    tags?: string[];
+} & {
+    filmId: number;
+}, revalidate?: string[] | undefined) => Promise<{
+    title: string;
+    metadata: string | null;
+    path: string;
+    releaseDate: string | null;
+    dateAdded: string;
+    filmId: number;
+    studioId: number | null;
+} | undefined>
 }

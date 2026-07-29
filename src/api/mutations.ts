@@ -1,31 +1,12 @@
 import { action, json } from "@solidjs/router";
 import { state } from "../state";
 import { getActors, getFilms, getInaccessible, getStudios } from "./data";
-import * as tagRepo from "../repositories/tagRepository"
 import * as actorRepo from "../repositories/actorsRepository"
 import * as studioRepo from "../repositories/studioRepository"
 import * as filmRepo from "../repositories/filmsRepository"
 import { type OptionalExcept } from "~/lib/utilityTypes";
 import { deleteItemsFromDb } from "../repositories/deleteItems";
 import type { TActor, TStudio } from "~/datatypes";
-
-export const updateTag = action(async (filmId: number, tags: string[]) => {
-    try {
-        const filterTags: string[] = []
-        for (const tag of tags) {
-            const trimmed = tag.trim().toLowerCase()
-            if (!trimmed || filterTags.includes(trimmed)) continue
-            filterTags.push(trimmed)
-        }
-        
-        await tagRepo.updateTags(filmId, filterTags)
-        return json(undefined)
-    }
-    catch (error) {
-        state.status.setStatus(String(error))
-        throw json(undefined)
-    }
-})
 
 export const addActor = action(async (partialActor: string | Omit<TActor, 'actorId'>, filmId?: number) => {
     const actorObj = typeof partialActor === "string" ? {name: partialActor, dob: null, gender: null, image: null, nationality: null} : partialActor;
@@ -77,18 +58,6 @@ export const deleteItems = action(async (ids: number[], table: string) => {
     }
 })
 
-export const editFilmActors = action(async (actors: TActor[], filmId: number) => {
-
-    try {
-        await actorRepo.editFilmActor(actors, filmId)
-        return json(undefined, {revalidate: [getFilms.key]})
-    }
-    catch (error) {
-        state.status.setStatus(String(error))
-        throw json(undefined, {revalidate: []});
-    }
-})
-
 export const addFilesToDatabase = action(async (files: {title: string, path: string}[]) => {
     try {
         const res = await filmRepo.addFilms(files)
@@ -129,8 +98,8 @@ export const updateStudio = action(async (s: OptionalExcept<TStudio, "studioId">
 export const editFilm = action(async (f: filmRepo.UpdateFilmInput & {filmId: number}, revalidate: string[] = []) => {
     const {filmId, ...rest} = f
     try {
-        await filmRepo.updateFilm(filmId, rest)    
-        return json(undefined, {revalidate})
+        const film = await filmRepo.updateFilm(filmId, rest)    
+        return json(film, {revalidate})
     } 
     catch (error) {
         state.status.setStatus(String(error))

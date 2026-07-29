@@ -4,6 +4,7 @@ import { TABLE_CELL_HEIGHT } from "~/constants";
 import clickOutside from "~/lib/clickOutside";
 import { useCellContext } from "~/utils/createTable";
 import styles from "./SelectCell.module.css";
+import { ChevronDownIcon, Loader } from "lucide-solid";
 
 false && clickOutside
 
@@ -92,9 +93,9 @@ export function SelectCell(props: SelectCellProps) {
                             {currentLabel() || <span class={styles.emptyText}>Empty</span>}
                         </span>
                         <Show when={loading()} fallback={
-                            <ChevronIcon class={styles.iconChevronHover} />
+                            <ChevronDownIcon class={styles.iconChevronHover} />
                         }>
-                            <SpinnerIcon class={styles.iconSpinner} />
+                            <Loader class={styles.iconSpinner} />
                         </Show>
                     </button>
                 }
@@ -130,7 +131,7 @@ export function SelectCell(props: SelectCellProps) {
                             )}
                         </For>
                     </select>
-                    <ChevronIcon class={styles.iconChevronAbsolute} />
+                    <ChevronDownIcon class={styles.iconChevronAbsolute} />
                 </div>
             </Show>
         </div>
@@ -166,26 +167,3 @@ export function AsyncSelectCell<T>(props: AsyncSelectCellProps<T>) {
     );
 }
 
-function ChevronIcon(props: { class?: string }) {
-    return (
-        <svg
-            class={props.class}
-            width="10"
-            height="10"
-            viewBox="0 0 10 6"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
-            <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-    );
-}
-
-function SpinnerIcon(props: { class?: string }) {
-    return (
-        <svg class={`${styles.iconSpinner} ${props.class ?? ""}`} width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle opacity="0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-            <path opacity="0.9" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-        </svg>
-    );
-}

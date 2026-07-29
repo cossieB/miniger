@@ -1,39 +1,12 @@
 import { For, Show, Suspense, createEffect, createSignal, on, onCleanup, onMount } from "solid-js";
-import type { ICellEditor, ICellEditorParams } from "ag-grid-community";
 import type { TActor } from "~/datatypes";
 import { getActors } from "~/api/data";
 import { ActorItem } from "./ActorItem";
 import { AddActorToDatabaseBtn } from "./AddActorToDatabaseBtn";
-import { createAsync, useAction } from "@solidjs/router";
+import { createAsync } from "@solidjs/router";
 import clickOutside from "~/lib/clickOutside";
-import { editFilmActors } from "~/api/mutations";
 import { Portal } from "solid-js/web";
 false && clickOutside
-
-let cb: () => TActor[];
-export function AgActorSelector(props: ICellEditorParams) {
-    const editFilmActorsAction = useAction(editFilmActors);
-    const api: ICellEditor = {
-        getValue: () => cb(),
-
-    };
-
-    (props as any).ref(api);
-
-    async function handleSubmit(actors: TActor[]) {
-        await editFilmActorsAction(actors, props.data.filmId);
-        props.stopEditing();
-    }
-
-    return (
-        <ActorSelector
-            allowAddActor
-            close={() => props.stopEditing()}
-            handleSubmit={handleSubmit}
-            initialActors={props.data.actors}
-        />
-    );
-}
 
 type P = {
     close: () => void
@@ -47,7 +20,6 @@ export function ActorSelector(props: P) {
     let ref!: HTMLInputElement
     const [input, setInput] = createSignal("");
     const [selectedActors, setSelectedActors] = createSignal(props.initialActors ?? []);
-    cb = () => selectedActors()
     const actors = createAsync(() => getActors())
     const filteredActors = () => actors()?.filter(actor => actor.name.toLowerCase().includes(input().toLowerCase()));
     createEffect(on(actors, () => {
@@ -67,9 +39,12 @@ export function ActorSelector(props: P) {
     return (
         <Suspense>
             <Portal>
-                <div class="fixed inset-0 backdrop-blur-sm z-100">
+                <div 
+                class="fixed inset-0 backdrop-blur-sm z-100"
+                onClick={e => e.stopPropagation()}
+                >
                     <div
-                        class="w-[min(90vw,90rem)] h-screen flex flex-col ml-[50%] -translate-x-[50%]"
+                        class="w-[min(90vw,90rem)] h-screen flex flex-col ml-[50%] translate-x-[-50%]"
                         use:clickOutside={() => {
                             setSelectedActors(props.initialActors ?? [])
                             props.close()

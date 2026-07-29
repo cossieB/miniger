@@ -67,6 +67,7 @@
     z-index: 999;
     display: flex;
     flex-wrap: wrap;
+    min-width: 30rem;
     max-width: 50rem;
     max-height: 50rem;
     align-items: center;
@@ -82,17 +83,6 @@
     left: anchor(left);
 
     position-try: flip-block, flip-inline;
-}
-
-@position-try --normal {
-}
-
-@position-try --above {
-    bottom: anchor(bottom);
-    left: anchor(left);
-}
-@position-try --shift-left {
-
 }
 
 .portalWrapper:focus-within {
@@ -204,4 +194,17 @@
     to {
         transform: rotate(360deg);
     }
+}
+
+.tooltip {
+    position: absolute;
+    display: grid;
+    text-align: center;
+    max-height: 50vh;
+    overflow: hidden;
+    max-width: 50vw;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    top: anchor(bottom);
+    left: anchor(left);
+    position-try: flip-block;
 }
