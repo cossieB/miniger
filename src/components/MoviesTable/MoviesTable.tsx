@@ -98,60 +98,7 @@ export function MoviesTable(props: { data: MovieData }) {
                         <TableBody
                             virtualizer={virtualizer}
                             handleRightClick={data => setContextMenu(data)}
-                        />
-                        {/* <tbody class="relative">
-                            <Show
-                                when={table.getRowModel().rows.length > 0}
-                                fallback={
-                                    <tr>
-                                        <td
-                                            colSpan={columns.length}
-                                            class="px-4 py-10 text-center text-zinc-600"
-                                        >
-                                            Nothing to show.
-                                        </td>
-                                    </tr>
-                                }
-                            >
-                                <For each={virtualizer.getVirtualItems()}>
-                                    {(virtualRow, i) => {
-                                        const deselectAll = () => table.toggleAllRowsSelected(false);
-                                        const row = () => rows()[virtualRow.index]
-                                        return (
-                                            <tr
-                                                class="hover:bg-zinc-900/60"
-                                                style={{
-                                                    position: 'absolute',
-                                                    transform: `translateY(${virtualRow.start}px)`,
-                                                    width: '100%',
-                                                }}
-                                                onClick={e => {
-                                                    batch(() => {
-                                                        if (!e.ctrlKey)
-                                                            deselectAll()
-                                                        row()?.getToggleSelectedHandler()(e)
-                                                    })
-                                                }}
-                                                classList={{ "bg-zinc-700!": row().getIsSelected() }}
-
-                                            >
-                                                <For each={row()?.getAllCells()}>
-                                                    {(cell) => (
-                                                        <table.AppCell cell={cell}>
-                                                            {cell => (
-                                                                <td>
-                                                                    <cell.FlexRender />
-                                                                </td>
-                                                            )}
-                                                        </table.AppCell>
-                                                    )}
-                                                </For>
-                                            </tr>
-                                        )
-                                    }}
-                                </For>
-                            </Show>
-                        </tbody> */}
+                        />                        
                     </table>
                 </table.AppTable>
             </div>

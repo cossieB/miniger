@@ -96,8 +96,51 @@ export function moviesByCostars(actorAId: number, actorBId: number) {
     return filmsQuery.where("film.filmId", "in", filter).execute()
 }
 
-export function updateFilm(filmId: number, f: Partial<Omit<TFilm, "filmId">>) {
-    return db.updateTable("film").set(f).where("film.filmId", "=", filmId).execute()
+export type UpdateFilmInput = Partial<Omit<TFilm, "filmId">> & {
+    actorIds?: number[]
+    tags?: string[]
+}
+
+export function updateFilm(filmId: number, f: UpdateFilmInput ) {
+    const { actorIds, tags, ...filmColumns } = f
+
+    return db.transaction().execute(async (tx) => {
+        if (Object.keys(filmColumns).length > 0) {
+            await tx.updateTable("film")
+                .set(filmColumns)
+                .where("film.filmId", "=", filmId)
+                .execute()
+        }
+
+        if (actorIds !== undefined) {
+            await tx.deleteFrom("actorFilm")
+                .where("actorFilm.filmId", "=", filmId)
+                .execute()
+
+            if (actorIds.length > 0) {
+                await tx.insertInto("actorFilm")
+                    .values(actorIds.map((actorId) => ({ actorId, filmId })))
+                    .execute()
+            }
+        }
+
+        if (tags !== undefined) {
+            await tx.deleteFrom("filmTag")
+                .where("filmTag.filmId", "=", filmId)
+                .execute()
+
+            if (tags.length > 0) {
+                await tx.insertInto("filmTag")
+                    .values(tags.map((tag) => ({ tag, filmId })))
+                    .execute()
+            }
+        }
+
+        return tx.selectFrom("film")
+            .selectAll()
+            .where("film.filmId", "=", filmId)
+            .executeTakeFirstOrThrow()
+    })
 }
 
 export async function addFilms(files: { title: string, path: string }[]) {

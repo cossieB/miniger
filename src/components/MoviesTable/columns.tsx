@@ -1,10 +1,11 @@
 import { For, Show } from "solid-js";
-import { getStudios } from "~/api/data";
+import { getStudios, getTags } from "~/api/data";
 import { TABLE_CELL_HEIGHT } from "~/constants";
 import type { Studio } from "~/kysely/schema";
 import type { MovieData } from "~/types";
 import { secondsToTime } from "~/utils/conversions";
 import { createAppColumnHelper } from "~/utils/createTable";
+import { TagsCell } from "./TagsCell";
 
 const columnHelper = createAppColumnHelper<MovieData[number]>();
 
@@ -85,28 +86,34 @@ export const columns = columnHelper.columns([
         size: 175,
         enableSorting: false,
         cell: (props) => {
-            const tags = props.getValue();
+
             return (
-                <div
-                    class="flex flex-wrap items-center overflow-hidden"
-                    style={{
-                        width: props.column.getSize() + "px",
-                        height: TABLE_CELL_HEIGHT + "px"
-                    }}
-                >
-                    <For each={tags.slice(0, 3)}>
-                        {(tag) => (
-                            <span class="rounded border border-amber-500/30 px-1.5 py-0.5 text-[11px] uppercase tracking-wide text-amber-400/90 grow-0 h-min">
-                                {tag}
-                            </span>
-                        )}
-                    </For>
-                    <Show when={tags.length > 3}>
-                        <span class="rounded border border-amber-500/30 px-1.5 py-0.5 text-[11px] uppercase tracking-wide text-amber-400/90 grow-0 h-min">
-                            +{tags.length - 3}
-                        </span>
-                    </Show>
-                </div>
+                <TagsCell onUpdate={async tags => {
+                    props.table.options.meta?.updateFilm({
+                        filmId: props.cell.row.original.filmId,
+                        tags
+                    }, [getTags.key])
+                }} />
+                // <div
+                //     class="flex flex-wrap items-center overflow-hidden"
+                //     style={{
+                //         width: props.column.getSize() + "px",
+                //         height: TABLE_CELL_HEIGHT + "px"
+                //     }}
+                // >
+                //     <For each={tags.slice(0, 3)}>
+                //         {(tag) => (
+                //             <span class="rounded border border-amber-500/30 px-1.5 py-0.5 text-[11px] uppercase tracking-wide text-amber-400/90 grow-0 h-min">
+                //                 {tag}
+                //             </span>
+                //         )}
+                //     </For>
+                //     <Show when={tags.length > 3}>
+                //         <span class="rounded border border-amber-500/30 px-1.5 py-0.5 text-[11px] uppercase tracking-wide text-amber-400/90 grow-0 h-min">
+                //             +{tags.length - 3}
+                //         </span>
+                //     </Show>
+                // </div>
             );
         },
     }),

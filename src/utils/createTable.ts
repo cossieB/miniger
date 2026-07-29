@@ -2,7 +2,6 @@ import { tableFeatures, columnSizingFeature, rowSortingFeature, columnResizingFe
 import { LockedCell, TextCell } from "~/components/table-wrapper/Cells"
 import { AsyncSelectCell, SelectCell } from "~/components/table-wrapper/SelectCell"
 import type { TFilm } from "~/datatypes"
-import type { OptionalExcept } from "~/lib/utilityTypes"
 
 const features = tableFeatures({
     columnSizingFeature,
@@ -41,5 +40,10 @@ export const {
 export type AppTableFeatures = typeof features
 
 type MovieMeta = {
-    updateFilm: (f: OptionalExcept<TFilm, "filmId">, revalidate?: string[] | undefined) => Promise<undefined>;
+    updateFilm: (f: Partial<Omit<TFilm, "filmId">> & {
+        actorIds?: number[];
+        tags?: string[];
+    } & {
+        filmId: number;
+    }, revalidate?: string[] | undefined) => Promise<undefined>
 }

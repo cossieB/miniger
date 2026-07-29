@@ -7,7 +7,7 @@ import * as studioRepo from "../repositories/studioRepository"
 import * as filmRepo from "../repositories/filmsRepository"
 import { type OptionalExcept } from "~/lib/utilityTypes";
 import { deleteItemsFromDb } from "../repositories/deleteItems";
-import type { TActor, TFilm, TStudio } from "~/datatypes";
+import type { TActor, TStudio } from "~/datatypes";
 
 export const updateTag = action(async (filmId: number, tags: string[]) => {
     try {
@@ -126,7 +126,7 @@ export const updateStudio = action(async (s: OptionalExcept<TStudio, "studioId">
     }
 })
 
-export const editFilm = action(async (f: OptionalExcept<TFilm, "filmId">, revalidate: string[] = []) => {
+export const editFilm = action(async (f: filmRepo.UpdateFilmInput & {filmId: number}, revalidate: string[] = []) => {
     const {filmId, ...rest} = f
     try {
         await filmRepo.updateFilm(filmId, rest)    
