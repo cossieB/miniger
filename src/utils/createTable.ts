@@ -1,7 +1,8 @@
 import { tableFeatures, columnSizingFeature, rowSortingFeature, columnResizingFeature, createSortedRowModel, sortFn_alphanumeric, sortFn_datetime, sortFn_text, sortFn_basic, createTableHook, rowSelectionFeature, metaHelper } from "@tanstack/solid-table"
 import { LockedCell, TextCell } from "~/components/table-wrapper/Cells"
 import { AsyncSelectCell, SelectCell } from "~/components/table-wrapper/SelectCell"
-import type { TFilm, TStudio } from "~/datatypes"
+import type { TActor, TFilm, TStudio } from "~/datatypes"
+import { ImageEditor } from "~/components/table-wrapper/ImageEditor"
 import type { OptionalExcept } from "~/lib/utilityTypes"
 
 const features = tableFeatures({
@@ -34,7 +35,8 @@ export const {
         TextCell,
         LockedCell,
         SelectCell,
-        AsyncSelectCell
+        AsyncSelectCell,
+        ImageEditor
     }
 })
 
@@ -46,19 +48,17 @@ type TableMeta = {
         tags?: string[];
     } & {
         filmId: number;
-    }, revalidate?: string[] | undefined) => Promise<{
-        title: string;
-        metadata: string | null;
-        path: string;
-        releaseDate: string | null;
-        dateAdded: string;
-        filmId: number;
-        studioId: number | null;
-    } | undefined>,
+    }, revalidate?: string[] | undefined) => Promise<TFilm | undefined>,
 
-    editStudio?: (s: OptionalExcept<TStudio, "studioId">) => Promise<{
+    editStudio?: (s: OptionalExcept<TStudio, "studioId">) => Promise<TStudio>
+
+    updateActor?: (a: OptionalExcept<TActor, "actorId">) => Promise<{
+        actorId: number;
+        dob: string | null;
+        gender: string | null;
+        image: string | null;
         name: string;
-        studioId: number;
-        website: string | null;
-    }>
+        nationality: string | null;
+    } | undefined>
+
 }

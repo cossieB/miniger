@@ -1,39 +1,39 @@
-import { updateStudio } from "~/api/mutations";
-import { columns } from "./columns";
-import { createAsync, useAction } from "@solidjs/router";
-import { getStudios } from "~/api/data";
-import { createAppTable } from "~/utils/createTable";
-import type { TStudio } from "~/datatypes";
-import { createSignal, Show } from "solid-js";
+import { useAction, createAsync } from "@solidjs/router";
 import type { RowSelectionState } from "@tanstack/solid-table";
-import { state } from "~/state";
-import { createStore } from "solid-js/store";
 import { createVirtualizer } from "@tanstack/solid-virtual";
-import { TABLE_CELL_HEIGHT, TABLE_HEADER_HEIGHT } from "~/constants";
+import { createSignal, Show } from "solid-js";
+import { createStore } from "solid-js/store";
+import { getActors } from "~/api/data";
+import { editActor } from "~/api/mutations";
 import { ContextMenu } from "~/components/ContextMenu/ContextMenu";
 import { TableBody } from "~/components/table-wrapper/TableBody";
 import { TableHeader } from "~/components/table-wrapper/TableHeader";
+import { TABLE_CELL_HEIGHT, TABLE_HEADER_HEIGHT } from "~/constants";
+import type { TActor } from "~/datatypes";
+import { state } from "~/state";
+import { createAppTable } from "~/utils/createTable";
 import { enc } from "~/utils/encodeDecode";
+import { columns } from "./columns";
 import styles from "~/components/table-wrapper/Table.module.css"
 
-export function StudiosTable() {
+export function ActorsTable() {
     let ref!: HTMLDivElement
-    const editStudio = useAction(updateStudio);
-    const studios = createAsync(() => getStudios(), { initialValue: [] });
+    const updateActor = useAction(editActor);
+    const actors = createAsync(() => getActors(), { initialValue: [] });
     const virtualizer = createVirtualizer({
         get count() {
-            return studios().length
+            return actors().length
         },
         estimateSize: () => TABLE_CELL_HEIGHT,
         getScrollElement: () => ref,
         overscan: 20
     })
     const [rowSelection, setRowSelection] = createSignal<RowSelectionState>({})
-    const table = createAppTable<TStudio>({
-        getRowId: row => row.studioId.toString(),
-        key: "studios",
+    const table = createAppTable<TActor & {appearances: number | bigint | string}>({
+        getRowId: row => row.actorId.toString(),
+        key: "actors",
         get data() {
-            return studios()
+            return actors()
         },
         columns,
         state: {
@@ -43,12 +43,12 @@ export function StudiosTable() {
         },
         onRowSelectionChange: setRowSelection,
         meta: {
-            editStudio
+            updateActor
         }
     })
 
     state.mainPanel.selectionsFn(() => table.getSelectedRowIds()
-        .map(id => studios().find(s => s.studioId === Number(id))).filter(Boolean)
+        .map(id => actors().find(a => a.actorId === Number(id))).filter(Boolean)
     );
 
     const [contextMenu, setContextMenu] = createStore({
@@ -82,12 +82,12 @@ export function StudiosTable() {
                 <table.AppTable >
                     <table>
                         <TableHeader />
-                        <TableBody<ReturnType<typeof studios>[number]>
+                        <TableBody<ReturnType<typeof actors>[number]>
                             virtualizer={virtualizer}
                             handleRightClick={menu => setContextMenu({
                                 ...menu,
                                 data: {
-                                    selectedId: menu.data.studioId,
+                                    selectedId: menu.data.actorId,
                                     selectedName: menu.data.name
                                 }
                             })}
@@ -97,7 +97,8 @@ export function StudiosTable() {
             </div>
             <Show when={contextMenu.isOpen}>
                 <ContextMenu pos={contextMenu} close={() => setContextMenu('isOpen', false)} >
-                    <ContextMenu.Link href={`/movies/studios/${enc({ display: contextMenu.data.selectedName, id: contextMenu.data.selectedId })}`}> Go To Movies </ContextMenu.Link>
+                         <ContextMenu.Link href={`/movies/actors/${enc({display: contextMenu.data.selectedName, id: contextMenu.data.selectedId})}`}> Go To Movies </ContextMenu.Link>
+                         <ContextMenu.Link href={`/costars/${enc({display: contextMenu.data.selectedName, id: contextMenu.data.selectedId})}`} >See Co-stars</ContextMenu.Link>
                 </ContextMenu>
             </Show>
         </div>

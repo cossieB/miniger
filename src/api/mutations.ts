@@ -38,8 +38,8 @@ export const editActor = action(async (a: OptionalExcept<TActor, 'actorId'>) => 
     const {actorId, ...rest} = a
     if (Object.keys(rest).length === 0) return;
     try {
-        await actorRepo.updateActor(rest, actorId as any as number)
-        return json(undefined, {revalidate: []})
+        const a = await actorRepo.updateActor(rest, actorId as any as number)
+        return json(a, {revalidate: []})
     }
     catch (error) {
         console.error(error);

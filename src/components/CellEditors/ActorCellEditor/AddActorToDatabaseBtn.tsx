@@ -15,7 +15,7 @@ export function AddActorToDatabaseBtn(props: Props) {
     const addActorAction = useAction(addActor)
 
     const newActor = async () => {
-        const actorId = await addActorAction(props.input().trim());
+        const {actorId} = await addActorAction(props.input().trim());
         const actor: TActor = {
             actorId: actorId,
             dob: null,

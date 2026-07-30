@@ -73,7 +73,7 @@ export default function Inaccessible() {
     return (
         <div
             ref={ref}
-            class={styles.table}
+            class={`${styles.table} scrollable`}
             tabIndex={-1}
             onkeyup={e => {
                 if (e.key == "Escape")

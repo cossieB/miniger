@@ -1,4 +1,4 @@
-import { createEffect, createSignal, type JSX, Show, type ComponentProps, splitProps } from "solid-js"
+import { createEffect, createSignal, Show, type ComponentProps, splitProps, type JSX } from "solid-js"
 import { TABLE_CELL_HEIGHT } from "~/constants"
 import { useCellContext } from "~/utils/createTable"
 import styles from "./Cells.module.css"
@@ -13,7 +13,7 @@ export function TextCell(props: Props) {
     const cell = useCellContext<string>()
     const [edit, setEdit] = createSignal(false)
     const [loading, setLoading] = createSignal(false)
-    const [stargingVal, setStartingVal] = createSignal(cell.getValue())
+    const [startingVal, setStartingVal] = createSignal(cell.getValue())
     const [value, setValue] = createSignal(cell.getValue())
     let inputRef!: HTMLInputElement
     let isCancelled = false
@@ -31,7 +31,7 @@ export function TextCell(props: Props) {
 
         const newValue = inputRef.value
 
-        if (newValue == stargingVal()) return
+        if (newValue == startingVal()) return
         try {
             setLoading(true)
             await local.onUpdate(newValue)
@@ -39,7 +39,7 @@ export function TextCell(props: Props) {
         }
         catch (error) {
             console.error("Failed to commit cell update:", error)
-            setValue(stargingVal())
+            setValue(startingVal())
         }
         finally {
             setLoading(false)
@@ -79,7 +79,7 @@ export function TextCell(props: Props) {
                         }
                         if (e.key === "Escape") {
                             isCancelled = true
-                            setValue(stargingVal())
+                            setValue(startingVal())
                             setEdit(false)
                         }
                     }}
@@ -89,12 +89,13 @@ export function TextCell(props: Props) {
     )
 }
 
-export function LockedCell(props: { value?: string | null, class?: string }) {
+export function LockedCell(props: { value?: string | null, class?: string, style?: JSX.CSSProperties }) {
     const cell = useCellContext<string>()
     return (
         <div
             class={`${styles.lockedCell} ${props.class ?? ""}`}
             style={{
+                ...props.style,
                 height: `${TABLE_CELL_HEIGHT}px`,
                 width: cell.column.getSize() + "px"
             }}

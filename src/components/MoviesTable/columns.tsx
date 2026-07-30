@@ -3,8 +3,8 @@ import type { Studio } from "~/kysely/schema";
 import type { MovieData } from "~/types";
 import { secondsToTime } from "~/utils/conversions";
 import { createAppColumnHelper } from "~/utils/createTable";
-import { TagsCell } from "./TagsCell";
-import { ActorsCell } from "./ActorsCell";
+import { TagsCell } from "../table-wrapper/TagsCell";
+import { ActorsCell } from "../table-wrapper/ActorsCell";
 
 const columnHelper = createAppColumnHelper<MovieData[number]>();
 

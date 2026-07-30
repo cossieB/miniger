@@ -76,7 +76,7 @@ function AddStudioBtn(props: P1) {
     return (
         <HoldClickBtn
             action={async () => {
-                const studioId = await createAction(props.input())
+                const {studioId} = await createAction(props.input())
                 await updateAction({filmId: props.filmId, studioId})
                 props.setSelectedStudio({
                     name: props.input(), studioId

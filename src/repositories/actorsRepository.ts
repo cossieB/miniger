@@ -74,5 +74,5 @@ export async function createActor(a: Omit<TActor, 'actorId'>, filmId?: number) {
 }
 
 export function updateActor(a: Partial<Omit<TActor, "actorId">>, actorId: number) {
-    return db.updateTable("actor").set(a).where("actor.actorId", "=", actorId).returningAll().executeTakeFirst();
+    return db.updateTable("actor").set(a).where("actor.actorId", "=", actorId).returningAll().executeTakeFirstOrThrow();
 }
