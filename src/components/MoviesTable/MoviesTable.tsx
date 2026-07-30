@@ -95,7 +95,7 @@ export function MoviesTable(props: { data: MovieData }) {
                 <table.AppTable >
                     <table>
                         <TableHeader />
-                        <TableBody
+                        <TableBody<MovieData[number]>
                             virtualizer={virtualizer}
                             handleRightClick={data => setContextMenu(data)}
                         />                        

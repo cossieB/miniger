@@ -7,9 +7,9 @@ export function allStudios() {
 }
 
 export function addStudio(s: Omit<Studio, 'studioId'>) {
-    return db.insertInto("studio").values(s).returningAll().execute()
+    return db.insertInto("studio").values(s).returningAll().executeTakeFirstOrThrow()
 }
 
 export function editStudio(s: Partial<Omit<Studio, "studioId">>, studioId: number) {
-    return db.updateTable("studio").set(s).where("studioId", "=", studioId).execute()
+    return db.updateTable("studio").set(s).where("studioId", "=", studioId).returningAll().executeTakeFirstOrThrow()
 }

@@ -3,17 +3,17 @@ import columns from "lucide-solid/icons/columns";
 import { Show, For, batch, createMemo } from "solid-js";
 import { useTableContext } from "~/utils/createTable";
 
-type Props = {
+type Props<T extends object> = {
     virtualizer: Virtualizer<HTMLDivElement, Element>
     handleRightClick?: (data: {
         x: number,
         y: number,
         isOpen: boolean,
-        data: any
+        data: T
     }) => void
 }
 
-export function TableBody(props: Props) {
+export function TableBody<TData extends object>(props: Props<TData>) {
     const table = useTableContext()
     const rows = createMemo(() => table.getRowModel().rows)
     const deselectAll = () => table.toggleAllRowsSelected(false);
@@ -35,7 +35,7 @@ export function TableBody(props: Props) {
                 <For each={props.virtualizer.getVirtualItems()}>
                     {(virtualRow, i) => {
                         const row = () => rows()[virtualRow.index]
-                        
+
                         return (
                             <tr
                                 class="hover:bg-zinc-900/60"

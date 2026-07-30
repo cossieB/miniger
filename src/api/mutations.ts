@@ -12,7 +12,7 @@ export const addActor = action(async (partialActor: string | Omit<TActor, 'actor
     const actorObj = typeof partialActor === "string" ? {name: partialActor, dob: null, gender: null, image: null, nationality: null} : partialActor;
     try {
         const a = await actorRepo.createActor(actorObj, filmId)
-        return json(a.actorId, {revalidate: [getActors.key]})
+        return json(a, {revalidate: [getActors.key]})
 
     } 
     catch (error) {
@@ -26,7 +26,7 @@ export const createStudio = action(async (studio: string | Omit<TStudio, "studio
     const studioObj = typeof studio === "string" ?  {name: studio, website: null} : studio
     try {
         const s = await studioRepo.addStudio(studioObj);
-        return json(s[0].studioId, {revalidate: [getStudios.key]})
+        return json(s, {revalidate: [getStudios.key]})
     }
     catch (error) {
         state.status.setStatus(String(error))
@@ -86,8 +86,8 @@ export const removeByPaths = action(async (selection: { path: string }[] | strin
 export const updateStudio = action(async (s: OptionalExcept<TStudio, "studioId">) => {
     const {studioId, ...rest} = s
     try {
-        await studioRepo.editStudio(rest, studioId)
-        return json(undefined, {revalidate: [getStudios.key]})
+        const studio = await studioRepo.editStudio(rest, studioId)
+        return json(studio, {revalidate: [getStudios.key]})
     } catch (error) {
         console.error(error)
         state.status.setStatus(String(error))

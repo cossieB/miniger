@@ -16,7 +16,7 @@ export const columns = columnHelper.columns([
         cell: props => (
             <props.cell.TextCell
                 onUpdate={async val => {
-                    props.table.options.meta!.updateFilm({
+                    props.table.options.meta!.updateFilm!({
                         title: val,
                         filmId: props.row.original.filmId
                     })
@@ -34,7 +34,7 @@ export const columns = columnHelper.columns([
                 initialValue={props.row.original.studioId ?? undefined}
                 onUpdate={async val => {
                     const newStudioId = Number(val) || null
-                    await props.table.options.meta!.updateFilm({
+                    await props.table.options.meta!.updateFilm!({
                         studioId: newStudioId,
                         filmId: props.row.original.filmId
                     });
@@ -53,7 +53,7 @@ export const columns = columnHelper.columns([
         cell: (props) => (
             <ActorsCell
                 onUpdate={async actors => {
-                    await props.table.options.meta!.updateFilm({
+                    await props.table.options.meta!.updateFilm!({
                         actorIds: actors.map(actor => actor.actorId),
                         filmId: props.row.original.filmId
                     })
@@ -69,7 +69,7 @@ export const columns = columnHelper.columns([
 
             return (
                 <TagsCell onUpdate={async tags => {
-                    props.table.options.meta?.updateFilm({
+                    props.table.options.meta?.updateFilm!({
                         filmId: props.cell.row.original.filmId,
                         tags
                     }, [getTags.key])
@@ -85,7 +85,7 @@ export const columns = columnHelper.columns([
             <props.cell.TextCell
                 type="date"
                 onUpdate={async val => {
-                    await props.table.options.meta!.updateFilm({
+                    await props.table.options.meta!.updateFilm!({
                         releaseDate: val || null,
                         filmId: props.row.original.filmId
                     })

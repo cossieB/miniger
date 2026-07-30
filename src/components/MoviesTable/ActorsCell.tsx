@@ -32,7 +32,7 @@ export function ActorsCell(props: Props) {
             setLoading(false)
         }
     }
-
+    const anchorName = "--cast-cell" + cell.id
     return (
         <div
             class={styles.cellWrapper}
@@ -40,7 +40,7 @@ export function ActorsCell(props: Props) {
             style={{
                 width: `${cell.column.getSize()}px`,
                 height: `${TABLE_CELL_HEIGHT}px`,
-                "anchor-name": "--cast-cell" + cell.id,
+                "anchor-name": anchorName,
             }}
             onMouseEnter={e => {
                 timer = setTimeout(() => setShowtooltip(true), 1000)
@@ -94,7 +94,7 @@ export function ActorsCell(props: Props) {
             </Show>
             <Show when={showTooltip()}>
                 <Portal>
-                    <Tooltip anchorName={"--cast-cell" + cell.id} actors={oldValue()} />
+                    <Tooltip anchorName={anchorName} actors={oldValue()} />
                 </Portal>
             </Show>
         </div>

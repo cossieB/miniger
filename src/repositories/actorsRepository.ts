@@ -74,14 +74,5 @@ export async function createActor(a: Omit<TActor, 'actorId'>, filmId?: number) {
 }
 
 export function updateActor(a: Partial<Omit<TActor, "actorId">>, actorId: number) {
-    return db.updateTable("actor").set(a).where("actor.actorId", "=", actorId).execute();
-}
-
-export function editFilmActor(actors: TActor[], filmId: number) {
-    return db.transaction().execute(async tx => {
-        await tx.deleteFrom("actorFilm").where("actorFilm.filmId", "=", filmId).execute();
-        if (actors.length > 0) {
-            await tx.insertInto("actorFilm").values(actors.map(a => ({filmId, actorId: a.actorId}))).execute();
-        }
-    })
+    return db.updateTable("actor").set(a).where("actor.actorId", "=", actorId).returningAll().executeTakeFirst();
 }
