@@ -36,11 +36,11 @@ export function TextCell(props: Props) {
             setLoading(true)
             await local.onUpdate(newValue)
             setStartingVal(newValue)
-        } 
+        }
         catch (error) {
             console.error("Failed to commit cell update:", error)
             setValue(stargingVal())
-        } 
+        }
         finally {
             setLoading(false)
         }
@@ -89,13 +89,13 @@ export function TextCell(props: Props) {
     )
 }
 
-export function LockedCell(props: { value?: string | null, class?: string, style?: JSX.CSSProperties }) {
+export function LockedCell(props: { value?: string | null, class?: string }) {
     const cell = useCellContext<string>()
     return (
         <div
             class={`${styles.lockedCell} ${props.class ?? ""}`}
             style={{
-                ...props.style,
+                height: `${TABLE_CELL_HEIGHT}px`,
                 width: cell.column.getSize() + "px"
             }}
         >

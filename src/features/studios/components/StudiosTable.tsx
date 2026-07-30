@@ -14,6 +14,7 @@ import { ContextMenu } from "~/components/ContextMenu/ContextMenu";
 import { TableBody } from "~/components/table-wrapper/TableBody";
 import { TableHeader } from "~/components/table-wrapper/TableHeader";
 import { enc } from "~/utils/encodeDecode";
+import styles from "~/components/table-wrapper/Table.module.css"
 
 export function StudiosTable() {
     let ref!: HTMLDivElement
@@ -63,7 +64,7 @@ export function StudiosTable() {
     return (
         <div
             ref={ref}
-            class="w-full h-full overflow-scroll rounded-lg  bg-zinc-950 relative scrollable  border-collapse text-left text-sm"
+            class={styles.table}
             tabIndex={-1}
             onkeyup={e => {
                 if (e.key == "Escape")
@@ -73,8 +74,7 @@ export function StudiosTable() {
                 }
             }}
         >  
-            <div
-                class="w-full"
+            <div                
                 style={{
                     height: (virtualizer.getTotalSize() + TABLE_HEADER_HEIGHT) + "px",
                 }}

@@ -27,6 +27,12 @@
     container-type: inline-size;
 }
 
+.flexCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .actorsList {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 }

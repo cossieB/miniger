@@ -1,5 +1,4 @@
 import type { Virtualizer } from "@tanstack/solid-virtual";
-import columns from "lucide-solid/icons/columns";
 import { Show, For, batch, createMemo } from "solid-js";
 import { useTableContext } from "~/utils/createTable";
 
@@ -17,6 +16,7 @@ export function TableBody<TData extends object>(props: Props<TData>) {
     const table = useTableContext()
     const rows = createMemo(() => table.getRowModel().rows)
     const deselectAll = () => table.toggleAllRowsSelected(false);
+
     return (
         <tbody class="relative">
             <Show
@@ -24,7 +24,6 @@ export function TableBody<TData extends object>(props: Props<TData>) {
                 fallback={
                     <tr>
                         <td
-                            colSpan={columns.length}
                             class="px-4 py-10 text-center text-zinc-600"
                         >
                             Nothing to show.
