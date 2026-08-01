@@ -1,45 +1,79 @@
-.cellWrapper {
-    display: flex;
-    flex-direction: column;
-    padding: 0 0.5rem;
-    justify-content: center;
-    overflow: hidden;
-    cursor: pointer;
-}
+@layer components {
+    .cellWrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
 
-.textValue {
-    font-weight: 500;
-    color: var(--color-text-primary);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    outline: none;
-}
+    .triggerButton {
+        display: flex;
+        min-width: 0;
+        padding: 0 0.5rem;
+        height: 100%;
+        width: 100%;
+        align-items: center;
+        gap: 0.25rem;
+        border-radius: 0.25rem;
+        text-align: left;
+        outline: none;
+        transition: background-color 0.1s;
+        background: transparent;
+        border: none;
+        cursor: pointer;
 
-.textInput {
-    font-weight: 500;
-    color: var(--color-text-primary);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    outline: none;
-    background-color: transparent;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-}
+        &:hover {
+            background-color: var(--char-800);
+            box-shadow: inset 0 0 2.5px 1px var(--volt-fill-hover);
+        }
 
-.textInput:disabled {
-    opacity: 0.5;
-}
+        &:focus-visible {
+            box-shadow: 0 0 0 1px var(--volt-fill-hover);
+        }
+    }
 
-.lockedCell {
-    display: flex;
-    flex-direction: column;
-    padding: 0 0.5rem;
-    justify-content: center;
-    overflow: hidden;
-    color: var(--color-text-faded);
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    .overflowHidden {
+        overflow: hidden;
+    }
+
+    .isLoading {
+        opacity: 0.6;
+    }
+
+    .textValue {
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        outline: none;
+    }
+
+    .textInput {
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        outline: none;
+        background-color: transparent;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .textInput:disabled {
+        opacity: 0.5;
+    }
+
+    .lockedCell {
+        display: flex;
+        flex-direction: column;
+        padding: 0 0.5rem;
+        justify-content: center;
+        overflow: hidden;
+        color: var(--color-text-faded);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
 }

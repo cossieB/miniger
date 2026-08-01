@@ -6,13 +6,14 @@ import { enc } from "~/utils/encodeDecode"
 import { CameraIcon, DramaIcon, FileQuestionMarkIcon, FilmIcon, SearchIcon, TagIcon } from "lucide-solid"
 import { createAsync } from "@solidjs/router"
 import { For, Suspense } from "solid-js"
+import styles from "~/windows/MainWindow.module.css"
 
 export function Nav() {
     const tags = createAsync(() => getTags())
     const studios = createAsync(() => getStudios())
     return (
         <nav
-            class="top-0 left-0 h-full bg-slate-950 text-orange-50 shrink-0 overflow-y-auto text-sm scrollable"
+            class={`${styles.tree} scrollable`}
             style={{ 
                 width: state.tree.width + "px",
                 "scrollbar-gutter": "auto"

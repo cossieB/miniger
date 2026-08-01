@@ -10,6 +10,7 @@ import { Nav } from "../components/Nav/Nav";
 import { useWatchJson } from "../readSettings";
 import "~/events/mainWindow"
 import { BOTTOM_BAR_HEIGHT, TOP_BAR_HEIGHT } from "~/constants";
+import styles from "./MainWindow.module.css"
 
 function App(props: { children?: JSXElement }) {
     const abortController = new AbortController
@@ -26,9 +27,9 @@ function App(props: { children?: JSXElement }) {
     })
 
     return (
-        <div oncontextmenu={e => e.preventDefault()} class="h-screen w-screen text-white">
+        <div oncontextmenu={e => e.preventDefault()} class={styles.app}>
             <TopBar />
-            <div class="w-screen flex relative"
+            <div 
                 style={{
                     height: (state.windowDimensions.height - TOP_BAR_HEIGHT - BOTTOM_BAR_HEIGHT) + "px"
                 }}
@@ -42,7 +43,7 @@ function App(props: { children?: JSXElement }) {
                     minDisplacement={50}
                     maxDisplacement={state.windowDimensions.width - state.sidePanel.width - 600}
                 />
-                <main class="overflow-hidden bg-slate-900" style={{ width: state.mainPanel.width() + "px" }}>
+                <main style={{ width: state.mainPanel.width() + "px" }}>
                     {props.children}
                 </main>
                 <Resizer

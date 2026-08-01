@@ -1,6 +1,7 @@
 import { Show } from "solid-js";
 import { useControls } from "./useControls";
 import { CirclePauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon } from "lucide-solid";
+import styles from "./VideoPlayer.module.css"
 
 type P = {
     video: HTMLVideoElement;
@@ -10,9 +11,8 @@ type P = {
 export function VideoControls(props: P) {
     const { playNext, playPrevious } = useControls()
     return (
-        <div class="flex-1 flex h-full items-center justify-center gap-2.5">
-            <button
-            class="active:scale-90 hover:text-orange-500"
+        <div class={`${styles.controls} ${styles.elements}`}>
+            <button                
                 onclick={() => {
                     if (props.video.currentTime > 5)
                         return props.video.currentTime = 0
@@ -20,10 +20,9 @@ export function VideoControls(props: P) {
                     playPrevious()
                 }}
             >
-                <SkipBackIcon class="h-6 w-6" />
+                <SkipBackIcon />
             </button>
-            <button
-            class="active:scale-90 hover:text-orange-500"
+            <button                
                 onclick={() => {
 
                     if (!props.isPlaying()) {
@@ -34,15 +33,14 @@ export function VideoControls(props: P) {
                     }
                 }}
             >
-                <Show when={!props.isPlaying()} fallback={<CirclePauseIcon class="h-10 w-10" />}>
-                    <PlayIcon class="h-10 w-10" />
+                <Show when={!props.isPlaying()} fallback={<CirclePauseIcon class={styles.midIcon} />}>
+                    <PlayIcon class={styles.midIcon} />
                 </Show>
             </button>
-            <button 
-            class="active:scale-90 hover:text-orange-500"
-            onclick={playNext} 
+            <button                
+                onclick={playNext}
             >
-                <SkipForwardIcon class="h-6 w-6" />
+                <SkipForwardIcon />
             </button>
         </div>
     );

@@ -2,18 +2,24 @@ import { type Accessor, type Setter, Suspense } from "solid-js";
 import type { TActor } from "../../../datatypes";
 import { appDataDir, sep } from "@tauri-apps/api/path";
 import { convertFileSrc } from "@tauri-apps/api/core";
+import styles from "./ActorSelector.module.css"
 
 type Props = {
     actor: TActor;
+} & ({
     rowActors: Accessor<TActor[]>;
     setRowActors: Setter<TActor[]>;
-};
+} | {
+    rowActors?: undefined
+    setRowActors?: undefined
+})
 
 const d = await appDataDir()
 const dir = d + sep() + "images" + sep()
 
 export function ActorItem(props: Props) {
     function handleClick() {
+        if (!props.rowActors) return;
         if (props.rowActors().some(x => x.actorId === props.actor.actorId))
             props.setRowActors(prev => prev.filter(x => x.actorId !== props.actor.actorId));
 
@@ -24,41 +30,19 @@ export function ActorItem(props: Props) {
         <Suspense fallback={"loading"}>
             <li
                 onclick={handleClick}
-                class="overflow-hidden h-60 flex flex-col"
-                classList={{ 'border-2 border-green-500': props.rowActors().some((x: any) => x.actorId === props.actor.actorId) }}
+                class={`${styles.actorItem}`}
+                classList={{ [styles.selected]: props.rowActors?.().some(actor => actor.actorId === props.actor.actorId) }}
             >
-                <div class="h-[90%] overflow-hidden">
+                <div>
                     <img
-                        src={props.actor.image ? convertFileSrc(dir + props.actor.image) : "/Question_Mark.svg"}
-                        class="object-cover object-top h-full w-full"
+                        src={props.actor.image ? convertFileSrc(dir + props.actor.image) : "/Question_Mark.svg"}                        
                         loading="lazy"
                         alt=""
                         onerror={e => e.currentTarget.src = "/Question_Mark.svg"}
                     />
                 </div>
-                <span class="flex-1 flex items-center justify-center">{props.actor.name}</span>
+                <span>{props.actor.name}</span>
             </li>
         </Suspense>
     );
-}
-
-export function ActorItem2(props: { actor: Pick<TActor, 'image' | 'name'> }) {
-
-    return (
-        <Suspense>
-            <li
-                class="overflow-hidden h-60 flex flex-col bg-slate-800 p-2"
-            >
-                <div class="h-[90%] overflow-hidden">
-                    <img
-                        src={props.actor.image ? convertFileSrc(dir + props.actor.image) : "/Question_Mark.svg"}
-                        class="object-cover object-top h-full w-full"
-                        loading="lazy" alt=""
-                        onerror={e => e.currentTarget.src = "/Question_Mark.svg"}
-                    />
-                </div>
-                <span class="flex-1 flex items-center justify-center">{props.actor.name}</span>
-            </li>
-        </Suspense>
-    )
 }

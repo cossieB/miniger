@@ -4,19 +4,20 @@ import { addFilesToDatabase } from "~/api/mutations";
 import { addFolderToSidebar, readDirectories } from "~/utils/readDirectories";
 import { loadPlaylist, loadVideos } from "~/utils/loadPlaylist";
 import { Film, FolderInput, FolderOpen, ListVideo } from "lucide-solid";
+import styles from "./pages.module.css"
 
 export function Home() {
     const addAction = useAction(addFilesToDatabase)
     return (
-        <div class="mx-1">
-            <h1 class="text-center text-2xl my-2.5">Welcome To Miniger!</h1>
-            <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2">
+        <div class={styles.home}>
+            <h1 >Welcome To Miniger!</h1>
+            <div>
                 <Btn
-                    icon={<FolderOpen fill={undefined} />}
+                    icon={<FolderOpen  size={50} />}
                     label="Add folder to your sidebar playlist"
                     onclick={addFolderToSidebar}
                 />
-                <Btn icon={<FolderInput fill={undefined} />}
+                <Btn icon={<FolderInput  size={50} />}
                     label="Add folder to your database"
                     onclick={async () => {
                         const files = await readDirectories()
@@ -24,12 +25,12 @@ export function Home() {
                     }}
                 />
                 <Btn
-                    icon={<ListVideo />}
+                    icon={<ListVideo size={50} />}
                     label="Load Playlist File"
                     onclick={loadPlaylist}
                 />
                 <Btn
-                    icon={<Film />}
+                    icon={<Film size={50} />}
                     label="Load Videos"
                     onclick={loadVideos}
                 />
@@ -47,13 +48,13 @@ type P = {
 function Btn(props: P) {
     return (
         <button
-            class="p-1 h-52 flex flex-col items-center border-2 border-amber-400 hover:bg-slate-700 cursor-pointer hover:bg-linear-to-b from-slate-700 to-slate-900 homeBtn"
+            class={styles.homeBtn}
             onclick={props.onclick}
         >
-            <div class="h-[80%] flex place-items-center">
+            <div>
                 {props.icon}
             </div>
-            <label class="w-full grow "> {props.label} </label>
+            <label> {props.label} </label>
         </button>
     )
 }

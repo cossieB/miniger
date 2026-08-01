@@ -1,4 +1,5 @@
 import { Show } from "solid-js";
+import styles from "./Table.module.css"
 
 export function SortIcon(props: {
     direction: false | "asc" | "desc";
@@ -6,23 +7,11 @@ export function SortIcon(props: {
 }) {
     return (
         <Show when={props.sortable}>
-            <span class="inline-flex w-3 flex-col leading-none text-[8px]">
-                <span
-                    class={
-                        props.direction === "asc"
-                            ? "text-amber-400"
-                            : "text-zinc-600"
-                    }
-                >
+            <span class={styles.sorter}>
+                <span classList={{ [styles.active]: props.direction === "asc" }}               >
                     ▲
                 </span>
-                <span
-                    class={
-                        props.direction === "desc"
-                            ? "text-amber-400"
-                            : "text-zinc-600"
-                    }
-                >
+                <span classList={{ [styles.active]: props.direction === "desc" }}               >
                     ▼
                 </span>
             </span>

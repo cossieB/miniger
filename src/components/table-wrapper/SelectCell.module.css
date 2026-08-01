@@ -1,123 +1,102 @@
 .cellWrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  overflow: hidden;
-  padding: 0 0.5rem;
+    composes: cellWrapper from "./Cells.module.css"
 }
 
 .triggerButton {
-  margin: 0 -0.375rem;
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: 0.375rem;
-  border-radius: 0.25rem;
-  padding: 0.125rem 0.375rem;
-  text-align: left;
-  outline: none;
-  transition: background-color 0.1s, color 0.1s;
-  height: 100%;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
+    composes: triggerButton from "./Cells.module.css";
+    &:hover {
+        .triggerText {
+            color: #ffffff;
+        }
 
-.triggerButton:hover {
-  background-color: var(--color-bg-hover);
-}
-
-.triggerButton:focus-visible {
-  box-shadow: 0 0 0 1px var(--color-ring-solid);
+        .iconChevronHover {
+            opacity: 1;
+        }
+    }
 }
 
 .isLoading {
-  opacity: 0.6;
+    composes: isLoading from "./Cells.module.css"
 }
 
 .triggerText {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-weight: 500;
-  color: var(--color-text-primary);
-  transition: color 0.1s;
-}
-
-.triggerButton:hover .triggerText {
-  color: #ffffff;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    transition: color 0.1s;
 }
 
 .emptyText {
-  font-style: italic;
-  color: var(--color-text-faded);
+    font-style: italic;
+    color: var(--color-text-faded);
 }
 
 .selectWrapper {
-  position: relative;
-  height: 100%;
-  margin: 0 -0.375rem;
+    position: relative;
+    height: 100%;
+    margin: 0 -0.375rem;
 }
 
 .selectInput {
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-  appearance: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  border-radius: 0.25rem;
-  border: 1px solid var(--color-border);
-  background-color: var(--color-bg-base);
-  padding: 0.125rem 1.25rem 0.125rem 0.375rem;
-  font-weight: 500;
-  color: var(--color-text-primary);
-  box-shadow: var(--shadow-inner);
-  outline: none;
-  box-shadow: inset 0 0 0 1px var(--color-ring);
-  transition: background-color 0.1s, border-color 0.1s;
-}
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    appearance: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-radius: 0.25rem;
+    border: 1px solid var(--volt-border);
+    background-color: var(--char-800);
+    padding: 0.125rem 1.25rem 0.125rem 0.375rem;
+    font-weight: 500;
+    box-shadow: var(--smoke-300);
+    outline: none;
+    box-shadow: inset 0 0 0 1px var(--color-ring);
+    transition: background-color 0.1s, border-color 0.1s;
 
-.selectInput:focus {
-  border-color: var(--color-border-focus);
-  box-shadow: inset 0 0 0 2px var(--color-ring-focus);
-}
+    &:focus {
+        border-color: var(--color-border-focus);
+        box-shadow: inset 0 0 0 2px var(--color-ring-focus);
+    }
 
-.selectInput:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
 }
 
 .iconChevronAbsolute {
-  pointer-events: none;
-  position: absolute;
-  right: 0.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--color-text-muted);
+    pointer-events: none;
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
 }
 
 .iconChevronHover {
-  flex-shrink: 0;
-  color: var(--color-border);
-  opacity: 0;
-  transition: opacity 0.1s;
-  margin-left: auto;
-}
-
-.triggerButton:hover .iconChevronHover {
-  opacity: 1;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.1s;
+    margin-left: auto;
 }
 
 .iconSpinner {
-  flex-shrink: 0;
-  color: var(--color-text-muted);
-  animation: spin 1s linear infinite;
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+    animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }

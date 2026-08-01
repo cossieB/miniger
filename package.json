@@ -29,13 +29,11 @@
     "solid-js": "^1.9.12"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.2.2",
     "@tanstack/solid-table-devtools": "^9.0.0-beta.58",
     "@tauri-apps/cli": "^2.11.4",
     "@types/node": "^24.9.2",
     "autoprefixer": "^10.4.21",
     "kysely-codegen": "^0.20.0",
-    "tailwindcss": "^4.2.2",
     "typescript": "^7.0.2",
     "vite": "^8.0.0",
     "vite-plugin-solid": "^2.11.6"

@@ -4,6 +4,7 @@ import { VideoControls } from "./VideoControls";
 import { CustomVideo } from "./CustomVideo";
 import { useControls } from "./useControls";
 import { VolumeControl } from "./VolumeControl";
+import styles from "./VideoPlayer.module.css"
 
 export function VideoPlayer() {
     let video!: HTMLVideoElement
@@ -19,9 +20,9 @@ export function VideoPlayer() {
     })
 
     return (
-        <div class="w-full h-full flex flex-col relative">
+        <div class={styles.container}>
             <div
-                class=" bg-black items-center justify-center flex"
+                class={styles.player}
                 style={{
                     height: "calc(100% - 5rem)"
                 }}
@@ -34,13 +35,13 @@ export function VideoPlayer() {
                     isPlaying={isPlaying()}
                 />
             </div>
-            <div class="w-full flex justify-center gap-5 h-20 shrink-0 relative">
-                <div class="flex-1">
+            <div class={styles.controlsWrapper}>
+                <div class={`${styles.elements}`}>
                     {/* TODO: loop, repeat, random video controls etc */}
                 </div>
                 <input
                     type="range"
-                    class="w-full absolute top-0 -translate-y-1/2 flex-1"
+                    class={styles.seekbar}
                     value={time()}
                     min={0}
                     max={100}

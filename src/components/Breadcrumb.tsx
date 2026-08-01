@@ -3,6 +3,7 @@ import { type Accessor, For, Show, createMemo } from "solid-js"
 import titleCase from "../lib/titleCase"
 import { deco } from "~/utils/encodeDecode"
 import { ChevronRightIcon, HouseIcon } from "lucide-solid"
+import styles from "~/windows/MainWindow.module.css"
 
 export function Breadcrumbs() {
     const location = useLocation()
@@ -14,7 +15,7 @@ export function Breadcrumbs() {
     })
     
     return (
-        <ol class="h-full flex items-center" >
+        <ol class={styles.breadcrumb} >
             <li>
                 <HouseIcon onclick={() => navigate("/")} />
             </li>

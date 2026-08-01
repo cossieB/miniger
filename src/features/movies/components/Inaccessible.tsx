@@ -1,19 +1,17 @@
-import { createAsync, useAction } from "@solidjs/router";
+import { createAsync } from "@solidjs/router";
 import type { RowSelectionState } from "@tanstack/solid-table";
 import { createVirtualizer } from "@tanstack/solid-virtual";
 import { createSignal } from "solid-js";
 import { getInaccessible } from "~/api/data";
 import { TABLE_CELL_HEIGHT, TABLE_HEADER_HEIGHT } from "~/constants";
 import { state } from "~/state";
-import { createAppColumnHelper, createAppTable, useCellContext } from "~/utils/createTable";
+import { createAppColumnHelper, createAppTable } from "~/utils/createTable";
 import styles from "~/components/table-wrapper/Table.module.css"
 import { TableBody } from "~/components/table-wrapper/TableBody";
 import { TableHeader } from "~/components/table-wrapper/TableHeader";
 import type { MovieData } from "~/types";
-import { editFilm } from "~/api/mutations";
-import { open, } from "@tauri-apps/plugin-dialog";
-import videoExtensions from "~/videoExtensions.json"
-import { SearchIcon } from "lucide-solid";
+import { Find } from "~/components/table-wrapper/FindCell";
+
 
 const columnHelper = createAppColumnHelper<{ title: string, path: string, filmId: number }>();
 
@@ -104,33 +102,3 @@ export default function Inaccessible() {
     );
 }
 
-function Find() {
-    const action = useAction(editFilm)
-    const cell = useCellContext()
-
-    return (
-        <div
-            style={{
-                width: `${cell.column.getSize()}px`,
-                height: `${TABLE_CELL_HEIGHT}px`,
-            }}
-            class="flexCenter"
-        >
-            <button
-                title="Find file"
-                onClick={async () => {
-                    const sel = await open({
-                        filters: [{
-                            extensions: videoExtensions,
-                            name: "Video Files",
-                        }]
-                    })
-                    if (!sel) return;
-                    await action({ path: sel, filmId: cell.row.original.filmId }, [getInaccessible.key])
-                }}
-            >
-                <SearchIcon />
-            </button>
-        </div>
-    )
-}

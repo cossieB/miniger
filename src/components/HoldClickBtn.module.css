@@ -1,0 +1,38 @@
+@layer component {
+    .btn {
+        width: 100%;
+        padding: 0.75rem;
+        background: transparent;
+        overflow: hidden;
+        position: relative;
+
+        &::after {
+            content: "";
+            inset: 0;
+            position: absolute;
+            z-index: -10;
+            background-color: var(--volt-300);
+        }
+
+        &::before {
+            content: "";
+            inset: 0;
+            position: absolute;
+            z-index: -5;
+            background-color: var(--volt-700);
+            translate: calc(var(--time)*-1%);
+        }
+
+        >span {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: center;
+
+            span {
+                font-weight: bold;
+                font-style: italic;
+            }
+        }
+    }
+}

@@ -2,6 +2,7 @@ import { type JSXElement } from "solid-js";
 import { useLevel } from "./calculateLevel";
 import { Icon } from "./Icon";
 import { A } from "@solidjs/router";
+import styles from "~/windows/MainWindow.module.css"
 
 type P1 = {
     href: string;
@@ -13,7 +14,7 @@ export function LinkNode(props: P1) {
     const {level, setRef} = useLevel()
     return (
         <li
-            class="tree-node"
+            class={`tree-node ${styles.linkNode}`}
             ref={setRef}
         >
             <A

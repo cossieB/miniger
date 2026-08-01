@@ -3,6 +3,7 @@ import { useLevel } from "./calculateLevel";
 import { Icon } from "./Icon";
 import { CaretIcon } from "../CaretIcon";
 import { createAsync } from "@solidjs/router";
+import styles from "~/windows/MainWindow.module.css"
 
 type P = {
     label: string,
@@ -15,12 +16,11 @@ export function ParentNode(props: P) {
     const { level, setRef } = useLevel()
     return (
         <li
-            class="tree-node"
+            class={`tree-node ${styles.node}`}
             ref={setRef}
         >
             <div
-                onclick={() => setIsOpen(p => !p)}
-                class="w-full flex items-center h-8 hover:bg-orange-500"
+                onclick={() => setIsOpen(p => !p)}                
                 style={{ "padding-left": level() + 'rem' }}
             >
                 <Icon>
@@ -28,7 +28,7 @@ export function ParentNode(props: P) {
                 </Icon>
                 {props.label}
             </div>
-            <ul class="overflow-hidden transition-[height] duration-250 ease]" classList={{ "h-0": !isOpen(), "h-auto": isOpen() }}>
+            <ul class={styles.subtree} classList={{ [styles.open]: isOpen() }}>
                 {props.children}
             </ul>
         </li>
@@ -47,12 +47,11 @@ export function AsyncParentNode<T>(props: P1<T>) {
 
     return (
         <li
-            class="tree-node"
+            class={`tree-node ${styles.node}`}
             ref={setRef}
         >
             <div
-                onclick={() => setIsOpen(p => !p)}
-                class="w-full flex items-center h-8 hover:bg-orange-500"
+                onclick={() => setIsOpen(p => !p)}                
                 style={{ "padding-left": level() + 'rem' }}
             >
                 <Icon>
@@ -60,7 +59,7 @@ export function AsyncParentNode<T>(props: P1<T>) {
                 </Icon>
                 {props.label}
             </div>
-            <ul class="overflow-hidden transition-[height] duration-250 ease" classList={{ "h-0": !isOpen(), "h-auto": isOpen() }}>
+            <ul class={styles.subtree} classList={{ [styles.open]: isOpen() }}>
                 <Show when={isOpen()}>
                     <List
                         {...props}

@@ -2,6 +2,7 @@ import { createResource, Index } from "solid-js"
 import { getCurrentWindow } from "@tauri-apps/api/window"
 import { state } from "~/state"
 import { SidePanelItem } from "~/components/sidePanel/SidePanelItem";
+import styles from "./Windows.module.css"
 import "~/events/drop"
 
 const window = getCurrentWindow();
@@ -25,7 +26,7 @@ export function DragDrop() {
 
     return (
         <div
-            class="bg-slate-950 w-screen h-screen text-white overflow-y-scroll"
+            class={styles.dragdrop}
             tabIndex={0}
             onkeyup={e => {
                 e.preventDefault();
@@ -40,11 +41,8 @@ export function DragDrop() {
                 }
             }}
         >
-            <div
-                class="w-full flex justify-end"
-            >
+            <div>
                 <button
-                    class="bg-orange-500 rounded-sm p-1"
                     onclick={async () => {
                         (await unlisten)()
                         await window.emitTo("main", "files-dropped", state.sidePanel.list)
@@ -54,7 +52,7 @@ export function DragDrop() {
                     DONE
                 </button>
             </div>
-            <ul class="overflow-y-auto overflow-x-hidden droppable shrink" id="drop-list">
+            <ul class="droppable" id="drop-list">
                 <Index each={state.sidePanel.list}>
                     {(data, i) =>
                         <SidePanelItem

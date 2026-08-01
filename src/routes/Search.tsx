@@ -1,15 +1,18 @@
-import { type JSXElement, Show } from "solid-js";
+import { For, type JSXElement, Show } from "solid-js";
 import { createStore } from "solid-js/store";
 import { ActorSelector } from "~/components/CellEditors/ActorCellEditor/ActorSelector";
-import { TagSelector } from "~/components/CellEditors/TagSelector";
 import { type TActor } from "~/datatypes";
-import { useNavigate } from "@solidjs/router";
-import { StudioSelector } from "~/components/CellEditors/StudioSelector/StudioSelector";
-import { CaretIcon } from "~/components/CaretIcon";
+import { createAsync, useNavigate } from "@solidjs/router";
+import { Tags } from "~/components/table-wrapper/TagsCell";
+import { getStudios, getTags } from "~/api/data";
+import { ReactiveSet } from "@solid-primitives/set";
+import { XIcon } from "lucide-solid";
+import styles from "./Search.module.css";
+import { withViewTransition } from "~/utils/withViewTransition";
 
 const [filters, setFilters] = createStore({
     actors: [] as TActor[],
-    tags: [] as string[],
+    tags: new ReactiveSet<string>(),
     afterDate: "",
     beforeDate: "",
     studio: {
@@ -27,71 +30,103 @@ const [state, setState] = createStore({
 
 export function Search(props: { children?: JSXElement }) {
     const navigate = useNavigate()
-
+    const tags = createAsync(() => getTags(), { initialValue: [] })
+    const studios = createAsync(() => getStudios(), { initialValue: [] })
     function handleClick() {
-        sessionStorage.setItem("filters", JSON.stringify(filters))
-
+        sessionStorage.setItem("filters", JSON.stringify({
+            ...filters,
+            tags: Array.from(filters.tags)
+        }))
         navigate("/movies/search")
     }
+
     return (
-        <div class="ctis p-5 h-full overflow-auto thin-scrollbar">
-            <h1 class="text-center text-3xl">Search Movies</h1>
+        <div class={`scrollable ${styles.container}`}>
+            <h1 class={styles.title}>Search Movies</h1>
+
             <div>
-                <h2 class="font-bold">Actors</h2>
+                <h2 class={styles.sectionTitle}>Actors</h2>
                 <button
-                    class="bg-amber-500 p-1"
+                    class={styles.actionButton}
                     onclick={() => setState({ showActors: true })}
                 >
                     Select Actors
-
                 </button>
-                <span class="ml-2">{new Intl.ListFormat(undefined, { type: 'conjunction' }).format(filters.actors.map(a => a.name))}</span>
+                <span class={styles.actorNames}>
+                    {new Intl.ListFormat(undefined, { type: 'conjunction' }).format(filters.actors.map(a => a.name))}
+                </span>
             </div>
-            <h2 class="py-2">Tags</h2>
-            <span class="h-10 bg-slate-700 mt-1 mb-3 px-1 flex items-center">
-                {filters.tags.join(", ")}
-            </span>
-            <TagSelector
-                selectedTags={filters.tags}
-                setTags={tags => setFilters('tags', tags )}
 
+            <h2 class={styles.sectionTitle}>Tags</h2>
+            <div class={styles.tagsDisplay}>
+                <For each={Array.from(filters.tags)}>
+                    {tag => (
+                        <div style={{ "view-transition-name": `--tag-${tag}` }}>
+                            <span>{tag}</span>
+                            <button onClick={() => withViewTransition(() => setFilters('tags', filters => {
+                                filters.delete(tag);
+                                return filters
+                            }))}>
+                                <XIcon size={16} />
+                            </button>
+                        </div>
+                    )}
+                </For>
+            </div>
+            <Tags
+                onClick={tag => withViewTransition(() => {
+                    if (filters.tags.has(tag)) filters.tags.delete(tag)
+                    else filters.tags.add(tag)
+                })}
+                tags={tags().filter(t => !filters.tags.has(t.tag)).map(t => t.tag)}
             />
-            <div class="flex justify-around my-5">
-                <label >
+
+            <div class={styles.dateGroup}>
+                <select>
+                    <option
+                        onClick={() => setFilters('studio', { name: "", studioId: null })}
+                        value={JSON.stringify({ name: "", studioId: null })}
+                        selected={!filters.studio.studioId}
+                    >
+                        Studio
+
+                    </option>
+                    <For each={studios()}>
+                        {studio => <option
+                            onClick={() => {
+                                setFilters('studio', studio);
+                            }}
+                            value={JSON.stringify(studio)}
+                            selected={filters.studio.studioId == studio.studioId}
+                        >
+                            {studio.name}
+                        </option>}
+                    </For>
+                </select>
+                <label>
                     Released After
-                    <input type="date" class="ml-5" value={filters.afterDate} onchange={(e) => setFilters("afterDate", e.target.value)} />
+                    <input
+                        type="date"
+                        value={filters.afterDate}
+                        onchange={(e) => setFilters("afterDate", e.target.value)}
+                    />
                 </label>
-                <label >
+                <label>
                     Released Before
-                    <input type="date" class="ml-5" value={filters.beforeDate} onchange={(e) => setFilters("beforeDate", e.target.value)} />
+                    <input
+                        type="date"
+                        value={filters.beforeDate}
+                        onchange={(e) => setFilters("beforeDate", e.target.value)}
+                    />
                 </label>
             </div>
-            <button
-                class="bg-amber-500 p-1 flex text-nowrap items-center [&>svg]:h-5"
-                onclick={() => setState("showStudios", prev => !prev)}
-            >
-                Select Studio &nbsp;
-                <CaretIcon isOpen={() => state.showStudios} />
-            </button>
-            <span> {filters.studio.name == "Unknown" ? "" : filters.studio.name} </span>
-            <div
-                class="mt-5 z-500 overflow-hidden transition-[height_2s_ease] "
-                classList={{ "h-auto!": state.showStudios, "h-0": !state.showStudios }}
-            >
-                <StudioSelector
-                    setSelectedStudio={studio => {
-                        setFilters("studio", studio)
-                        setState("showStudios", false)
-                    }}
-                />
-            </div>
+
+
 
             <Show when={state.showActors}>
                 <ActorSelector
                     allowAddActor={false}
-                    close={() => {
-                        setState({ showActors: false })
-                    }}
+                    close={() => setState({ showActors: false })}
                     handleSubmit={(actors) => {
                         setState({ showActors: false })
                         setFilters({ actors })
@@ -101,9 +136,14 @@ export function Search(props: { children?: JSXElement }) {
             </Show>
 
             <button
-                class="flex p-3 w-full items-center justify-center bg-green-600 mt-5 disabled:bg-green-200 disabled:text-black"
+                class={styles.submitBtn}
                 onclick={handleClick}
-                disabled={(filters.actors.length + filters.tags.length === 0) && !filters.studio.studioId}
+                disabled={(
+                    filters.actors.length + filters.tags.size === 0) 
+                    && !filters.studio.studioId
+                    && !filters.beforeDate
+                    && !filters.afterDate
+                }
             >
                 SEARCH
             </button>

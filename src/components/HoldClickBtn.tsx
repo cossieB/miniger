@@ -1,5 +1,6 @@
 import { CirclePlusIcon } from "lucide-solid";
 import { type Accessor, createSignal, onCleanup } from "solid-js";
+import styles from "./HoldClickBtn.module.css"
 
 type Props = {
     action: () => Promise<unknown>
@@ -18,7 +19,7 @@ export function HoldClickBtn(props: Props) {
     })
     return (
         <button
-            class="w-full p-3 bg-transparent relative overflow-hidden holdBtn"
+            class={styles.btn}
             style={{ "--time": percentage() }}
             onmousedown={e => {
                 t = setInterval(async () => {
@@ -38,9 +39,9 @@ export function HoldClickBtn(props: Props) {
                 setTime(start)
             }}
         >
-            <span class="flex items-center w-full justify-center">
+            <span>
                 <CirclePlusIcon />&nbsp;
-                Hold to add<span class="font-bold italic">&nbsp;{props.input()}&nbsp;</span>to the database
+                Hold to add<span>&nbsp;{props.input()}&nbsp;</span>to the database
             </span>
         </button>
     )

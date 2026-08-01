@@ -1,6 +1,7 @@
 import { createMemo, type JSX, splitProps } from "solid-js";
 import { state } from "../../state";
 import { useLocation, useNavigate, useSearchParams } from "@solidjs/router";
+import styles from "./SidePanel.module.css"
 
 type P = {
     data: (typeof state)['sidePanel']['list'][number];
@@ -22,13 +23,13 @@ export function SidePanelItem(props: P) {
 
     return (
         <li
-            class="text-ellipsis text-nowrap overflow-hidden p-1 cursor-default not-last:hover:bg-slate-700 transition-[margin-top,padding-top] not-last:odd:bg-slate-900 not-last:even:bg-slate-800 relative sidepanel-item -outline-offset-1"
+            class={`${styles.item} sidepanel-item`}
             classList={{
-                "!bg-slate-500": props.data.isSelected,
-                "mt-4": props.data.lastDraggedOver,
-                'outline-dashed outline-1': props.data.selectedLast,
-                "text-gray-400!": props.data.cantPlay,
-                "text-orange-500": isPlaying(),
+                [styles.selected]: props.data.isSelected,
+                [styles.lastDraggedOver]: props.data.lastDraggedOver,
+                [styles.selectedLast]: props.data.selectedLast,
+                [styles.cantPlay]: props.data.cantPlay,
+                [styles.playing]: isPlaying(),
             }}
             data-i={props.i}
             onClick={e => {

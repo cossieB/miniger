@@ -1,6 +1,7 @@
 import type { Virtualizer } from "@tanstack/solid-virtual";
 import { Show, For, batch, createMemo } from "solid-js";
 import { useTableContext } from "~/utils/createTable";
+import styles from "./Table.module.css"
 
 type Props<T extends object> = {
     virtualizer: Virtualizer<HTMLDivElement, Element>
@@ -18,14 +19,12 @@ export function TableBody<TData extends object>(props: Props<TData>) {
     const deselectAll = () => table.toggleAllRowsSelected(false);
 
     return (
-        <tbody class="relative">
+        <tbody>
             <Show
                 when={table.getRowModel().rows.length > 0}
                 fallback={
                     <tr>
-                        <td
-                            class="px-4 py-10 text-center text-zinc-600"
-                        >
+                        <td class={styles.empty} >
                             Nothing to show.
                         </td>
                     </tr>
@@ -37,11 +36,8 @@ export function TableBody<TData extends object>(props: Props<TData>) {
 
                         return (
                             <tr
-                                class="hover:bg-zinc-900/60"
                                 style={{
-                                    position: 'absolute',
                                     transform: `translateY(${virtualRow.start}px)`,
-                                    width: '100%',
                                 }}
                                 onClick={e => {
                                     batch(() => {
@@ -50,7 +46,7 @@ export function TableBody<TData extends object>(props: Props<TData>) {
                                         row()?.getToggleSelectedHandler()(e)
                                     })
                                 }}
-                                classList={{ "bg-zinc-700!": row().getIsSelected() }}
+                                classList={{ [styles.selected]: row().getIsSelected() }}
                                 onContextMenu={e => {
                                     e.preventDefault();
                                     batch(() => {

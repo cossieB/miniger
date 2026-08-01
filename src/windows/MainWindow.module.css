@@ -1,0 +1,144 @@
+@layer layouts {
+    .app {
+        height: 100vh;
+        width: 100vw;
+
+        >div {
+            width: 100vw;
+            display: flex;
+            position: relative;
+        }
+
+        main {
+            overflow: hidden;
+
+        }
+    }
+
+    .topbar {
+        width: 100%;
+        display: flex;
+        padding-left: 1.25rem;
+        background-color: var(--volt-700);
+
+        svg {
+            height: 100%;
+            color: var(--paper-50);
+
+            &:hover {
+                color: var(--paper-100);
+            }
+        }
+
+        >div {
+            display: flex;
+            height: 100%;
+            flex: 1;
+            flex-shrink: 0;
+            align-items: center;
+            gap: 0.75rem;
+
+            &:is(:nth-child(2)) {
+                margin-left: auto;
+                justify-content: center;
+            }
+
+            &:is(:nth-child(3)) {
+                margin-left: auto;
+                justify-content: end;
+            }
+
+        }
+    }
+
+    .bottombar {
+        width: 100%;
+        background-color: var(--volt-700);
+        padding-left: 1.25rem;
+        display: flex;
+        justify-items: center;
+
+        >svg {
+            margin-right: 1.25rem;
+        }
+    }
+
+    .tree {
+        top: 0;
+        left: 0;
+        height: 100%;
+        flex-shrink: 0;
+        overflow-y: auto;
+        font-size: small;
+        background-color: var(--char-800);
+
+        .linkNode a {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            height: 2rem;
+            text-wrap: wrap;
+            &:hover {
+                background-color: var(--char-600);                        
+            }
+        }
+        .parent {
+            width: 1rem;
+            margin-inline: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    .node>div {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        height: 2rem;
+        &:hover {
+            background-color: var(--char-600);
+                    
+        }
+    }
+
+    .subtree {
+        overflow: hidden;
+        transition: height 250ms ease;
+        height: 0;
+
+        &.open {
+            height: auto;
+        }
+    }
+
+    .resizer {
+        position: absolute;
+        z-index: 50;
+        border-radius: 1rem;
+        height: 2.5rem;
+        width: 0.5rem;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        cursor: ew-resize;
+        background-color: var(--volt-400);
+        &.vertical {
+            width: 2.5rem;
+            height: 0.5rem;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: ns-resize;
+        }
+    }
+
+    ul {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .breadcrumb {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+}

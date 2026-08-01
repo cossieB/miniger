@@ -1,11 +1,11 @@
 import { createAsync } from "@solidjs/router"
-import { createMemo, createUniqueId, createSignal, Match, Switch } from "solid-js"
+import { createMemo, createSignal, Match, Switch } from "solid-js"
 import { type DetailedDbFilm } from "~/repositories/filmsRepository"
 import type { FfprobeMetadata } from "~/utils/updateMetadata"
 import { MoviesTable } from "~/components/MoviesTable/MoviesTable"
 import { Grid3x3Icon, ListIcon, LoaderCircleIcon } from "lucide-solid"
 import { ModeToggle } from "../components/ModeToggle"
-import { MovieGrid } from "~/components/MovieGrid"
+import { MovieGrid } from "~/features/movies/components/MovieGrid"
 import { MovieGridProvider } from "~/contexts/MovieGridContext"
 
 type Props = {
@@ -33,7 +33,6 @@ export function Movies(props: Props) {
             ...film,
             tags: JSON.parse(film.tags as string),
             actors: JSON.parse(film.actors as string),
-            rowId: createUniqueId(),
             isOnDb: true,
             metadata: film.metadata ? JSON.parse(film.metadata) as FfprobeMetadata["metadata"] : null
         })))
@@ -46,7 +45,9 @@ export function Movies(props: Props) {
             />
             <Switch>
                 <Match when={!data()}>
-                    <div class="w-full h-full flex items-center justify-center"><LoaderCircleIcon class="animate-spin" size={25} /></div>
+                    <div class="flexCenter fillUp">
+                        <LoaderCircleIcon class="animate-spin" size={25} />
+                    </div>
                 </Match>
                 <Match when={activeView() == 0}>
                     <MoviesTable data={data()!} />

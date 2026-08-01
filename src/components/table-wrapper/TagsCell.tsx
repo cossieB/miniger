@@ -217,31 +217,47 @@ export function TagsCell(props: TagsCellProps) {
                         <Show when={loading()}>
                             <SpinnerIcon />
                         </Show>
-
                         <Show when={filteredSuggestions().length > 0}>
-                            <div class={styles.dropdown}>
-                                <For each={filteredSuggestions()}>
-                                    {tag => (
-                                        <button
-                                            type="button"
-                                            tabIndex={-1}
-                                            class={styles.dropdownItem}
-                                            onClick={(e) => {
-                                                addTags([tag]);
-                                                setInputValue("");
-                                                inputRef?.focus();
-                                                e.stopPropagation()
-                                            }}
-                                        >
-                                            {tag}
-                                        </button>
-                                    )}
-                                </For>
-                            </div>
+                            <Tags
+                                tags={filteredSuggestions()}
+                                onClick={(tag) => {
+                                    addTags([tag]);
+                                    setInputValue("");
+                                    inputRef?.focus();
+                                }}
+                            />                           
                         </Show>
                     </div>
                 </Portal>
             </Show>
         </div>
     );
+}
+
+type P = {
+    tags: string[]
+    onClick: (tag: string) => void
+}
+
+export function Tags(props: P) {
+    return (
+        <div class={styles.dropdown}>
+            <For each={props.tags}>
+                {tag => (
+                    <button
+                        style={{"view-transition-name": `--tag-${tag}`}}
+                        type="button"
+                        tabIndex={-1}
+                        class={styles.dropdownItem}
+                        onClick={e => {
+                            props.onClick(tag);
+                            e.stopPropagation()
+                        }}
+                    >
+                        {tag}
+                    </button>
+                )}
+            </For>
+        </div>
+    )
 }

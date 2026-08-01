@@ -2,10 +2,11 @@ import { useAction, useSubmission } from "@solidjs/router"
 import { getCurrentWindow } from "@tauri-apps/api/window"
 import { open } from "@tauri-apps/plugin-dialog"
 import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs"
-import { Trash2Icon } from "lucide-solid"
+import { Loader, Trash2Icon } from "lucide-solid"
 import { createResource, createSignal, For, onMount, Show } from "solid-js"
 import { addFilesToDatabase } from "~/api/mutations"
 import { readDirectories } from "~/utils/readDirectories"
+import styles from "./Windows.module.css"
 
 export function Settings() {
     let scanNowBtn!: HTMLButtonElement
@@ -20,11 +21,10 @@ export function Settings() {
     const submissions = useSubmission(addFilesToDatabase)
     return (
         <div 
-            class="w-screen h-screen bg-slate-800 z-999 absolute p-2 overflow-y-auto scroll text-white scrollbar-gutter-stable"            
+            class={styles.settings}            
         >
             <span>Folders</span>
-            <button
-                class="bg-slate-700 rounded-sm float-end p-1"
+            <button                
                 disabled={submissions.pending}
                 onclick={async () => {
                     const dirs = await open({ multiple: true, directory: true });
@@ -37,7 +37,6 @@ export function Settings() {
             <Show when={!hasChanged()}>
                 <button
                     ref={scanNowBtn}
-                    class="bg-orange-500 disabled:bg-slate-700 rounded-sm float-end p-1 mr-1"
                     disabled={submissions.pending}
                     onclick={async () => {
                         const files = await readDirectories(data().map(x => x.path))
@@ -52,10 +51,10 @@ export function Settings() {
                     Scan Now
                 </button>
             </Show>
-            <table class="table-fixed w-full">
+            <table>
                 <thead>
                     <tr>
-                        <th class="w-3/4">Folder</th>
+                        <th>Folder</th>
                         <th>Scan on startup</th>
                         <th></th>
                     </tr>
@@ -64,8 +63,8 @@ export function Settings() {
                     <For each={data()}>
                         {(item, i) =>
                             <tr>
-                                <td class="text-ellipsis overflow-hidden pr-2.5 text-nowrap w-3/4"> {item.path} </td>
-                                <td class="text-center">
+                                <td> {item.path} </td>
+                                <td>
                                     <input
                                         type="checkbox"
                                         checked={item.scanOnStart}
@@ -77,6 +76,7 @@ export function Settings() {
                                         }}
                                     />
                                 </td>
+                                
                                 <td>
                                     <button
                                         onclick={() => {
@@ -91,9 +91,9 @@ export function Settings() {
                     </For>
                 </tbody>
             </table>
-            <div class="flex justify-end">
-                <button
-                    class="bg-orange-500 rounded-sm p-1"
+            <div>
+                <button   
+                    disabled={submissions.pending}         
                     onclick={async () => {
                         await writeTextFile("watch.json", JSON.stringify(data()), {
                             baseDir: BaseDirectory.AppData
@@ -103,7 +103,7 @@ export function Settings() {
                     Save
                 </button>
                 <button
-                    class="bg-slate-700 rounded-sm p-1 mr-1"
+                    disabled={submissions.pending}
                     onclick={async () => {
                         await refetch()
                         setHasChanged(false)
@@ -113,8 +113,8 @@ export function Settings() {
                 </button>
             </div>
             <Show when={submissions.pending}>
-                <div class="animate-bounce bg-orange-500 h-20 w-20 rounded-full ml-auto mr-auto">
-
+                <div class={`${styles.loader}`}>
+                    <Loader class="animate-spin" />
                 </div>
             </Show>
         </div>

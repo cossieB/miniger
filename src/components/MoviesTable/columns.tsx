@@ -100,7 +100,10 @@ export const columns = columnHelper.columns([
         size: 75,
         cell: props => {
             const dur = props.getValue()
-            return <props.cell.LockedCell class="text-right" value={dur ? secondsToTime(dur) : null} />
+            return <props.cell.LockedCell
+                style={{
+                    "text-align": "right"
+                }} value={dur ? secondsToTime(dur) : null} />
         }
     }),
     columnHelper.accessor(row => Number(row.metadata?.format.size) || null, {
@@ -110,10 +113,13 @@ export const columns = columnHelper.columns([
         cell: props => {
             const size = props.getValue()
             const display = size ? new Intl.NumberFormat(undefined, { useGrouping: true }).format(size) : null
-            return <props.cell.LockedCell class="text-right" value={display} />
+            return <props.cell.LockedCell
+                style={{
+                    "text-align": "right"
+                }} value={display} />
         }
     }),
-    columnHelper.accessor("metadata.format.bit_rate", {
+    columnHelper.accessor(row => row.metadata?.format.bit_rate ?? null, {
         header: "Bit Rate",
         id: "bitrate",
         size: 100,
@@ -122,17 +128,21 @@ export const columns = columnHelper.columns([
             const display = size ? new Intl.NumberFormat(undefined, { useGrouping: true }).format(Number(size)) : null
             return (
                 <props.cell.LockedCell
+                    style={{
+                        "text-align": "right",
+                        "padding-block": "0.75"
+                    }}
                     class="text-right px-2 truncate"
                     value={display}
                 />
             )
         }
     }),
-    columnHelper.accessor(row => row.metadata?.streams?.find(x => x.codec_type == 'video')?.codec_name, {
+    columnHelper.accessor(row => row.metadata?.streams?.find(x => x.codec_type == 'video')?.codec_name ?? null, {
         header: "Format",
         id: "format",
         size: 100,
-        cell: props => <props.cell.LockedCell class="text-center" />
+        cell: props => <props.cell.LockedCell style={{"text-align": "center"}}/>
     }),
     columnHelper.accessor(row => {
         const videoStream = row.metadata?.streams?.find(x => x.codec_type == "video")
@@ -142,13 +152,13 @@ export const columns = columnHelper.columns([
         id: "resolution",
         size: 100,
         enableSorting: false,
-        cell: props => <props.cell.LockedCell class="text-center" />
+        cell: props => <props.cell.LockedCell style={{"text-align": "center"}}/>
     }),
     columnHelper.accessor("dateAdded", {
         header: "Added",
         size: 175,
         sortFn: "datetime",
-        cell: (props) => <props.cell.LockedCell />,
+        cell: (props) => <props.cell.LockedCell style={{"text-align": "end"}} />,
     }),
     columnHelper.accessor("path", {
         cell: props => <props.cell.LockedCell />

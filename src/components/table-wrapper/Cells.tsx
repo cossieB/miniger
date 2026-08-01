@@ -60,9 +60,12 @@ export function TextCell(props: Props) {
             <Show
                 when={edit()}
                 fallback={
+                    <button class={styles.triggerButton}>
+
                     <span class={styles.textValue}>
                         {value()}
                     </span>
+                    </button>
                 }
             >
                 <input

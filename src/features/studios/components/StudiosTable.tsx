@@ -1,8 +1,7 @@
 import { updateStudio } from "~/api/mutations";
-import { columns } from "./columns";
 import { createAsync, useAction } from "@solidjs/router";
 import { getStudios } from "~/api/data";
-import { createAppTable } from "~/utils/createTable";
+import { createAppColumnHelper, createAppTable } from "~/utils/createTable";
 import type { TStudio } from "~/datatypes";
 import { createSignal, Show } from "solid-js";
 import type { RowSelectionState } from "@tanstack/solid-table";
@@ -15,6 +14,33 @@ import { TableBody } from "~/components/table-wrapper/TableBody";
 import { TableHeader } from "~/components/table-wrapper/TableHeader";
 import { enc } from "~/utils/encodeDecode";
 import styles from "~/components/table-wrapper/Table.module.css"
+
+const columnHelper = createAppColumnHelper<TStudio>()
+
+export const columns = columnHelper.columns([
+    columnHelper.accessor("name", {
+        size: 300,
+        cell: props => <props.cell.TextCell onUpdate={async name => {
+            props.table.options.meta?.editStudio!({
+                studioId: props.row.original.studioId,
+                name
+            })
+        }} />
+    }),
+    columnHelper.accessor("website", {
+        size: 300,
+        cell: props => <props.cell.TextCell onUpdate={async website => {
+            props.table.options.meta?.editStudio!({
+                studioId: props.row.original.studioId,
+                website
+            })
+        }} />
+    }),
+    // columnHelper.display({
+    //     header: "Test",
+    //     cell: (props) => <props.cell.LockedCell value={"skdsfjs"} />
+    // })
+])
 
 export function StudiosTable() {
     let ref!: HTMLDivElement

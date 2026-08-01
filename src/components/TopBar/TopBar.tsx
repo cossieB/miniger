@@ -11,31 +11,32 @@ import { LoadVideosBtn } from "./LoadVideosBtn";
 import { ShufflePlaylistBtn } from "./ShufflePlaylistBtn";
 import { BackBtn, ForwardBtn } from "./NavArrowSvgs";
 import { TOP_BAR_HEIGHT } from "~/constants";
+import styles from "~/windows/MainWindow.module.css"
 
 export function TopBar() {
 
     return (
-        <nav 
-        class="w-full bg-orange-500 flex pl-5 gap-5 [&>svg]:h-full text-orange-50"
+        <nav
+            class={styles.topbar}
             style={{
                 height: TOP_BAR_HEIGHT + "px"
             }}
         >
-            <div class="flex-1 flex h-full justify-start items-center gap-3">
+            <div>
                 {/* Left Part */}
                 <BackBtn />
                 <ForwardBtn />
                 <Breadcrumbs />
             </div>
 
-            <div class="ml-auto flex-1 flex h-full justify-center items-center gap-3">
+            <div>
                 {/* Center Part */}
                 <AddDirectoryToDatabase />
                 <AddToPlaylistBtn />
                 <DeleteBtn />
             </div>
 
-            <div class="ml-auto flex-1 flex h-full justify-end items-center gap-3">
+            <div>
                 {/* Right Part */}
                 <LoadVideosBtn />
                 <LoadPlaylistBtn />

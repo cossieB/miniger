@@ -60,7 +60,7 @@ export function ContextSubMenu(props: Props) {
 
             >
                 <span>{props.label} </span>
-                <span class="ml-auto"><ChevronRightIcon /></span>
+                <span style={{"margin-left": "auto"}}><ChevronRightIcon /></span>
                 <Show when={showMenu()}>
                     <Menu
                         pos={{ x: x(), y: y() }}

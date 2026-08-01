@@ -4,6 +4,7 @@ import { batch } from "solid-js"
 import { For } from "solid-js/web"
 import type { useMoviesContextMenu } from "~/hooks/useMoviesContextMenu"
 import type { AppTableFeatures } from "~/utils/createTable"
+import styles from "./Table.module.css"
 
 type Props<T extends RowData> = {
     virtualRow: VirtualItem
@@ -19,11 +20,8 @@ export function TableRow<T extends RowData>(props: Props<T>) {
 
     return (
         <tr
-            class="hover:bg-zinc-900/60"
             style={{
-                position: 'absolute',
                 transform: `translateY(${props.virtualRow.start}px)`,
-                width: '100%',
             }}
             onClick={e => {
                 batch(() => {
@@ -32,7 +30,7 @@ export function TableRow<T extends RowData>(props: Props<T>) {
                     row()?.getToggleSelectedHandler()(e)
                 })
             }}
-            classList={{ "bg-zinc-700!": row().getIsSelected() }}
+            classList={{ [styles.selected]: row().getIsSelected() }}
             onContextMenu={e => {
                 e.preventDefault();
                 batch(() => {

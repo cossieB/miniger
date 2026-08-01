@@ -6,8 +6,6 @@ import { Navigate, Route, Router } from "@solidjs/router";
 import Actors from "./routes/Actors";
 import Studios from "./routes/Studios";
 import { getActors, getCostars, getFilms, getInaccessible, getMoviesByCostars, getPairings, getStudios } from "./api/data";
-import 'ag-grid-community/styles/ag-grid.css'; // grid core CSS
-import "ag-grid-community/styles/ag-theme-alpine.css"; // optional theme
 import { Movies } from "./routes/Movies";
 import Inaccessible from "./routes/Inaccessible";
 import { VideoPlayer } from "./components/VideoPlayer/VideoPlayer";
@@ -100,8 +98,8 @@ render(() => (
 function Splash() {
     readSession()
     return (
-        <main class="w-screen h-screen flex items-center justify-center">
-            <img class="animate-[spin_5s_linear_infinite] " src="/tauri.svg" />
+        <main class="splash-screen flexCenter">
+            <img src="/tauri.svg" />
         </main>
     )
 }

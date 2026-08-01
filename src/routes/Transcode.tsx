@@ -6,6 +6,7 @@ import { filterMap } from "~/lib/filterMap";
 import videoExtensions from "../videoExtensions.json"
 import { XIcon } from "lucide-solid";
 import { createStore } from "solid-js/store";
+import styles from "../windows/Windows.module.css"
 
 type F = {
     src: string
@@ -45,17 +46,17 @@ export default function Transcode() {
         })
     })
     return (
-        <div class="flex flex-col h-screen">
-            <div class="grid grid-cols-[1fr_1fr_auto_auto]">
-                <div class="font-extrabold text-center" >Source</div>
-                <div class="font-extrabold text-center" >Destination</div>
-                <div class="font-extrabold text-center" >Status</div>
+        <div class={styles.transcode}>
+            <div >
+                <div >Source</div>
+                <div >Destination</div>
+                <div >Status</div>
                 <div></div>
                 <For each={files}>
                     {(file, i) =>
                         <>
-                            <div class="overflow-hidden text-ellipsis whitespace-nowrap border-l border-amber-50 border-collapse px-1" classList={{ "bg-slate-700": i() % 2 == 0 }} > {file.src} </div>
-                            <div class="overflow-hidden text-ellipsis whitespace-nowrap border-l border-amber-50 border-collapse px-1" classList={{ "bg-slate-700": i() % 2 == 0 }} > {file.dest} </div>
+                            <div class={styles.path} > {file.src} </div>
+                            <div class={styles.path} > {file.dest} </div>
                             <div> {file.status} </div>
                             <div onclick={() => setFiles(prev => prev.filter((_, j) => j != i()))} >
                                 <XIcon />
@@ -68,7 +69,7 @@ export default function Transcode() {
             <Show
                 when={files.length > 0}
                 fallback={
-                    <div class="border border-dashed w-full h-full flex justify-center items-center">
+                    <div class={styles.instr}>
                         Drop videos here
                     </div>
                 }

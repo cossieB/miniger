@@ -6,6 +6,8 @@ import { AddActorToDatabaseBtn } from "./AddActorToDatabaseBtn";
 import { createAsync } from "@solidjs/router";
 import clickOutside from "~/lib/clickOutside";
 import { Portal } from "solid-js/web";
+import styles from "./ActorSelector.module.css"
+
 false && clickOutside
 
 type P = {
@@ -39,12 +41,11 @@ export function ActorSelector(props: P) {
     return (
         <Suspense>
             <Portal>
-                <div 
-                class="fixed inset-0 backdrop-blur-sm z-100"
-                onClick={e => e.stopPropagation()}
+                <div
+                    class={styles.container}
+                    onClick={e => e.stopPropagation()}
                 >
-                    <div
-                        class="w-[min(90vw,90rem)] h-screen flex flex-col ml-[50%] translate-x-[-50%]"
+                    <div                        
                         use:clickOutside={() => {
                             setSelectedActors(props.initialActors ?? [])
                             props.close()
@@ -54,27 +55,25 @@ export function ActorSelector(props: P) {
                             ref={ref}
                             type="search"
                             value={input()}
-                            oninput={e => setInput(e.target.value)}
-                            class="ag-text-field-input h-10 shrink-0! grow-0! bg-slate-600!"
+                            oninput={e => setInput(e.target.value)}    
                             placeholder="Filter actors"
                         />
                         <button
-                            class="flex p-3 w-full items-center justify-center bg-green-600"
                             onclick={() => props.handleSubmit(selectedActors())}
                         >
                             SUBMIT
                         </button>
                         <Show when={selectedActors().length > 0}>
-                            <ul class="bg-slate-800 grid text-center p-2 gap-2 overflow-auto max-h-[1/2] shrink-0 grow-0 actorsList">
+                            <ul class={`${styles.actorsList} ${styles.cast} scrollable`}>
                                 <For each={selectedActors()}>
                                     {actor => <ActorItem actor={actor} rowActors={selectedActors} setRowActors={setSelectedActors} />}
                                 </For>
                             </ul>
-                            <div class="w-full h-0.5 shrink-0 bg-amber-400" />
+                            <div />
                         </Show>
-                        <div class="bg-slate-800 overflow-auto grow ">
+                        <div class={`${styles.listContainer} scrollable`}>
 
-                            <ul class=" grid text-center p-2 gap-2 actorsList">
+                            <ul class={`${styles.actorsList} `}>
                                 <For each={filteredActors()}>
                                     {actor => <ActorItem actor={actor} rowActors={selectedActors} setRowActors={setSelectedActors} />}
                                 </For>

@@ -1,128 +1,130 @@
-@import "tailwindcss";
-@import "variables.css";
+@import url("reset.css") layer(reset);
+@import url("inputs.css") layer(base);
+@import url("utilities.css") layer(utilities);
+@layer reset, base, layouts, components, utilities;
 
 @layer base {
+    @property --volt-h {
+        syntax: '<number>';
+        inherits: true;
+        initial-value: 145;
+    }
+
+    @property --volt-c {
+        syntax: '<number>';
+        inherits: true;
+        initial-value: 0.24;
+    }
+
+    :root {
+        color-scheme: dark;
+
+        --volt-h: 145;
+        --volt-c: 0.24;
+
+        --char-950: oklch(11% 0.012 var(--volt-h));
+        --char-900: oklch(15% 0.014 var(--volt-h));
+        --char-800: oklch(19% 0.016 var(--volt-h));
+        --char-700: oklch(25% 0.018 var(--volt-h));
+        --char-600: oklch(32% 0.02 var(--volt-h));
+
+        --smoke-400: oklch(58% 0.02 var(--volt-h));
+        --smoke-300: oklch(70% 0.018 var(--volt-h));
+        --paper-100: oklch(88% 0.012 var(--volt-h));
+        --paper-50: oklch(96% 0.008 var(--volt-h));
+
+        --volt-500: #61dc6b;
+        --volt-500: oklch(80% var(--volt-c) var(--volt-h));
+        --volt-300: oklch(from var(--volt-500) calc(l + 0.16) calc(c * 0.9) h);
+        --volt-400: oklch(from var(--volt-500) calc(l + 0.07) c h);
+        --volt-600: oklch(from var(--volt-500) calc(l - 0.08) calc(c * 1.05) h);
+        --volt-700: oklch(from var(--volt-500) calc(l - 0.18) calc(c * 0.9) h);
+
+        --volt-fill-hover: oklch(from var(--volt-500) calc(l + 0.05) c h);
+        --volt-fill-active: oklch(from var(--volt-500) calc(l - 0.07) c h);
+        --volt-tint: color-mix(in oklch, var(--volt-500) 14%, var(--char-900));
+        --volt-tint-strong: color-mix(in oklch, var(--volt-500) 26%, var(--char-900));
+        --volt-border: color-mix(in oklch, var(--volt-500) 45%, var(--char-700));
+
+        --radius: 10px;
+        --font-display: 'Space Grotesk', system-ui, sans-serif;
+        --font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+        --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
     body {
-        width: 100vw;
-        height: 100vh;
-        overflow: hidden;
-        @apply bg-slate-800;
-
-    }
-}
-
-:root {
-    interpolate-size: allow-keywords;
-}
-
-* {
-    user-select: none;
-}
-
-#gridContainer {
-    container-type: inline-size;
-}
-
-.ctis {
-    container-type: inline-size;
-}
-
-.flexCenter {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.actorsList {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-}
-
-.homeBtn svg {
-    @apply fill-orange-500;
-    @apply w-20;
-    @apply h-20
-}
-
-@keyframes spin {
-    from {
-        rotate: 0deg;
+        margin: 0;
+        background: var(--char-950);
+        color: var(--paper-50);
+        font-family: var(--font-body);
+        line-height: 1.5;
+        transition: background 0.2s ease;
     }
 
-    to {
-        rotate: 360deg;
-    }
-}
-
-input[type=range] {
-    -webkit-appearance: none;
-    appearance: none;
-    background: transparent;
-    cursor: pointer;
-
-    /* Chrome, Safari, Opera, and Edge Chromium */
-    &::-webkit-slider-runnable-track {
-        background: #053a5f;
-        height: 0.5rem;
+    input {
+        border: none;
+        background: none;
     }
 
-    /* Firefox */
-    &::-moz-range-track {
-        background: #053a5f;
-        height: 0.5rem;
-    }
-
-    /* Thumb Styles - Chrome, Safari, Opera, and Edge Chromium */
-    &::-webkit-slider-thumb {
+    input[type="range"] {
         -webkit-appearance: none;
-        /* Override default look */
         appearance: none;
-        background-color: #EA580C;
-        height: 1rem;
-        width: 1rem;
+        width: 100%;
+        height: 4px;
+        border-radius: 2px;
+        background: var(--volt-tint);
+        accent-color: var(--volt-500);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
         border-radius: 50%;
-        margin-top: -4px;
-        top: 50%;
-    }
-}
-
-.holdBtn {
-    &::after {
-        content: "";
-        inset: 0;
-        position: absolute;
-        z-index: -10;
-        @apply bg-slate-800;
+        background: var(--volt-500);
+        border: 2px solid var(--volt-500);
+        cursor: pointer;
     }
 
-    &::before {
-        content: "";
-        inset: 0;
-        position: absolute;
-        z-index: -5;
-        @apply bg-orange-500;
-        translate: calc(var(--time)*-1%);
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            transition: none !important;
+        }
+
+        ::view-transition-group(*),
+        ::view-transition-old(*),
+        ::view-transition-new(*) {
+            animation: none !important;
+        }
+    }
+
+
+    @keyframes spin {
+        from {
+            rotate: 0deg;
+        }
+
+        to {
+            rotate: 360deg;
+        }
+    }
+
+    .splash-screen {
+        height: 100vh;
+        width: 100%;
+
+        img {
+            animation: spin 5s linear infinite;
+        }
     }
 }
 
 .hide-scrollbar::-webkit-scrollbar {
     display: none;
-}
-
-.thin-scrollbar {
-    scrollbar-gutter: stable;
-
-    &::-webkit-scrollbar {
-        width: 10px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: rgba(0, 0, 0, 0.3);
-        border-radius: 5px;
-    }
 }
 
 .scrollable {
@@ -146,17 +148,17 @@ input[type=range] {
     }
 
     &:hover {
-        scrollbar-color: oklch(70.5% 0.213 47.604) transparent;
+        scrollbar-color: var(--volt-300) transparent;
 
         &::-webkit-scrollbar-thumb {
-            background-color: oklch(70.5% 0.213 47.604);
+            background-color: var(--volt-300);
         }
     }
 }
 
 html {
     scrollbar-width: auto;
-    scrollbar-color: oklch(70.5% 0.213 47.604) transparent;
+    scrollbar-color: var(--volt-300) transparent;
 }
 
 ::-webkit-scrollbar-track {
@@ -165,7 +167,7 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-    @apply bg-orange-500;
+    background-color: var(--volt-300);
     border-radius: 4px;
 }
 

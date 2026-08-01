@@ -2,6 +2,7 @@ import { invoke } from "@tauri-apps/api/core"
 import { getCurrentWindow } from "@tauri-apps/api/window"
 import { open, save } from "@tauri-apps/plugin-dialog"
 import { createSignal, onMount } from "solid-js"
+import styles from "./Windows.module.css"
 
 export function Convert() {
     const [source, setSource] = createSignal("")
@@ -25,7 +26,7 @@ export function Convert() {
     })
 
     return (
-        <div class="w-screen h-screen bg-slate-800 z-[999] absolute p-2 overflow-y-auto scroll text-white">
+        <div class={styles.convert}>
             <div
                 class="grid grid-cols-[auto_1fr] gap-2 items-center"
             >
@@ -79,7 +80,7 @@ export function Convert() {
                 </span>
                 <button
                     disabled={!source() || !destination() || isBusy()}
-                    class="bg-orange-500 rounded-sm col-span-2 w-[75%] justify-self-center disabled:bg-gray-300 disabled:text-black disabled:cursor-not-allowed"
+                    class={styles.submitBtn}
                     onclick={async () => {
                         setIsBusy(true)
                         try {

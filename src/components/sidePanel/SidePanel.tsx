@@ -7,6 +7,7 @@ import { Miniplayer, Thumbnail } from "../Miniplayer";
 import MoviesContextMenu from "../MoviesContextMenu";
 import Resizer from "../Resizer";
 import { BOTTOM_BAR_HEIGHT, TOP_BAR_HEIGHT } from "~/constants";
+import styles from "./SidePanel.module.css"
 
 false && clickOutside
 
@@ -24,7 +25,7 @@ export function SidePanel() {
 
     return (
         <section
-            class="bg-slate-950 overflow-x-hidden select-none shrink-0 droppable flex flex-col relative"
+            class={`${styles.sidepanel} droppable`}
             style={{
                 width: state.sidePanel.width + "px",
                 height: (state.windowDimensions.height - TOP_BAR_HEIGHT - BOTTOM_BAR_HEIGHT) + "px"
@@ -46,7 +47,7 @@ export function SidePanel() {
             }}
         >
             <ul
-                class="overflow-y-auto overflow-x-hidden droppable"
+                class="droppable"
             >
                 <Index each={state.sidePanel.list}>
                     {(data, i) =>
@@ -84,7 +85,7 @@ export function SidePanel() {
                     isMainPanel={false}
                 />
             </Show>
-            <div class="mt-auto">
+            <div class={styles.miniplayerWrapper}>
                 <Show when={!!state.miniplayer.video}>
                     <Resizer
                         vertical

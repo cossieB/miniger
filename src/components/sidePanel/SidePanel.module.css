@@ -1,0 +1,60 @@
+@layer components {
+    .sidepanel {
+        background-color: var(--char-800);
+        overflow-x: hidden;
+        user-select: none;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+
+    }
+    .item {
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 0.25rem;
+        cursor: default;
+        position: relative;
+        outline-offset: -0.1rem;
+        transition:
+            margin-top 200ms ease,
+            padding-top 200ms ease;
+
+        &:not(:last-child) {
+            background-color: var(--char-800);
+
+            &:is(:nth-child(2n)) {
+                background-color: var(--char-700);
+            }
+
+            &:hover {
+                background-color: var(--char-600);
+            }
+        }
+
+        &.selected {
+            background-color: var(--smoke-400) !important;
+
+        }
+
+        &.lastDraggedOver {
+            margin-top: 1rem;
+        }
+
+        &.selectedLast {
+            outline: 0.1rem dashed;
+        }
+
+        &.cantPlay {
+            color: gray;
+        }
+
+        &.playing {
+            color: var(--volt-500)
+        }
+    }
+
+    .miniplayerWrapper {
+        margin-top: auto;
+    }
+}

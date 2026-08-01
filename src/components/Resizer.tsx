@@ -1,4 +1,5 @@
 import { onCleanup } from "solid-js";
+import styles from "~/windows/MainWindow.module.css"
 
 type Props = {
     displacement: number;
@@ -28,10 +29,9 @@ export default function Resizer(props: Props) {
     }
     return (
         <div
-            class="bg-orange-600 absolute transition-[height] z-50 rounded-sm"
+            class={styles.resizer}
             classList={{
-                "h-10 w-2 top-1/2 -translate-y-1/2 -translate-x-1/2 cursor-ew-resize": !props.vertical,
-                "w-10 h-2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-ns-resize": !!props.vertical
+                [styles.vertical]: !!props.vertical
             }}
             onMouseDown={e => {
                 e.preventDefault();

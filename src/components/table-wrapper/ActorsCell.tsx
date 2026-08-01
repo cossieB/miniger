@@ -5,7 +5,7 @@ import type { TActor } from "~/datatypes";
 import { useCellContext } from "~/utils/createTable";
 import { ActorSelector } from "../CellEditors/ActorCellEditor/ActorSelector";
 import styles from "./TagsCell.module.css"
-import { ActorItem2 } from "../CellEditors/ActorCellEditor/ActorItem";
+import { ActorItem } from "../CellEditors/ActorCellEditor/ActorItem";
 import { Portal } from "solid-js/web";
 
 type Props = {
@@ -102,6 +102,7 @@ export function ActorsCell(props: Props) {
 }
 
 function Tooltip(props: { actors: TActor[], anchorName: string }) {
+    
     return (
         <ul
             class={styles.tooltip}
@@ -110,7 +111,7 @@ function Tooltip(props: { actors: TActor[], anchorName: string }) {
             }}
         >
             <For each={props.actors}>
-                {actor => <ActorItem2 actor={actor} />}
+                {actor => <ActorItem actor={actor} />}
             </For>
         </ul>
     )

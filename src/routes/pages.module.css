@@ -1,0 +1,49 @@
+@layer layouts {
+    .home {
+        margin-inline: 0.25rem;
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-block: 1.5rem;            
+        }
+
+        >div {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+        }
+    }
+
+    .homeBtn {
+        padding: 0.25rem;
+        height: 13rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 2px solid var(--volt-fill-hover);
+        cursor: pointer;
+        background: linear-gradient(to bottom, var(--volt-tint-strong), var(--volt-tint));
+        svg {
+            transition: scale 200ms ease;
+        }
+        &:hover {
+            border-color: var(--volt-fill-active);
+            svg {
+                color: var(--volt-fill-hover);
+                scale: 1.2
+            }
+        }
+
+        >div {
+            height: 80%;
+            display: flex;
+            place-items: center;
+        }
+
+        label {
+            width: 100%;
+            flex-grow: 1;
+        }
+    }
+}

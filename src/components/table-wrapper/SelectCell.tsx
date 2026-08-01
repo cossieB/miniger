@@ -90,7 +90,7 @@ export function SelectCell(props: SelectCellProps) {
                         title="Double click to edit"
                     >
                         <span class={styles.triggerText}>
-                            {currentLabel() || <span class={styles.emptyText}>Empty</span>}
+                            {currentLabel() ?? "—"}
                         </span>
                         <Show when={loading()} fallback={
                             <ChevronDownIcon class={styles.iconChevronHover} />
@@ -100,13 +100,13 @@ export function SelectCell(props: SelectCellProps) {
                     </button>
                 }
             >
-                <div class={styles.selectWrapper}>
+                <div class={`${styles.selectWrapper}`}>
                     <select
                         {...selectProps}
                         value={value()}
                         ref={selectRef}
                         disabled={loading() || selectProps.disabled}
-                        class={`${styles.selectInput} ${selectProps.class || ""}`}
+                        class={`${styles.selectInput} ${selectProps.class || ""} scrollable`}
                         onChange={(e) => {
                             setValue(e.currentTarget.value)
                             selectRef.blur();

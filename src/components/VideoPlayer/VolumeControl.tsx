@@ -1,5 +1,6 @@
 import { Volume2Icon, VolumeXIcon } from "lucide-solid";
 import { createEffect, createSignal, Show } from "solid-js";
+import styles from "./VideoPlayer.module.css"
 
 type Props = {
     video: HTMLVideoElement;
@@ -19,7 +20,7 @@ export function VolumeControl(props: Props) {
     })
 
     return (
-        <div class="flex-1 flex h-full items-center justify-center gap-2.5">
+        <div class={`${styles.elements}`}>
             <button
                 onclick={() => {
                     if (isMuted()) {
@@ -35,7 +36,7 @@ export function VolumeControl(props: Props) {
                 </Show>
             </button>
             <input
-                class=""
+                class={styles.volSlider}
                 type="range"
                 min={0}
                 max={100}

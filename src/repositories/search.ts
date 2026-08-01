@@ -13,6 +13,6 @@ export function search() {
         beforeDate: filters.beforeDate,
         afterDate: filters.afterDate,
         studioId: filters.studio.studioId,
-        tags: filters.tags
+        tags: filters.tags as any as string[]
     })
 }

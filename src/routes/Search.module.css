@@ -1,0 +1,99 @@
+@layer layouts {
+    .container {
+        padding: 1.25rem;
+        height: 100%;
+        overflow: auto;
+    }
+
+    .title {
+        text-align: center;
+        font-size: 1.875rem;
+        line-height: 2.25rem;
+    }
+
+    .sectionTitle {
+        font-weight: 700;
+        padding: 0.5rem 0;
+    }
+
+    .actionButton {
+        border-radius: 8px;
+        padding: 0.65rem;
+        cursor: pointer;
+        background-color: var(--char-800);
+        color: var(--paper-100);
+        border: 1px solid var(--char-600);
+
+        &:hover {
+            border-color: var(--char-600);
+            background-color: var(--char-700);
+        }
+    }
+
+    .actorNames {
+        margin-left: 0.5rem;
+    }
+
+    .tagsDisplay {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+        font-size: small;
+
+        >div {
+            padding: 0.25rem;
+            display: flex;
+            background: transparent;
+            align-items: center;
+            background-color: var(--char-600);
+        }
+    }
+
+    .dateGroup {
+        display: flex;
+        justify-content: space-around;
+        margin: 1.25rem 0;
+
+        label {
+            display: flex;
+            align-items: center;
+
+            input {
+                margin-left: 1.25rem;
+            }
+        }
+    }
+
+    .studioContainer {
+        margin-top: 1.25rem;
+        z-index: 500;
+        overflow: hidden;
+        transition: height 2s ease;
+        height: 0;
+
+        &.open {
+            height: auto;
+        }
+    }
+
+    .submitBtn {
+        display: flex;
+        padding: 0.75rem;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--volt-fill-active);
+        color: white;
+        margin-top: 1.25rem;
+        border: none;
+        cursor: pointer;
+        color: var(--char-900);
+
+        &:disabled {
+            background-color: var(--volt-400);
+            color: black;
+            cursor: not-allowed;
+        }
+    }
+}

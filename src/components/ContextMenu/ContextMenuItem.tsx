@@ -1,4 +1,5 @@
 import { type JSX, splitProps } from "solid-js";
+import styles from "./ContextMenu.module.css"
 
 type ContextMenuProps = {
     children: JSX.Element;
@@ -11,10 +12,10 @@ export function ContextMenuItem(props: ContextMenuProps) {
         const [partial, others] = splitProps(props, ['icon']);
     return (
         <li
-            class="flex items-center h-8 p-2 hover:bg-slate-500"
+            class={styles.item}
             {...others}
         >
-            <span class="w-8"> {partial.icon} </span>
+            <span class={styles.icon} > {partial.icon} </span>
             {props.children}
         </li>
     );

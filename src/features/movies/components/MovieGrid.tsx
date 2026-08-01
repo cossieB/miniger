@@ -8,7 +8,8 @@ import { BOTTOM_BAR_HEIGHT, CELL_WIDTH, TOP_BAR_HEIGHT } from '~/constants';
 import { useGetThumbnails } from '~/hooks/useGenerateThumbnails';
 import { useMovieGridContext } from '~/hooks/useMovieGridContext';
 import { state } from '~/state';
-import MoviesContextMenu from './MoviesContextMenu';
+import MoviesContextMenu from '../../../components/MoviesContextMenu';
+import styles from "./MovieGrid.module.css"
 
 const dir = await appDataDir()
 
@@ -22,13 +23,10 @@ export function MovieGrid() {
                 setParentRef(elem);
             }}
             id='mg'
-            class="grid-container scrollable"
+            class={`grid-container scrollable ${styles.container}`}
             tabIndex={-1}
             style={{
                 height: (state.windowDimensions.height - TOP_BAR_HEIGHT - BOTTOM_BAR_HEIGHT) + "px",
-                "overflow-y": 'auto',
-                position: 'relative',
-                display: "block",
             }}
             onkeydown={async e => {
                 e.preventDefault();
@@ -51,7 +49,6 @@ export function MovieGrid() {
             <div
                 style={{
                     height: `${rowVirtualizer().getTotalSize()}px`,
-                    position: 'relative',
                 }}
             >
                 <For each={rowVirtualizer().getVirtualItems()}>
@@ -92,18 +89,18 @@ function Row(props: P) {
                 transform: `translateY(${props.virtualRow.start}px)`,
                 height: props.virtualRow.size + "px"
             }}
-            class='absolute flex gap-1'
+            class={styles.row}
         >
             <For each={rowItems()}>
 
                 {(film, i) => (
                     <div
-                        class='text-center flex flex-col bg-slate-800 flex-1'
+                        class={styles.movieCard}
                         style={{
                             width: CELL_WIDTH + "px"
                         }}
                         tabIndex={1}
-                        classList={{ "outline-1 outline-amber-600": selections.has(j(i())) }}
+                        classList={{ [styles.selected]: selections.has(j(i())) }}
                         oncontextmenu={(e) => {
                             batch(() => {
                                 if (!selections.has(j(i())) && !e.ctrlKey ) {
@@ -137,27 +134,22 @@ function Row(props: P) {
                         }}
                         ondblclick={() => {
                             state.sidePanel.setFiles([film])
-                            navigate("/play?rowId=" + film.rowId)
+                            navigate("/play?rowId=" + state.sidePanel.list.at(0)?.rowId)
                         }}
                     >
-                        <div class='h-5/6 w-full relative'>
-                            <FilmIcon
-                                class='w-full h-1/2 top-1/2 -translate-y-1/2 absolute z-1'
-                            />
+                        <div class={styles.imgWrapper}>
+                            <FilmIcon />
                             <img
-                                src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`) + `?=${props.cacheBuster()}`}
-                                class="object-cover w-full h-full z-2 relative"
+                                src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`) + `?=${props.cacheBuster()}`}                                
                                 onerror={() => {
                                     props.addThumbnail({ filmId: film.filmId, path: film.path })
                                 }}
                                 loading='lazy'
                             />
                         </div>
-                        <div class='flex-1 flex items-center px-2'>
-                            <span class='truncate text-ellipsis w-full text-nowrap'>
+                        <span class={styles.title}>
                                 {film.title}
-                            </span>
-                        </div>
+                        </span>
                     </div>
                 )}
             </For>

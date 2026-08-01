@@ -3,9 +3,11 @@ import { action, createAsync, json, useAction } from "@solidjs/router"
 import { convertFileSrc, invoke } from "@tauri-apps/api/core"
 import { appDataDir, sep } from "@tauri-apps/api/path"
 import { confirm } from "@tauri-apps/plugin-dialog"
-import { LoaderCircle } from "lucide-solid"
+import { FilmIcon, LoaderCircle } from "lucide-solid"
 import { createSignal, For, onCleanup, Show, Suspense } from "solid-js"
 import { getFilms } from "~/api/data"
+import styles from "../windows/Windows.module.css"
+import { CELL_HEIGHT } from "~/constants"
 
 const dir = await appDataDir()
 
@@ -46,22 +48,20 @@ export function Thumbnails() {
     return (
         <Suspense>
             <div
-                class="w-full overflow-y-scroll relative overflow-scroll h-screen"
+                class={`${styles.thumbs} scrollable`}
                 oncontextmenu={e => e.preventDefault()}
             >
-                <div class="flex gap-2  items-center justify-center h-10 w-full my-2 sticky top-0 bg-slate-800 z-100">
+                <div class={styles.btns}>
                     <Show when={!isWorking()} fallback={<LoaderCircle class="animate-spin" />}>
                         <button
-                            class="bg-slate-600 p-1"
                             onclick={async () => {
                                 await send(films())
-                            }}                            
+                            }}
                         >
                             Generate thumbs for all {films().length} videos
                         </button>
                         <Show when={errored.size > 0}>
                             <button
-                                class="bg-slate-600 p-1"
                                 onclick={async () => {
                                     const arr = Array.from(errored).map(i => films()[i])
                                     await send(arr)
@@ -72,14 +72,13 @@ export function Thumbnails() {
                         </Show>
                         <Show when={selected.size > 0}>
                             <button
-                                class="bg-slate-600 p-1"
                                 onclick={async () => {
                                     const sel: { path: string; filmId: number }[] = []
                                     selected.forEach(num => {
                                         sel.push(films()[num])
                                     })
                                     await send(sel)
-                                }}                                
+                                }}
                             >
                                 Generate thumbs for {selected.size} selected videos
                             </button>
@@ -92,12 +91,13 @@ export function Thumbnails() {
                         </Show>
                     </Show>
                 </div>
-                <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-1">
+                <div class={styles.grid}>
                     <For each={films()}>
                         {(film, i) =>
                             <div
-                                class="flex flex-col bg-gray-800 outline-amber-300"
-                                classList={{ "outline-1": selected.has(i()) }}
+                                class={styles.movieCard}
+                                classList={{ [styles.selected]: selected.has(i()) }}
+                                style={{height: CELL_HEIGHT + "px"}}
                                 onclick={() => {
                                     if (selected.has(i())) selected.delete(i())
                                     else selected.add(i())
@@ -106,15 +106,20 @@ export function Thumbnails() {
                                     send([{ filmId: film.filmId, path: film.path }])
                                 }}
                             >
-                                <img
-                                    class="aspect-video object-cover"
-                                    src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`) + `?a=${a()}`}
-                                    alt=""
-                                    onerror={e => {
-                                        errored.add(i())
-                                        e.currentTarget.src = "/Question_Mark.svg"
-                                    }} />
-                                <label class="overflow-hidden text-nowrap text-center"> {film.title} </label>
+                                <div class={styles.imgWrapper}>
+                                    <FilmIcon />
+                                    <img
+                                        class="aspect-video object-cover"
+                                        src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`) + `?a=${a()}`}
+                                        alt=""
+                                        onerror={e => {
+                                            errored.add(i())
+                                        }}
+                                    />
+                                </div>
+                                <span class={styles.title}>
+                                    {film.title}
+                                </span>
                             </div>
                         }
                     </For>
