@@ -155,6 +155,9 @@ export async function addFilms(files: { title: string, path: string }[]) {
 export function deleteByPaths(paths: string[]) {
     return db.deleteFrom("film").where("path", "in", paths).execute()
 }
+export function deleteByIds(filmIds: number[]) {
+    return db.deleteFrom("film").where("filmId", "in", filmIds).execute()
+}
 
 export function getFilmsWithoutMetadata() {
     return db.selectFrom("film").select(["filmId", "path"]).where("metadata", "is", null).execute()

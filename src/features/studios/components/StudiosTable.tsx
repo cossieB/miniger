@@ -1,19 +1,19 @@
-import { updateStudio } from "~/api/mutations";
 import { createAsync, useAction } from "@solidjs/router";
-import { getStudios } from "~/api/data";
 import { createAppColumnHelper, createAppTable } from "~/utils/createTable";
 import type { TStudio } from "~/datatypes";
 import { createSignal, Show } from "solid-js";
 import type { RowSelectionState } from "@tanstack/solid-table";
-import { state } from "~/state";
 import { createStore } from "solid-js/store";
 import { createVirtualizer } from "@tanstack/solid-virtual";
 import { TABLE_CELL_HEIGHT, TABLE_HEADER_HEIGHT } from "~/constants";
-import { ContextMenu } from "~/components/ContextMenu/ContextMenu";
-import { TableBody } from "~/components/table-wrapper/TableBody";
-import { TableHeader } from "~/components/table-wrapper/TableHeader";
+import { ContextMenu } from "~/components/context-menu/ContextMenu";
+import { TableBody } from "~/components/tables/TableBody";
+import { TableHeader } from "~/components/tables/TableHeader";
 import { enc } from "~/utils/encodeDecode";
-import styles from "~/components/table-wrapper/Table.module.css"
+import styles from "~/components/tables/Table.module.css"
+import { deleteStudios, getStudios, updateStudio } from "../api";
+import { confirm } from "@tauri-apps/plugin-dialog";
+import { FilmIcon, TrashIcon } from "lucide-solid";
 
 const columnHelper = createAppColumnHelper<TStudio>()
 
@@ -36,15 +36,12 @@ export const columns = columnHelper.columns([
             })
         }} />
     }),
-    // columnHelper.display({
-    //     header: "Test",
-    //     cell: (props) => <props.cell.LockedCell value={"skdsfjs"} />
-    // })
 ])
 
 export function StudiosTable() {
     let ref!: HTMLDivElement
     const editStudio = useAction(updateStudio);
+    const del = useAction(deleteStudios)
     const studios = createAsync(() => getStudios(), { initialValue: [] });
     const virtualizer = createVirtualizer({
         get count() {
@@ -73,9 +70,16 @@ export function StudiosTable() {
         }
     })
 
-    state.mainPanel.selectionsFn(() => table.getSelectedRowIds()
-        .map(id => studios().find(s => s.studioId === Number(id))).filter(Boolean)
-    );
+    const handleDelete = async () => {
+        const selections = table.getSelectedRowIds().map(Number);
+        if (selections.length === 0) return;
+        const confirmed = await confirm(`Permanently delete ${selections.length} studios from database?`, {
+            kind: "warning",
+            title: "Delete",
+        })
+        if (!confirmed) return;
+        await del(selections)
+    }
 
     const [contextMenu, setContextMenu] = createStore({
         isOpen: false,
@@ -98,9 +102,11 @@ export function StudiosTable() {
                 if (e.ctrlKey && e.key == "a") {
                     return table.toggleAllRowsSelected(true)
                 }
+                if (e.key == "Delete")
+                    return handleDelete()
             }}
-        >  
-            <div                
+        >
+            <div
                 style={{
                     height: (virtualizer.getTotalSize() + TABLE_HEADER_HEIGHT) + "px",
                 }}
@@ -123,7 +129,22 @@ export function StudiosTable() {
             </div>
             <Show when={contextMenu.isOpen}>
                 <ContextMenu pos={contextMenu} close={() => setContextMenu('isOpen', false)} >
-                    <ContextMenu.Link href={`/movies/studios/${enc({ display: contextMenu.data.selectedName, id: contextMenu.data.selectedId })}`}> Go To Movies </ContextMenu.Link>
+                    <ContextMenu.Link
+                        icon={<FilmIcon />}
+                        href={`/movies/studios/${enc({ display: contextMenu.data.selectedName, id: contextMenu.data.selectedId })}`}
+                    >
+                        Go To Movies
+                    </ContextMenu.Link>
+                    <ContextMenu.Divider />
+                    <ContextMenu.Item
+                        icon={<TrashIcon />}
+                        style={{
+                            color: "red"
+                        }}
+                        onClick={handleDelete}
+                    >
+                        Remove From Database
+                    </ContextMenu.Item>
                 </ContextMenu>
             </Show>
         </div>

@@ -1,14 +1,15 @@
 import { For, type JSXElement, Show } from "solid-js";
 import { createStore } from "solid-js/store";
-import { ActorSelector } from "~/components/CellEditors/ActorCellEditor/ActorSelector";
+import { ActorSelector } from "~/features/actors/components/ActorSelector";
 import { type TActor } from "~/datatypes";
 import { createAsync, useNavigate } from "@solidjs/router";
-import { Tags } from "~/components/table-wrapper/TagsCell";
-import { getStudios, getTags } from "~/api/data";
+import { Tags } from "~/components/tables/TagsCell";
 import { ReactiveSet } from "@solid-primitives/set";
 import { XIcon } from "lucide-solid";
 import styles from "./Search.module.css";
 import { withViewTransition } from "~/utils/withViewTransition";
+import { getTags } from "~/features/tags/api";
+import { getStudios } from "~/features/studios/api";
 
 const [filters, setFilters] = createStore({
     actors: [] as TActor[],

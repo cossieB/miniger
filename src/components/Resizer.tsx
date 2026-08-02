@@ -1,4 +1,4 @@
-import styles from "~/windows/MainWindow.module.css"
+import styles from "~/layouts/main-window/MainWindow.module.css"
 
 type Props = {
     displacement: number;

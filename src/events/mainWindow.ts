@@ -3,11 +3,11 @@ import { BaseDirectory, writeTextFile } from "@tauri-apps/plugin-fs";
 import { unwrap } from "solid-js/store";
 import { state } from "~/state";
 import { revalidate } from "@solidjs/router"
-import { getFilms } from "~/api/data";
-import { loadPlaylist, loadVideos } from "~/utils/loadPlaylist";
-import { createTempPlaylist } from "~/utils/createTempPlaylist";
-import { updateMetadata } from "~/utils/updateMetadata";
+import { loadPlaylist, loadVideos } from "~/features/movies/utils/loadPlaylist";
+import { createTempPlaylist } from "~/features/movies/utils/createTempPlaylist";
+import { updateMetadata } from "~/features/movies/utils/updateMetadata";
 import { getFilmsWithoutMetadata } from "~/repositories/filmsRepository";
+import { getFilms } from "~/features/movies";
 
 export type SessionJSON = {
     list: typeof state['sidePanel']['list'],

@@ -5,10 +5,10 @@ import { appDataDir, sep } from '@tauri-apps/api/path';
 import { FilmIcon } from 'lucide-solid';
 import { batch, createMemo, For, Show, type Accessor } from 'solid-js';
 import { BOTTOM_BAR_HEIGHT, CELL_WIDTH, TOP_BAR_HEIGHT } from '~/constants';
-import { useGetThumbnails } from '~/hooks/useGenerateThumbnails';
-import { useMovieGridContext } from '~/hooks/useMovieGridContext';
+import { useGetThumbnails } from '~/features/movies/hooks/useGenerateThumbnails';
+import { useMovieGridContext } from '~/features/movies/hooks/useMovieGridContext';
 import { state } from '~/state';
-import MoviesContextMenu from '../../../components/MoviesContextMenu';
+import MoviesContextMenu from './MoviesContextMenu';
 import styles from "./MovieGrid.module.css"
 
 const dir = await appDataDir()
@@ -97,7 +97,8 @@ function Row(props: P) {
                     <div
                         class={styles.movieCard}
                         style={{
-                            width: CELL_WIDTH + "px"
+                            width: CELL_WIDTH + "px",
+                            "view-transition-name": `--movieCard${film.filmId}`
                         }}
                         tabIndex={1}
                         classList={{ [styles.selected]: selections.has(j(i())) }}
@@ -157,6 +158,7 @@ function Row(props: P) {
                 <MoviesContextMenu
                     contextMenu={contextMenu}
                     isMainPanel
+                    getSelectedFilms={() => Array.from(selections).map(i => data()[i])}
                 />
             </Show>
         </div>

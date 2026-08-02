@@ -5,11 +5,11 @@ import { TABLE_CELL_HEIGHT, TABLE_HEADER_HEIGHT } from "~/constants";
 import type { allPairings } from "~/repositories/actorsRepository";
 import { createAppColumnHelper, createAppTable } from "~/utils/createTable";
 import { enc } from "~/utils/encodeDecode";
-import styles from "~/components/table-wrapper/Table.module.css"
+import styles from "~/components/tables/Table.module.css"
 import { Show } from "solid-js";
-import { ContextMenu } from "~/components/ContextMenu/ContextMenu";
-import { TableBody } from "~/components/table-wrapper/TableBody";
-import { TableHeader } from "~/components/table-wrapper/TableHeader";
+import { TableBody } from "~/components/tables/TableBody";
+import { TableHeader } from "~/components/tables/TableHeader";
+import { ContextMenu } from "~/components/context-menu/ContextMenu";
 
 type P = Awaited<ReturnType<typeof allPairings>>
 

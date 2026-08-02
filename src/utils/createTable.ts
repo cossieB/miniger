@@ -1,8 +1,8 @@
 import { tableFeatures, columnSizingFeature, rowSortingFeature, columnResizingFeature, createSortedRowModel, sortFn_alphanumeric, sortFn_datetime, sortFn_text, sortFn_basic, createTableHook, rowSelectionFeature, metaHelper } from "@tanstack/solid-table"
-import { LockedCell, TextCell } from "~/components/table-wrapper/Cells"
-import { AsyncSelectCell, SelectCell } from "~/components/table-wrapper/SelectCell"
+import { LockedCell, TextCell } from "~/components/tables/Cells"
+import { AsyncSelectCell, SelectCell } from "~/components/tables/SelectCell"
 import type { TActor, TFilm, TStudio } from "~/datatypes"
-import { ImageEditor } from "~/components/table-wrapper/ImageEditor"
+import { ImageEditor } from "~/components/tables/ImageEditor"
 import type { OptionalExcept } from "~/lib/utilityTypes"
 
 const features = tableFeatures({

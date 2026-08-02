@@ -1,0 +1,57 @@
+import { action, json, query } from "@solidjs/router";
+import type { TActor } from "~/datatypes";
+import type { OptionalExcept } from "~/lib/utilityTypes";
+import * as actorRepo from "~/repositories/actorsRepository"
+import { state } from "~/state";
+import { getId } from "~/utils/getIdFromParam";
+
+export const getActors = query(async () => {
+    return actorRepo.allActors()
+}, 'actors')
+
+export const addActor = action(async (partialActor: string | Omit<TActor, 'actorId'>) => {
+    const actorObj = typeof partialActor === "string" ? { name: partialActor, dob: null, gender: null, image: null, nationality: null } : partialActor;
+    try {
+        const a = await actorRepo.createActor(actorObj)
+        return json(a, { revalidate: [getActors.key] })
+    }
+    catch (error) {
+        console.error(error);
+        state.status.setStatus(String(error))
+        throw json(undefined, { revalidate: [] });
+    }
+})
+
+export const editActor = action(async (a: OptionalExcept<TActor, 'actorId'>) => {
+    const { actorId, ...rest } = a
+    if (Object.keys(rest).length === 0) return;
+    try {
+        const a = await actorRepo.updateActor(rest, actorId as any as number)
+        return json(a, { revalidate: [] })
+    }
+    catch (error) {
+        console.error(error);
+        state.status.setStatus(String(error))
+        throw json(undefined, { revalidate: [] });
+    }
+})
+
+export const getCostars = query(async (actor: string) => {
+    const actorId = getId(actor, "/costars")
+    return actorRepo.costarsOf(actorId);
+}, 'costarsOf')
+
+export const getPairings = query(async () => {
+    return actorRepo.allPairings()
+}, 'costars')
+
+export const removeActors = action(async (actorIds: number[]) => {
+    try {
+        await actorRepo.deleteActors(actorIds)
+        return json(undefined, { revalidate: [getActors.key] })
+    }
+    catch (error) {
+        state.status.setStatus(String(error))
+        throw json(undefined, { revalidate: [] })
+    }
+})

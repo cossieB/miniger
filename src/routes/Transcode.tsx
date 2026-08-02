@@ -6,7 +6,7 @@ import { filterMap } from "~/lib/filterMap";
 import videoExtensions from "../videoExtensions.json"
 import { XIcon } from "lucide-solid";
 import { createStore } from "solid-js/store";
-import styles from "../windows/Windows.module.css"
+import styles from "~/layouts/secondary-windows/Windows.module.css"
 
 type F = {
     src: string

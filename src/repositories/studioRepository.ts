@@ -13,3 +13,7 @@ export function addStudio(s: Omit<Studio, 'studioId'>) {
 export function editStudio(s: Partial<Omit<Studio, "studioId">>, studioId: number) {
     return db.updateTable("studio").set(s).where("studioId", "=", studioId).returningAll().executeTakeFirstOrThrow()
 }
+
+export function deleteStudios(studioIds: number[]) {
+    return db.deleteFrom("studio").where("studioId", "in", studioIds).execute()
+}

@@ -1,10 +1,10 @@
 import { type JSXElement } from "solid-js";
 import { useAction } from "@solidjs/router";
-import { addFilesToDatabase } from "~/api/mutations";
-import { addFolderToSidebar, readDirectories } from "~/utils/readDirectories";
-import { loadPlaylist, loadVideos } from "~/utils/loadPlaylist";
+import { addFolderToSidebar, readDirectories } from "~/features/movies/utils/readDirectories";
+import { loadPlaylist, loadVideos } from "~/features/movies/utils/loadPlaylist";
 import { Film, FolderInput, FolderOpen, ListVideo } from "lucide-solid";
 import styles from "./pages.module.css"
+import { addFilesToDatabase } from "~/features/movies/api";
 
 export function Home() {
     const addAction = useAction(addFilesToDatabase)

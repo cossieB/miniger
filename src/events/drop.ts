@@ -42,7 +42,7 @@ getAllWindows().then(async windows => {
     await dropWindow?.listen<DropPayload>("tauri://drag-over", e => {
         const pos = e.payload.position
         const target = document.elementFromPoint(pos.x, pos.y) as HTMLLIElement | null;
-console.log(pos, target)
+
         if (!target || !target.classList.contains("sidepanel-item")) {
             prevElem?.classList.remove("pt-5")
             prevElem = null;

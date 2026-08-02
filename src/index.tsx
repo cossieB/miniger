@@ -1,25 +1,27 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
-import "./App.css";
-import MainWindow from "./windows/MainWindow";
+import "./styles/index.css"
 import { Navigate, Route, Router } from "@solidjs/router";
 import Actors from "./routes/Actors";
 import Studios from "./routes/Studios";
-import { getActors, getCostars, getFilms, getInaccessible, getMoviesByCostars, getPairings, getStudios } from "./api/data";
 import { Movies } from "./routes/Movies";
 import Inaccessible from "./routes/Inaccessible";
-import { VideoPlayer } from "./components/VideoPlayer/VideoPlayer";
 import { Home } from "./routes/Home";
-import { Settings } from "./windows/Settings";
-import { Convert } from "./windows/Convert";
-import { DragDrop } from "./windows/DragDrop";
-import { readSession } from "./readSettings";
 import { Costars } from "./routes/Costars";
 import { Search } from "./routes/Search";
 import { search } from "./repositories/search";
 import { Thumbnails } from "./routes/Thumbs";
 import Transcode from "./routes/Transcode";
 import { getId } from "./utils/getIdFromParam";
+import MainWindow from "./layouts/main-window/MainWindow";
+import { Settings } from "lucide-solid";
+import { getActors, getPairings, getCostars } from "./features/actors/api";
+import { VideoPlayer } from "./features/media/components/VideoPlayer";
+import { getFilms, getMoviesByCostars, getInaccessible } from "./features/movies";
+import { getStudios } from "./features/studios/api";
+import { readSession } from "./hooks/useStorage";
+import { Convert } from "./layouts/secondary-windows/Convert";
+import { DragDrop } from "./layouts/secondary-windows/DragDrop";
 
 
 render(() => (

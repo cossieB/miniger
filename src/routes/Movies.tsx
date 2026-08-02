@@ -1,26 +1,16 @@
 import { createAsync } from "@solidjs/router"
-import { createMemo, createSignal, Match, Switch } from "solid-js"
+import { createMemo, Match, Switch } from "solid-js"
 import { type DetailedDbFilm } from "~/repositories/filmsRepository"
-import type { FfprobeMetadata } from "~/utils/updateMetadata"
-import { MoviesTable } from "~/components/MoviesTable/MoviesTable"
-import { Grid3x3Icon, ListIcon, LoaderCircleIcon } from "lucide-solid"
-import { ModeToggle } from "../components/ModeToggle"
+import type { FfprobeMetadata } from "~/features/movies/utils/updateMetadata"
+import { LoaderCircleIcon } from "lucide-solid"
 import { MovieGrid } from "~/features/movies/components/MovieGrid"
-import { MovieGridProvider } from "~/contexts/MovieGridContext"
+import { MoviesTable } from "~/features/movies/components/MoviesTable/MoviesTable"
+import { MovieGridProvider } from "~/features/movies/contexts/MovieGridContext"
+import { activeView } from "~/layouts/main-window/top-bar/ViewToggle"
 
 type Props = {
     fetcher(): Promise<DetailedDbFilm[] | undefined>
 }
-
-const views = [{
-    icon: ListIcon,
-    label: "table"
-}, {
-    icon: Grid3x3Icon,
-    label: "grid"
-}]
-
-export const [activeView, setActiveView] = createSignal(0)
 
 export function Movies(props: Props) {
 
@@ -39,25 +29,20 @@ export function Movies(props: Props) {
     })
 
     return (
-        <>
-            <ModeToggle
-                modes={views}
-            />
-            <Switch>
-                <Match when={!data()}>
-                    <div class="flexCenter fillUp">
-                        <LoaderCircleIcon class="animate-spin" size={25} />
-                    </div>
-                </Match>
-                <Match when={activeView() == 0}>
-                    <MoviesTable data={data()!} />
-                </Match>
-                <Match when={activeView() == 1}>
-                    <MovieGridProvider data={data()!}>
-                        <MovieGrid />
-                    </MovieGridProvider>
-                </Match>
-            </Switch>
-        </>
+        <Switch>
+            <Match when={!data()}>
+                <div class="flexCenter fillUp">
+                    <LoaderCircleIcon class="animate-spin" size={25} />
+                </div>
+            </Match>
+            <Match when={activeView() == "table"}>
+                <MoviesTable data={data()!} />
+            </Match>
+            <Match when={activeView() == "grid"}>
+                <MovieGridProvider data={data()!}>
+                    <MovieGrid />
+                </MovieGridProvider>
+            </Match>
+        </Switch>
     )
 }

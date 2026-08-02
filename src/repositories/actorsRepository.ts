@@ -64,15 +64,14 @@ export function allPairings() {
         .execute();
 }
 
-export async function createActor(a: Omit<TActor, 'actorId'>, filmId?: number) {
-
-    const inserted = await db.insertInto("actor").values(a).returningAll().executeTakeFirstOrThrow();
-    if (filmId) {
-        await db.insertInto("actorFilm").values({filmId, actorId: inserted.actorId}).execute();
-    }
-    return inserted
+export async function createActor(a: Omit<TActor, 'actorId'>) {
+    return await db.insertInto("actor").values(a).returningAll().executeTakeFirstOrThrow();
 }
 
 export function updateActor(a: Partial<Omit<TActor, "actorId">>, actorId: number) {
     return db.updateTable("actor").set(a).where("actor.actorId", "=", actorId).returningAll().executeTakeFirstOrThrow();
+}
+
+export function deleteActors(actorIds: number[]) {
+    return db.deleteFrom("actor").where("actor.actorId", "in", actorIds).execute()
 }
