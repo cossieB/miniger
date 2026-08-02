@@ -61,6 +61,13 @@ export function MovieGrid() {
                     }
                 </For>
             </div>
+            <Show when={contextMenu.isOpen}>
+                <MoviesContextMenu
+                    contextMenu={contextMenu}
+                    isMainPanel
+                    getSelectedFilms={() => Array.from(selections).map(i => data()[i])}
+                />
+            </Show>            
         </div>
     )
 }
@@ -76,7 +83,7 @@ type P = {
 
 function Row(props: P) {
     const navigate = useNavigate()
-    const { columns, data, setContextMenu, selections, contextMenu } = useMovieGridContext()
+    const { columns, data, setContextMenu, selections } = useMovieGridContext()
     const startIdx = createMemo(() => props.virtualRow.index * columns());
     const rowItems = createMemo(() => (data().slice(startIdx(), startIdx() + columns())));
     const j = (i: number) => props.virtualRow.index * columns() + i
@@ -154,13 +161,7 @@ function Row(props: P) {
                     </div>
                 )}
             </For>
-            <Show when={contextMenu.isOpen}>
-                <MoviesContextMenu
-                    contextMenu={contextMenu}
-                    isMainPanel
-                    getSelectedFilms={() => Array.from(selections).map(i => data()[i])}
-                />
-            </Show>
+
         </div>
     );
 }

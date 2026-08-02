@@ -17,7 +17,7 @@ export type Props = {
         y: number,
     },
     attach?: HTMLElement
-    ref?: HTMLDivElement | (() => HTMLDivElement | undefined)
+    ref?: HTMLDivElement | ((el: HTMLDivElement) => void) | undefined
 }
 
 type Ctx = {
@@ -28,7 +28,7 @@ type Ctx = {
 
 export const ContextMenuContext = createContext<Ctx | null>(null)
 
-export function ContextMenu(props: Props) {
+export function ContextMenu(props: Props) {    
     let ref!: HTMLDivElement
     const [position, setPosition] = createStore({
         x: props.pos.x,
@@ -37,17 +37,18 @@ export function ContextMenu(props: Props) {
     })
 
     onMount(() => {
+        const rect = ref.getBoundingClientRect();
+          
         setPosition('width', ref.clientWidth);
         // shift menu when close the the right and bottom edges of the window
-        if (props.pos.y + ref.clientHeight > window.innerHeight)
+        if (rect.right > window.innerWidth)
             setPosition({
-                y: props.pos.y - ref.clientHeight,
+                x: window.innerWidth - rect.width
             })
-        if (props.pos.x + ref.clientWidth > window.innerWidth)
+        if (rect.bottom > window.innerHeight)
             setPosition({
-                x: props.pos.x - ref.clientWidth,
+                y: window.innerHeight - rect.height
             })
-        ref.style.opacity = "1" 
     })
 
     return (

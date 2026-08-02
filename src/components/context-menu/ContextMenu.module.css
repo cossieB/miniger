@@ -1,12 +1,12 @@
 @layer components {
     .menu {
-        position: absolute;
+        position: fixed;
         background-color: var(--char-600);
         color: #ffffff;
         border-radius: 0.375rem;
         border: 2px solid var(--char-700);
         z-index: 999;
-        opacity: 0;
+        /* opacity: 0; */
 
         ul {
             min-width: 13rem
@@ -19,6 +19,7 @@
         align-items: center;
         height: 2rem;
         padding: 0.5rem;
+        text-wrap: nowrap;
 
         &:hover {
             background-color: var(--char-700);
@@ -41,8 +42,6 @@
             inset: 0;
         }
     }
-
-    .item {}
 
     .divider {
         width: 100%;

@@ -16,7 +16,7 @@ export function Menu(props: Props) {
                 top: props.pos.y + "px",
             }}
         >
-            <ul class="min-w-52 ">
+            <ul>
                 {props.children}
             </ul>
         </div>

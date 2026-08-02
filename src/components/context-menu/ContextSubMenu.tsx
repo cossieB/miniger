@@ -1,4 +1,4 @@
-import { type JSX, Show, createEffect, createSignal, on, untrack } from "solid-js";
+import { type JSX, Show, createEffect, createSignal, on } from "solid-js";
 import { useContextMenuContext } from "./useContextMenuContext";
 import { Menu } from "./Menu";
 import { ContextMenuItem } from "./ContextMenuItem";
@@ -21,22 +21,26 @@ export function ContextSubMenu(props: Props) {
 
     let timerId = -1
 
-
-    createEffect(on(showMenu, () => {
-        setY(prev => parentItem()?.offsetTop ?? prev);
-        if (!parentItem() || !subMenu()) return
-        const rect = subMenu()!.getBoundingClientRect();
-        const h = rect.top + rect.height;
-
-        if (h > window.innerHeight) {
-            const diff = h - window.innerHeight;
-            setY(untrack(y) - diff);
+    createEffect(on(() => [parentItem(), subMenu()] as const, ([parent, sub]) => {
+        
+        if (!parent || !sub) return;
+        const parentRect = parent.getBoundingClientRect()
+        const subRect = sub.getBoundingClientRect();
+        
+        const w = parentRect.right + subRect.width;
+        if (w < window.innerWidth) {
+            setX(parentRect.right)
         }
-        setX(position.width);
-        subMenu()!.style.opacity = "1";
-        const w = position.x + position.width + subMenu()!.clientLeft + subMenu()!.clientWidth;
-        if (w > window.innerWidth) {
-            setX(-position.width)
+        else {
+            setX(parentRect.left - subRect.width)
+        }
+
+        const h = parentRect.top + subRect.height
+        if (h < window.innerHeight) {
+            setY(parentRect.top)
+        }
+        else {
+            setY(parentRect.bottom - subRect.height)
         }
     }));
 
