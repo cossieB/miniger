@@ -16,7 +16,6 @@ export function Nav() {
             class={`${styles.tree} scrollable`}
             style={{ 
                 width: state.tree.width + "px",
-                "scrollbar-gutter": "auto"
             }}
         >
             <ul id="tree-root">

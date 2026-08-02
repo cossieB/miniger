@@ -20,7 +20,10 @@ export const columns = columnHelper.columns([
             options={["M", "F"]}
             initialValue={props.row.original.gender ?? undefined}
             onUpdate={async gender => {
-
+                props.table.options.meta?.updateActor!({
+                    actorId: props.row.original.actorId,
+                    gender: gender || null
+                })
             }}
         />,
         size: 70
@@ -29,7 +32,10 @@ export const columns = columnHelper.columns([
         cell: props => <props.cell.TextCell
             type="date"
             onUpdate={async dob => {
-
+                props.table.options.meta?.updateActor!({
+                    actorId: props.row.original.actorId,
+                    dob
+                })
             }}
         />
     }),
@@ -38,7 +44,10 @@ export const columns = columnHelper.columns([
             options={countryList}
             initialValue={props.row.original.nationality ?? undefined}
             onUpdate={async nationality => {
-
+                props.table.options.meta?.updateActor!({
+                    actorId: props.row.original.actorId,
+                    nationality: nationality || null
+                })
             }}
         />
     }),

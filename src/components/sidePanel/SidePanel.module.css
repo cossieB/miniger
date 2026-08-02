@@ -1,14 +1,14 @@
 @layer components {
     .sidepanel {
         background-color: var(--char-800);
-        overflow-x: hidden;
+        overflow: unset;
         user-select: none;
         flex-shrink: 0;
         display: flex;
         flex-direction: column;
         position: relative;
-
     }
+
     .item {
         white-space: nowrap;
         overflow: hidden;

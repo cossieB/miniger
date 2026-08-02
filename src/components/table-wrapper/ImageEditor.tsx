@@ -65,10 +65,9 @@ export function ImageEditor(props: Props) {
                     <div
                         style={{
                             "position-anchor": anchorName,
-                            top: "anchor(top)",
-                            left: "anchor(left)"
+
                         }}
-                        class="h-52 aspect-square absolute bg-white"
+                        class={styles.imgEditor}
                         onDragOver={e => {
                             e.preventDefault();
                         }}
@@ -115,7 +114,7 @@ export function ImageEditor(props: Props) {
                             fallback={<p class="h-52 absolute aspect-square text-black flex justify-center items-center text-4xl">DROP <br /> IMAGE <br /> HERE</p>}
                         >
                             <img
-                                class="h-full w-full object-contain"
+                                class="fillUp"
                                 src={src()}
                                 onError={e => e.currentTarget.src = "/Question_Mark.svg"}
                             />

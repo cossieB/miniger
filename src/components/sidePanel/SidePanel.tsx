@@ -25,7 +25,7 @@ export function SidePanel() {
 
     return (
         <section
-            class={`${styles.sidepanel} droppable`}
+            class={`${styles.sidepanel} droppable scrollable`}
             style={{
                 width: state.sidePanel.width + "px",
                 height: (state.windowDimensions.height - TOP_BAR_HEIGHT - BOTTOM_BAR_HEIGHT) + "px"

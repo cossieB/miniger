@@ -44,6 +44,9 @@ export function TableHeader() {
                                                 e.currentTarget.setPointerCapture(e.pointerId)
                                                 header.getResizeHandler()(e)
                                             }} 
+                                            onPointerUp={e => {
+                                                e.currentTarget.releasePointerCapture(e.pointerId)
+                                            }}
                                         />
                                     </div>
                                 </th>

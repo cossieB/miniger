@@ -76,4 +76,14 @@
         white-space: nowrap;
     }
 
+    .imgEditor {
+        height: 13rem;
+        position: absolute;
+        background-color: white;
+        position-area: center center;
+        
+        img {
+            object-fit: contain;
+        }
+    }
 }

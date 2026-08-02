@@ -13,6 +13,7 @@ select {
     background-repeat: no-repeat;
     background-position: right 0.85rem center;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    scrollbar-color: var(--volt-300) transparent;
 
     &:hover {
         border-color: var(--char-600);
@@ -122,6 +123,7 @@ input[type="radio"] {
    :has() support so old engines keep the safe accent-color version ---------- */
 
 @supports selector(:has(a)) {
+
     input[type="checkbox"],
     input[type="radio"] {
         appearance: none;

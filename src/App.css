@@ -121,56 +121,56 @@
             animation: spin 5s linear infinite;
         }
     }
-}
 
-.hide-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-
-.scrollable {
-    scrollbar-gutter: stable;
-    scrollbar-width: auto;
-    scrollbar-color: transparent transparent;
-    overflow: auto;
-
-    &::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
     }
 
-    &::-webkit-scrollbar-track {
-        background: transparent;
+    .scrollable {
+        scrollbar-gutter: stable;
+        scrollbar-width: auto;
+        scrollbar-color: transparent transparent;
+        overflow: auto;
+
+        &::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: transparent;
+            border-radius: 4px;
+        }
+
+        &:hover {
+            scrollbar-color: var(--volt-300) transparent;
+
+            &::-webkit-scrollbar-thumb {
+                background-color: var(--volt-300);
+            }
+        }
     }
 
-    &::-webkit-scrollbar-thumb {
+    html {
+        scrollbar-width: auto;
+        scrollbar-color: var(--volt-300) transparent;
+    }
+
+    ::-webkit-scrollbar-track {
         background: transparent;
         border-radius: 4px;
     }
 
-    &:hover {
-        scrollbar-color: var(--volt-300) transparent;
-
-        &::-webkit-scrollbar-thumb {
-            background-color: var(--volt-300);
-        }
+    ::-webkit-scrollbar-thumb {
+        background-color: var(--volt-300);
+        border-radius: 4px;
     }
-}
 
-html {
-    scrollbar-width: auto;
-    scrollbar-color: var(--volt-300) transparent;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: var(--volt-300);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.6);
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
 }

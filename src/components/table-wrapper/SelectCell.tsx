@@ -41,7 +41,7 @@ export function SelectCell(props: SelectCellProps) {
     createEffect(() => {
         if (edit()) {
             isCancelled = false;
-            setTimeout(() => selectRef?.focus(), 0);
+            setTimeout(() => selectRef?.showPicker(), 0);
         }
     });
 
@@ -106,7 +106,7 @@ export function SelectCell(props: SelectCellProps) {
                         value={value()}
                         ref={selectRef}
                         disabled={loading() || selectProps.disabled}
-                        class={`${styles.selectInput} ${selectProps.class || ""} scrollable`}
+                        class={selectProps.class}
                         onChange={(e) => {
                             setValue(e.currentTarget.value)
                             selectRef.blur();
@@ -131,7 +131,6 @@ export function SelectCell(props: SelectCellProps) {
                             )}
                         </For>
                     </select>
-                    <ChevronDownIcon class={styles.iconChevronAbsolute} />
                 </div>
             </Show>
         </div>

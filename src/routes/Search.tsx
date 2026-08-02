@@ -82,20 +82,17 @@ export function Search(props: { children?: JSXElement }) {
             />
 
             <div class={styles.dateGroup}>
-                <select>
-                    <option
-                        onClick={() => setFilters('studio', { name: "", studioId: null })}
-                        value={JSON.stringify({ name: "", studioId: null })}
-                        selected={!filters.studio.studioId}
-                    >
+                <select
+                    onChange={e => {
+                        setFilters('studio', JSON.parse(e.currentTarget.value))
+                    }}
+                >
+                    <option value={JSON.stringify({name: "", studioId: null})}>
                         Studio
 
                     </option>
                     <For each={studios()}>
                         {studio => <option
-                            onClick={() => {
-                                setFilters('studio', studio);
-                            }}
                             value={JSON.stringify(studio)}
                             selected={filters.studio.studioId == studio.studioId}
                         >

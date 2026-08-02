@@ -71,17 +71,25 @@
         overflow-y: auto;
         font-size: small;
         background-color: var(--char-800);
+        scrollbar-gutter: auto;
 
-        .linkNode a {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            height: 2rem;
-            text-wrap: wrap;
-            &:hover {
-                background-color: var(--char-600);                        
+        svg, span {
+            flex-shrink: 0;
+        }
+        .linkNode {
+            a {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                height: 2rem;
+                text-wrap: nowrap;
+
+                &:hover {
+                    background-color: var(--char-600);
+                }
             }
         }
+
         .parent {
             width: 1rem;
             margin-inline: 0.25rem;
@@ -96,9 +104,10 @@
         display: flex;
         align-items: center;
         height: 2rem;
+
         &:hover {
             background-color: var(--char-600);
-                    
+
         }
     }
 
@@ -122,6 +131,7 @@
         transform: translate(-50%, -50%);
         cursor: ew-resize;
         background-color: var(--volt-400);
+
         &.vertical {
             width: 2.5rem;
             height: 0.5rem;

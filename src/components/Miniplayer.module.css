@@ -1,0 +1,10 @@
+.miniplayer {
+    margin-top: auto;
+    flex-grow: 0;
+    background-color: var(--char-950);
+    button {
+        position: absolute;
+        z-index: 50;
+    }
+    
+}

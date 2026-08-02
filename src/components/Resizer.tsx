@@ -1,4 +1,3 @@
-import { onCleanup } from "solid-js";
 import styles from "~/windows/MainWindow.module.css"
 
 type Props = {
@@ -10,21 +9,12 @@ type Props = {
 }
 
 export default function Resizer(props: Props) {
-    const abortController = new AbortController
+    let isDragging = false
 
-    document.addEventListener("mouseup", e => {
-        e.preventDefault();        
-        document.removeEventListener("mousemove", handleMouseMove)
-    }, { signal: abortController.signal })
-
-    onCleanup(() => {
-        abortController.abort()
-    })
-
-    const handleMouseMove = (e: MouseEvent) => {
-        e.preventDefault();
+    const handleMouseMove = (e: PointerEvent) => {
+        if (!isDragging) return;
         const point = props.vertical ? e.clientY : e.clientX
-        const displacement = Math.max(props.minDisplacement, Math.min(props.maxDisplacement, point))        
+        const displacement = Math.max(props.minDisplacement, Math.min(props.maxDisplacement, point))
         props.onMove(displacement)
     }
     return (
@@ -33,12 +23,21 @@ export default function Resizer(props: Props) {
             classList={{
                 [styles.vertical]: !!props.vertical
             }}
-            onMouseDown={e => {
-                e.preventDefault();
-                document.addEventListener("mousemove", handleMouseMove);
+            onPointerDown={e => {
+                isDragging = true
+                e.currentTarget.setPointerCapture(e.pointerId)
+            }}
+            onPointerUp={e => {
+                isDragging = false
+                e.currentTarget.releasePointerCapture(e.pointerId);
+            }}
+            onPointerMove={handleMouseMove}
+            onPointerCancel={e => {              
+                isDragging = false;
+                e.currentTarget.releasePointerCapture(e.pointerId);
             }}
             style={{
-                [props.vertical ? "top" :"left"]: props.displacement + "px"
+                [props.vertical ? "top" : "left"]: props.displacement + "px"
             }}
         />
     )
