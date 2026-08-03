@@ -6,6 +6,7 @@ import {status} from "./status"
 import { windowDimensions } from "./windowDimension";
 import { miniplayer } from "./miniplayer";
 import { settings } from "./settings";
+import { dialog } from "./dialog";
 
 export type PlaylistFile = {
     filmId?: number;
@@ -31,4 +32,5 @@ export const state = {
     windowDimensions,
     miniplayer,
     settings,
+    dialog
 }

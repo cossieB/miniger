@@ -51,6 +51,16 @@
         --font-display: 'Space Grotesk', system-ui, sans-serif;
         --font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
         --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+        --danger-500: oklch(62% 0.21 25);
+        --danger-300: oklch(from var(--danger-500) calc(l + 0.20) calc(c * 0.85) h);
+        --danger-400: oklch(from var(--danger-500) calc(l + 0.08) c h);
+        --danger-600: oklch(from var(--danger-500) calc(l - 0.07) calc(c * 1.05) h);
+        --danger-700: oklch(from var(--danger-500) calc(l - 0.20) calc(c * 0.85) h);
+
+        --danger-tint: color-mix(in oklch, var(--danger-500) 14%, var(--char-900));
+        --danger-tint-strong: color-mix(in oklch, var(--danger-500) 26%, var(--char-900));
+        --danger-border: color-mix(in oklch, var(--danger-500) 45%, var(--char-700));
     }
 
     * {
@@ -154,6 +164,20 @@
             &::-webkit-scrollbar-thumb {
                 background-color: var(--volt-300);
             }
+        }
+    }
+
+    .button {
+        border-radius: 8px;
+        padding: 0.65rem;
+        cursor: pointer;
+        background-color: var(--char-800);
+        color: var(--paper-100);
+        border: 1px solid var(--char-600);
+
+        &:hover {
+            border-color: var(--char-600);
+            background-color: var(--char-700);
         }
     }
 

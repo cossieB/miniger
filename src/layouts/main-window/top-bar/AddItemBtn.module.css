@@ -1,0 +1,14 @@
+@layer components {
+    .itemsContainer {
+        position: absolute;
+        margin-top: 0.5rem;
+        top: anchor(bottom);
+        left: anchor(left);
+        
+        &:popover-open {
+            display: flex;
+            flex-direction: column;
+            border: none;
+        }
+    }
+}

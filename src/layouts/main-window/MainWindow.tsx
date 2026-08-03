@@ -10,6 +10,7 @@ import { BottomBar } from "./BottomBar";
 import { Nav } from "./nav/Nav";
 import { SidePanel } from "./sidepanel/SidePanel";
 import { TopBar } from "./top-bar/TopBar";
+import { Dialog } from "~/components/dialog/Dialog";
 
 function App(props: { children?: JSXElement }) {
     const abortController = new AbortController
@@ -53,6 +54,7 @@ function App(props: { children?: JSXElement }) {
                 <SidePanel />
             </div>
             <BottomBar />
+            <Dialog />
         </div>
     );
 }

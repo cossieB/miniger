@@ -13,6 +13,14 @@ export function allActors() {
         .execute()
 }
 
+export function findById(id: number) {
+    return db
+        .selectFrom("actor")
+        .selectAll()
+        .where("actor.actorId", "=", id)
+        .executeTakeFirstOrThrow()
+}
+
 export function costarsOf(actorId: number) {
 
     return db

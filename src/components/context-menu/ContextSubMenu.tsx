@@ -22,11 +22,11 @@ export function ContextSubMenu(props: Props) {
     let timerId = -1
 
     createEffect(on(() => [parentItem(), subMenu()] as const, ([parent, sub]) => {
-        
+
         if (!parent || !sub) return;
         const parentRect = parent.getBoundingClientRect()
         const subRect = sub.getBoundingClientRect();
-        
+
         const w = parentRect.right + subRect.width;
         if (w < window.innerWidth) {
             setX(parentRect.right)
@@ -45,36 +45,35 @@ export function ContextSubMenu(props: Props) {
     }));
 
     return (
-        <>
-            <ContextMenuItem
-                ref={setParentItem}
-                onClick={() => {
-                    setShowMenu(p => !p);
-                    clearTimeout(timerId);
-                    timerId = -1;
-                }}
-                onMouseEnter={() => {
-                    timerId = setTimeout(() => setShowMenu(true), 250);
-                }}
-                onMouseLeave={() => {
-                    clearTimeout(timerId);
-                    timerId = setTimeout(() => setShowMenu(false), 250);
-                }}
-                icon={props.icon}
+        <ContextMenuItem
+            ref={setParentItem}
+            onClick={() => {
+                setShowMenu(p => !p);
+                clearTimeout(timerId);
+                timerId = -1;
+            }}
+            onMouseEnter={() => {
+                clearTimeout(timerId)
+                timerId = setTimeout(() => setShowMenu(true), 400);
+            }}
+            onMouseLeave={() => {
+                clearTimeout(timerId);
+                timerId = setTimeout(() => setShowMenu(false), 400);
+            }}
+            icon={props.icon}
 
-            >
-                <span>{props.label} </span>
-                <span style={{"margin-left": "auto"}}><ChevronRightIcon /></span>
-                <Show when={showMenu()}>
-                    <Menu
-                        pos={{ x: x(), y: y() }}
-                        close={() => setShowMenu(false)}
-                        ref={setSubmenu}
-                    >
-                        {props.children}
-                    </Menu>
-                </Show>
-            </ContextMenuItem>
-        </>
+        >
+            <span>{props.label} </span>
+            <span style={{ "margin-left": "auto" }}><ChevronRightIcon /></span>
+            <Show when={showMenu()}>
+                <Menu
+                    pos={{ x: x(), y: y() }}
+                    close={() => setShowMenu(false)}
+                    ref={setSubmenu}
+                >
+                    {props.children}
+                </Menu>
+            </Show>
+        </ContextMenuItem>
     );
 }

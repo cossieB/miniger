@@ -122,7 +122,7 @@ export default function Inaccessible() {
                         onClick={handleDelete}
                         icon={<Trash2Icon />}
                         style={{
-                            color: "red"
+                            color: "var(--danger-500)"
                         }}
                     >
                         Delete Selected

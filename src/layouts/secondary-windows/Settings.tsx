@@ -83,7 +83,7 @@ export function Settings() {
                                             mutate(p => p.filter((_, j) => j != i()))
                                             setHasChanged(true);
                                         }}>
-                                        <Trash2Icon color="red" />
+                                        <Trash2Icon color="var(--danger-500)" />
                                     </button>
                                 </td>
                             </tr>

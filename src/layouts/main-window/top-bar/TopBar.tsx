@@ -11,6 +11,7 @@ import { BackBtn, ForwardBtn } from "./NavArrowSvgs";
 import { TOP_BAR_HEIGHT } from "~/constants";
 import styles from "~/layouts/main-window/MainWindow.module.css"
 import { ViewToggle } from "./ViewToggle";
+import { AddItemBtn } from "./AddItemBtn";
 
 export function TopBar() {
 
@@ -32,6 +33,7 @@ export function TopBar() {
                 {/* Center Part */}
                 <AddDirectoryToDatabase />
                 <ViewToggle />
+                <AddItemBtn />
             </div>
 
             <div>

@@ -55,3 +55,7 @@ export const removeActors = action(async (actorIds: number[]) => {
         throw json(undefined, { revalidate: [] })
     }
 })
+
+export const getActor = query(async (actorId: number) => {
+    return actorRepo.findById(actorId)
+}, "actor")

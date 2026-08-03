@@ -8,7 +8,6 @@ import { state } from "~/state";
 import styles from "./Cells.module.css"
 import { Portal } from "solid-js/web";
 import clickOutside from "~/lib/clickOutside";
-import { sleep } from "~/lib/sleep";
 
 false && clickOutside
 
@@ -76,7 +75,6 @@ export function ImageEditor(props: Props) {
                         onDrop={async e => {
                             setLoading(true)
                             e.preventDefault();
-                            await sleep(5000)
                             if (!e.dataTransfer?.files.length) return;
                             const file = e.dataTransfer.files[0];
                             if (!file.type.startsWith("image")) return;

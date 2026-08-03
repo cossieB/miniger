@@ -3,7 +3,6 @@ import type { TActor } from "./datatypes";
 export type MovieData = {
     tags: string[];
     actors: TActor[];
-    isOnDb: boolean;
     metadata: {
         streams: ({
             codec_name: string;

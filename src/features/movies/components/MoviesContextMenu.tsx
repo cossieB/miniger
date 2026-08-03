@@ -215,7 +215,7 @@ export default function MoviesContextMenu(props: P) {
 
                     <ContextMenu.Item
                         style={{
-                            color: "red"
+                            color: "var(--danger-500)"
                         }}
                         icon={<TrashIcon />}
                         onClick={async () => {
@@ -233,7 +233,7 @@ export default function MoviesContextMenu(props: P) {
                 <ContextMenu.Item
                     icon={<Trash2Icon />}
                     style={{
-                        color: "red"
+                        color: "var(--danger-500)"
                     }}
                     onClick={async () => {
                         try {

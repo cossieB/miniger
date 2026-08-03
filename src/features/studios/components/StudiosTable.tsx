@@ -139,7 +139,7 @@ export function StudiosTable() {
                     <ContextMenu.Item
                         icon={<TrashIcon />}
                         style={{
-                            color: "red"
+                            color: "var(--danger-500)"
                         }}
                         onClick={handleDelete}
                     >
