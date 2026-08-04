@@ -58,6 +58,8 @@ export function ActorsTable() {
         })
         if (!confirmed) return;
         await del(selections)
+        table.toggleAllRowsSelected(false);
+        setContextMenu({isOpen: false})   
     }
 
     const [contextMenu, setContextMenu] = createStore({

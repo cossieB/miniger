@@ -13,7 +13,8 @@ import { enc } from "~/utils/encodeDecode";
 import styles from "~/components/tables/Table.module.css"
 import { deleteStudios, getStudios, updateStudio } from "../api";
 import { confirm } from "@tauri-apps/plugin-dialog";
-import { FilmIcon, TrashIcon } from "lucide-solid";
+import { FilmIcon, PencilIcon, TrashIcon } from "lucide-solid";
+import { state } from "~/state";
 
 const columnHelper = createAppColumnHelper<TStudio>()
 
@@ -79,6 +80,8 @@ export function StudiosTable() {
         })
         if (!confirmed) return;
         await del(selections)
+        table.toggleAllRowsSelected(false);
+        setContextMenu({isOpen: false})        
     }
 
     const [contextMenu, setContextMenu] = createStore({
@@ -135,6 +138,12 @@ export function StudiosTable() {
                     >
                         Go To Movies
                     </ContextMenu.Link>
+                    <ContextMenu.Item
+                        onClick={() => state.dialog.openDialog({type: "studio", data: {studioId: contextMenu.data.selectedId}})}
+                        icon={<PencilIcon />}
+                    >
+                        Edit
+                    </ContextMenu.Item>
                     <ContextMenu.Divider />
                     <ContextMenu.Item
                         icon={<TrashIcon />}

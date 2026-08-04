@@ -5,7 +5,7 @@ import { useCellContext } from "~/utils/createTable";
 import { open, } from "@tauri-apps/plugin-dialog";
 import videoExtensions from "~/videoExtensions.json"
 import styles from "./Cells.module.css"
-import { editFilm, getInaccessible } from "~/features/movies";
+import { editFilm } from "~/features/movies";
 
 export function Find() {
     const action = useAction(editFilm)
@@ -29,7 +29,7 @@ export function Find() {
                         }]
                     })
                     if (!sel) return;
-                    await action({ path: sel, filmId: cell.row.original.filmId }, [getInaccessible.key])
+                    await action({ path: sel, filmId: cell.row.original.filmId })
                 }}
             >
                 <SearchIcon />

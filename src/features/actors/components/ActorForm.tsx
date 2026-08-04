@@ -1,13 +1,13 @@
-import { createAsync, useAction } from "@solidjs/router";
+import { createAsync, useAction, useSubmission } from "@solidjs/router";
 import { state } from "~/state";
 import { addActor, editActor, getActor } from "../api";
 import { createSignal, For, Show, Suspense } from "solid-js";
 import { MyLoader } from "~/components/MyLoader";
 import { countryList } from "~/countryList";
 import { DropZone } from "~/components/FilePicker";
-import { CheckIcon, XIcon } from "lucide-solid";
 import type { ActorDialog } from "~/state/dialog";
 import { saveImg } from "~/utils/saveImg";
+import { DialogForm } from "~/components/dialog/DialogForm";
 
 export function ActorForm() {
     const dialog = () => state.dialog.active
@@ -16,17 +16,15 @@ export function ActorForm() {
     const actor = createAsync(() => dialog()?.data ? getActor((dialog() as ActorDialog)!.data!.actorId) : Promise.resolve(null))
     const [file, setFile] = createSignal<File | null>(null)
 
-
     const addAction = useAction(addActor)
     const editAction = useAction(editActor)
-
+    const sub1 = useSubmission(addActor)
+    const sub2 = useSubmission(editActor)
     return (
         <Suspense fallback={<MyLoader />}>
-            <form
-                data-for="dialog"
-                method="post"
-                onSubmit={async e => {
-                    e.preventDefault();
+            <DialogForm
+                pending={sub1.pending || !!sub2.pending}
+                onSubmit={async (e) => {
                     const d = dialog()
                     if (d?.type !== "actor") throw new Error("Expected actor but received: " + String(d))
                     const fd = new FormData(e.currentTarget)
@@ -81,20 +79,10 @@ export function ActorForm() {
                     <input type="date" name="dob" value={actor()?.dob ?? ""} />
                 </div>
                 <div style={{ height: "13rem" }}>
-
                     <DropZone
                         setFile={setFile} />
                 </div>
-                <div data-btns class={`flexCenter`}>
-                    <button type="submit" class="button"><span>Accept</span> <CheckIcon /> </button>
-                    <button
-                        class="button"
-                        type="button"
-                        onClick={() => state.dialog.close()}
-                    >
-                        <span>Cancel</span> <XIcon /> </button>
-                </div>
-            </form>
+            </DialogForm>
         </Suspense>
     )
 }

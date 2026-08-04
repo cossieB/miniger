@@ -10,6 +10,7 @@ import { useMovieGridContext } from '~/features/movies/hooks/useMovieGridContext
 import { state } from '~/state';
 import MoviesContextMenu from './MoviesContextMenu';
 import styles from "./MovieGrid.module.css"
+import { Nothing } from '~/components/Nothing';
 
 const dir = await appDataDir()
 
@@ -45,29 +46,34 @@ export function MovieGrid() {
                 }
             }}
         >
-            {/* Absolute sizer canvas providing the fake scroll height */}
-            <div
-                style={{
-                    height: `${rowVirtualizer().getTotalSize()}px`,
-                }}
+            <Show when={data().length > 0}
+                fallback={<Nothing />}
             >
-                <For each={rowVirtualizer().getVirtualItems()}>
-                    {virtualRow =>
-                        <Row
-                            virtualRow={virtualRow}
-                            addThumbnail={addThumbnail}
-                            cacheBuster={cacheBuster}
-                        />
-                    }
-                </For>
-            </div>
+                {/* Absolute sizer canvas providing the fake scroll height */}
+                <div
+                    style={{
+                        height: `${rowVirtualizer().getTotalSize()}px`,
+                    }}
+                >
+
+                    <For each={rowVirtualizer().getVirtualItems()}>
+                        {virtualRow =>
+                            <Row
+                                virtualRow={virtualRow}
+                                addThumbnail={addThumbnail}
+                                cacheBuster={cacheBuster}
+                            />
+                        }
+                    </For>
+                </div>
+            </Show>
             <Show when={contextMenu.isOpen}>
                 <MoviesContextMenu
                     contextMenu={contextMenu}
                     isMainPanel
                     getSelectedFilms={() => Array.from(selections).map(i => data()[i])}
                 />
-            </Show>            
+            </Show>
         </div>
     )
 }
@@ -111,7 +117,7 @@ function Row(props: P) {
                         classList={{ [styles.selected]: selections.has(j(i())) }}
                         oncontextmenu={(e) => {
                             batch(() => {
-                                if (!selections.has(j(i())) && !e.ctrlKey ) {
+                                if (!selections.has(j(i())) && !e.ctrlKey) {
                                     selections.clear();
                                 }
                                 selections.add(j(i()));
@@ -148,7 +154,7 @@ function Row(props: P) {
                         <div class={styles.imgWrapper}>
                             <FilmIcon />
                             <img
-                                src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`) + `?=${props.cacheBuster()}`}                                
+                                src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`) + `?=${props.cacheBuster()}`}
                                 onerror={() => {
                                     props.addThumbnail({ filmId: film.filmId, path: film.path })
                                 }}
@@ -156,7 +162,7 @@ function Row(props: P) {
                             />
                         </div>
                         <span class={styles.title}>
-                                {film.title}
+                            {film.title}
                         </span>
                     </div>
                 )}

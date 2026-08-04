@@ -1,4 +1,4 @@
-import { For, Show, Suspense, createEffect, createSignal, on, onCleanup, onMount } from "solid-js";
+import { For, Show, Suspense, createEffect, createSignal, on, onCleanup } from "solid-js";
 import type { TActor } from "~/datatypes";
 import { ActorItem } from "./ActorItem";
 import { AddActorToDatabaseBtn } from "./AddActorToDatabaseBtn";
@@ -27,14 +27,7 @@ export function ActorSelector(props: P) {
     createEffect(on(actors, () => {
         ref?.focus();
     }));
-    onMount(() => {
-        document.addEventListener("keyup", (e) => {
-            if (e.key == "Escape") {
-                setSelectedActors(props.initialActors ?? [])
-                props.close()
-            }
-        }, { signal: abortController.signal })
-    })
+
     onCleanup(() => {
         abortController.abort()
     })
@@ -44,8 +37,15 @@ export function ActorSelector(props: P) {
                 <div
                     class={styles.container}
                     onClick={e => e.stopPropagation()}
+                    onkeyup={e => {
+                        if (e.key == "Escape") {
+                            setSelectedActors(props.initialActors ?? [])
+                            props.close();
+                            e.stopPropagation()
+                        }
+                    }}
                 >
-                    <div                        
+                    <div
                         use:clickOutside={() => {
                             setSelectedActors(props.initialActors ?? [])
                             props.close()
@@ -55,7 +55,7 @@ export function ActorSelector(props: P) {
                             ref={ref}
                             type="search"
                             value={input()}
-                            oninput={e => setInput(e.target.value)}    
+                            oninput={e => setInput(e.target.value)}
                             placeholder="Filter actors"
                         />
                         <button

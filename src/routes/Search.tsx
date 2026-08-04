@@ -26,7 +26,6 @@ export type Filters = typeof filters
 
 const [state, setState] = createStore({
     showActors: false,
-    showStudios: false
 })
 
 export function Search(props: { children?: JSXElement }) {

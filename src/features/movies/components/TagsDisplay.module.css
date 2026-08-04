@@ -1,0 +1,17 @@
+@layer components {
+    .tagsDisplay {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+        font-size: small;
+
+        >div {
+            padding: 0.25rem;
+            display: flex;
+            background: transparent;
+            align-items: center;
+            background-color: var(--char-600);
+        }
+    }    
+}

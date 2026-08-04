@@ -9,11 +9,11 @@ export const getActors = query(async () => {
     return actorRepo.allActors()
 }, 'actors')
 
-export const addActor = action(async (partialActor: string | Omit<TActor, 'actorId'>) => {
+export const addActor = action(async (partialActor: string | Omit<TActor, 'actorId'>, revalidate: string[] = [getActors.key]) => {
     const actorObj = typeof partialActor === "string" ? { name: partialActor, dob: null, gender: null, image: null, nationality: null } : partialActor;
     try {
         const a = await actorRepo.createActor(actorObj)
-        return json(a, { revalidate: [getActors.key] })
+        return json(a, { revalidate })
     }
     catch (error) {
         console.error(error);
@@ -22,7 +22,7 @@ export const addActor = action(async (partialActor: string | Omit<TActor, 'actor
     }
 })
 
-export const editActor = action(async (a: OptionalExcept<TActor, 'actorId'>, revalidate?: string[]) => {
+export const editActor = action(async (a: OptionalExcept<TActor, 'actorId'>, revalidate: string[] = [getActor.keyFor(a.actorId), getActors.key]) => {
     const { actorId, ...rest } = a
     if (Object.keys(rest).length === 0) return;
     try {
@@ -45,10 +45,10 @@ export const getPairings = query(async () => {
     return actorRepo.allPairings()
 }, 'costars')
 
-export const removeActors = action(async (actorIds: number[]) => {
+export const removeActors = action(async (actorIds: number[], revalidate: string[] = [getActors.key]) => {
     try {
         await actorRepo.deleteActors(actorIds)
-        return json(undefined, { revalidate: [getActors.key] })
+        return json(undefined, { revalidate })
     }
     catch (error) {
         state.status.setStatus(String(error))

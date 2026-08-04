@@ -76,6 +76,8 @@ export default function Inaccessible() {
         const confirmed = await confirm(`Permanently delete ${selections.length} film${selections.length != 1 ? "s" : ""} from the database?`, { kind: "warning" });
         if (!confirmed) return;
         await deleteFilms(selections)
+        table.toggleAllRowsSelected(false);
+        setContextMenu({isOpen: false})   
     }
 
     const [contextMenu, setContextMenu] = createStore({

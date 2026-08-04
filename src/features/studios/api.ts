@@ -8,11 +8,15 @@ export const getStudios = query(async () => {
     return studioRepo.allStudios()
 }, 'studios')
 
-export const createStudio = action(async (studio: string | Omit<TStudio, "studioId">) => {
+export const getStudio = query(async (studioId: number) => {
+    return studioRepo.findStudioById(studioId)
+}, "studio")
+
+export const createStudio = action(async (studio: string | Omit<TStudio, "studioId">, revalidate: string[] = [getStudios.key]) => {
     const studioObj = typeof studio === "string" ?  {name: studio, website: null} : studio
     try {
         const s = await studioRepo.addStudio(studioObj);
-        return json(s, {revalidate: [getStudios.key]})
+        return json(s, {revalidate})
     }
     catch (error) {
         state.status.setStatus(String(error))
@@ -20,21 +24,21 @@ export const createStudio = action(async (studio: string | Omit<TStudio, "studio
     }
 })
 
-export const updateStudio = action(async (s: OptionalExcept<TStudio, "studioId">) => {
+export const updateStudio = action(async (s: OptionalExcept<TStudio, "studioId">, revalidate: string[] = [getStudios.key, getStudio.keyFor(s.studioId)]) => {
     const {studioId, ...rest} = s
     try {
         const studio = await studioRepo.editStudio(rest, studioId)
-        return json(studio, {revalidate: [getStudios.key]})
+        return json(studio, {revalidate})
     } catch (error) {
         state.status.setStatus(String(error))
         throw json(undefined, {revalidate: []});
     }
 })
 
-export const deleteStudios = action(async (studioIds: number[]) => {
+export const deleteStudios = action(async (studioIds: number[], revalidate: string[] = [getStudios.key]) => {
     try {
         await studioRepo.deleteStudios(studioIds)
-        return json(undefined, {revalidate: [getStudios.key]})
+        return json(undefined, {revalidate})
     } catch (error) {
         state.status.setStatus(String(error))
         throw json(undefined, {revalidate: []});        

@@ -20,7 +20,7 @@ export const columns = columnHelper.columns([
                     props.table.options.meta!.updateFilm!({
                         title: val,
                         filmId: props.row.original.filmId
-                    })
+                    }, [])
                 }}
             />
         )
@@ -38,7 +38,7 @@ export const columns = columnHelper.columns([
                     await props.table.options.meta!.updateFilm!({
                         studioId: newStudioId,
                         filmId: props.row.original.filmId
-                    });
+                    }, []);
                 }}
                 //@ts-expect-error
                 normalize={(studio: Studio) => ({
@@ -57,7 +57,7 @@ export const columns = columnHelper.columns([
                     await props.table.options.meta!.updateFilm!({
                         actorIds: actors.map(actor => actor.actorId),
                         filmId: props.row.original.filmId
-                    })
+                    }, [])
                 }}
             />
         )
@@ -89,7 +89,7 @@ export const columns = columnHelper.columns([
                     await props.table.options.meta!.updateFilm!({
                         releaseDate: val || null,
                         filmId: props.row.original.filmId
-                    })
+                    }, [])
                 }}
             />
         ),

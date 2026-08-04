@@ -6,6 +6,10 @@ export function allStudios() {
     return db.selectFrom("studio").selectAll().orderBy(sql`LOWER(name)`).execute();
 }
 
+export function findStudioById(id: number) {
+    return db.selectFrom("studio").selectAll().where("studioId", "=", id).executeTakeFirstOrThrow()
+}
+
 export function addStudio(s: Omit<Studio, 'studioId'>) {
     return db.insertInto("studio").values(s).returningAll().executeTakeFirstOrThrow()
 }

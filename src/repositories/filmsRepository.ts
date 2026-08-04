@@ -85,6 +85,10 @@ export async function filmsByPath(path: string) {
     return filmsQuery.where("film.path", "=", path).executeTakeFirst()
 }
 
+export async function findById(id: number) {
+    return filmsQuery.where("film.filmId", "=", id).executeTakeFirstOrThrow()
+}
+
 export function moviesByCostars(actorAId: number, actorBId: number) {
     const filter = db
         .selectFrom("actorFilm as af1")

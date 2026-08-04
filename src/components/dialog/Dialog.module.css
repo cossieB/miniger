@@ -71,5 +71,10 @@
             height: 13rem;
             margin-inline: auto;
         }
+        button:disabled {
+            pointer-events: none;
+            background-color: var(--smoke-400) ;
+            color: var(--char-800);
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { For, Show, Suspense } from "solid-js";
+import { batch, For, Show, Suspense } from "solid-js";
 import { state, type PlaylistFile } from "~/state";
 import { invoke } from "@tauri-apps/api/core";
 import { createAsync, useAction, useBeforeLeave, useNavigate } from "@solidjs/router";
@@ -6,7 +6,7 @@ import { addFilesToDatabase, editFilm, deleteFilmsByPaths } from "../api";
 import type { TActor } from "~/datatypes";
 import { createTempPlaylist } from "~/features/movies/utils/createTempPlaylist";
 import { enc } from "~/utils/encodeDecode";
-import { CameraIcon, CornerRightUpIcon, DramaIcon, FilePlayIcon, FilesIcon, ListVideoIcon, PlayIcon, ScissorsIcon, TagIcon, Trash2Icon, TrashIcon } from "lucide-solid";
+import { CameraIcon, CornerRightUpIcon, DramaIcon, FilePlayIcon, FilesIcon, ListVideoIcon, PencilIcon, PlayIcon, ScissorsIcon, TagIcon, Trash2Icon, TrashIcon } from "lucide-solid";
 import { confirm, open } from "@tauri-apps/plugin-dialog";
 import { rename, writeTextFile } from "@tauri-apps/plugin-fs";
 import { BaseDirectory, sep } from "@tauri-apps/api/path";
@@ -181,6 +181,18 @@ export default function MoviesContextMenu(props: P) {
                         </For>
                     </ContextMenu.SubMenu>
                 </Show>
+                <ContextMenu.Item
+                    onClick={() => {
+                        batch(() => {
+                            props.contextMenu.close()
+                            state.dialog.openDialog({type: 'film', data: {filmId: data()!.filmId}})
+
+                        })
+                    }}
+                    icon={<PencilIcon />}
+                >
+                    Edit
+                </ContextMenu.Item>
                 <ContextMenu.Item
                     icon={<ScissorsIcon />}
                     onClick={async () => {
