@@ -268,13 +268,14 @@ textarea {
     align-items: center;
     justify-content: center;
     gap: 0.35rem;
-    padding: 1.75rem 1rem;
+    padding: 0.5rem;
     border: 1.5px dashed var(--char-600);
     border-radius: 10px;
     background: var(--char-800);
     text-align: center;
     cursor: pointer;
     transition: border-color 0.15s ease, background 0.15s ease;
+    height: 100%;
 
     input[type="file"] {
         position: absolute;
@@ -308,5 +309,8 @@ textarea {
         font-family: var(--font-mono);
         font-size: 0.76rem;
         color: var(--volt-300);
+    }
+    img {
+        height: 100%;
     }
 }

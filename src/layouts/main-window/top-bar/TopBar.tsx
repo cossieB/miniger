@@ -32,8 +32,8 @@ export function TopBar() {
             <div>
                 {/* Center Part */}
                 <AddDirectoryToDatabase />
-                <ViewToggle />
                 <AddItemBtn />
+                <ViewToggle />
             </div>
 
             <div>

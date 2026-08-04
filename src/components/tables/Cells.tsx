@@ -13,7 +13,7 @@ export function TextCell(props: Props) {
     const cell = useCellContext<string>()
     const [edit, setEdit] = createSignal(false)
     const [loading, setLoading] = createSignal(false)
-    const [startingVal, setStartingVal] = createSignal(cell.getValue())
+    const [startingVal, setStartingVal] = createSignal(cell.getValue()) //local state to prevent table resorting on update
     const [value, setValue] = createSignal(cell.getValue())
     let inputRef!: HTMLInputElement
     let isCancelled = false

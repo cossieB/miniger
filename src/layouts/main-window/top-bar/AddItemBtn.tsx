@@ -4,7 +4,7 @@ import { state } from "~/state";
 
 export function AddItemBtn() {
     return (
-        <button popoverTarget="add-options-popover">
+        <button style={{"anchor-name": "--add-trigger"}} popoverTarget="add-options-popover">
             <CirclePlusIcon />
             <Items />
         </button>
@@ -13,7 +13,7 @@ export function AddItemBtn() {
 
 function Items() {
     return (
-        <div class={styles.itemsContainer} popover id="add-options-popover">
+        <div style={{"position-anchor": "--add-trigger"}} class={styles.itemsContainer} popover id="add-options-popover">
             <button onClick={() => state.dialog.openDialog({ type: "actor" })} class="button">Add Actor</button>
             <button onClick={() => state.dialog.openDialog({ type: "studio" })} class="button">Add Studio</button>
         </div>

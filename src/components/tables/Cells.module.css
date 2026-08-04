@@ -79,12 +79,22 @@
 
     .imgEditor {
         height: 13rem;
+        aspect-ratio: 1;
         position: absolute;
         background-color: white;
         position-area: center center;
-        
+
         img {
             object-fit: contain;
+        }
+
+        p {
+            font-size: 2.25rem;
+            line-height: 2.5rem;
+            color: var(--char-950);
+            display: grid;
+            place-items: center;
+            height: 100%;
         }
     }
 }

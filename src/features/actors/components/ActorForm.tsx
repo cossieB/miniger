@@ -1,57 +1,24 @@
 import { createAsync, useAction } from "@solidjs/router";
 import { state } from "~/state";
 import { addActor, editActor, getActor } from "../api";
-import { createSignal, For, onCleanup, Show, Suspense } from "solid-js";
+import { createSignal, For, Show, Suspense } from "solid-js";
 import { MyLoader } from "~/components/MyLoader";
 import { countryList } from "~/countryList";
 import { DropZone } from "~/components/FilePicker";
-import { convertFileSrc } from "@tauri-apps/api/core";
-import { appDataDir, sep } from "@tauri-apps/api/path";
-import { writeFile } from "@tauri-apps/plugin-fs";
 import { CheckIcon, XIcon } from "lucide-solid";
 import type { ActorDialog } from "~/state/dialog";
-
-const d = await appDataDir()
-const dir = d + sep() + "images" + sep()
+import { saveImg } from "~/utils/saveImg";
 
 export function ActorForm() {
     const dialog = () => state.dialog.active
-    if (dialog()?.type !== "actor") throw new Error("Invalid state in ActorForm. Expected TActor but received: " + String(dialog()))
+    // if (dialog()?.type !== "actor") throw new Error("Invalid state in ActorForm. Expected TActor but received: " + String(dialog()))
 
     const actor = createAsync(() => dialog()?.data ? getActor((dialog() as ActorDialog)!.data!.actorId) : Promise.resolve(null))
     const [file, setFile] = createSignal<File | null>(null)
-    const [objectUrl, setObjectUrl] = createSignal("")
-    onCleanup(() => URL.revokeObjectURL(objectUrl()));
+
 
     const addAction = useAction(addActor)
     const editAction = useAction(editActor)
-    
-
-    async function saveImg() {
-        const f = file()
-        if (!f) return undefined
-        const timestamp = Date.now().toString();
-        const fileType = f.name.slice(f.name.lastIndexOf("."));
-        const fileName = timestamp + fileType
-        const path = `${dir}${fileName}`
-        try {
-            const buffer = await f.arrayBuffer()
-            const uint8array = new Uint8Array(buffer);
-            await writeFile(path, uint8array)
-            return fileName
-        }
-        catch (error) {
-            state.status.setStatus("Error updating image: " + String(error))
-            return actor()?.image
-        }
-    }
-
-    const src = () => {
-        if (objectUrl())
-            return objectUrl()
-        if (actor()?.image)
-            return convertFileSrc(dir + actor()?.image)
-    }
 
     return (
         <Suspense fallback={<MyLoader />}>
@@ -66,12 +33,13 @@ export function ActorForm() {
                     const data = Object.fromEntries(fd) as any
                     data.dob ||= null;
                     data.gender ||= null;
-                    data.image = await saveImg();
+                    if (file())
+                        data.image = await saveImg(file()!) ?? undefined;
                     if (!d.data?.actorId) {
                         await addAction(data)
                     }
                     else
-                        await editAction({...data, actorId: d.data.actorId})
+                        await editAction({ ...data, actorId: d.data.actorId })
                     state.dialog.close()
                 }}
             >
@@ -112,17 +80,11 @@ export function ActorForm() {
                     <label >D.O.B</label>
                     <input type="date" name="dob" value={actor()?.dob ?? ""} />
                 </div>
-                <DropZone
-                    setFile={setFile}
-                    setObjectUrl={url => {
-                        URL.revokeObjectURL(objectUrl())
-                        setObjectUrl(URL.createObjectURL(url))
-                    }}
-                />
-                <img
-                    data-preview
-                    src={src() ?? "/Question_Mark.svg"}
-                />
+                <div style={{ height: "13rem" }}>
+
+                    <DropZone
+                        setFile={setFile} />
+                </div>
                 <div data-btns class={`flexCenter`}>
                     <button type="submit" class="button"><span>Accept</span> <CheckIcon /> </button>
                     <button

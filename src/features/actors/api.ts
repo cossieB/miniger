@@ -22,12 +22,12 @@ export const addActor = action(async (partialActor: string | Omit<TActor, 'actor
     }
 })
 
-export const editActor = action(async (a: OptionalExcept<TActor, 'actorId'>) => {
+export const editActor = action(async (a: OptionalExcept<TActor, 'actorId'>, revalidate?: string[]) => {
     const { actorId, ...rest } = a
     if (Object.keys(rest).length === 0) return;
     try {
         const a = await actorRepo.updateActor(rest, actorId as any as number)
-        return json(a, { revalidate: [] })
+        return json(a, { revalidate })
     }
     catch (error) {
         console.error(error);

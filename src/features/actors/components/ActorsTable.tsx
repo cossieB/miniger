@@ -14,7 +14,8 @@ import { TableBody } from "~/components/tables/TableBody";
 import { TableHeader } from "~/components/tables/TableHeader";
 import { ContextMenu } from "~/components/context-menu/ContextMenu";
 import { confirm } from "@tauri-apps/plugin-dialog";
-import { DramaIcon, FilmIcon, TrashIcon } from "lucide-solid";
+import { DramaIcon, FilmIcon, PencilIcon, TrashIcon } from "lucide-solid";
+import { state } from "~/state";
 
 export function ActorsTable() {
     let ref!: HTMLDivElement
@@ -119,6 +120,12 @@ export function ActorsTable() {
                     >
                         See Co-stars
                     </ContextMenu.Link>
+                    <ContextMenu.Item
+                        icon={<PencilIcon />}
+                        onClick={() => state.dialog.openDialog({type: "actor", data: {actorId: contextMenu.data.selectedId}})}
+                    >
+                        Edit
+                    </ContextMenu.Item>
                     <ContextMenu.Divider />
                     <ContextMenu.Item
                         icon={<TrashIcon />}

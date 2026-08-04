@@ -11,7 +11,7 @@ export const columns = columnHelper.columns([
                 props.table.options.meta?.updateActor!({
                     actorId: props.row.original.actorId,
                     name
-                })
+                }, [])
             }}
         />
     }),
@@ -23,7 +23,7 @@ export const columns = columnHelper.columns([
                 props.table.options.meta?.updateActor!({
                     actorId: props.row.original.actorId,
                     gender: gender || null
-                })
+                }, [])
             }}
         />,
         size: 70
@@ -35,7 +35,7 @@ export const columns = columnHelper.columns([
                 props.table.options.meta?.updateActor!({
                     actorId: props.row.original.actorId,
                     dob
-                })
+                }, [])
             }}
         />
     }),
@@ -47,7 +47,7 @@ export const columns = columnHelper.columns([
                 props.table.options.meta?.updateActor!({
                     actorId: props.row.original.actorId,
                     nationality: nationality || null
-                })
+                }, [])
             }}
         />
     }),
@@ -57,7 +57,7 @@ export const columns = columnHelper.columns([
                 props.table.options.meta?.updateActor!({
                     actorId: props.row.original.actorId,
                     image
-                })
+                }, [])
             }}
         />
     }),

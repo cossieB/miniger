@@ -22,7 +22,7 @@ export function SelectCell(props: SelectCellProps) {
     const cell = useCellContext<string>();
     const [edit, setEdit] = createSignal(false);
     const [loading, setLoading] = createSignal(false);
-    const [startingVal, setStartingVal] = createSignal(String(props.initialValue ?? ""))    
+    const [startingVal, setStartingVal] = createSignal(String(props.initialValue ?? "")) //local state to prevent table resorting on update
     const [value, setValue] = createSignal(String(props.initialValue ?? ""))
 
     let selectRef!: HTMLSelectElement;

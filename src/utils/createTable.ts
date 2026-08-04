@@ -50,9 +50,9 @@ type TableMeta = {
         filmId: number;
     }, revalidate?: string[] | undefined) => Promise<TFilm | undefined>,
 
-    editStudio?: (s: OptionalExcept<TStudio, "studioId">) => Promise<TStudio>
+    editStudio?: (s: OptionalExcept<TStudio, "studioId">, revalidate?: string[]) => Promise<TStudio>
 
-    updateActor?: (a: OptionalExcept<TActor, "actorId">) => Promise<{
+    updateActor?: (a: OptionalExcept<TActor, "actorId">, revalidate?: string[]) => Promise<{
         actorId: number;
         dob: string | null;
         gender: string | null;

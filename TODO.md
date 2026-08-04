@@ -2,6 +2,8 @@
 
 [x] performance improvements for large playlists
 
-[ ] film grid virtualization - @tanstack/solid-virtual
+[x] film grid virtualization - @tanstack/solid-virtual
 
-[ ] bundle ffmpeg or at option to download
+[ ] filtering / faceting
+
+[ ] bundle ffmpeg or add option to download

@@ -16,7 +16,6 @@ export function Dialog() {
                     <ActorForm />
                 </Match>
             </Switch>
-
         </dialog>
     )
 }
