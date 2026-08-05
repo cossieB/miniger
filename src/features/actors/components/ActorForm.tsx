@@ -25,6 +25,7 @@ export function ActorForm() {
             <DialogForm
                 pending={sub1.pending || !!sub2.pending}
                 onSubmit={async (e) => {
+                    e.preventDefault()
                     const d = dialog()
                     if (d?.type !== "actor") throw new Error("Expected actor but received: " + String(d))
                     const fd = new FormData(e.currentTarget)

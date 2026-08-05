@@ -4,6 +4,7 @@ import { AsyncSelectCell, SelectCell } from "~/components/tables/SelectCell"
 import type { TActor, TFilm, TStudio } from "~/datatypes"
 import { ImageEditor } from "~/components/tables/ImageEditor"
 import type { OptionalExcept } from "~/lib/utilityTypes"
+import { CheckboxCell } from "~/components/tables/CheckboxCell"
 
 const features = tableFeatures({
     columnSizingFeature,
@@ -36,7 +37,8 @@ export const {
         LockedCell,
         SelectCell,
         AsyncSelectCell,
-        ImageEditor
+        ImageEditor,
+        CheckboxCell
     }
 })
 

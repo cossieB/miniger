@@ -65,6 +65,7 @@
             background-color: var(--char-800);
             position: absolute;
             width: 100%;
+
             &:nth-child(2n) {
                 background-color: var(--char-700);
             }
@@ -73,7 +74,9 @@
                 background-color: var(--char-600);
             }
 
-
+            input[type="number"] {
+                text-align: right;
+            }
         }
     }
 
@@ -93,6 +96,20 @@
     .selected {
         background-color: var(--smoke-400) !important;
     }
+
+    input[type="checkbox"] {
+        place-items: center;
+        accent-color: var(--volt-500);
+
+        &:hover {
+            border-color: var(--volt-fill-hover);
+        }
+
+        &::before {
+            background-color: var(--volt-500);
+        }
+    }
+
 }
 
 @scope (.sorter) {

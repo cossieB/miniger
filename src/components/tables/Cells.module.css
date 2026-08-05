@@ -31,6 +31,9 @@
         &:focus-visible {
             box-shadow: 0 0 0 1px var(--volt-fill-hover);
         }
+        &.isNumber {
+            justify-content: flex-end;
+        }
     }
 
     .overflowHidden {

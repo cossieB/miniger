@@ -47,7 +47,6 @@ export function TextCell(props: Props) {
 
         setEdit(false)
     }
-
     return (
         <div
             class={styles.cellWrapper}
@@ -60,11 +59,12 @@ export function TextCell(props: Props) {
             <Show
                 when={edit()}
                 fallback={
-                    <button class={styles.triggerButton}>
-
-                    <span class={styles.textValue}>
-                        {value()}
-                    </span>
+                    <button
+                        class={`${styles.triggerButton} ${inputProps.type === "number" ? styles.isNumber : ""}`}
+                    >
+                        <span class={styles.textValue}>
+                            {value()}
+                        </span>
                     </button>
                 }
             >
