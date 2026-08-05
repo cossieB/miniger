@@ -30,3 +30,19 @@
         background-color: var(--char-700);
     }
 }
+
+.menuPopoverAnimation {
+    opacity: 0;
+    scale: 0.9 1;
+    transform-origin: right;
+    transition: 
+        opacity 200ms,
+        scale 200ms ease-in-out,
+        display 200ms allow-discrete,
+        overlay 200ms allow-discrete;
+
+    &:popover-open {
+        opacity: 1;
+        scale: 1;
+    }
+}

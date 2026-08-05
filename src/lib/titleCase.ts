@@ -4,7 +4,7 @@
  * @returns 
  */
 export default function(input: string) {
-    const arr = input.split(" ");
+    const arr = input.split(/[\s+_]/);
     const ignoreList = ["of", "the", "a", "an"]
     let titleCased = ""
     for (let i = 0; i < arr.length; i++) {

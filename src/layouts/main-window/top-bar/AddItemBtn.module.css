@@ -4,11 +4,9 @@
         margin-top: 0.5rem;
         top: anchor(bottom);
         left: anchor(left);
+        display: flex;
+        flex-direction: column;
+        border: none;
         
-        &:popover-open {
-            display: flex;
-            flex-direction: column;
-            border: none;
-        }
     }
 }

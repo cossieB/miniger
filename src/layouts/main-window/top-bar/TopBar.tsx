@@ -12,6 +12,7 @@ import { TOP_BAR_HEIGHT } from "~/constants";
 import styles from "~/layouts/main-window/MainWindow.module.css"
 import { ViewToggle } from "./ViewToggle";
 import { AddItemBtn } from "./AddItemBtn";
+import { MovieGridSortBtn } from "./MovieGridSort";
 
 export function TopBar() {
 
@@ -34,6 +35,7 @@ export function TopBar() {
                 <AddDirectoryToDatabase />
                 <AddItemBtn />
                 <ViewToggle />
+                <MovieGridSortBtn />
             </div>
 
             <div>

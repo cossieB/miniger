@@ -5,17 +5,21 @@ import { CELL_WIDTH } from "~/constants";
 import { useMoviesContextMenu } from "~/features/movies/hooks/useMoviesContextMenu";
 import { state } from "~/state";
 import type { MovieData } from "~/types";
+import { type SortCriterion, sortMovies } from "../utils/sort";
 
 export const MovieGridContext = createContext<MovieGridContext>()
 
+export const [movieGridSort, setMovieGridSort] = createSignal<SortCriterion[]>([])
+
 export function MovieGridProvider(props: { children: JSXElement, data: MovieData }) {
     const selections = new ReactiveSet<number>()
-        
+
     const { contextMenu, setContextMenu } = useMoviesContextMenu()
 
     const [_parentRef, setParentRef] = createSignal<HTMLDivElement | null>(null);
     const columns = () => Math.floor((state.mainPanel.width() - 50) / CELL_WIDTH)
     const rowCount = createMemo(() => Math.ceil(props.data.length / columns()));
+
 
     const rowVirtualizer = createMemo(() => {
         return createVirtualizer({
@@ -26,7 +30,7 @@ export function MovieGridProvider(props: { children: JSXElement, data: MovieData
             gap: 8,
         })
     });
-
+    const data = createMemo(() => sortMovies(props.data, movieGridSort()))
     return (
         <MovieGridContext.Provider
             value={{
@@ -36,7 +40,7 @@ export function MovieGridProvider(props: { children: JSXElement, data: MovieData
                 setContextMenu,
                 columns,
                 selections,
-                data: () => props.data
+                data,
             }}>
             {props.children}
         </MovieGridContext.Provider>
@@ -50,5 +54,5 @@ export type MovieGridContext = {
     setContextMenu: ReturnType<typeof useMoviesContextMenu>['setContextMenu']
     columns: () => number
     selections: ReactiveSet<number>
-    data: () => MovieData
+    data: () => MovieData,
 }

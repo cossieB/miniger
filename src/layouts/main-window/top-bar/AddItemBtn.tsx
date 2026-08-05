@@ -13,7 +13,7 @@ export function AddItemBtn() {
 
 function Items() {
     return (
-        <div style={{"position-anchor": "--add-trigger"}} class={styles.itemsContainer} popover id="add-options-popover">
+        <div style={{"position-anchor": "--add-trigger"}} class={`${styles.itemsContainer} menuPopoverAnimation`} popover id="add-options-popover">
             <button onClick={() => state.dialog.openDialog({ type: "actor" })} class="button">Add Actor</button>
             <button onClick={() => state.dialog.openDialog({ type: "studio" })} class="button">Add Studio</button>
         </div>

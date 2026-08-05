@@ -17,9 +17,9 @@ export function Movies(props: Props) {
     const films = createAsync(() => props.fetcher())
 
     const data = createMemo(() => {
-        if (!films()) return undefined
+        if (!films.latest) return undefined
 
-        return films()!.map((film => ({
+        return films.latest!.map((film => ({
             ...film,
             tags: JSON.parse(film.tags as string),
             actors: JSON.parse(film.actors as string),

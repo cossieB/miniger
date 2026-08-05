@@ -11,6 +11,7 @@ import { state } from '~/state';
 import MoviesContextMenu from './MoviesContextMenu';
 import styles from "./MovieGrid.module.css"
 import { Nothing } from '~/components/Nothing';
+import { SortWrapper } from './SortWrapper';
 
 const dir = await appDataDir()
 
@@ -74,6 +75,7 @@ export function MovieGrid() {
                     getSelectedFilms={() => Array.from(selections).map(i => data()[i])}
                 />
             </Show>
+            <SortWrapper />
         </div>
     )
 }
@@ -171,3 +173,4 @@ function Row(props: P) {
         </div>
     );
 }
+
