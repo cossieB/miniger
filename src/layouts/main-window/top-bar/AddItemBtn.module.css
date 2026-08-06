@@ -1,9 +1,13 @@
 @layer components {
     .itemsContainer {
-        composes: filters from "~/features/movies/components/MovieGrid.module.css";
-        height: unset;
+        position: absolute;
+        background-color: var(--char-700);        
+        margin-top: 0.5rem;
+        border: 1px solid var(--volt-600);
+        border-radius: var(--radius);
         display: flex;
         flex-direction: column;
+        position-area: bottom center;
         >div {
             display: grid;
             align-items: center;

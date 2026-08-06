@@ -11,11 +11,18 @@ import { Nav } from "./nav/Nav";
 import { SidePanel } from "./sidepanel/SidePanel";
 import { TopBar } from "./top-bar/TopBar";
 import { Dialog } from "~/components/dialog/Dialog";
+import { useBeforeLeave } from "@solidjs/router";
 
 function App(props: { children?: JSXElement }) {
     const abortController = new AbortController
     useWatchJson()
-
+    useBeforeLeave((e) => {
+        if (!document.startViewTransition) return;
+        e.preventDefault()
+        document.startViewTransition(() => {
+            e.retry(true)
+        })
+    })
     onMount(() => {
         window.addEventListener("resize", handleResize, {signal: abortController.signal});
     })
