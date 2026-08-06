@@ -12,6 +12,8 @@ import MoviesContextMenu from './MoviesContextMenu';
 import styles from "./MovieGrid.module.css"
 import { Nothing } from '~/components/Nothing';
 import { SortWrapper } from './SortWrapper';
+import { FilterWrapper } from './FilterWrapper';
+import { Portal } from 'solid-js/web';
 
 const dir = await appDataDir()
 
@@ -31,7 +33,6 @@ export function MovieGrid() {
                 height: (state.windowDimensions.height - TOP_BAR_HEIGHT - BOTTOM_BAR_HEIGHT) + "px",
             }}
             onkeydown={async e => {
-                e.preventDefault();
                 if (e.repeat) return
                 if (e.key === "a" && e.ctrlKey) {
                     return batch(() => {
@@ -75,7 +76,19 @@ export function MovieGrid() {
                     getSelectedFilms={() => Array.from(selections).map(i => data()[i])}
                 />
             </Show>
-            <SortWrapper />
+            <Portal>
+                <div
+                    popover
+                    id="movie-grid-sort"
+                    class={`${styles.filters} menuPopoverAnimation`}
+                    style={{
+                        "position-anchor": "--movie-grid-sort-btn"
+                    }}
+                >
+                    <SortWrapper />
+                    <FilterWrapper />
+                </div>
+            </Portal>
         </div>
     )
 }

@@ -33,16 +33,21 @@
 
 .menuPopoverAnimation {
     opacity: 0;
-    scale: 0.9 1;
-    transform-origin: right;
-    transition: 
+    transform: translateY(5rem);
+    z-index: 4;
+    transition:
         opacity 200ms,
-        scale 200ms ease-in-out,
+        transform 800ms var(--bounce),
         display 200ms allow-discrete,
         overlay 200ms allow-discrete;
 
     &:popover-open {
         opacity: 1;
-        scale: 1;
+        transform: translateY(0);
+        
+        @starting-style {
+            opacity: 0;
+            transform: translateY(-5rem);
+        }
     }
 }

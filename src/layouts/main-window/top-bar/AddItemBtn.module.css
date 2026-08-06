@@ -1,12 +1,23 @@
 @layer components {
     .itemsContainer {
-        position: absolute;
-        margin-top: 0.5rem;
-        top: anchor(bottom);
-        left: anchor(left);
+        composes: filters from "~/features/movies/components/MovieGrid.module.css";
+        height: unset;
         display: flex;
         flex-direction: column;
-        border: none;
-        
+        >div {
+            display: grid;
+            align-items: center;
+            justify-items: left;
+            grid-template-columns: subgrid;
+            grid-column: span 3;
+            padding: 0.25rem 0.5rem;
+            text-wrap: nowrap;
+            border-radius: 0;
+            background-color: var(--char-700);
+
+            &:hover {
+                background-color: var(--char-600);
+            }
+        }
     }
 }

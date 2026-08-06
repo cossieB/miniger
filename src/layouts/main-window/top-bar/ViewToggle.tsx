@@ -14,14 +14,18 @@ export function ViewToggle() {
                 {null}
             </Match>
             <Match when={activeView() == "grid"}>
-                <ListIcon
-                    onClick={() => setActiveView("table")}
-                />
+                <button title="List View">
+                    <ListIcon
+                        onClick={() => setActiveView("table")}
+                    />
+                </button>
             </Match>
             <Match when={activeView() == "table"}>
-                <Grid3x3Icon
-                    onClick={() => setActiveView("grid")}
-                />
+                <button title="Grid View">
+                    <Grid3x3Icon
+                        onClick={() => setActiveView("grid")}
+                    />
+                </button>
             </Match>
         </Switch>
     )

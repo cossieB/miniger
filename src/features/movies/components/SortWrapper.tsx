@@ -4,22 +4,28 @@ import { SortIcon } from '~/components/tables/SortIcon';
 import type { SortCriterion, SortKey } from '../utils/sort';
 import titleCase from '~/lib/titleCase';
 import { movieGridSort, setMovieGridSort } from '../contexts/MovieGridContext';
+import { useMovieGridContext } from '../hooks/useMovieGridContext';
 
 const keys = ['title', 'releaseDate', 'path', 'studioName', 'dateAdded', 'duration', 'size', 'bit_rate'] as SortKey[]
 
 export function SortWrapper() {
+    const { search, setSearch } = useMovieGridContext()
     return (
         <div
-            popover
-            id="movie-grid-sort"
-            class={`${styles.sortWrapper} menuPopoverAnimation`}
-            style={{
-                "position-anchor": "--movie-grid-sort-btn"
-            }}
+            class={`${styles.sortWrapper}`}
         >
+            <h3>Sort</h3>
             <For each={keys}>
                 {key => <Sort key={key} />}
             </For>
+            <input
+                value={search()}
+                onInput={e => {
+                    setSearch(e.currentTarget.value)
+                }}
+                placeholder='Title Search'
+                type="text"
+            />
         </div>
     )
 }

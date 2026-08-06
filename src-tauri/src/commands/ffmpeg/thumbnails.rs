@@ -63,30 +63,61 @@ async fn generate_one(dir: Arc<std::path::PathBuf>, video: super::F) {
         return;
     }
 
+    for ts in ["00:02:00", "00:00:05", "00:00:00"] {
+        match try_extract_frame(&video.path, &out_path, ts).await {
+            Ok(true) => return, // success, thumbnail written
+            Ok(false) => {
+                eprintln!(
+                    "ffmpeg produced no output for {} at {}, trying next timestamp",
+                    video.filmId, ts
+                );
+            }
+            Err(e) => {
+                eprintln!(
+                    "ffmpeg failed for {} at {}: {:?}, trying next timestamp",
+                    video.filmId, ts, e
+                );
+            }
+        }
+    }
+
+    eprintln!(
+        "giving up on thumbnail for {} after all timestamps failed",
+        video.filmId
+    );
+}
+
+/// Attempts to extract a single frame at `timestamp`.
+/// Returns Ok(true) on success, Ok(false) if ffmpeg ran but produced no file,
+/// Err if the process itself failed to spawn/run.
+async fn try_extract_frame(
+    src: &str,
+    out_path: &std::path::Path,
+    timestamp: &str,
+) -> std::io::Result<bool> {
     let mut cmd = tokio::process::Command::new("ffmpeg");
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;
         cmd.as_std_mut().creation_flags(0x08000000);
     }
-    let result = cmd
+
+    let output = cmd
         .args([
             "-y",
             "-ss",
-            "00:02:00",
+            timestamp,
             "-i",
-            &video.path,
+            src,
             "-an",
             "-vf",
             "scale=1280:-1",
             "-vframes",
             "1",
         ])
-        .arg(&out_path)
+        .arg(out_path)
         .output()
-        .await;
+        .await?;
 
-    if let Err(e) = result {
-        eprintln!("ffmpeg failed for {}: {:?}", video.filmId, e);
-    }
+    Ok(output.status.success() && out_path.exists())
 }

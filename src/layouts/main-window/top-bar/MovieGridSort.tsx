@@ -8,7 +8,7 @@ export function MovieGridSortBtn() {
     const match = () => /^\/movies(?!\/inaccessible)/.test(location.pathname)
     return (
         <Show when={match() && activeView() == "grid"}>
-            <button style={{
+            <button title="Filter Movies" style={{
                 "anchor-name": "--movie-grid-sort-btn"
             }}
                 popoverTarget="movie-grid-sort"

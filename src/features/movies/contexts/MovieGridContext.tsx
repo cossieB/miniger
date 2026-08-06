@@ -6,10 +6,16 @@ import { useMoviesContextMenu } from "~/features/movies/hooks/useMoviesContextMe
 import { state } from "~/state";
 import type { MovieData } from "~/types";
 import { type SortCriterion, sortMovies } from "../utils/sort";
+import { applyFacetedSearch, type FacetResults, type FilterState } from "../utils/faceting";
+import { createStore } from "solid-js/store";
+import Fuse from "fuse.js";
 
 export const MovieGridContext = createContext<MovieGridContext>()
 
+
+
 export const [movieGridSort, setMovieGridSort] = createSignal<SortCriterion[]>([])
+export const [appliedFilters, setAppliedFilters] = createStore<Partial<FilterState>>({})
 
 export function MovieGridProvider(props: { children: JSXElement, data: MovieData }) {
     const selections = new ReactiveSet<number>()
@@ -19,7 +25,7 @@ export function MovieGridProvider(props: { children: JSXElement, data: MovieData
     const [_parentRef, setParentRef] = createSignal<HTMLDivElement | null>(null);
     const columns = () => Math.floor((state.mainPanel.width() - 50) / CELL_WIDTH)
     const rowCount = createMemo(() => Math.ceil(props.data.length / columns()));
-
+    const [search, setSearch] = createSignal("")
 
     const rowVirtualizer = createMemo(() => {
         return createVirtualizer({
@@ -30,7 +36,16 @@ export function MovieGridProvider(props: { children: JSXElement, data: MovieData
             gap: 8,
         })
     });
-    const data = createMemo(() => sortMovies(props.data, movieGridSort()))
+    const results = createMemo(() => applyFacetedSearch(sortMovies(props.data, movieGridSort()), appliedFilters))
+    
+    const data = createMemo(() => {
+        if (!search()) return results().results;
+        if (search().length < 3) return results().results.filter(a => a.title.includes(search()))
+        return new Fuse(results().results, {
+            keys: ['title'],
+        }).search(search()).map(r => r.item)
+    })
+    const facets = createMemo(() => results().facets)
     return (
         <MovieGridContext.Provider
             value={{
@@ -41,6 +56,9 @@ export function MovieGridProvider(props: { children: JSXElement, data: MovieData
                 columns,
                 selections,
                 data,
+                facets,
+                setSearch,
+                search
             }}>
             {props.children}
         </MovieGridContext.Provider>
@@ -55,4 +73,7 @@ export type MovieGridContext = {
     columns: () => number
     selections: ReactiveSet<number>
     data: () => MovieData,
+    facets: () => FacetResults
+    setSearch: Setter<string>,
+    search: Accessor<string>
 }

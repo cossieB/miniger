@@ -32,9 +32,9 @@ export function TopBar() {
 
             <div>
                 {/* Center Part */}
+                <ViewToggle />
                 <AddDirectoryToDatabase />
                 <AddItemBtn />
-                <ViewToggle />
                 <MovieGridSortBtn />
             </div>
 

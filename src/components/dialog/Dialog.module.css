@@ -3,19 +3,47 @@
         width: min(90%, 600px);
         inset: 0;
         margin: auto;
-        border: none;
         padding: 1rem;
         background-color: var(--char-800);
         border: 1px solid var(--volt-400);
         box-shadow: 0 0 2px var(--volt-600);
 
-        &:open {
+        opacity: 0;
+        transform: translateY(-5rem);
+        z-index: 4;
+        transition:
+            opacity 200ms,
+            transform 800ms var(--bounce),
+            display 200ms allow-discrete,
+            overlay 200ms allow-discrete;
+
+        &[open] {
+            opacity: 1;
+            transform: translateY(0);
             display: grid;
 
+            @starting-style {
+                opacity: 0;
+                transform: translateY(-5rem);
+            }
         }
 
         &::backdrop {
             backdrop-filter: blur(1px) grayscale(5%);
+            background-color: rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition:
+                opacity 200ms,
+                display 200ms allow-discrete,
+                overlay 200ms allow-discrete;
+        }
+
+        &[open]::backdrop {
+            opacity: 1;
+
+            @starting-style {
+                opacity: 0;
+            }
         }
 
 

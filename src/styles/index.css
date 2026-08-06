@@ -48,6 +48,7 @@
         --volt-border: color-mix(in oklch, var(--volt-500) 45%, var(--char-700));
 
         --radius: 10px;
+        --bounce: linear(0, 0.029 0.8%, 0.13 1.8%, 0.908 7.2%, 1.051 9.1%, 1.112 11.2%, 1.116 12.2%, 1.106 13.4%, 1.007 19.5%, 0.987 23.1%, 1.001 35%, 1);
         --font-display: 'Space Grotesk', system-ui, sans-serif;
         --font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
         --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
