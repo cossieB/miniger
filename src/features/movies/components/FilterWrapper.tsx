@@ -2,96 +2,66 @@ import { For } from "solid-js";
 import { useMovieGridContext } from "../hooks/useMovieGridContext"
 import styles from "./MovieGrid.module.css"
 import { appliedFilters, setAppliedFilters } from "../contexts/MovieGridContext";
+import type { FacetResults } from "../utils/faceting";
+import titleCase from "~/lib/titleCase";
 
 export function FilterWrapper() {
-    const { facets } = useMovieGridContext();
-
     return (
         <>
-            <div class={styles.facet +" scrollable"}>
-                <h3>Actors</h3>
-                <For each={facets().actors}>
-                    {actor => (
-                        <div
-                            classList={{[styles.active]: appliedFilters.actorIds?.includes(actor.id)}}
-                            onClick={e => {
-                                const arr = appliedFilters.actorIds;
-                                if (!arr) return setAppliedFilters({
-                                    actorIds: [actor.id]
-                                })
-                                if (arr.includes(actor.id)) return setAppliedFilters('actorIds', arr!.filter(id => id !== actor.id))
-                                return setAppliedFilters('actorIds', [...arr, actor.id])
-                            }}
-                        >
-                            <label> {actor.name} </label>
-                            <span> {actor.count} </span>
-                        </div>
-                    )}
-                </For>
-            </div>
-            <div class={styles.facet +" scrollable"}>
-                <h3>Tags</h3>
-                <For each={facets().tags}>
-                    {tag => (
-                        <div
-                            classList={{[styles.active]: appliedFilters.tags?.includes(tag.tag)}}
-                            onClick={e => {
-                                const arr = appliedFilters.tags;
-                                if (!arr) return setAppliedFilters({
-                                    tags: [tag.tag]
-                                })
-                                if (arr.includes(tag.tag)) return setAppliedFilters('tags', arr!.filter(t => t !== tag.tag))
-                                return setAppliedFilters('tags', [...arr, tag.tag])
-                            }}
-                        >
-                            <label> {tag.tag} </label>
-                            <span> {tag.count} </span>
-                        </div>
-                    )}
-                </For>
-            </div>
-            <div class={styles.facet +" scrollable"}>
-                <h3>Studios</h3>
-                <For each={facets().studios}>
-                    {studio => (
-                        <div
-                            classList={{[styles.active]: appliedFilters.studioIds?.includes(studio.id)}}
-                            onClick={e => {
-                                const arr = appliedFilters.studioIds;
-                                if (!arr) return setAppliedFilters({
-                                    studioIds: [studio.id]
-                                })
-                                if (arr.includes(studio.id)) return setAppliedFilters('studioIds', arr!.filter(id => id !== studio.id))
-                                return setAppliedFilters('studioIds', [...arr, studio.id])
-                            }}
-                        >
-                            <label> {studio.name} </label>
-                            <span> {studio.count} </span>
-                        </div>
-                    )}
-                </For>
-            </div>            
-            <div class={styles.facet +" scrollable"}>
-                <h3>Codecs</h3>
-                <For each={facets().videoCodecs}>
-                    {codec => (
-                        <div
-                            classList={{[styles.active]: appliedFilters.videoCodecs?.includes(codec.codec)}}
-                            onClick={e => {
-                                const arr = appliedFilters.videoCodecs;
-                                if (!arr) return setAppliedFilters({
-                                    videoCodecs: [codec.codec]
-                                })
-                                if (arr.includes(codec.codec)) return setAppliedFilters('videoCodecs', arr!.filter(t => t !== codec.codec))
-                                return setAppliedFilters('videoCodecs', [...arr, codec.codec])
-                            }}
-                        >
-                            <label> {codec.codec} </label>
-                            <span> {codec.count} </span>
-                        </div>
-                    )}
-                </For>
-            </div>            
+            <Facet
+                key="actors"
+                filterKey="actorIds"
+            />
+            <Facet
+                key="tags"
+                filterKey="tags"
+            />
+            <Facet
+                key="studios"
+                filterKey="studioIds"
+            />
+            <Facet
+                key="videoCodecs"
+                filterKey="videoCodecs"
+            />
         </>
+    )
+}
+
+type Props<T extends keyof FacetResults> = {
+    label?: string
+    key: T
+    filterKey: T extends "studios" ? "studioIds" : T extends "actors" ? "actorIds" : T
+}
+
+function Facet<T extends keyof FacetResults>(props: Props<T>) {
+    const { facets } = useMovieGridContext();
+    return (
+        <div class={`${styles.facet} scrollable`}>
+            <h3> {props.label ?? titleCase(props.key)} </h3>
+            <For each={facets()[props.key]}>
+                {item => (
+                    <div
+
+                        // @ts-expect-error
+                        classList={{ [styles.active]: appliedFilters[props.filterKey]?.includes(item.id) }}
+                        onClick={() => {
+
+                            const arr = appliedFilters[props.filterKey]
+                            if (!arr) return setAppliedFilters({
+                                [props.filterKey]: [item.id]
+                            })
+                            // @ts-expect-error
+                            if (arr.includes(item.id)) return setAppliedFilters(props.filterKey, arr.filter(t => t !== item.id))
+                            // @ts-expect-error
+                            return setAppliedFilters(props.filterKey, [...arr, item.id])
+                        }}
+                    >
+                        <label> {'name' in item ? item.name : item.id} </label>
+                        <span> {item.count} </span>
+                    </div>
+                )}
+            </For>
+        </div>
     )
 }

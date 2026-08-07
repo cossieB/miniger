@@ -9,8 +9,8 @@ export type FilterState = {
 
 export type FacetResults = {
     studios: { id: number; name: string; count: number }[];
-    videoCodecs: { codec: string; count: number }[];
-    tags: { tag: string; count: number }[];
+    videoCodecs: { id: string; count: number }[];
+    tags: { id: string; count: number }[];
     actors: { id: number; name: string; count: number }[];
 };
 
@@ -77,11 +77,11 @@ export function generateFacets(movies: MovieData): FacetResults {
             .sort((a, b) => b.count - a.count), // Sort largest count first
 
         videoCodecs: Array.from(codecsMap.entries())
-            .map(([codec, count]) => ({ codec, count }))
+            .map(([codec, count]) => ({ id: codec, count }))
             .sort((a, b) => b.count - a.count),
 
         tags: Array.from(tagsMap.entries())
-            .map(([tag, count]) => ({ tag, count }))
+            .map(([tag, count]) => ({ id: tag, count }))
             .sort((a, b) => b.count - a.count),
 
         actors: Array.from(actorsMap.entries())
