@@ -62,6 +62,8 @@ export const columns = columnHelper.columns([
         />
     }),
     columnHelper.accessor("appearances", {
+        header: "films",
+        size: 70,
         cell: props => <props.cell.LockedCell style={{
             "text-align": "right"
         }} />

@@ -6,7 +6,7 @@ import { addFilesToDatabase, editFilm, deleteFilmsByPaths } from "../api";
 import type { TActor } from "~/datatypes";
 import { createTempPlaylist } from "~/features/movies/utils/createTempPlaylist";
 import { enc } from "~/utils/encodeDecode";
-import { CameraIcon, CornerRightUpIcon, DramaIcon, FilePlayIcon, FilesIcon, ListVideoIcon, PencilIcon, PlayIcon, ScissorsIcon, TagIcon, Trash2Icon, TrashIcon } from "lucide-solid";
+import { CameraIcon, DramaIcon, FilePlayIcon, FilesIcon, ListVideoIcon, PencilIcon, PlayIcon, ScissorsIcon, TagIcon, Trash2Icon, TrashIcon } from "lucide-solid";
 import { confirm, open } from "@tauri-apps/plugin-dialog";
 import { rename, writeTextFile } from "@tauri-apps/plugin-fs";
 import { BaseDirectory, sep } from "@tauri-apps/api/path";
@@ -167,20 +167,6 @@ export default function MoviesContextMenu(props: P) {
                 >
                     Show In Explorer
                 </ContextMenu.Item>
-                <Show when={actors().length > 0}>
-                    <ContextMenu.SubMenu label="Goto Actor" icon={<CornerRightUpIcon />}>
-                        <For each={actors()}>
-                            {actor =>
-                                <ContextMenu.Link
-                                    icon={<DramaIcon />}
-                                    href={`/actors?gridId=${actor.actorId}`}
-                                >
-                                    {actor.name}
-                                </ContextMenu.Link>
-                            }
-                        </For>
-                    </ContextMenu.SubMenu>
-                </Show>
                 <ContextMenu.Item
                     onClick={() => {
                         batch(() => {
@@ -193,6 +179,23 @@ export default function MoviesContextMenu(props: P) {
                 >
                     Edit
                 </ContextMenu.Item>
+                <Show when={actors().length > 0}>
+                    <ContextMenu.SubMenu label="Edit Actor" icon={<PencilIcon />}>
+                        <For each={actors()}>
+                            {actor =>
+                                <ContextMenu.Item
+                                    icon={<DramaIcon />}
+                                    onClick={() => {
+                                        state.dialog.openDialog({type: "actor", data: {actorId: actor.actorId}});
+                                        props.contextMenu.close()
+                                    }}
+                                >
+                                    {actor.name}
+                                </ContextMenu.Item>
+                            }
+                        </For>
+                    </ContextMenu.SubMenu>
+                </Show>                
                 <ContextMenu.Item
                     icon={<ScissorsIcon />}
                     onClick={async () => {
@@ -226,9 +229,7 @@ export default function MoviesContextMenu(props: P) {
                 <Show when={props.isMainPanel}>
 
                     <ContextMenu.Item
-                        style={{
-                            color: "var(--danger-500)"
-                        }}
+                        class="danger"
                         icon={<TrashIcon />}
                         onClick={async () => {
                             const selections = props.getSelectedFilms();
@@ -244,9 +245,7 @@ export default function MoviesContextMenu(props: P) {
                 </Show>
                 <ContextMenu.Item
                     icon={<Trash2Icon />}
-                    style={{
-                        color: "var(--danger-500)"
-                    }}
+                    class="danger"
                     onClick={async () => {
                         try {
                             const selections = props.getSelectedFilms()

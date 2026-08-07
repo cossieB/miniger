@@ -31,6 +31,10 @@
     }
 }
 
+.danger {
+    color: var(--danger-500);
+}
+
 .menuPopoverAnimation {
     opacity: 0;
     transform: translateY(5rem);

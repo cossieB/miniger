@@ -7,11 +7,11 @@ export function ContextMenuLink(props: JSX.HTMLAttributes<HTMLLIElement> & { hre
     return (
         <li
             {...others}
-            class={styles.link}
+            class={`${styles.link} ${others.class ?? ""}`}
         >
-                <span class={styles.icon}> {partial.icon} </span>
-                {props.children}
-            <A  href={partial.href} />
+            <span class={styles.icon}> {partial.icon} </span>
+            {props.children}
+            <A href={partial.href} />
         </li>
     );
 }

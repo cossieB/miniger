@@ -59,14 +59,22 @@ export function DropZone(props: Props) {
                 onDragEnter={e => {
                     e.preventDefault();
                     const items = Array.from(e.dataTransfer?.items ?? []);
-                    const hasImage = items.some(item => item.kind === 'file' && item.type.startsWith('image/'));
+                    const hasImage = items.some(item => {
+                        const isLocalImage = item.kind === 'file' && item.type.startsWith('image/');
+                        const isExternalImage = item.kind === 'string' && (item.type === 'text/html' || item.type === 'text/uri-list');
+                        return isLocalImage || isExternalImage;
+                    });
+
                     if (hasImage) {
+                        ref.classList.remove('invalid'); 
                         ref.classList.add('dragover');
-                    } else {
+                    }
+                     else {
+                        ref.classList.remove('dragover');
                         ref.classList.add('invalid');
                     }
-
                 }}
+
                 onDragLeave={e => {
                     e.preventDefault()
                     ref.classList.remove("dragover", "invalid")

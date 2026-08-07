@@ -1,7 +1,7 @@
 import { ReactiveSet } from "@solid-primitives/set";
 import { createVirtualizer, Virtualizer } from "@tanstack/solid-virtual";
 import { createContext, createMemo, createSignal, type Accessor, type JSXElement, type Setter } from "solid-js";
-import { CELL_WIDTH } from "~/constants";
+import { CELL_HEIGHT, CELL_WIDTH } from "~/constants";
 import { useMoviesContextMenu } from "~/features/movies/hooks/useMoviesContextMenu";
 import { state } from "~/state";
 import type { MovieData } from "~/types";
@@ -39,7 +39,7 @@ const rowCount = createMemo(() => Math.ceil(data().length / columns()));
         return createVirtualizer({
             count: rowCount(),
             getScrollElement: () => document.getElementById("mg") as HTMLDivElement,
-            estimateSize: () => CELL_WIDTH,
+            estimateSize: () => CELL_HEIGHT,
             overscan: 5,
             gap: 8,
         })

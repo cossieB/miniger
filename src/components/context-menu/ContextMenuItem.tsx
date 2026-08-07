@@ -9,11 +9,11 @@ type ContextMenuProps = {
 } & JSX.HTMLAttributes<HTMLLIElement>;
 
 export function ContextMenuItem(props: ContextMenuProps) {
-        const [partial, others] = splitProps(props, ['icon']);
+    const [partial, others] = splitProps(props, ['icon']);
     return (
         <li
-            class={styles.item}
             {...others}
+            class={`${styles.item} ${others.class ?? ""}`}
         >
             <span class={styles.icon} > {partial.icon} </span>
             {props.children}

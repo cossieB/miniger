@@ -22,6 +22,8 @@ import { getStudios } from "./features/studios/api";
 import { readSession } from "./hooks/useStorage";
 import { Convert } from "./layouts/secondary-windows/Convert";
 import { DragDrop } from "./layouts/secondary-windows/DragDrop";
+import { TagsRoute } from "./routes/Tags";
+import { getTags } from "./features/tags/api";
 
 
 render(() => (
@@ -79,6 +81,7 @@ render(() => (
                 />
             </Route>
             <Route path="/studios" component={Studios} preload={() => getStudios()} />
+            <Route path="/tags" component={TagsRoute} preload={() => getTags()} />
             <Route path="/play" component={VideoPlayer} />
             <Route path="/search" component={Search} />
         </Route>
@@ -92,7 +95,7 @@ render(() => (
         {/* Redirects */}
         <Route path="/movies/actors" component={() => <Navigate href="/actors" />} />
         <Route path="/movies/studios" component={() => <Navigate href="/studios" />} />
-        <Route path={["/movies/tags", "/tags"]} component={() => <Navigate href="/movies" />} />
+        <Route path={"/movies/tags"} component={() => <Navigate href="/tags" />} />
     </Router>
 ), document.getElementById("root") as HTMLElement);
 

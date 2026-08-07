@@ -131,9 +131,7 @@ export function ActorsTable() {
                     <ContextMenu.Divider />
                     <ContextMenu.Item
                         icon={<TrashIcon />}
-                        style={{
-                            color: "var(--danger-500)"
-                        }}
+                        class="danger"
                         onClick={handleDelete}
                     >
                         Remove From Database

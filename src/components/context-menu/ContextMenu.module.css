@@ -6,19 +6,9 @@
         border-radius: 0.375rem;
         border: 2px solid var(--char-700);
         z-index: 999;
-        height: auto;
-
-        transition: 
-            height 800ms var(--bounce),
-            overlay 200ms ease allow-discrete,
-            display 200ms ease allow-discrete;
 
         ul {
             min-width: 13rem
-        }
-        
-        @starting-style {
-            height: 0;
         }
     }
 
