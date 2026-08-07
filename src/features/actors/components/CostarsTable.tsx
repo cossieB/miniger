@@ -2,16 +2,17 @@ import { A, createAsync } from "@solidjs/router";
 import { createVirtualizer } from "@tanstack/solid-virtual";
 import { createStore } from "solid-js/store";
 import { TABLE_CELL_HEIGHT, TABLE_HEADER_HEIGHT } from "~/constants";
-import type { allPairings } from "~/repositories/actorsRepository";
+import type { getActorPairings } from "~/repositories/actorsRepository";
 import { createAppColumnHelper, createAppTable } from "~/utils/createTable";
 import { enc } from "~/utils/encodeDecode";
 import styles from "~/components/tables/Table.module.css"
-import { Show } from "solid-js";
 import { TableBody } from "~/components/tables/TableBody";
 import { TableHeader } from "~/components/tables/TableHeader";
 import { ContextMenu } from "~/components/context-menu/ContextMenu";
+import { FilmIcon } from "lucide-solid";
+import { Show } from "solid-js";
 
-type P = Awaited<ReturnType<typeof allPairings>>
+type P = Awaited<ReturnType<typeof getActorPairings>>
 
 const columnHelper = createAppColumnHelper<P[number]>()
 
@@ -26,7 +27,7 @@ const columns = columnHelper.columns([
     }),
     columnHelper.accessor("together", {
         header: "Movies",
-        cell: props => <props.cell.LockedCell style={{"text-align": "right"}} />
+        cell: props => <props.cell.LockedCell style={{ "text-align": "right" }} />
     }),
     columnHelper.display({
         id: "link",
@@ -52,7 +53,7 @@ const columns = columnHelper.columns([
 ])
 
 type Props = {
-    fetcher(): ReturnType<typeof allPairings>
+    fetcher(): ReturnType<typeof getActorPairings>
 }
 
 export function CostarsTable(props: Props) {
@@ -115,8 +116,18 @@ export function CostarsTable(props: Props) {
             </div>
             <Show when={contextMenu.isOpen}>
                 <ContextMenu pos={contextMenu} close={() => setContextMenu('isOpen', false)} >
-                    <ContextMenu.Link href={`/movies/actors/${enc({id: contextMenu.data.actorAid, display: contextMenu.data.actorA})}`}> <span class="font-bold whitespace-pre">{contextMenu.data.actorA} </span>Movies </ContextMenu.Link>
-                    <ContextMenu.Link href={`/movies/actors/${enc({id: contextMenu.data.actorBid, display: contextMenu.data.actorB})}`}> <span class="font-bold whitespace-pre">{contextMenu.data.actorB} </span>Movies </ContextMenu.Link>
+                    <ContextMenu.Link
+                        icon={<FilmIcon />}
+                        href={`/movies/actors/${enc({ id: contextMenu.data.actorAid, display: contextMenu.data.actorA })}`}
+                    >
+                        <span style={{ "font-weight": "bold" }} >{contextMenu.data.actorA}</span> &nbsp; Movies
+                    </ContextMenu.Link>
+                    <ContextMenu.Link
+                        icon={<FilmIcon />}
+                        href={`/movies/actors/${enc({ id: contextMenu.data.actorBid, display: contextMenu.data.actorB })}`}
+                    >
+                        <span style={{ "font-weight": "bold" }} >{contextMenu.data.actorB}</span> &nbsp; Movies
+                    </ContextMenu.Link>
                 </ContextMenu>
             </Show>
         </div>

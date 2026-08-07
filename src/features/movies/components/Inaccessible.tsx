@@ -8,7 +8,7 @@ import styles from "~/components/tables/Table.module.css"
 import { TableBody } from "~/components/tables/TableBody";
 import { TableHeader } from "~/components/tables/TableHeader";
 import { Find } from "~/components/tables/FindCell";
-import { getInaccessible, deleteFilmsByIds } from "../api";
+import { getInaccessible, deleteFilmsByIds, getFilms } from "../api";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { createStore } from "solid-js/store";
 import { ContextMenu } from "~/components/context-menu/ContextMenu";
@@ -75,9 +75,9 @@ export default function Inaccessible() {
         if (selections.length === 0) return
         const confirmed = await confirm(`Permanently delete ${selections.length} film${selections.length != 1 ? "s" : ""} from the database?`, { kind: "warning" });
         if (!confirmed) return;
-        await deleteFilms(selections)
+        await deleteFilms(selections, [getInaccessible.key, getFilms.key])
         table.toggleAllRowsSelected(false);
-        setContextMenu({isOpen: false})   
+        setContextMenu({ isOpen: false })
     }
 
     const [contextMenu, setContextMenu] = createStore({

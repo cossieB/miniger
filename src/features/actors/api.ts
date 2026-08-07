@@ -36,14 +36,10 @@ export const editActor = action(async (a: OptionalExcept<TActor, 'actorId'>, rev
     }
 })
 
-export const getCostars = query(async (actor: string) => {
-    const actorId = getId(actor, "/costars")
-    return actorRepo.costarsOf(actorId);
-}, 'costarsOf')
-
-export const getPairings = query(async () => {
-    return actorRepo.allPairings()
-}, 'costars')
+export const getPairings = query(async (actor?: string) => {
+    const actorId = actor ? getId(actor, "/costars") : undefined
+    return actorRepo.getActorPairings(actorId)
+}, 'pairings')
 
 export const removeActors = action(async (actorIds: number[], revalidate: string[] = [getActors.key]) => {
     try {

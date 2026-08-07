@@ -15,7 +15,7 @@ import Transcode from "./routes/Transcode";
 import { getId } from "./utils/getIdFromParam";
 import MainWindow from "./layouts/main-window/MainWindow";
 import { Settings } from "lucide-solid";
-import { getActors, getPairings, getCostars } from "./features/actors/api";
+import { getActors, getPairings } from "./features/actors/api";
 import { VideoPlayer } from "./features/media/components/VideoPlayer";
 import { getFilms, getMoviesByCostars, getInaccessible } from "./features/movies";
 import { getStudios } from "./features/studios/api";
@@ -75,7 +75,7 @@ render(() => (
                 />
                 <Route
                     path="/:actor"
-                    component={props => <Costars fetcher={() => getCostars(props.params.actor!)} />}
+                    component={props => <Costars fetcher={() => getPairings(props.params.actor!)} />}
                 />
             </Route>
             <Route path="/studios" component={Studios} preload={() => getStudios()} />

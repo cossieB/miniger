@@ -21,14 +21,17 @@ export function findById(id: number) {
         .executeTakeFirstOrThrow()
 }
 
-export function costarsOf(actorId: number) {
-
-    return db
+export function getActorPairings(actorId?: number) {
+    let query = db
         .selectFrom("actorFilm as af1")
-        .innerJoin("actorFilm as af2", join => join
-            .onRef("af2.filmId", "=", "af1.filmId")
-            .on("af2.actorId", "!=", actorId)
-        )
+        .innerJoin("actorFilm as af2", (join) => {
+            const baseJoin = join.onRef("af2.filmId", "=", "af1.filmId");
+            
+            // Apply different join conditions based on whether actorId is provided
+            return actorId !== undefined
+                ? baseJoin.on("af2.actorId", "!=", actorId)
+                : baseJoin.onRef("af2.actorId", ">", "af1.actorId");
+        })
         .innerJoin("actor as a", "af1.actorId", "a.actorId")
         .innerJoin("actor as b", "af2.actorId", "b.actorId")
         .select([
@@ -40,36 +43,16 @@ export function costarsOf(actorId: number) {
             "b.image as actorBimage",
             db.fn.countAll().as("together")
         ])
-        .where("af1.actorId", "=", actorId)
         .groupBy(["a.actorId", "b.actorId"])
         .orderBy("a.name", "asc")
-        .orderBy("b.name", "asc")
-        .execute();
-}
+        .orderBy("b.name", "asc");
 
-export function allPairings() {
+    // Conditionally apply the WHERE clause if we are filtering by a specific actor
+    if (actorId !== undefined) {
+        query = query.where("af1.actorId", "=", actorId);
+    }
 
-    return db
-        .selectFrom("actorFilm as af1")
-        .innerJoin("actorFilm as af2", join => join
-            .onRef("af2.filmId", "=", "af1.filmId")
-            .onRef("af2.actorId", ">", "af1.actorId")
-        )
-        .innerJoin("actor as a", "af1.actorId", "a.actorId")
-        .innerJoin("actor as b", "af2.actorId", "b.actorId")
-                .select([
-            "a.name as actorA",
-            "a.actorId as actorAid",
-            "a.image as actorAimage",
-            "b.name as actorB",
-            "b.actorId as actorBid",
-            "b.image as actorBimage",
-            db.fn.countAll().as("together")
-        ])
-        .groupBy(["a.actorId", "b.actorId"])
-        .orderBy("a.name", "asc")
-        .orderBy("b.name", "asc")
-        .execute();
+    return query.execute();
 }
 
 export async function createActor(a: Omit<TActor, 'actorId'>) {

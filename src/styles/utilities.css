@@ -50,4 +50,7 @@
             transform: translateY(-5rem);
         }
     }
+    &:not(:popover-open) {
+        pointer-events: none;
+    }
 }

@@ -12,20 +12,28 @@ import Fuse from "fuse.js";
 
 export const MovieGridContext = createContext<MovieGridContext>()
 
-
-
 export const [movieGridSort, setMovieGridSort] = createSignal<SortCriterion[]>([])
 export const [appliedFilters, setAppliedFilters] = createStore<Partial<FilterState>>({})
 
 export function MovieGridProvider(props: { children: JSXElement, data: MovieData }) {
     const selections = new ReactiveSet<number>()
 
-    const { contextMenu, setContextMenu } = useMoviesContextMenu()
+    const { contextMenu, setContextMenu, } = useMoviesContextMenu()
 
     const [_parentRef, setParentRef] = createSignal<HTMLDivElement | null>(null);
     const columns = () => Math.floor((state.mainPanel.width() - 50) / CELL_WIDTH)
-    const rowCount = createMemo(() => Math.ceil(props.data.length / columns()));
     const [search, setSearch] = createSignal("")
+    
+    const results = createMemo(() => applyFacetedSearch(sortMovies(props.data, movieGridSort()), appliedFilters))
+    
+    const data = createMemo(() => {
+        if (!search()) return results().results;
+        if (search().length < 3) return results().results.filter(a => a.title.includes(search()))
+            return new Fuse(results().results, {
+        keys: ['title'],
+    }).search(search()).map(r => r.item)
+})
+const rowCount = createMemo(() => Math.ceil(data().length / columns()));
 
     const rowVirtualizer = createMemo(() => {
         return createVirtualizer({
@@ -36,15 +44,7 @@ export function MovieGridProvider(props: { children: JSXElement, data: MovieData
             gap: 8,
         })
     });
-    const results = createMemo(() => applyFacetedSearch(sortMovies(props.data, movieGridSort()), appliedFilters))
-    
-    const data = createMemo(() => {
-        if (!search()) return results().results;
-        if (search().length < 3) return results().results.filter(a => a.title.includes(search()))
-        return new Fuse(results().results, {
-            keys: ['title'],
-        }).search(search()).map(r => r.item)
-    })
+
     const facets = createMemo(() => results().facets)
     return (
         <MovieGridContext.Provider

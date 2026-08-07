@@ -81,7 +81,9 @@ export function ActorForm() {
                 </div>
                 <div style={{ height: "13rem" }}>
                     <DropZone
-                        setFile={setFile} />
+                        setFile={setFile} 
+                        image={actor()?.image}
+                        />
                 </div>
             </DialogForm>
         </Suspense>
