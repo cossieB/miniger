@@ -1,6 +1,5 @@
 import { A, createAsync } from "@solidjs/router";
 import { createVirtualizer } from "@tanstack/solid-virtual";
-import { createStore } from "solid-js/store";
 import { TABLE_CELL_HEIGHT, TABLE_HEADER_HEIGHT } from "~/constants";
 import type { getActorPairings } from "~/repositories/actorsRepository";
 import { createAppColumnHelper, createAppTable } from "~/utils/createTable";
@@ -11,6 +10,7 @@ import { TableHeader } from "~/components/tables/TableHeader";
 import { ContextMenu } from "~/components/context-menu/ContextMenu";
 import { FilmIcon } from "lucide-solid";
 import { Show } from "solid-js";
+import { useContextMenu } from "~/hooks/useContextMenu";
 
 type P = Awaited<ReturnType<typeof getActorPairings>>
 
@@ -77,17 +77,14 @@ export function CostarsTable(props: Props) {
         getScrollElement: () => ref,
         overscan: 20
     })
-    const [contextMenu, setContextMenu] = createStore({
-        isOpen: false,
-        x: 0,
-        y: 0,
-        data: {
+
+    const {contextMenu} = useContextMenu({
             actorAid: -1,
             actorBid: -1,
             actorA: "",
             actorB: "",
-        }
-    })
+        })
+
     return (
         <div
             ref={ref}
@@ -104,7 +101,7 @@ export function CostarsTable(props: Props) {
                         <TableHeader />
                         <TableBody<ReturnType<typeof data>[number]>
                             virtualizer={virtualizer}
-                            handleRightClick={menu => setContextMenu({
+                            handleRightClick={menu => contextMenu.open({
                                 ...menu,
                                 data: {
                                     ...menu.data
@@ -115,7 +112,7 @@ export function CostarsTable(props: Props) {
                 </table.AppTable>
             </div>
             <Show when={contextMenu.isOpen}>
-                <ContextMenu pos={contextMenu} close={() => setContextMenu('isOpen', false)} >
+                <ContextMenu pos={contextMenu} close={contextMenu.close} >
                     <ContextMenu.Link
                         icon={<FilmIcon />}
                         href={`/movies/actors/${enc({ id: contextMenu.data.actorAid, display: contextMenu.data.actorA })}`}

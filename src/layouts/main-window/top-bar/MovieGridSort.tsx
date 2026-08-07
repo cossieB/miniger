@@ -2,6 +2,7 @@ import { useLocation } from "@solidjs/router"
 import { FunnelIcon } from "lucide-solid"
 import { Show } from "solid-js"
 import { activeView } from "./ViewToggle"
+import { appliedFilters } from "~/features/movies/contexts/MovieGridContext"
 
 export function MovieGridSortBtn() {
     const location = useLocation()
@@ -13,7 +14,7 @@ export function MovieGridSortBtn() {
             }}
                 popoverTarget="movie-grid-sort"
             >
-                <FunnelIcon />
+                <FunnelIcon classList={{"animate-spin": Object.values(appliedFilters).flat().length > 0}} />
             </button>
         </Show>
     )

@@ -3,7 +3,6 @@ import { createAppColumnHelper, createAppTable } from "~/utils/createTable";
 import type { TStudio } from "~/datatypes";
 import { createSignal, Show } from "solid-js";
 import type { RowSelectionState } from "@tanstack/solid-table";
-import { createStore } from "solid-js/store";
 import { createVirtualizer } from "@tanstack/solid-virtual";
 import { TABLE_CELL_HEIGHT, TABLE_HEADER_HEIGHT } from "~/constants";
 import { ContextMenu } from "~/components/context-menu/ContextMenu";
@@ -15,6 +14,7 @@ import { deleteStudios, getStudios, updateStudio } from "../api";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { FilmIcon, PencilIcon, TrashIcon } from "lucide-solid";
 import { state } from "~/state";
+import { useContextMenu } from "~/hooks/useContextMenu";
 
 const columnHelper = createAppColumnHelper<TStudio>()
 
@@ -81,18 +81,13 @@ export function StudiosTable() {
         if (!confirmed) return;
         await del(selections)
         table.toggleAllRowsSelected(false);
-        setContextMenu({isOpen: false})        
+        contextMenu.close()
     }
 
-    const [contextMenu, setContextMenu] = createStore({
-        isOpen: false,
-        x: 0,
-        y: 0,
-        data: {
-            selectedId: -1,
-            selectedName: "",
-        }
-    })
+    const {contextMenu} = useContextMenu({
+            studioId: -1,
+            name: "",
+        })
 
     return (
         <div
@@ -119,27 +114,24 @@ export function StudiosTable() {
                         <TableHeader />
                         <TableBody<ReturnType<typeof studios>[number]>
                             virtualizer={virtualizer}
-                            handleRightClick={menu => setContextMenu({
-                                ...menu,
-                                data: {
-                                    selectedId: menu.data.studioId,
-                                    selectedName: menu.data.name
-                                }
-                            })}
+                            handleRightClick={menu => contextMenu.open(menu)}
                         />
                     </table>
                 </table.AppTable>
             </div>
             <Show when={contextMenu.isOpen}>
-                <ContextMenu pos={contextMenu} close={() => setContextMenu('isOpen', false)} >
+                <ContextMenu pos={contextMenu} close={contextMenu.close} >
                     <ContextMenu.Link
                         icon={<FilmIcon />}
-                        href={`/movies/studios/${enc({ display: contextMenu.data.selectedName, id: contextMenu.data.selectedId })}`}
+                        href={`/movies/studios/${enc({ display: contextMenu.data.name, id: contextMenu.data.studioId })}`}
                     >
                         Go To Movies
                     </ContextMenu.Link>
                     <ContextMenu.Item
-                        onClick={() => state.dialog.openDialog({type: "studio", data: {studioId: contextMenu.data.selectedId}})}
+                        onClick={() => {
+                            state.dialog.openDialog({type: "studio", data: {studioId: contextMenu.data.studioId}});
+                            contextMenu.close()
+                        }}
                         icon={<PencilIcon />}
                     >
                         Edit

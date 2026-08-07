@@ -2,7 +2,6 @@ import { useAction, createAsync } from "@solidjs/router";
 import type { RowSelectionState } from "@tanstack/solid-table";
 import { createVirtualizer } from "@tanstack/solid-virtual";
 import { createSignal, Show } from "solid-js";
-import { createStore } from "solid-js/store";
 import { TABLE_CELL_HEIGHT, TABLE_HEADER_HEIGHT } from "~/constants";
 import type { TActor } from "~/datatypes";
 import { createAppTable } from "~/utils/createTable";
@@ -16,6 +15,7 @@ import { ContextMenu } from "~/components/context-menu/ContextMenu";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { DramaIcon, FilmIcon, PencilIcon, TrashIcon } from "lucide-solid";
 import { state } from "~/state";
+import { useContextMenu } from "~/hooks/useContextMenu";
 
 export function ActorsTable() {
     let ref!: HTMLDivElement
@@ -59,18 +59,12 @@ export function ActorsTable() {
         if (!confirmed) return;
         await del(selections)
         table.toggleAllRowsSelected(false);
-        setContextMenu({isOpen: false})   
+        contextMenu.close()
     }
-
-    const [contextMenu, setContextMenu] = createStore({
-        isOpen: false,
-        x: 0,
-        y: 0,
-        data: {
-            selectedId: -1,
-            selectedName: "",
-        }
-    })
+    const {contextMenu} = useContextMenu({
+            actorId: -1,
+            name: "",
+        })
 
     return (
         <div
@@ -97,34 +91,31 @@ export function ActorsTable() {
                         <TableHeader />
                         <TableBody<ReturnType<typeof actors>[number]>
                             virtualizer={virtualizer}
-                            handleRightClick={menu => setContextMenu({
-                                ...menu,
-                                data: {
-                                    selectedId: menu.data.actorId,
-                                    selectedName: menu.data.name
-                                }
-                            })}
+                            handleRightClick={menu => contextMenu.open(menu)}
                         />
                     </table>
                 </table.AppTable>
             </div>
             <Show when={contextMenu.isOpen}>
-                <ContextMenu pos={contextMenu} close={() => setContextMenu('isOpen', false)} >
+                <ContextMenu pos={contextMenu} close={contextMenu.close} >
                     <ContextMenu.Link
                         icon={<FilmIcon />}
-                        href={`/movies/actors/${enc({ display: contextMenu.data.selectedName, id: contextMenu.data.selectedId })}`}
+                        href={`/movies/actors/${enc({ display: contextMenu.data.name, id: contextMenu.data.actorId })}`}
                     >
                         Go To Movies
                     </ContextMenu.Link>
                     <ContextMenu.Link
                     icon={<DramaIcon />}
-                        href={`/costars/${enc({ display: contextMenu.data.selectedName, id: contextMenu.data.selectedId })}`}
+                        href={`/costars/${enc({ display: contextMenu.data.name, id: contextMenu.data.actorId })}`}
                     >
                         See Co-stars
                     </ContextMenu.Link>
                     <ContextMenu.Item
                         icon={<PencilIcon />}
-                        onClick={() => state.dialog.openDialog({type: "actor", data: {actorId: contextMenu.data.selectedId}})}
+                        onClick={() => {
+                            contextMenu.close()
+                            state.dialog.openDialog({type: "actor", data: {actorId: contextMenu.data.actorId}})
+                        }}
                     >
                         Edit
                     </ContextMenu.Item>

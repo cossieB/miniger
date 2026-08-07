@@ -2,7 +2,7 @@ import { For } from "solid-js";
 import { useMovieGridContext } from "../hooks/useMovieGridContext"
 import styles from "./MovieGrid.module.css"
 import { appliedFilters, setAppliedFilters } from "../contexts/MovieGridContext";
-import type { FacetResults } from "../utils/faceting";
+import type { FacetResults, FilterState } from "../utils/faceting";
 import titleCase from "~/lib/titleCase";
 
 export function FilterWrapper() {
@@ -10,19 +10,15 @@ export function FilterWrapper() {
         <>
             <Facet
                 key="actors"
-                filterKey="actorIds"
             />
             <Facet
                 key="tags"
-                filterKey="tags"
             />
             <Facet
                 key="studios"
-                filterKey="studioIds"
             />
             <Facet
                 key="videoCodecs"
-                filterKey="videoCodecs"
             />
         </>
     )
@@ -31,11 +27,11 @@ export function FilterWrapper() {
 type Props<T extends keyof FacetResults> = {
     label?: string
     key: T
-    filterKey: T extends "studios" ? "studioIds" : T extends "actors" ? "actorIds" : T
 }
 
 function Facet<T extends keyof FacetResults>(props: Props<T>) {
     const { facets } = useMovieGridContext();
+    const filterKey: keyof FilterState = props.key == "actors" ? "actorIds" : props.key == "studios" ? "studioIds" : props.key
     return (
         <div class={`${styles.facet} scrollable`}>
             <h3> {props.label ?? titleCase(props.key)} </h3>
@@ -44,17 +40,17 @@ function Facet<T extends keyof FacetResults>(props: Props<T>) {
                     <div
 
                         // @ts-expect-error
-                        classList={{ [styles.active]: appliedFilters[props.filterKey]?.includes(item.id) }}
+                        classList={{ [styles.active]: appliedFilters[filterKey]?.includes(item.id) }}
                         onClick={() => {
 
-                            const arr = appliedFilters[props.filterKey]
+                            const arr = appliedFilters[filterKey]
                             if (!arr) return setAppliedFilters({
-                                [props.filterKey]: [item.id]
+                                [filterKey]: [item.id]
                             })
                             // @ts-expect-error
-                            if (arr.includes(item.id)) return setAppliedFilters(props.filterKey, arr.filter(t => t !== item.id))
+                            if (arr.includes(item.id)) return setAppliedFilters(filterKey, arr.filter(t => t !== item.id))
                             // @ts-expect-error
-                            return setAppliedFilters(props.filterKey, [...arr, item.id])
+                            return setAppliedFilters(filterKey, [...arr, item.id])
                         }}
                     >
                         <label> {'name' in item ? item.name : item.id} </label>

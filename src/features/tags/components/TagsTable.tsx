@@ -6,10 +6,10 @@ import { TABLE_CELL_HEIGHT, TABLE_HEADER_HEIGHT } from "~/constants";
 import { TableHeader } from "~/components/tables/TableHeader";
 import { TableBody } from "~/components/tables/TableBody";
 import styles from "~/components/tables/Table.module.css"
-import { createStore } from "solid-js/store";
 import { Show } from "solid-js";
 import { ContextMenu } from "~/components/context-menu/ContextMenu";
 import { FilmIcon } from "lucide-solid";
+import { useContextMenu } from "~/hooks/useContextMenu";
 
 type TData = {
     tag: string;
@@ -54,14 +54,9 @@ export function TagsTable() {
             enableResizing: false,
         }
     })
-    const [contextMenu, setContextMenu] = createStore({
-        isOpen: false,
-        x: 0,
-        y: 0,
-        data: {
+    const {contextMenu} = useContextMenu({
             tag: ""
-        }
-    })
+        })
     return (
         <div
             ref={ref}
@@ -78,13 +73,13 @@ export function TagsTable() {
                         <TableHeader />
                         <TableBody<TData>
                             virtualizer={virtualizer}
-                            handleRightClick={menu => setContextMenu(menu)}
+                            handleRightClick={menu => contextMenu.open(menu)}
                         />
                     </table>
                 </table.AppTable>
             </div>
             <Show when={contextMenu.isOpen}>
-                <ContextMenu pos={contextMenu} close={() => setContextMenu('isOpen', false)} >
+                <ContextMenu pos={contextMenu} close={contextMenu.close} >
                     <ContextMenu.Link
                         href={`/movies/tags/${contextMenu.data.tag}`}
                         icon={<FilmIcon />}
