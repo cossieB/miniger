@@ -14,7 +14,6 @@ import { Thumbnails } from "./routes/Thumbs";
 import Transcode from "./routes/Transcode";
 import { getId } from "./utils/getIdFromParam";
 import MainWindow from "./layouts/main-window/MainWindow";
-import { Settings } from "lucide-solid";
 import { getActors, getPairings } from "./features/actors/api";
 import { VideoPlayer } from "./features/media/components/VideoPlayer";
 import { getFilms, getMoviesByCostars, getInaccessible } from "./features/movies";
@@ -24,6 +23,7 @@ import { Convert } from "./layouts/secondary-windows/Convert";
 import { DragDrop } from "./layouts/secondary-windows/DragDrop";
 import { TagsRoute } from "./routes/Tags";
 import { getTags } from "./features/tags/api";
+import { Settings } from "./layouts/secondary-windows/Settings";
 
 
 render(() => (

@@ -53,7 +53,8 @@ export function CustomVideo(props: P) {
                     e.currentTarget.play();
             }}
             onerror={() => {
-                state.sidePanel.markDirty(currentVideo()!.rowId)
+                const rowId = currentVideo()?.rowId
+                rowId && state.sidePanel.markDirty(rowId)
                 t = setTimeout(playNext, 500)
             }}
             onkeyup={e => {

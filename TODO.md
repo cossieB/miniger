@@ -4,6 +4,8 @@
 
 [x] film grid virtualization - @tanstack/solid-virtual
 
-[ ] filtering / faceting
+[x] filtering / faceting
+
+[ ] persist state across restarts
 
 [ ] bundle ffmpeg or add option to download

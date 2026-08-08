@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { sep } from "@tauri-apps/api/path";
+import { stat } from "@tauri-apps/plugin-fs"
 import { state } from "../state";
 import videoExtensions from "../videoExtensions.json"
 import { getAllWindows } from "@tauri-apps/api/window";
@@ -14,27 +15,36 @@ getAllWindows().then(async windows => {
         prevElem = null;
         const pos = event.payload.position
         const target = document.elementFromPoint(pos.x, pos.y) as HTMLLIElement | null;
-            
-        const files = event.payload.paths
+        const i = target?.dataset.i === undefined ? state.sidePanel.list.length : Number(target.dataset.i)
+
+        const files = event.payload.paths;
         for (const path of files) {
-            let idx = path.lastIndexOf(".")
-            if (idx < 0) 
-                continue;
-            
-            const extension = path.slice(idx + 1).toLowerCase();
-            if (!extension) continue;
-    
-            const i = target?.dataset.i === undefined ? state.sidePanel.list.length : Number(target.dataset.i)
-    
-            if (["mpcpl", "asx", "m3u", "pls"].includes(extension)) {
-                const fileList: { title: string; path: string; }[] = await invoke("read_playlist", {
-                    playlist: path
-                });
-                state.sidePanel.insertAt(i, fileList)
+            const details = await stat(path);
+            if (details.isFile) {
+                let idx = path.lastIndexOf(".")
+                if (idx < 0)
+                    continue;
+
+                const extension = path.slice(idx + 1).toLowerCase();
+                if (!extension) continue;
+
+
+                if (["mpcpl", "asx", "m3u", "pls"].includes(extension)) {
+                    const fileList: { title: string; path: string; }[] = await invoke("read_playlist", {
+                        playlist: path
+                    });
+                    state.sidePanel.insertAt(i, fileList)
+                }
+                if (videoExtensions.includes(extension)) {
+                    const title = path.slice(path.lastIndexOf(sep()) + 1)
+                    state.sidePanel.insertAt(i, [{ title, path }])
+                }
             }
-            if (videoExtensions.includes(extension)) {
-                const title = path.slice(path.lastIndexOf(sep()) + 1)
-                state.sidePanel.insertAt(i, [{title, path}])
+            if (details.isDirectory) {
+                const fileList: { title: string; path: string; }[] = await invoke("load_directory", {
+                    path
+                })
+                state.sidePanel.insertAt(i, fileList)
             }
         }
     })

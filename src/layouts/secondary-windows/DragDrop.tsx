@@ -1,4 +1,4 @@
-import { createResource, Index } from "solid-js"
+import { batch, createResource, Index } from "solid-js"
 import { getCurrentWindow } from "@tauri-apps/api/window"
 import { state } from "~/state"
 import styles from "./Windows.module.css"
@@ -35,9 +35,11 @@ export function DragDrop() {
                 }
 
                 if (e.key == "a" && e.ctrlKey) {
-                    for (let i = 0; i < state.sidePanel.list.length; i++) {
-                        state.sidePanel.selections.add(i)
-                    }
+                    batch(() => {
+                        for (let i = 0; i < state.sidePanel.list.length; i++) {
+                            state.sidePanel.selections.add(i)
+                        }
+                    })
                 }
             }}
         >

@@ -93,7 +93,7 @@ const [sidePanel, setSidepanel] = createStore({
         })))
     },
     setLastDraggedOver: (i: number) => {
-        const last = sidePanel.lastDraggedOver;
+        const last = sidePanel.lastDraggedOver; console.log(i)
         if (last > -1 && last < sidePanel.list.length)
             setSidepanel('list', last, 'lastDraggedOver', false)
         if (i > -1 && i < sidePanel.list.length)

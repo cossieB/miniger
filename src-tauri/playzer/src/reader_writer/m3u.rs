@@ -12,7 +12,7 @@ impl PlaylistReaderWriter for M3UReaderWriter {
         let file = fs::read_to_string(path).expect("Error while reading playlist");
         let mut list = Vec::with_capacity(1000);
         for line in file.lines() {
-            if line.starts_with('#') || line.starts_with('\u{feff}') {
+            if line.starts_with('#') || line.starts_with('\u{feff}') || line.is_empty() {
                 continue;
             }
             list.push({FileInfo{

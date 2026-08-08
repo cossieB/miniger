@@ -1,4 +1,4 @@
-import { Index, Show } from "solid-js";
+import { batch, Index, Show } from "solid-js";
 import { state } from "~/state";
 import { SidePanelItem } from "./SidePanelItem";
 import { createStore } from "solid-js/store";
@@ -8,6 +8,8 @@ import { Miniplayer } from "~/components/Miniplayer";
 import Resizer from "~/components/Resizer";
 import MoviesContextMenu from "~/features/movies/components/MoviesContextMenu";
 import clickOutside from "~/lib/clickOutside";
+import { sep } from "@tauri-apps/api/path";
+import { parsePlaylistContent } from "~/utils/parsePlaylist";
 
 false && clickOutside
 
@@ -30,8 +32,8 @@ export function SidePanel() {
                 width: state.sidePanel.width + "px",
                 height: (state.windowDimensions.height - TOP_BAR_HEIGHT - BOTTOM_BAR_HEIGHT) + "px"
             }}
-            tabindex={0}
-            onkeyup={e => {
+            tabIndex={0}
+            onKeyUp={e => {
                 e.preventDefault();
                 if (e.key == "Escape")
                     return state.sidePanel.selections.clearSelections()
@@ -44,6 +46,34 @@ export function SidePanel() {
                         state.sidePanel.selections.add(i)
                     }
                 }
+            }}
+            onDragOver={e => e.preventDefault()}
+            onDrop={async e => {
+                e.preventDefault();
+                e.currentTarget.classList.remove(styles.dragover)
+                const files = Array.from(e.dataTransfer?.files ?? []).filter(f => /\.(m3u8?|pls|asx|mpcpl)$/i.test(f.name));
+                if (files.length === 0) return;
+
+                const parsedPathArrays = await Promise.all(files.map(async (file) => {
+                    const text = await file.text();
+                    return parsePlaylistContent(text, file.name);
+                }));
+
+                const extractedPaths: string[] = parsedPathArrays.flat();
+                batch(() => {
+                    const i = state.sidePanel.lastDraggedOver
+                    state.sidePanel.setLastDraggedOver(-1)
+                    state.sidePanel.insertAt(i, extractedPaths.map(path => ({
+                        path,
+                        title: path.slice(path.lastIndexOf(sep()) + 1, path.lastIndexOf("."))
+                    })));
+                })
+            }}
+            onDragLeave={e => {
+                e.currentTarget.classList.remove(styles.dragover)
+            }}
+            onDragEnter={e => {
+                e.currentTarget.classList.add(styles.dragover)
             }}
         >
             <ul

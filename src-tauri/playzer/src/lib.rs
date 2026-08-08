@@ -8,15 +8,12 @@ pub mod reader_writer;
 #[derive(Serialize, Deserialize)]
 pub struct FileInfo {
     title: String,
-    path: String
+    path: String,
 }
 
 impl FileInfo {
     pub fn new(title: String, path: String) -> Self {
-        Self {
-            title,
-            path
-        }
+        Self { title, path }
     }
 }
 
@@ -31,19 +28,19 @@ fn file_exists(path: &str) -> bool {
     path.exists()
 }
 
-// fn shuffle<T: Clone>(arr: &mut Vec<T>) {
-//     use rand::Rng;
-//     let mut i = arr.len() - 1;
-//     while i > 0 {
-//         let mut rng = rand::thread_rng();
-//         let j = rng.gen_range(0..i);
-//         ( arr[i], arr[j] ) = ( arr[j].clone(), arr[i].clone() );
-//         i -= 1;
-//     };
+// fn shuffle<T>(arr: &mut Vec<T>) {
+//     if arr.len() <= 1 {
+//         return;
+//     }
+//     let mut rng = rand::thread_rng();
+//     for i in (1..arr.len()).rev() {
+//         let j = rand::Rng::gen_range(&mut rng, 0..=i);
+//         arr.swap(i, j);
+//     }
 // }
 
 fn get_filename(path: &str) -> String {
-    let re = regex::Regex::new(r"(^(?:\.(?:/|\\))?[^\.]+)(?:\.\w+)?$").unwrap(); 
+    let re = regex::Regex::new(r"(^(?:\.(?:/|\\))?[^\.]+)(?:\.\w+)?$").unwrap();
     extract_regex(path, &re).unwrap_or("playzer_generated".to_owned())
 }
 
