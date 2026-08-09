@@ -1,7 +1,7 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
 import "./styles/index.css"
-import { Navigate, Route, Router } from "@solidjs/router";
+import { Navigate, Route, Router, type RouteSectionProps } from "@solidjs/router";
 import Actors from "./routes/Actors";
 import Studios from "./routes/Studios";
 import { Movies } from "./routes/Movies";
@@ -37,22 +37,22 @@ render(() => (
                 />
                 <Route
                     path="/tags/:tag"
-                    component={(props) => <Movies fetcher={() => getFilms({tags: [decodeURI(props.params.tag!)]})} />}
+                    component={(props: RouteSectionProps) => <Movies fetcher={() => getFilms({tags: [decodeURI(props.params.tag!)]})} />}
                     preload={(args) => void getFilms({tags: [decodeURI(args.params.tag!)]})}
                 />
                 <Route
                     path="/actors/:actor"
-                    component={props => <Movies fetcher={() => getFilms({actorIds: [getId(props.params.actor!, "/movies")]})} />}
+                    component={(props: RouteSectionProps) => <Movies fetcher={() => getFilms({actorIds: [getId(props.params.actor!, "/movies")]})} />}
                     preload={(args) => void getFilms({actorIds: [getId(args.params.actor!, "/movies")]})}
                 />
                 <Route
                     path="/actors/:actor/:costar"
-                    component={props => <Movies fetcher={() => getMoviesByCostars(props.params.actor!, props.params.costar!)} />}
+                    component={(props: RouteSectionProps) => <Movies fetcher={() => getMoviesByCostars(props.params.actor!, props.params.costar!)} />}
                     preload={(args) => void getMoviesByCostars(args.params.actor!, args.params.costar!)}
                 />
                 <Route
                     path="/studios/:studio"
-                    component={props => <Movies fetcher={() => getFilms({studioId: getId(props.params.studio!, "/studios")})} />}
+                    component={(props: RouteSectionProps) => <Movies fetcher={() => getFilms({studioId: getId(props.params.studio!, "/studios")})} />}
                     preload={args => void getFilms({studioId: getId(args.params.studio!, "/studios")})}
                 />
                 <Route
@@ -62,7 +62,7 @@ render(() => (
                 />
                 <Route
                     path="/search"
-                    component={props => <Movies fetcher={() => search()} />}
+                    component={(props: RouteSectionProps) => <Movies fetcher={() => search()} />}
                 />
             </Route>
             <Route path="/actors" >
@@ -76,7 +76,7 @@ render(() => (
                 />
                 <Route
                     path="/:actor"
-                    component={props => <Costars fetcher={() => getPairings(props.params.actor!)} />}
+                    component={(props: RouteSectionProps) => <Costars fetcher={() => getPairings(props.params.actor!)} />}
                 />
             </Route>
             <Route path="/studios" component={Studios} preload={() => getStudios()} />
