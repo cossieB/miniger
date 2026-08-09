@@ -7,14 +7,18 @@ import { readDirectories } from "~/features/movies/utils/readDirectories"
 import type { WatchJSON } from "~/layouts/secondary-windows/Settings"
 import { filterMap } from "~/lib/filterMap"
 import { sleep } from "~/lib/sleep"
+import { initBackup } from "~/repositories/backupDb"
 import { state } from "~/state"
 
 export async function readSession() {
     const navigate = useNavigate()
     try {
-        const content = await readTextFile("session.json", {
-            baseDir: BaseDirectory.AppData
-        })
+        const [content] = await Promise.all([
+            readTextFile("session.json", {
+                baseDir: BaseDirectory.AppData
+            }),
+            initBackup()
+        ])
 
         const settings = JSON.parse(content) as SessionJSON
 
@@ -51,7 +55,7 @@ export function useWatchJson() {
         try {
             const files = await readWatchJson()
             if (!files?.length) return
-            state.status.setStatus("Reading files....")            
+            state.status.setStatus("Reading files....")
             await action(files)
             state.status.clear()
         } catch (error) {

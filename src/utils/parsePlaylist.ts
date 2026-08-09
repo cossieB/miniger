@@ -18,12 +18,12 @@ export function parsePlaylistContent(content: string, filename: string): string[
     } else if (ext === 'pls') {
         rawPaths = content
             .split(/\r?\n/)
-            .map(line => line.match(/^File\d+=(.+)$/i)?.[1]?.trim())
+            .map(line => line.trim().match(/^File\d+=(.+)$/i)?.[1]?.trim())
             .filter((path): path is string => Boolean(path));
     } else if (ext === 'mpcpl') {
         rawPaths = content
             .split(/\r?\n/)
-            .map(line => line.match(/^\d+,filename,(.+)$/i)?.[1]?.trim())
+            .map(line => line.trim().match(/^\d+,filename,(.+)$/i)?.[1]?.trim())
             .filter((path): path is string => Boolean(path));
     } else if (ext === 'asx') {
         const matches = content.matchAll(/<ref\s+[^>]*href=["']([^"']+)["']/gi);

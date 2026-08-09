@@ -9,3 +9,5 @@
 [ ] persist state across restarts
 
 [ ] bundle ffmpeg or add option to download
+
+[ ] TMDB

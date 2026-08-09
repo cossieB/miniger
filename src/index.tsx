@@ -25,7 +25,6 @@ import { TagsRoute } from "./routes/Tags";
 import { getTags } from "./features/tags/api";
 import { Settings } from "./layouts/secondary-windows/Settings";
 
-
 render(() => (
     <Router  >
         <Route component={MainWindow}>

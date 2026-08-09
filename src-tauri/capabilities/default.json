@@ -58,6 +58,14 @@
         }
       ]
     },
+    {
+      "identifier": "fs:allow-read-dir",
+      "allow": [
+        {
+          "path": "$APPDATA/**/*"
+        }
+      ]
+    },
     "shell:allow-execute",
     "shell:allow-open",
     "shell:default",

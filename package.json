@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "test": "vitest"
   },
   "license": "MIT",
   "dependencies": {
@@ -34,9 +35,11 @@
     "@tauri-apps/cli": "^2.11.4",
     "@types/node": "^24.9.2",
     "autoprefixer": "^10.4.21",
+    "jsdom": "^29.1.1",
     "kysely-codegen": "^0.20.0",
     "typescript": "^7.0.2",
     "vite": "^8.0.0",
-    "vite-plugin-solid": "^2.11.6"
+    "vite-plugin-solid": "^2.11.6",
+    "vitest": "^4.1.10"
   }
 }
