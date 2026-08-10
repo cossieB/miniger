@@ -1,9 +1,11 @@
 import { useNavigate } from "@solidjs/router"
 import { readTextFile, BaseDirectory } from "@tauri-apps/plugin-fs"
 import { createResource } from "solid-js"
-import type { SessionJSON } from "~/events/mainWindow"
+import { SessionSchema } from "~/utils/session"
+import { setMovieGridSort } from "~/features/movies/contexts/MovieGridContext"
 import { useAddFiles } from "~/features/movies/hooks/useAddFiles"
 import { readDirectories } from "~/features/movies/utils/readDirectories"
+import { setActiveView } from "~/layouts/main-window/top-bar/ViewToggle"
 import type { WatchJSON } from "~/layouts/secondary-windows/Settings"
 import { filterMap } from "~/lib/filterMap"
 import { sleep } from "~/lib/sleep"
@@ -12,6 +14,7 @@ import { state } from "~/state"
 
 export async function readSession() {
     const navigate = useNavigate()
+    let redirect = "/"
     try {
         const [content] = await Promise.all([
             readTextFile("session.json", {
@@ -20,15 +23,18 @@ export async function readSession() {
             initBackup()
         ])
 
-        const settings = JSON.parse(content) as SessionJSON
-
-        state.sidePanel.setFiles(settings.list ?? [])
+        const rawJson = JSON.parse(content)
+        const settings = SessionSchema.parse(rawJson)
+        redirect = settings.location
+        setMovieGridSort(settings.sort)
+        setActiveView(settings.view)
+        state.sidePanel.setFiles(settings.list)
         settings.treeWidth && state.tree.setWidth(settings.treeWidth * window.innerWidth)
         settings.sidePanelWidth && state.sidePanel.setWidth(settings.sidePanelWidth * window.innerWidth)
     } catch (error) { }
 
     finally {
-        navigate("/")
+        navigate(redirect)
     }
 }
 

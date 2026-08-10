@@ -33,7 +33,7 @@ export function TableHeader() {
                                         <FlexRender header={header} />
                                         <SortIcon
                                             sortable={header.column.getCanSort()}
-                                            direction={header.column.getIsSorted()}
+                                            desc={header.column.getIsSorted() === false ? undefined : header.column.getIsSorted()  === "desc"}
                                         />
                                         <div
                                             class={styles.slider}

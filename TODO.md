@@ -6,7 +6,7 @@
 
 [x] filtering / faceting
 
-[ ] persist state across restarts
+[x] persist state across restarts
 
 [ ] bundle ffmpeg or add option to download
 

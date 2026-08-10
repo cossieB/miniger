@@ -1,6 +1,6 @@
-import { Show, createSignal } from "solid-js";
+import { Show, createEffect, createSignal } from "solid-js";
 import type { MovieData } from "~/types";
-import { type SortingState, type RowSelectionState } from "@tanstack/solid-table";
+import { type RowSelectionState } from "@tanstack/solid-table";
 import { createVirtualizer } from "@tanstack/solid-virtual";
 import { TABLE_CELL_HEIGHT, TABLE_HEADER_HEIGHT } from "~/constants";
 import { createAppTable } from "~/utils/createTable";
@@ -12,8 +12,8 @@ import MoviesContextMenu from "~/features/movies/components/MoviesContextMenu";
 import { TableBody } from "~/components/tables/TableBody";
 import { TableHeader } from "~/components/tables/TableHeader";
 import { editFilm } from "../../api";
-
-const [sorting, setSorting] = createSignal<SortingState>([]);
+import { movieGridSort, setMovieGridSort } from "../../contexts/MovieGridContext";
+import type { SortCriterion } from "../../utils/sort";
 
 export function MoviesTable(props: { data: MovieData }) {
     let ref!: HTMLDivElement
@@ -36,14 +36,13 @@ export function MoviesTable(props: { data: MovieData }) {
         getRowId: row => String(row.filmId),
         columns,
         state: {
-            get sorting() {
-                return sorting();
-            },
             get rowSelection() {
                 return rowSelection()
-            }
+            },
         },
-        onSortingChange: setSorting,
+        initialState: {
+            sorting: movieGridSort()
+        },
         enableSorting: true,
         defaultColumn: {
             size: 250,
@@ -58,7 +57,11 @@ export function MoviesTable(props: { data: MovieData }) {
             updateFilm
         }
     });
-
+createEffect(() => {
+    const sorting = table.atoms.sorting.get();
+    console.log(sorting.map(s => s.id))
+    setMovieGridSort(sorting as SortCriterion[])
+})
     const { contextMenu, setContextMenu } = useMoviesContextMenu()
     
     return (

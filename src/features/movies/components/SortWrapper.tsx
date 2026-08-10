@@ -37,28 +37,28 @@ type P2 = {
 function Sort(props: P2) {
 
     const handleClick = (e: MouseEvent) => {
-        const existingSort = movieGridSort().find(x => x.key == props.key)
+        const existingSort = movieGridSort().find(x => x.id == props.key)
         if (!existingSort) {
-            const sortObj: SortCriterion = { direction: "asc", key: props.key }
+            const sortObj: SortCriterion = { desc: false, id: props.key }
             if (e.shiftKey) {
                 return setMovieGridSort(prev => [...prev, sortObj])
             }
             return setMovieGridSort([sortObj])
         }
-        if (existingSort.direction == "asc") {
-            const sortObj: SortCriterion = { direction: "desc", key: props.key }
+        if (existingSort.desc === false) {
+            const sortObj: SortCriterion = { desc: true, id: props.key }
             if (e.shiftKey) {
-                return setMovieGridSort(prev => [...prev.filter(x => x.key != props.key), sortObj])
+                return setMovieGridSort(prev => [...prev.filter(x => x.id != props.key), sortObj])
             }
             return setMovieGridSort([sortObj])
         }
-        return setMovieGridSort(prev => prev.filter(s => s.key != props.key))
+        return setMovieGridSort(prev => prev.filter(s => s.id != props.key))
     }
     return (
         <div class={styles.sortable} onClick={handleClick}>
-            <SortIcon sortable direction={movieGridSort().find(x => x.key === props.key)?.direction || false} />
+            <SortIcon sortable desc={movieGridSort().find(x => x.id === props.key)?.desc} />
             <label> {titleCase(props.key)} </label>
-            <span> {(movieGridSort().findIndex(x => x.key == props.key) + 1) || null} </span>
+            <span> {(movieGridSort().findIndex(x => x.id == props.key) + 1) || null} </span>
         </div>
     )
 }

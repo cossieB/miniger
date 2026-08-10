@@ -122,7 +122,7 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.accessor(row => row.metadata?.format.bit_rate ?? null, {
         header: "Bit Rate",
-        id: "bitrate",
+        id: "bit_rate",
         size: 100,
         cell: props => {
             const size = props.getValue()
@@ -142,6 +142,7 @@ export const columns = columnHelper.columns([
     columnHelper.accessor(row => row.metadata?.streams?.find(x => x.codec_type == 'video')?.codec_name ?? null, {
         header: "Format",
         id: "format",
+        enableSorting: false,
         size: 100,
         cell: props => <props.cell.LockedCell style={{"text-align": "center"}}/>
     }),
