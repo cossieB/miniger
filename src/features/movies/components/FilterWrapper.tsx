@@ -1,25 +1,17 @@
 import { For } from "solid-js";
-import { useMovieGridContext } from "../hooks/useMovieGridContext"
 import styles from "./MovieGrid.module.css"
-import { appliedFilters, setAppliedFilters } from "../contexts/MovieGridContext";
 import type { FacetResults, FilterState } from "../utils/faceting";
 import titleCase from "~/lib/titleCase";
+import { appliedFilters, setAppliedFilters } from "../contexts/MovieDataContext";
+import { useMovieDataContext } from "../hooks/useMovieDataContext";
 
 export function FilterWrapper() {
     return (
         <>
-            <Facet
-                key="actors"
-            />
-            <Facet
-                key="tags"
-            />
-            <Facet
-                key="studios"
-            />
-            <Facet
-                key="videoCodecs"
-            />
+            <Facet key="actors" />
+            <Facet key="tags" />
+            <Facet key="studios" />
+            <Facet key="videoCodecs" />
         </>
     )
 }
@@ -30,7 +22,7 @@ type Props<T extends keyof FacetResults> = {
 }
 
 function Facet<T extends keyof FacetResults>(props: Props<T>) {
-    const { facets } = useMovieGridContext();
+    const { facets } = useMovieDataContext();
     const filterKey: keyof FilterState = props.key == "actors" ? "actorIds" : props.key == "studios" ? "studioIds" : props.key
     return (
         <div class={`${styles.facet} scrollable`}>

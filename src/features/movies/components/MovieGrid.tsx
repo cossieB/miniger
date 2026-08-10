@@ -11,16 +11,14 @@ import { state } from '~/state';
 import MoviesContextMenu from './MoviesContextMenu';
 import styles from "./MovieGrid.module.css"
 import { Nothing } from '~/components/Nothing';
-import { SortWrapper } from './SortWrapper';
-import { FilterWrapper } from './FilterWrapper';
-import { Portal } from 'solid-js/web';
+import { useMovieDataContext } from '../hooks/useMovieDataContext';
 
 const dir = await appDataDir()
 
 export function MovieGrid() {
     const { addThumbnail, cacheBuster } = useGetThumbnails()
-    const { setParentRef, rowVirtualizer, selections, data, contextMenu } = useMovieGridContext()
-
+    const { setParentRef, rowVirtualizer, selections, contextMenu } = useMovieGridContext()
+    const {data} = useMovieDataContext()
     return (
         <div
             ref={elem => {
@@ -76,19 +74,6 @@ export function MovieGrid() {
                     getSelectedFilms={() => Array.from(selections).map(i => data()[i])}
                 />
             </Show>
-            <Portal>
-                <div
-                    popover
-                    id="movie-grid-sort"
-                    class={`${styles.filters} menuPopoverAnimation`}
-                    style={{
-                        "position-anchor": "--movie-grid-sort-btn"
-                    }}
-                >
-                    <SortWrapper />
-                    <FilterWrapper />
-                </div>
-            </Portal>
         </div>
     )
 }
@@ -104,7 +89,8 @@ type P = {
 
 function Row(props: P) {
     const navigate = useNavigate()
-    const { columns, data, setContextMenu, selections } = useMovieGridContext()
+    const { columns, setContextMenu, selections } = useMovieGridContext()
+    const {data} = useMovieDataContext()
     const startIdx = createMemo(() => props.virtualRow.index * columns());
     const rowItems = createMemo(() => (data().slice(startIdx(), startIdx() + columns())));
     const j = (i: number) => props.virtualRow.index * columns() + i

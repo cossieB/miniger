@@ -3,13 +3,13 @@ import styles from "./MovieGrid.module.css"
 import { SortIcon } from '~/components/tables/SortIcon';
 import type { SortCriterion, SortKey } from '../utils/sort';
 import titleCase from '~/lib/titleCase';
-import { movieGridSort, setMovieGridSort } from '../contexts/MovieGridContext';
-import { useMovieGridContext } from '../hooks/useMovieGridContext';
+import { useMovieDataContext } from '../hooks/useMovieDataContext';
+import { movieGridSort, setMovieGridSort } from '../contexts/MovieDataContext';
 
 const keys = ['title', 'releaseDate', 'path', 'studioName', 'dateAdded', 'duration', 'size', 'bit_rate'] as SortKey[]
 
 export function SortWrapper() {
-    const { search, setSearch } = useMovieGridContext()
+    const { search, setSearch } = useMovieDataContext()
     return (
         <div
             class={`${styles.sortWrapper}`}

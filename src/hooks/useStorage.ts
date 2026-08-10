@@ -2,7 +2,6 @@ import { useNavigate } from "@solidjs/router"
 import { readTextFile, BaseDirectory } from "@tauri-apps/plugin-fs"
 import { createResource } from "solid-js"
 import { SessionSchema } from "~/utils/session"
-import { setMovieGridSort } from "~/features/movies/contexts/MovieGridContext"
 import { useAddFiles } from "~/features/movies/hooks/useAddFiles"
 import { readDirectories } from "~/features/movies/utils/readDirectories"
 import { setActiveView } from "~/layouts/main-window/top-bar/ViewToggle"
@@ -11,6 +10,7 @@ import { filterMap } from "~/lib/filterMap"
 import { sleep } from "~/lib/sleep"
 import { initBackup } from "~/repositories/backupDb"
 import { state } from "~/state"
+import { setMovieGridSort } from "~/features/movies/contexts/MovieDataContext"
 
 export async function readSession() {
     const navigate = useNavigate()

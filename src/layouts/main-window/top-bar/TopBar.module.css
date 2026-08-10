@@ -27,5 +27,5 @@
         &:popover-open {
             display: flex;
         }
-    }
+    }    
 }

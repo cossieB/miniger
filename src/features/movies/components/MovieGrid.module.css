@@ -61,9 +61,8 @@
             white-space: nowrap;
             align-content: center;
         }
-    }
-
-    .filters {
+    }  
+.filters {
         position: absolute;
         background-color: var(--char-700);
         margin-top: 0.5rem;
@@ -166,6 +165,5 @@
                 grid-column: span 3;
             }
         }
-    }
-
+    }    
 }

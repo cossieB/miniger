@@ -12,15 +12,17 @@ import MoviesContextMenu from "~/features/movies/components/MoviesContextMenu";
 import { TableBody } from "~/components/tables/TableBody";
 import { TableHeader } from "~/components/tables/TableHeader";
 import { editFilm } from "../../api";
-import { movieGridSort, setMovieGridSort } from "../../contexts/MovieGridContext";
 import type { SortCriterion } from "../../utils/sort";
+import { movieGridSort, setMovieGridSort } from "../../contexts/MovieDataContext";
+import { useMovieDataContext } from "../../hooks/useMovieDataContext";
 
-export function MoviesTable(props: { data: MovieData }) {
+export function MoviesTable() {
+    const {data} = useMovieDataContext()
     let ref!: HTMLDivElement
     const updateFilm = useAction(editFilm)
     const virtualizer = createVirtualizer({
         get count() {
-            return props.data.length
+            return data().length
         },
         estimateSize: () => TABLE_CELL_HEIGHT,
         getScrollElement: () => ref,
@@ -31,7 +33,7 @@ export function MoviesTable(props: { data: MovieData }) {
     const table = createAppTable<MovieData[number]>({
         key: "movies",
         get data() {
-            return props.data;
+            return data();
         },
         getRowId: row => String(row.filmId),
         columns,
@@ -39,16 +41,18 @@ export function MoviesTable(props: { data: MovieData }) {
             get rowSelection() {
                 return rowSelection()
             },
+            get sorting() {
+                return movieGridSort()
+            }
         },
-        initialState: {
-            sorting: movieGridSort()
-        },
+
         enableSorting: true,
         defaultColumn: {
             size: 250,
             minSize: 25,
             enableResizing: true
         },
+        onSortingChange: setMovieGridSort,
         onRowSelectionChange: setRowSelection,
         columnResizeMode: "onChange",
         columnResizeDirection: "ltr",
@@ -59,7 +63,6 @@ export function MoviesTable(props: { data: MovieData }) {
     });
 createEffect(() => {
     const sorting = table.atoms.sorting.get();
-    console.log(sorting.map(s => s.id))
     setMovieGridSort(sorting as SortCriterion[])
 })
     const { contextMenu, setContextMenu } = useMoviesContextMenu()
@@ -96,7 +99,7 @@ createEffect(() => {
                 <MoviesContextMenu
                     contextMenu={contextMenu}
                     isMainPanel
-                    getSelectedFilms={() => table.getSelectedRowIds().map(rowId => props.data.find(film => film.filmId === Number(rowId))!).filter(Boolean)}
+                    getSelectedFilms={() => table.getSelectedRowIds().map(rowId => data().find(film => film.filmId === Number(rowId))!).filter(Boolean)}
                 />
             </Show>
         </div>

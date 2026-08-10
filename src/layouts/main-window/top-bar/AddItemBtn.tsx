@@ -1,5 +1,5 @@
 import { CirclePlusIcon } from "lucide-solid";
-import styles from "./AddItemBtn.module.css"
+import styles from "./TopBar.module.css"
 import { state } from "~/state";
 import { Portal } from "solid-js/web";
 

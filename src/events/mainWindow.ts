@@ -9,8 +9,8 @@ import { updateMetadata } from "~/features/movies/utils/updateMetadata";
 import { getFilmsWithoutMetadata } from "~/repositories/filmsRepository";
 import { getFilms } from "~/features/movies";
 import { activeView } from "~/layouts/main-window/top-bar/ViewToggle";
-import { movieGridSort } from "~/features/movies/contexts/MovieGridContext";
 import type { SessionJSON } from "~/utils/session";
+import { movieGridSort } from "~/features/movies/contexts/MovieDataContext";
 
 getAllWindows().then(windows => {
     const mainWindow = windows.find(w => w.label === "main")!
