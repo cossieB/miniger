@@ -21,13 +21,15 @@ pub fn create_window(app: &AppHandle, label: &str, url: &str, options: super::Wi
     match window {
         Ok(window) => {
             let main_window = app.get_webview_window("main").unwrap();
-            let _ = main_window.set_enabled(false);
+            if options.disable_main {
+                let _ = main_window.set_enabled(false);
+            };
             window.listen("tauri://close-requested", move |_| {
                 let _ = main_window.set_enabled(true);
             });
         }
         Err(error) => match error {
-            | tauri::Error::WindowLabelAlreadyExists(_)
+            tauri::Error::WindowLabelAlreadyExists(_)
             | tauri::Error::WebviewLabelAlreadyExists(_) => {
                 let existing_window = app.get_webview_window(label);
                 if let Some(existing) = existing_window {

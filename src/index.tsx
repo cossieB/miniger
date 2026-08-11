@@ -24,6 +24,7 @@ import { DragDrop } from "./layouts/secondary-windows/DragDrop";
 import { TagsRoute } from "./routes/Tags";
 import { getTags } from "./features/tags/api";
 import { Settings } from "./layouts/secondary-windows/Settings";
+import { DownloadFfmpeg } from "./layouts/secondary-windows/DownloadFfmpeg";
 
 render(() => (
     <Router  >
@@ -90,6 +91,7 @@ render(() => (
         <Route path="/splash" component={Splash} />
         <Route path="/thumbs" component={Thumbnails} />
         <Route path="/transcode" component={Transcode} />
+        <Route path="/ffmpeg_version" component={DownloadFfmpeg} />
 
         {/* Redirects */}
         <Route path="/movies/actors" component={() => <Navigate href="/actors" />} />

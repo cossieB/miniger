@@ -36,7 +36,7 @@ fn read_recursive(path: &Path, files: &mut Vec<FileInfo>, depth: u8) -> Result<(
 
             let ext_str = ext.to_string_lossy().to_lowercase();
             if EXTENSIONS.contains(&ext_str.as_str()) {
-                let file_name = entry.file_name().to_string_lossy().into_owned();
+                let file_name = entry.path().file_stem().unwrap_or_default().to_string_lossy().into_owned();
                 let full_path = entry_path.to_string_lossy().into_owned();
                 files.push(FileInfo::new(file_name, full_path));
             }

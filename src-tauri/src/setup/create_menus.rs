@@ -2,6 +2,7 @@ use tauri::{
     App, Manager,
     menu::{MenuBuilder, SubmenuBuilder},
 };
+use ffmpeg_sidecar::command::ffmpeg_is_installed;
 
 pub fn create_menus(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     let app_submenu = SubmenuBuilder::new(app, "App")
@@ -18,22 +19,18 @@ pub fn create_menus(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
         .text("data_dir", "Show data folder")
         .build()?;
 
-    let ffmpeg_submenu = SubmenuBuilder::new(app, "FFMpeg")
-        .text("thumbs", "Generate Thumbnails")
-        .text("metadata", "Get Metadata")
-        .text("transcode", "Convert Videos")
-        .enabled({
-            let mut cmd = std::process::Command::new("ffmpeg");
+    let builder = SubmenuBuilder::new(app, "FFMPEG");
 
-            #[cfg(windows)]
-            {
-                use std::os::windows::process::CommandExt;
-                cmd.creation_flags(0x08000000); // CREATE_NO_WINDOW
-            }
-
-            cmd.output().is_ok()
-        })
-        .build()?;
+    let ffmpeg_submenu = if ffmpeg_is_installed() {
+        builder
+            .text("thumbs", "Generate Thumbnails")
+            .text("metadata", "Get Metadata")
+            .text("transcode", "Convert Videos")
+            .text("ffmpeg_version", "Version")
+            .build()?
+    } else {
+        builder.text("ffmpeg_version", "Download FFMPEG").build()?
+    };
 
     let menu = MenuBuilder::new(app)
         .items(&[&app_submenu, &tools_submenu, &ffmpeg_submenu])

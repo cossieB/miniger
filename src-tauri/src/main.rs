@@ -40,6 +40,8 @@ fn main() {
             commands::get_metadata,
             commands::recycle,
             commands::transcode,
+            commands::ffmpeg_details,
+            commands::download_ffmpeg_if_missing          
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

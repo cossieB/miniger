@@ -1,7 +1,6 @@
 use tauri::menu::MenuEvent;
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_opener::open_path;
-
 use crate::window;
 
 pub fn handle_menu_event(app: &AppHandle, event: MenuEvent) {
@@ -59,7 +58,7 @@ pub fn handle_menu_event(app: &AppHandle, event: MenuEvent) {
                     drag_drop_enabled: true,
                     ..Default::default()
                 },
-            );            
+            );
         }
         "thumbs" => {
             window::create_window(
@@ -71,13 +70,27 @@ pub fn handle_menu_event(app: &AppHandle, event: MenuEvent) {
                     title: "Thumbnails".into(),
                     ..Default::default()
                 },
-            );            
+            );
         }
         "data_dir" => {
             let dir = app.path().app_data_dir();
             if let Ok(dir) = dir {
                 let _ = open_path(dir, None::<&str>);
             }
+        }
+        "ffmpeg_version" => {
+            window::create_window(
+                &app,
+                "ffmpeg_version",
+                "/ffmpeg_version",
+                window::WindowSettings {    
+                    title: "FFMPEG Download".into(),
+                    height: 300_f64,
+                    width: 600_f64,
+                    disable_main: false,
+                    ..Default::default()
+                },
+            );
         }
         _ => {
             let _ = app.emit_to("main", &event.id.as_ref(), 1);

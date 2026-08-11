@@ -2,9 +2,11 @@ use serde::{Deserialize, Serialize};
 
 mod metadata;
 mod thumbnails;
+mod setup;
 
 pub use metadata::*;
 pub use thumbnails::*;
+pub use setup::*;
 use tokio::sync::Mutex;
 
 #[derive(Serialize, Deserialize)]

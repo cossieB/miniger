@@ -7,7 +7,8 @@ pub struct WindowSettings {
     pub always_on_top: bool,
     pub maximizable: bool,
     pub minimizable: bool,
-    pub center: bool
+    pub center: bool,
+    pub disable_main: bool
 }
 impl Default for WindowSettings {
     fn default() -> Self {
@@ -20,7 +21,8 @@ impl Default for WindowSettings {
             always_on_top: false,
             maximizable: true,
             minimizable: true,
-            center: true
+            center: true,
+            disable_main: true
         }
     }
 }
