@@ -193,7 +193,7 @@
         h1 {
             font-size: large;
         }
-        >div {
+        >div[role="progressbar"] {
             --br: 0.5rem;
             height: 1rem;
             width: 100%;

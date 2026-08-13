@@ -84,7 +84,7 @@ pub fn handle_menu_event(app: &AppHandle, event: MenuEvent) {
                 "ffmpeg_version",
                 "/ffmpeg_version",
                 window::WindowSettings {    
-                    title: "FFMPEG Download".into(),
+                    title: "FFMPEG".into(),
                     height: 300_f64,
                     width: 600_f64,
                     disable_main: false,

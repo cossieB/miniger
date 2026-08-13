@@ -13,6 +13,11 @@ pub async fn download_ffmpeg_if_missing(app_handle: tauri::AppHandle) -> Result<
     auto_download_with_progress(|event| match event {
         FfmpegDownloadProgressEvent::Starting => {
             let _ = app_handle.emit_to("main","set-status", "Downloading Ffmpeg...");
+            let _ = app_handle.emit("ffmpeg_progress", Status{
+                downloaded: None,
+                is_downloading: Some(true),
+                total: None
+            });
         }
         FfmpegDownloadProgressEvent::Downloading {
             total_bytes,
@@ -20,9 +25,10 @@ pub async fn download_ffmpeg_if_missing(app_handle: tauri::AppHandle) -> Result<
         } => {
             let _ = app_handle.emit(
                 "ffmpeg_progress",
-                DownloadProgress {
-                    downloaded: downloaded_bytes,
-                    total: total_bytes,
+                Status {
+                    downloaded: Some(downloaded_bytes),
+                    total: Some(total_bytes),
+                    is_downloading: None
                 },
             );
         }
@@ -34,25 +40,22 @@ pub async fn download_ffmpeg_if_missing(app_handle: tauri::AppHandle) -> Result<
         }
     })
     .map_err(|e| AppError::new(format!("Error downloading ffmpeg: {:?}", e)))?;
-    let _ = app_handle.emit(
-        "set-status",
-        "✔️ Ffmpeg succesfully installed. Please restart the app for the changes to be reflected.",
-    );
     Ok(())
 }
 
 #[tauri::command]
 pub fn ffmpeg_details() -> FfmpegVersion {
     FfmpegVersion {
-        ffprobe: ffprobe_version().unwrap_or("Unable to determine ffprobe version".into()),
-        ffmpeg: ffmpeg_version().unwrap_or("Unable to determine ffmpeg version".into()),
+        ffprobe: ffprobe_version().unwrap_or_default(),
+        ffmpeg: ffmpeg_version().unwrap_or_default(),
     }
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-struct DownloadProgress {
-    downloaded: u64,
-    total: u64,
+struct Status {
+    downloaded: Option<u64>,
+    total: Option<u64>,
+    is_downloading: Option<bool>
 }
 
 #[derive(Serialize, Deserialize)]
