@@ -1,9 +1,8 @@
-use std::{process::Command, sync::Arc};
-
+use crate::{AppError, logger::CrashLogger};
+use ffmpeg_sidecar::command::{FfmpegCommand, ffmpeg_is_installed};
+use std::{path::PathBuf, sync::Arc};
 use tauri::Manager;
 use tokio::task::JoinSet;
-
-use crate::{AppError, logger::CrashLogger};
 
 #[tauri::command]
 pub async fn generate_thumbnails(
@@ -12,20 +11,11 @@ pub async fn generate_thumbnails(
     lock: tauri::State<'_, super::ProcessingLock>,
 ) -> Result<(), AppError> {
     let _guard = lock.0.lock().await;
-    let mut cmd = Command::new("ffmpeg");
 
-    // Apply the flag only on Windows (0x08000000 is CREATE_NO_WINDOW)
-    #[cfg(windows)]
-    {
-        use std::os::windows::process::CommandExt;
-        cmd.creation_flags(0x08000000);
-    }
-
-    let ffmpeg = cmd.arg("-version").output();
-
-    if ffmpeg.is_err() {
+    if !ffmpeg_is_installed() {
         return Err(AppError::new("FFMPEG is not installed".to_string()));
     }
+
     let dir = Arc::new(
         app_handle
             .path()
@@ -41,13 +31,11 @@ pub async fn generate_thumbnails(
     let mut videos_iter = videos.into_iter();
     let mut set = JoinSet::new();
 
-    // seed initial batch
     for video in videos_iter.by_ref().take(concurrency) {
         let dir = Arc::clone(&dir);
         set.spawn(generate_one(dir, video));
     }
 
-    // as each finishes, pull in the next one
     while let Some(_) = set.join_next().await {
         if let Some(video) = videos_iter.next() {
             let dir = Arc::clone(&dir);
@@ -57,14 +45,14 @@ pub async fn generate_thumbnails(
     Ok(())
 }
 
-async fn generate_one(dir: Arc<std::path::PathBuf>, video: super::F) {
+async fn generate_one(dir: Arc<PathBuf>, video: super::F) {
     let out_path = dir.join(format!("{}.webp", video.filmId));
     if out_path.exists() {
         return;
     }
 
     for ts in ["00:02:00", "00:00:05", "00:00:00"] {
-        match try_extract_frame(&video.path, &out_path, ts).await {
+        match try_extract_frame(video.path.clone(), out_path.clone(), ts).await {
             Ok(true) => return, // success, thumbnail written
             Ok(false) => {
                 eprintln!(
@@ -87,37 +75,38 @@ async fn generate_one(dir: Arc<std::path::PathBuf>, video: super::F) {
     );
 }
 
-/// Attempts to extract a single frame at `timestamp`.
-/// Returns Ok(true) on success, Ok(false) if ffmpeg ran but produced no file,
-/// Err if the process itself failed to spawn/run.
 async fn try_extract_frame(
-    src: &str,
-    out_path: &std::path::Path,
-    timestamp: &str,
+    src: String,
+    out_path: PathBuf,
+    timestamp: &'static str,
 ) -> std::io::Result<bool> {
-    let mut cmd = tokio::process::Command::new("ffmpeg");
-    #[cfg(windows)]
-    {
-        use std::os::windows::process::CommandExt;
-        cmd.as_std_mut().creation_flags(0x08000000);
-    }
+    tokio::task::spawn_blocking(move || -> std::io::Result<bool> {
+        let mut cmd = FfmpegCommand::new();
 
-    let output = cmd
-        .args([
-            "-y",
-            "-ss",
-            timestamp,
-            "-i",
-            src,
-            "-an",
-            "-vf",
-            "scale=1280:-1",
-            "-vframes",
-            "1",
-        ])
-        .arg(out_path)
-        .output()
-        .await?;
+        cmd.hide_banner()
+            .create_no_window()
+            .overwrite() // -y; also stops ffmpeg hanging on a stdin overwrite prompt
+            .args(["-ss", timestamp])
+            .input(&src)
+            .args(["-an", "-vf", "scale=1280:-1", "-vframes", "1"])
+            .output(out_path.to_string_lossy());
 
-    Ok(output.status.success() && out_path.exists())
+        let mut child = cmd
+            .spawn()
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))?;
+
+        child
+            .iter()
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))?
+            .for_each(|_event| {});
+
+        Ok(out_path.exists())
+    })
+    .await
+    .unwrap_or_else(|e| {
+        Err(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            e.to_string(),
+        ))
+    })
 }

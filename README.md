@@ -3,7 +3,7 @@
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)
 ![Built with Tauri](https://img.shields.io/badge/built%20with-Tauri%20v2-24C8DB)
 ![Rust](https://img.shields.io/badge/rust-%3E%3D1.82-orange)
-![License](https://img.shields.io/badge/license-MIT-lightgrey)
+![License](https://img.shields.io/badge/license-GPL--3.0-blue)
 
 A multi-platform desktop app for managing and playing your personal movie collection.
 
@@ -13,6 +13,7 @@ Miniger indexes the movies you already own, enriches them with metadata and thum
 
 - **Fast library browsing** — find movies by actor, genre, or series
 - **Automatic metadata & thumbnails** — movies are tagged and given thumbnails automatically on import
+- **In-app FFmpeg downloader** — easily download and set up FFmpeg directly within the app if you don't already have it
 - **Playlists** — build playlists from your collection and export them as `.m3u`, `.mpcpl`, `.pls`, or `.asx`
 - **Playlist converter** — convert existing playlists between any of the supported formats
 - **Simple video conversion** — transcode files using FFmpeg directly from the app
@@ -38,16 +39,16 @@ Miniger indexes the movies you already own, enriches them with metadata and thum
 | Backend logic | Rust |
 | Database | SQLite |
 | Query builder | [Kysely](https://kysely.dev/) |
-| Media processing | FFmpeg (external, see below) |
+| Media processing | FFmpeg |
 
 ## FFmpeg Requirement
 
-Miniger currently **does not bundle FFmpeg**. To use thumbnail generation, metadata extraction, and video conversion features, you'll need FFmpeg (and FFprobe) installed separately and available on your system `PATH`.
+Miniger relies on FFmpeg and FFprobe for thumbnail generation, metadata extraction, and video conversion.
 
-- [Download FFmpeg](https://ffmpeg.org/download.html)
-- Verify it's on your `PATH` by running `ffmpeg -version` and `ffprobe -version` in a terminal
+You can set up FFmpeg in one of two ways:
 
-> **Planned:** Future releases aim to either bundle FFmpeg with the app or offer an in-app option to download it automatically, removing this manual step.
+1. **In-App Downloader (Recommended):** Click the **Download FFmpeg** button in Miniger's settings/UI to fetch and configure the required binaries automatically.
+2. **System PATH:** Alternatively, install FFmpeg manually from [ffmpeg.org](https://ffmpeg.org/download.html) and ensure `ffmpeg` and `ffprobe` are available on your system `PATH`.
 
 ## Installation
 
@@ -77,13 +78,13 @@ Recommended:
 - [Node.js](https://nodejs.org/) >= 20 (>= 24 recommended)
 - [Rust](https://www.rust-lang.org/tools/install) >= 1.82 (>= 1.97 recommended)
 - [Tauri v2 prerequisites](https://v2.tauri.app/start/prerequisites/) for your platform
-- FFmpeg + FFprobe available on `PATH` (see above)
+- FFmpeg + FFprobe on `PATH` *(optional if using the in-app download feature)*
 
 ### Setup
 
 ```bash
 # clone the repo
-git clone https://github.com/cossieB/miniger.git
+git clone [https://github.com/cossieB/miniger.git](https://github.com/cossieB/miniger.git)
 cd miniger
 
 # install dependencies
@@ -113,7 +114,7 @@ Miniger is designed to run entirely offline against your local collection. Any f
 
 ## License
 
-_Add your license here (e.g. MIT, GPL-3.0)._
+Distributed under the GNU General Public License v3.0 (GPL-3.0). See [`LICENSE`](LICENSE) for details.
 
 ## Contributing
 

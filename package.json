@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "",
   "type": "module",
+  "private": true,
   "scripts": {
     "start": "vite",
     "dev": "vite",
@@ -11,7 +12,7 @@
     "tauri": "tauri",
     "test": "vitest"
   },
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "dependencies": {
     "@libsql/client": "^0.17.0",
     "@solid-primitives/set": "^0.7.1",

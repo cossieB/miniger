@@ -1,3 +1,5 @@
+use crate::AppError;
+use ffmpeg_sidecar::ffprobe::{ffprobe_is_installed, ffprobe_path};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -6,8 +8,6 @@ use tauri_plugin_log::log;
 use tokio::process::Command;
 use tokio::task::JoinSet;
 
-use crate::AppError;
-
 #[tauri::command]
 pub async fn get_metadata(
     app: tauri::AppHandle,
@@ -15,15 +15,8 @@ pub async fn get_metadata(
     lock: tauri::State<'_, super::ProcessingLock>,
 ) -> Result<Vec<Response>, AppError> {
     let _guard = lock.0.lock().await;
-    let mut cmd = Command::new("ffprobe");
-    #[cfg(windows)]
-    {
-        use std::os::windows::process::CommandExt;
-        cmd.as_std_mut().creation_flags(0x08000000);
-    }
-    let ffprobe = cmd.arg("-version").output().await;
 
-    if ffprobe.is_err() {
+    if !ffprobe_is_installed() {
         return Err(AppError::new("ffprobe is not installed".to_string()));
     }
 
@@ -67,7 +60,8 @@ pub async fn get_metadata(
 }
 
 async fn probe_one(video: super::F, completed: Arc<AtomicUsize>) -> Option<Response> {
-    let mut cmd = Command::new("ffprobe");
+    let ffprobe_path = ffprobe_path();
+    let mut cmd = Command::new(ffprobe_path);
 
     #[cfg(windows)]
     {
@@ -76,8 +70,10 @@ async fn probe_one(video: super::F, completed: Arc<AtomicUsize>) -> Option<Respo
     }
     let result = cmd
         .args([
-            "-v", "quiet",
-            "-print_format", "json",
+            "-v",
+            "quiet",
+            "-print_format",
+            "json",
             "-show_format",
             "-show_streams",
             &video.path,

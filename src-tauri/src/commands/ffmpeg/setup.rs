@@ -14,9 +14,9 @@ pub async fn download_ffmpeg_if_missing(app_handle: tauri::AppHandle) -> Result<
         FfmpegDownloadProgressEvent::Starting => {
             let _ = app_handle.emit_to("main","set-status", "Downloading Ffmpeg...");
             let _ = app_handle.emit("ffmpeg_progress", Status{
-                downloaded: None,
-                is_downloading: Some(true),
-                total: None
+                downloaded: 0,
+                is_downloading: true,
+                total: 0
             });
         }
         FfmpegDownloadProgressEvent::Downloading {
@@ -26,9 +26,9 @@ pub async fn download_ffmpeg_if_missing(app_handle: tauri::AppHandle) -> Result<
             let _ = app_handle.emit(
                 "ffmpeg_progress",
                 Status {
-                    downloaded: Some(downloaded_bytes),
-                    total: Some(total_bytes),
-                    is_downloading: None
+                    downloaded: downloaded_bytes,
+                    total: total_bytes,
+                    is_downloading: true
                 },
             );
         }
@@ -52,10 +52,11 @@ pub fn ffmpeg_details() -> FfmpegVersion {
 }
 
 #[derive(Serialize, Deserialize, Clone)]
+#[serde(rename_all="camelCase")]
 struct Status {
-    downloaded: Option<u64>,
-    total: Option<u64>,
-    is_downloading: Option<bool>
+    downloaded: u64,
+    total: u64,
+    is_downloading: bool
 }
 
 #[derive(Serialize, Deserialize)]
