@@ -3,6 +3,7 @@ import type { TActor } from "~/datatypes";
 import { useAction } from "@solidjs/router";
 import { HoldClickBtn } from "~/components/HoldClickBtn";
 import { addActor } from "../api";
+import { CirclePlusIcon } from "lucide-solid";
 
 type Props = {
     input: Accessor<string>;
@@ -15,7 +16,7 @@ export function AddActorToDatabaseBtn(props: Props) {
     const addActorAction = useAction(addActor)
 
     const newActor = async () => {
-        const {actorId} = await addActorAction(props.input().trim());
+        const { actorId } = await addActorAction(props.input().trim());
         const actor: TActor = {
             actorId: actorId,
             dob: null,
@@ -31,8 +32,12 @@ export function AddActorToDatabaseBtn(props: Props) {
         <Show when={props.input().length > 0}>
             <HoldClickBtn
                 action={newActor}
-                clearInput={props.clearInput}
-                input={props.input}
+                label={
+                    <>
+                        <CirclePlusIcon />&nbsp;
+                        Hold to add<span>&nbsp;{props.input()}&nbsp;</span>to the database
+                    </>
+                }
             />
         </Show>
     );

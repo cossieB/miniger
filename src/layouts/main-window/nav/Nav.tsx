@@ -2,7 +2,7 @@ import { state } from "~/state"
 import { ParentNode } from "./ParentNode"
 import { LinkNode } from "./LinkNode"
 import { enc } from "~/utils/encodeDecode"
-import { CameraIcon, DramaIcon, FileQuestionMarkIcon, FilmIcon, SearchIcon, TagIcon } from "lucide-solid"
+import { CameraIcon, DramaIcon, ExternalLinkIcon, FileQuestionMarkIcon, FilmIcon, SearchIcon, TagIcon } from "lucide-solid"
 import { createAsync } from "@solidjs/router"
 import { For, Suspense } from "solid-js"
 import styles from "~/layouts/main-window/MainWindow.module.css"
@@ -52,6 +52,7 @@ export function Nav() {
                 <LinkNode label="Actors" href="/actors" icon={<DramaIcon />} />
                 <LinkNode label="Studios" href="/studios" icon={<CameraIcon />} />
                 <LinkNode label="Search" href="/search" icon={<SearchIcon />} />
+                <LinkNode label="TMDB" href="/tmdb" icon={<ExternalLinkIcon />} />
             </ul>
         </nav>
     )

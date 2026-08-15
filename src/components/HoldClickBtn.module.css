@@ -22,7 +22,15 @@
             background-color: var(--volt-700);
             translate: calc(var(--time)*-1%);
         }
-
+        &[data-type="danger"] {
+            color: var(--char-900);
+            &::after {
+                background-color: var(--danger-300);
+            }
+            &::before {
+                background-color: var(--danger-600);
+            }
+        }
         >span {
             display: flex;
             align-items: center;

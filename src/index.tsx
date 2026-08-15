@@ -25,6 +25,7 @@ import { TagsRoute } from "./routes/Tags";
 import { getTags } from "./features/tags/api";
 import { Settings } from "./layouts/secondary-windows/Settings";
 import { DownloadFfmpeg } from "./layouts/secondary-windows/DownloadFfmpeg";
+import { TMDB } from "./routes/TMDB";
 
 render(() => (
     <Router  >
@@ -84,6 +85,7 @@ render(() => (
             <Route path="/tags" component={TagsRoute} preload={() => getTags()} />
             <Route path="/play" component={VideoPlayer} />
             <Route path="/search" component={Search} />
+            <Route path="/tmdb" component={TMDB} />
         </Route>
         <Route path="/settings" component={Settings} />
         <Route path="/convert" component={Convert} />
