@@ -41,7 +41,10 @@ fn main() {
             commands::recycle,
             commands::transcode,
             commands::ffmpeg_details,
-            commands::download_ffmpeg_if_missing          
+            commands::download_ffmpeg_if_missing,
+            commands::set_password,     
+            commands::get_password,     
+            commands::delete_password,     
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

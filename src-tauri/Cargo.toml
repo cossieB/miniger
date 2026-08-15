@@ -25,3 +25,4 @@ trash = "5.2.5"
 tauri-plugin-log = "2"
 tokio = {version = "1.53.0", features = ["process"] }
 ffmpeg-sidecar = {version = "2.5.2", features = ["download_ffmpeg"] }
+keyring = "4.1.6"

@@ -7,6 +7,7 @@ mod inaccessible;
 mod load_directory;
 mod playlist;
 mod recycle;
+mod password;
 
 pub use clean::*;
 pub use convert::*;
@@ -17,4 +18,4 @@ pub use inaccessible::*;
 pub use load_directory::*;
 pub use playlist::*;
 pub use recycle::*;
-
+pub use password::*;
