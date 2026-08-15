@@ -5,11 +5,13 @@ import type { SortCriterion, SortKey } from '../utils/sort';
 import titleCase from '~/lib/titleCase';
 import { useMovieDataContext } from '../hooks/useMovieDataContext';
 import { movieGridSort, setMovieGridSort } from '../contexts/MovieDataContext';
+import { debounce } from '~/lib/debounce';
 
 const keys = ['title', 'releaseDate', 'path', 'studioName', 'dateAdded', 'duration', 'size', 'bit_rate'] as SortKey[]
 
 export function SortWrapper() {
     const { search, setSearch } = useMovieDataContext()
+    const debouncedSearch = debounce(setSearch)
     return (
         <div
             class={`${styles.sortWrapper}`}
@@ -21,7 +23,7 @@ export function SortWrapper() {
             <input
                 value={search()}
                 onInput={e => {
-                    setSearch(e.currentTarget.value)
+                    debouncedSearch(e.currentTarget.value)
                 }}
                 placeholder='Title Search'
                 type="text"
