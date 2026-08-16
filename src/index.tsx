@@ -25,7 +25,7 @@ import { TagsRoute } from "./routes/Tags";
 import { getTags } from "./features/tags/api";
 import { Settings } from "./layouts/secondary-windows/Settings";
 import { DownloadFfmpeg } from "./layouts/secondary-windows/DownloadFfmpeg";
-import { TMDB } from "./routes/TMDB";
+import { TMDB } from "./layouts/secondary-windows/TMDB";
 
 render(() => (
     <Router  >
@@ -39,13 +39,13 @@ render(() => (
                 />
                 <Route
                     path="/tags/:tag"
-                    component={(props: RouteSectionProps) => <Movies fetcher={() => getFilms({tags: [decodeURI(props.params.tag!)]})} />}
-                    preload={(args) => void getFilms({tags: [decodeURI(args.params.tag!)]})}
+                    component={(props: RouteSectionProps) => <Movies fetcher={() => getFilms({ tags: [decodeURI(props.params.tag!)] })} />}
+                    preload={(args) => void getFilms({ tags: [decodeURI(args.params.tag!)] })}
                 />
                 <Route
                     path="/actors/:actor"
-                    component={(props: RouteSectionProps) => <Movies fetcher={() => getFilms({actorIds: [getId(props.params.actor!, "/movies")]})} />}
-                    preload={(args) => void getFilms({actorIds: [getId(args.params.actor!, "/movies")]})}
+                    component={(props: RouteSectionProps) => <Movies fetcher={() => getFilms({ actorIds: [getId(props.params.actor!, "/movies")] })} />}
+                    preload={(args) => void getFilms({ actorIds: [getId(args.params.actor!, "/movies")] })}
                 />
                 <Route
                     path="/actors/:actor/:costar"
@@ -54,8 +54,8 @@ render(() => (
                 />
                 <Route
                     path="/studios/:studio"
-                    component={(props: RouteSectionProps) => <Movies fetcher={() => getFilms({studioId: getId(props.params.studio!, "/studios")})} />}
-                    preload={args => void getFilms({studioId: getId(args.params.studio!, "/studios")})}
+                    component={(props: RouteSectionProps) => <Movies fetcher={() => getFilms({ studioId: getId(props.params.studio!, "/studios") })} />}
+                    preload={args => void getFilms({ studioId: getId(args.params.studio!, "/studios") })}
                 />
                 <Route
                     path="/inaccessible"
@@ -85,7 +85,6 @@ render(() => (
             <Route path="/tags" component={TagsRoute} preload={() => getTags()} />
             <Route path="/play" component={VideoPlayer} />
             <Route path="/search" component={Search} />
-            <Route path="/tmdb" component={TMDB} />
         </Route>
         <Route path="/settings" component={Settings} />
         <Route path="/convert" component={Convert} />
@@ -94,6 +93,7 @@ render(() => (
         <Route path="/thumbs" component={Thumbnails} />
         <Route path="/transcode" component={Transcode} />
         <Route path="/ffmpeg_version" component={DownloadFfmpeg} />
+        <Route path="/tmdb" component={TMDB} />
 
         {/* Redirects */}
         <Route path="/movies/actors" component={() => <Navigate href="/actors" />} />

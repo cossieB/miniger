@@ -1,7 +1,7 @@
+use crate::window;
 use tauri::menu::MenuEvent;
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_opener::open_path;
-use crate::window;
 
 pub fn handle_menu_event(app: &AppHandle, event: MenuEvent) {
     match event.id().as_ref() {
@@ -83,11 +83,25 @@ pub fn handle_menu_event(app: &AppHandle, event: MenuEvent) {
                 &app,
                 "ffmpeg_version",
                 "/ffmpeg_version",
-                window::WindowSettings {    
+                window::WindowSettings {
                     title: "FFMPEG".into(),
                     height: 300_f64,
                     width: 600_f64,
                     disable_main: false,
+                    ..Default::default()
+                },
+            );
+        }
+        "tmdb" => {
+            window::create_window(
+                &app,
+                "TMDB",
+                "/tmdb",
+                window::WindowSettings {
+                    height: 720_f64,
+                    width: 1280_f64,
+                    resizable: false,
+                    title: "The Movie Database".into(),
                     ..Default::default()
                 },
             );

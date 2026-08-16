@@ -1,8 +1,8 @@
+use ffmpeg_sidecar::command::ffmpeg_is_installed;
 use tauri::{
     App, Manager,
     menu::{MenuBuilder, SubmenuBuilder},
 };
-use ffmpeg_sidecar::command::ffmpeg_is_installed;
 
 pub fn create_menus(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     let app_submenu = SubmenuBuilder::new(app, "App")
@@ -15,6 +15,7 @@ pub fn create_menus(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
         .build()?;
 
     let tools_submenu = SubmenuBuilder::new(app, "Tools")
+        .text("tmdb", "The Movie Database")
         .text("convert_playlist", "Convert Playlist")
         .text("data_dir", "Show data folder")
         .build()?;

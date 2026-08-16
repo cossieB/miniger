@@ -1,9 +1,10 @@
-import { CircleQuestionMarkIcon, CopyIcon } from "lucide-solid"
-import styles from "./pages.module.css"
+import { CircleQuestionMarkIcon, EyeIcon, EyeOffIcon } from "lucide-solid"
+import styles from "./TMDB.module.css"
 import { createSignal, Show, Suspense } from "solid-js"
 import { invoke } from "@tauri-apps/api/core"
 import { action, createAsync, json, query, useAction } from "@solidjs/router"
 import { HoldClickBtn } from "~/components/HoldClickBtn"
+import { Dynamic } from "solid-js/web"
 
 const getApiKey = query(async () => {
     try {
@@ -27,9 +28,11 @@ const deleteKeyAction = action(async () => {
 })
 
 export function TMDB() {
+    let textarea!: HTMLTextAreaElement
     const existing = createAsync(() => getApiKey())
     const saveKey = useAction(saveKeyAction)
-    const deleteKey = useAction(deleteKeyAction)
+    const deleteKey = useAction(deleteKeyAction);
+    const [showKey, setShowKey] = createSignal(false)
     const [key, setKey] = createSignal("")
     const [testResult, setTestResult] = createSignal()
     const [loading, setLoading] = createSignal(false)
@@ -53,12 +56,19 @@ export function TMDB() {
         setLoading(true);
         try {
             await saveKey(key())
+            setKey("")
+            setShowKey(false)
         } catch (error) {
             setTestResult(error)
         }
         finally {
             setLoading(false)
         }
+    }
+
+    const displayedKey = () => {
+        if (showKey()) return existing.latest ?? ""
+        return existing()?.slice(0, existing()!.indexOf(".")).padEnd(existing()!.length - existing()!.indexOf("."), "\u25CF") ?? ""
     }
 
     return (
@@ -72,35 +82,40 @@ export function TMDB() {
                     </label>
                     <div class={styles.textareaWrapper}>
                         <textarea
+                            ref={textarea}
                             onInput={e => setKey(e.currentTarget.value)}
                             placeholder="ey......"
                             oncontextmenu={async () => {
                                 const text = await navigator.clipboard.readText();
                                 setKey(text)
-                            }}
+                            }}                                    
+                            value={key() || displayedKey()}
                         >
-                            {existing.latest?.slice(0, existing.latest.indexOf(".")).padEnd(existing.latest.length - existing.latest.indexOf("."), "*")}
                         </textarea>
-                        <Show when={existing.latest}>
+                        <Show when={existing()}>
                             <button
                                 onClick={() => {
-                                    navigator.clipboard.writeText(existing.latest ?? "")
+                                    setShowKey(prev => !prev)
                                 }}
                                 type="button"
                             >
-                                <CopyIcon />
+                                <Dynamic component={showKey() ? EyeOffIcon : EyeIcon} />
                             </button>
                         </Show>
                     </div>
                     <div class={styles.btns}>
                         <button onClick={handleTest} disabled={!key() || loading()} type="button">Test</button>
                         <button disabled={!key() || loading()} type="submit">Save</button>
-                        <Show when={existing.latest}>
+                        <Show when={existing()}>
                             <HoldClickBtn
                                 type="danger"
                                 label="Delete Key"
                                 action={async () => {
-                                    deleteKey()
+                                    await deleteKey();
+                                    setShowKey(false)
+                                    setKey("")                                    
+                                    setLoading(false)
+                                    setTestResult()
                                 }}
                             />
                         </Show>

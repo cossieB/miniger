@@ -11,7 +11,8 @@ pub fn create_window(app: &AppHandle, label: &str, url: &str, options: super::Wi
         .inner_size(options.width, options.height)
         .always_on_top(options.always_on_top)
         .minimizable(options.minimizable)
-        .maximizable(options.maximizable);
+        .maximizable(options.maximizable)
+        .resizable(options.resizable);
 
     if options.center {
         builder = builder.center();
