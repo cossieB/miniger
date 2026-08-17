@@ -8,5 +8,11 @@ pub fn get_migrations() -> Vec<Migration> {
             sql: include_str!("../migrations/schema.sql"),
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 2,
+            description: "add_tmdb_fields",
+            sql: include_str!("../migrations/tmdb.sql"),
+            kind: MigrationKind::Up
+        }
     ]
 }

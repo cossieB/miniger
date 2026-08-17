@@ -26,3 +26,10 @@ export type FilmDialog = {
         filmId: number
     }
 }
+
+export type TMDBFilmDialog = {
+    type: "tagFilm",
+    data: {
+        filmId: number[]
+    }
+}

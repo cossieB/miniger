@@ -138,7 +138,6 @@ input[type="radio"] {
         transition: background 0.15s ease, border-color 0.15s ease;
 
         &:checked {
-            background: var(--volt-500);
             border-color: var(--volt-500);
         }
 
@@ -146,6 +145,10 @@ input[type="radio"] {
             outline: none;
             box-shadow: 0 0 0 3px var(--volt-tint);
         }
+    }
+
+    input[type="radio"]:checked {
+        background: var(--volt-500);
     }
 
     input[type="checkbox"] {
@@ -289,7 +292,7 @@ textarea {
         border-color: var(--volt-500);
         background: var(--volt-tint);
     }
-    
+
     &.invalid {
         border-color: var(--danger-tint);
         background: var(--danger-600);
@@ -310,6 +313,7 @@ textarea {
         font-size: 0.76rem;
         color: var(--volt-300);
     }
+
     img {
         height: 100%;
     }

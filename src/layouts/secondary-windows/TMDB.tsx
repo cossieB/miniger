@@ -6,7 +6,7 @@ import { action, createAsync, json, query, useAction } from "@solidjs/router"
 import { HoldClickBtn } from "~/components/HoldClickBtn"
 import { Dynamic } from "solid-js/web"
 
-const getApiKey = query(async () => {
+export const getApiKey = query(async () => {
     try {
         return await invoke<string | null>('get_password')
     } catch (error) {
@@ -55,7 +55,7 @@ export function TMDB() {
         setTestResult()
         setLoading(true);
         try {
-            await saveKey(key())
+            await saveKey(key().trim())
             setKey("")
             setShowKey(false)
         } catch (error) {
