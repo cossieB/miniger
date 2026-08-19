@@ -1,0 +1,55 @@
+@layer components {
+    .autotag {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        label {
+            font-size: 0.8rem;
+        }
+        aside {
+            font-size: 0.75rem;
+            color: var(--smoke-300);
+        }
+    }
+    .results {
+        display: grid;
+        grid-template-columns: auto auto auto auto;
+    }
+    .result {
+        display: grid;
+        grid-template-columns: subgrid;
+        grid-column: span 4;
+        height: 7.5rem;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    img {
+        height: 100%;
+        width: 5rem;
+        object-fit: contain;
+    }
+    .detail {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+    }
+    button {
+        display: flex;
+        justify-content: center;
+        cursor: pointer;
+        &:hover {
+            color: var(--volt-500);
+            border-color: var(--volt-fill-hover);
+        }
+    }
+    .inputs {
+        display: flex;
+        gap: 0.25rem;
+        width: 100%;
+        align-items: center;
+        input[type="text"] {
+            flex: 1;
+        }
+    }
+}

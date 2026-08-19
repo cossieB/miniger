@@ -17,6 +17,7 @@ export const filmsQuery = db
         "studio.name as studioName",
         "film.studioId",
         "film.metadata",
+        "film.tmdbId",
         
         // Tags
         eb.selectFrom("filmTag")

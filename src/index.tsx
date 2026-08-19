@@ -26,7 +26,6 @@ import { getTags } from "./features/tags/api";
 import { Settings } from "./layouts/secondary-windows/Settings";
 import { DownloadFfmpeg } from "./layouts/secondary-windows/DownloadFfmpeg";
 import { TMDB } from "./layouts/secondary-windows/TMDB";
-import { SearchMovies } from "./features/tmdb/components/movies";
 
 render(() => (
     <Router  >
@@ -86,9 +85,6 @@ render(() => (
             <Route path="/tags" component={TagsRoute} preload={() => getTags()} />
             <Route path="/play" component={VideoPlayer} />
             <Route path="/search" component={Search} />
-            <Route path="/tmdb">
-                <Route path={"/movies"} component={SearchMovies} />
-            </Route>
         </Route>
         <Route path="/settings" component={Settings} />
         <Route path="/convert" component={Convert} />

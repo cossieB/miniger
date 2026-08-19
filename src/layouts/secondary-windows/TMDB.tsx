@@ -34,8 +34,10 @@ export function TMDB() {
     const deleteKey = useAction(deleteKeyAction);
     const [showKey, setShowKey] = createSignal(false)
     const [key, setKey] = createSignal("")
-    const [testResult, setTestResult] = createSignal()
+    const [testResult, setTestResult] = createSignal<any>()
     const [loading, setLoading] = createSignal(false)
+
+    const isValid = () => testResult()?.success === true
 
     const handleTest = async () => {
         setLoading(true)
@@ -83,7 +85,10 @@ export function TMDB() {
                     <div class={styles.textareaWrapper}>
                         <textarea
                             ref={textarea}
-                            onInput={e => setKey(e.currentTarget.value)}
+                            onInput={e => {
+                                setKey(e.currentTarget.value);
+                                setTestResult()
+                            }}
                             placeholder="ey......"
                             oncontextmenu={async () => {
                                 const text = await navigator.clipboard.readText();
@@ -105,7 +110,9 @@ export function TMDB() {
                     </div>
                     <div class={styles.btns}>
                         <button onClick={handleTest} disabled={!key() || loading()} type="button">Test</button>
-                        <button disabled={!key() || loading()} type="submit">Save</button>
+                        <Show when={isValid()}>
+                            <button disabled={!key() || loading()} type="submit">Save</button>
+                        </Show>
                         <Show when={existing()}>
                             <HoldClickBtn
                                 type="danger"

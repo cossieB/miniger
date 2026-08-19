@@ -169,6 +169,6 @@ export class TMDBClient {
             return [];
         }
 
-        return parsed.data.cast;
+        return parsed.data.cast.filter(x => x.known_for_department?.toLowerCase() === "acting");
     }
 }

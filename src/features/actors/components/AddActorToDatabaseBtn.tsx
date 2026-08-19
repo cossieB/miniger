@@ -24,6 +24,7 @@ export function AddActorToDatabaseBtn(props: Props) {
             image: null,
             name: props.input().trim(),
             nationality: null,
+            tmdbId: null
         };
         props.setRowActors(prev => [...prev, actor]);
     };

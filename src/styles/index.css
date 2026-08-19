@@ -169,16 +169,20 @@
     }
 
     .button {
-        border-radius: 8px;
-        padding: 0.65rem;
-        cursor: pointer;
         background-color: var(--char-800);
-        color: var(--paper-100);
         border: 1px solid var(--char-600);
+        border-radius: 0.5rem;
+        float: inline-end;
+        padding: 0.5rem;
+        margin-right: 0.25rem;
 
         &:hover {
-            border-color: var(--char-600);
             background-color: var(--char-700);
+        }
+
+        &:disabled {
+            background-color: var(--char-600);
+            cursor: not-allowed
         }
     }
 
@@ -201,3 +205,5 @@
         background-color: rgba(0, 0, 0, 0.6);
     }
 }
+
+

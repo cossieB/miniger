@@ -6,7 +6,7 @@ import { addFilesToDatabase, editFilm, deleteFilmsByPaths } from "../api";
 import type { TActor } from "~/datatypes";
 import { createTempPlaylist } from "~/features/movies/utils/createTempPlaylist";
 import { enc } from "~/utils/encodeDecode";
-import { CameraIcon, DramaIcon, FilePlayIcon, FilesIcon, ListVideoIcon, PencilIcon, PlayIcon, ScissorsIcon, TagIcon, Trash2Icon, TrashIcon } from "lucide-solid";
+import { CameraIcon, DramaIcon, FilePlayIcon, FilesIcon, ListVideoIcon, PencilIcon, PlayIcon, ScissorsIcon, SearchCodeIcon, TagIcon, Trash2Icon, TrashIcon } from "lucide-solid";
 import { confirm, open } from "@tauri-apps/plugin-dialog";
 import { rename, writeTextFile } from "@tauri-apps/plugin-fs";
 import { BaseDirectory, sep } from "@tauri-apps/api/path";
@@ -178,6 +178,24 @@ export default function MoviesContextMenu(props: P) {
                     icon={<PencilIcon />}
                 >
                     Edit
+                </ContextMenu.Item>
+                <ContextMenu.Item
+                    icon={<SearchCodeIcon />}
+                    onClick={async () => {
+                        const apiKey = await invoke<string | null>('get_password');
+                        if (!apiKey) {
+                            return await invoke("show_api_key_window")
+                        }
+                        props.contextMenu.close()
+                        state.dialog.openDialog({
+                            type: "tagFilm",
+                            data: {
+                                ...data()!
+                            }
+                        })
+                    }}
+                >
+                    Autotag
                 </ContextMenu.Item>
                 <Show when={actors().length > 0}>
                     <ContextMenu.SubMenu label="Edit Actor" icon={<PencilIcon />}>

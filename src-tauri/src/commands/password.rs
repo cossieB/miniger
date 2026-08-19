@@ -1,7 +1,8 @@
 use keyring::Entry;
+use tauri::menu::MenuEvent;
 use tauri_plugin_log::log::error;
 
-use crate::AppError;
+use crate::{AppError, events};
 
 const SERVICE_NAME: &str = match option_env!("THIS_APP") {
     Some(val) => val,
@@ -54,7 +55,7 @@ pub async fn get_password() -> Result<Option<String>, AppError> {
             let error_message = match e {
                 keyring::Error::NoEntry => {
                     return Ok(None);
-                },
+                }
                 keyring::Error::PlatformFailure(error) => format!("Platform failure: {error}"),
                 keyring::Error::NoStorageAccess(error) => format!("No storage access: {error}"),
                 keyring::Error::BadEncoding(items) => {
@@ -120,4 +121,9 @@ pub async fn delete_password() -> Result<(), AppError> {
     }
 
     Ok(())
+}
+
+#[tauri::command]
+pub async fn show_api_key_window(app: tauri::AppHandle) {
+    events::handle_menu_event(&app, MenuEvent { id: "tmdb".into() });
 }

@@ -16,6 +16,7 @@ export interface Actor {
   image: string | null;
   name: string;
   nationality: string | null;
+  tmdbId: number | null;
 }
 
 export interface ActorFilm {
@@ -26,11 +27,12 @@ export interface ActorFilm {
 export interface Film {
   dateAdded: Generated<string>;
   filmId: Generated<number>;
+  metadata: string | null;
   path: string;
   releaseDate: string | null;
   studioId: number | null;
   title: string;
-  metadata: string | null
+  tmdbId: number | null;
 }
 
 export interface FilmTag {

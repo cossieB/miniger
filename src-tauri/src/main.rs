@@ -45,6 +45,7 @@ fn main() {
             commands::set_password,     
             commands::get_password,     
             commands::delete_password,     
+            commands::show_api_key_window
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

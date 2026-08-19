@@ -10,7 +10,7 @@ export const getActors = query(async () => {
 }, 'actors')
 
 export const addActor = action(async (partialActor: string | Omit<TActor, 'actorId'>, revalidate: string[] = [getActors.key]) => {
-    const actorObj = typeof partialActor === "string" ? { name: partialActor, dob: null, gender: null, image: null, nationality: null } : partialActor;
+    const actorObj = typeof partialActor === "string" ? { name: partialActor, dob: null, gender: null, image: null, nationality: null, tmdbId: null } : partialActor;
     try {
         const a = await actorRepo.createActor(actorObj)
         return json(a, { revalidate })

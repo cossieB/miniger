@@ -47,7 +47,11 @@
                 margin-left: auto;
                 justify-content: end;
             }
-
+        }
+        button {
+            background: none;
+            border: none;
+            padding: unset;
         }
     }
 
