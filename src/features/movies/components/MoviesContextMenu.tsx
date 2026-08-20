@@ -186,7 +186,7 @@ export default function MoviesContextMenu(props: P) {
                         if (!apiKey) {
                             return await invoke("show_api_key_window")
                         }
-                        props.contextMenu.close()
+                        props.contextMenu.close();
                         state.dialog.openDialog({
                             type: "tagFilm",
                             data: {

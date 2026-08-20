@@ -1,33 +1,25 @@
-import { createAsync, query } from "@solidjs/router"
+import { createAsync, query, revalidate } from "@solidjs/router"
 import { TMDBClient } from "../api"
 import { cleanTitle } from "../utils/cleanTitle";
 import { state } from "~/state";
 import type { TMDBFilmDialog } from "~/state/dialog";
 import { invoke } from "@tauri-apps/api/core";
-import { createSignal, For, Suspense } from "solid-js";
+import { createSignal, For, Suspense, type Accessor, type Setter } from "solid-js";
 import styles from "./TMDB.module.css"
 import { MyLoader } from "~/components/MyLoader";
-import { CheckIcon } from "lucide-solid";
+import { CheckIcon, XIcon } from "lucide-solid";
 import type { UnwrapPromise } from "~/lib/utilityTypes";
-
-const dummy = [
-    {
-        "id": 101,
-        "title": "Inception",
-        "release_date": "2010-07-16",
-        "poster_path": "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg"
-    },
-    {
-        "id": 102,
-        "title": "Interstellar",
-        "release_date": undefined,
-        "poster_path": null
-    }
-]
-
+import { db } from "~/kysely/database";
+import { sql } from "kysely";
+import { saveImg } from "~/utils/saveImg";
+import { TMDB_IMG_PATH } from "~/constants";
+import { getFilms } from "~/features/movies";
+import { getTags } from "~/features/tags/api";
+import { getActors } from "~/features/actors/api";
+import { exists } from "@tauri-apps/plugin-fs";
+import { appDataDir, join } from "@tauri-apps/api/path";
 
 const searchFilm = query(async (title: string, isTv = false) => {
-    return { results: dummy }
     if (!title) return { results: [] }
     const apiKey = await invoke<string>("get_password")
     const tmdbCient = new TMDBClient(apiKey);
@@ -37,12 +29,19 @@ const searchFilm = query(async (title: string, isTv = false) => {
 
 export function TagFilm() {
     const dialog = () => state.dialog.active as TMDBFilmDialog
-    const [searchTerm, setSearchTerm] = createSignal(cleanTitle(dialog().data.title))
+
+    const [searchTerm, setSearchTerm] = createSignal(cleanTitle(dialog().data.title));
     const [isTv, setIsTv] = createSignal(false)
+    const [isSaving, setIsSaving] = createSignal(false)
     const searchResult = createAsync(() => searchFilm(searchTerm(), isTv()))
+
     return (
-        <div class={styles.autotag}>
-            <aside> {dialog().data.path} </aside>
+        <form class={styles.autotag}>
+            <aside> {dialog().data.path}
+                <button formMethod="dialog">
+                    <XIcon />
+                </button>
+            </aside>
             <div class={styles.inputs}>
                 <label>Search query</label>
                 <input type="text" value={searchTerm()} onChange={e => setSearchTerm(e.currentTarget.value)} />
@@ -55,26 +54,95 @@ export function TagFilm() {
                         {item =>
                             <SearchResult
                                 item={item}
+                                setIsSaving={setIsSaving}
+                                isSaving={isSaving}
                             />
                         }
                     </For>
                 </div>
             </Suspense>
-        </div>
+        </form>
     )
 }
 
 type Props = {
     item: NonNullable<UnwrapPromise<ReturnType<typeof searchFilm>>>['results'][number]
+    isSaving: Accessor<boolean>
+    setIsSaving: Setter<boolean>
 }
 
 function SearchResult(props: Props) {
     const dialog = () => state.dialog.active as TMDBFilmDialog
+
     async function tag() {
+        props.setIsSaving(true)
         const apiKey = await invoke<string>("get_password")
         const tmdbCient = new TMDBClient(apiKey);
-        const credits = await tmdbCient.movieCredits(props.item.id);
-        const detail = await tmdbCient.detail(props.item.id, "movie")
+        try {
+            if ('title' in props.item) {
+                const credits = await tmdbCient.movieCredits(props.item.id);
+                const detail = await tmdbCient.detail(props.item.id, "movie")
+                if (credits.length > 0) {
+                    const actors = await db.transaction().execute(async tx => {
+                        const actors = await tx.insertInto("actor")
+                            .values(credits.map(c => ({
+                                name: c.name,
+                                tmdbId: c.id,
+                                gender: c.gender === 1 ? "F" : c.gender === 2 ? "M" : undefined,
+                            })))
+                            .onConflict(oc => oc.column("tmdbId").doUpdateSet({
+                                name: sql`EXCLUDED.name`,
+                                gender: sql`EXCLUDED.gender`,
+                                tmdbId: sql`EXCLUDED.tmdb_id`
+                            }))
+                            .returningAll()
+                            .execute()
+                        await tx.insertInto("actorFilm").values(actors.map(a => ({
+                            actorId: a.actorId,
+                            filmId: dialog().data.filmId
+                        })))
+                        .onConflict(oc => oc.doNothing())
+                        .execute()
+
+                        if (detail)
+                            await tx.updateTable("film").set({
+                                title: detail.title,
+                                tmdbId: detail.id,
+                                releaseDate: detail.release_date,                                
+                            })
+                                .where("film.filmId", "=", dialog().data.filmId)
+                                .where("tmdbId", "is", null)
+                                .execute()
+
+                        if (detail?.genres.length)
+                            await tx.insertInto("filmTag")
+                                .values(detail.genres.map(genre => ({
+                                    filmId: dialog().data.filmId,
+                                    tag: genre.name
+                                })))
+                                .onConflict(oc => oc.doNothing())
+                                .execute()
+                        return actors
+                    })
+
+                    for (const actor of actors) {
+                        const img = credits.find(c => c.id === actor.tmdbId)?.profile_path;
+                        if (!img) continue;
+                        const imgExists = await exists(await join(await appDataDir(), "images", `${actor.actorId}.webp`));
+                        if (imgExists) continue;
+                        await downloadImage(`${TMDB_IMG_PATH}original${img}`, actor.actorId)
+                    }
+                }
+                revalidate([getFilms.key, getTags.key, getActors.key]);
+                document.querySelector<HTMLButtonElement>('button[formmethod="dialog"')?.click()
+            }
+        }
+        catch (error) {
+            state.status.setStatus("Error saving: " + error)
+        }
+        finally {
+            props.setIsSaving(false)
+        }
     }
     const display = () => 'title' in props.item ? { ...props.item } : {
         title: props.item.name,
@@ -84,7 +152,7 @@ function SearchResult(props: Props) {
     return (
         <div class={styles.result}>
             <img
-                src={`https://image.tmdb.org/t/p/original${props.item.poster_path}`}
+                src={`${TMDB_IMG_PATH}original${props.item.poster_path}`}
                 alt=""
                 onerror={e => {
                     e.currentTarget.src = "/Question_Mark.svg"
@@ -92,10 +160,23 @@ function SearchResult(props: Props) {
             />
             <span>{display().title}</span>
             <span>{display().release_date}</span>
-            <button class="button">
+            <button
+                class="button"
+                disabled={props.isSaving()}
+                onClick={tag}
+            >
                 Accept
                 <CheckIcon />
             </button>
         </div>
     )
+}
+
+async function downloadImage(url: string, id: number) {
+    const res = await fetch(url)
+    const blob = await res.blob();
+    const file = new File([blob], id.toString(), {
+        type: blob.type,
+    })
+    saveImg(file, "images", id)
 }

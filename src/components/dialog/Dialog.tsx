@@ -12,8 +12,15 @@ export function Dialog() {
         if (state.dialog.active) ref.showModal()
         else ref.close()
     })
+    
     return (
-        <dialog ref={ref} class={styles.dialog}>
+        <dialog 
+        ref={ref} 
+        class={styles.dialog}
+        onClose={e => {
+            state.dialog.close()
+        }}
+        >
             <Switch>
                 <Match when={state.dialog.active?.type === "actor"}>
                     <ActorForm />
