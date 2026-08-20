@@ -32,10 +32,10 @@ export function ActorForm() {
                     const data = Object.fromEntries(fd) as any
                     data.dob ||= null;
                     data.gender ||= null;
-                    if (file())
-                        data.image = await saveImg(file()!) ?? undefined;
                     if (!d.data?.actorId) {
-                        await addAction(data)
+                        const {actorId} = await addAction(data)
+                        if (file())
+                            await saveImg(file()!, "images", actorId) ?? undefined;
                     }
                     else
                         await editAction({ ...data, actorId: d.data.actorId })
@@ -82,7 +82,7 @@ export function ActorForm() {
                 <div style={{ height: "13rem" }}>
                     <DropZone
                         setFile={setFile} 
-                        image={actor()?.image}
+                        image={`${actor()?.actorId}.webp`}
                         />
                 </div>
             </DialogForm>

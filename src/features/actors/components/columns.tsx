@@ -2,7 +2,7 @@ import { countryList } from "~/countryList";
 import { type TActor } from "~/datatypes";
 import { createAppColumnHelper } from "~/utils/createTable";
 
-const columnHelper = createAppColumnHelper<TActor & {appearances: number | bigint | string}>()
+const columnHelper = createAppColumnHelper<TActor & { appearances: number | bigint | string }>()
 
 export const columns = columnHelper.columns([
     columnHelper.accessor("name", {
@@ -53,12 +53,8 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.accessor("image", {
         cell: props => <props.cell.ImageEditor
-            onUpdate={async image => {
-                props.table.options.meta?.updateActor!({
-                    actorId: props.row.original.actorId,
-                    image
-                }, [])
-            }}
+            folder="images"
+            id={props.row.original.actorId}
         />
     }),
     columnHelper.accessor("appearances", {

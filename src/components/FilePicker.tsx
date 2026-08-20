@@ -13,11 +13,14 @@ const dir = d + sep() + "images" + sep()
 export function DropZone(props: Props) {
     let ref!: HTMLLabelElement
     const [objectUrl, setObjectUrl] = createSignal("")
+    const [errored, setErrored] = createSignal(false)
     onCleanup(() => URL.revokeObjectURL(objectUrl()));
 
     const src = () => {
         if (objectUrl())
             return objectUrl()
+        if (errored())
+            return undefined
         if (props.image)
             return convertFileSrc(dir + props.image)
     }
@@ -83,7 +86,11 @@ export function DropZone(props: Props) {
             <Show when={src()}
                 fallback={<span class="file-title">Drop actor photo, or click to browse</span>}
             >
-                <img src={src()} alt="" />
+                <img 
+                    src={src()} 
+                    alt="" 
+                    onerror={() => setErrored(true)}
+                    />
             </Show>
         </label>
     )

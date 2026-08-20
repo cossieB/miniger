@@ -37,10 +37,8 @@ export function getActorPairings(actorId?: number) {
         .select([
             "a.name as actorA",
             "a.actorId as actorAid",
-            "a.image as actorAimage",
             "b.name as actorB",
             "b.actorId as actorBid",
-            "b.image as actorBimage",
             db.fn.countAll().as("together")
         ])
         .groupBy(["a.actorId", "b.actorId"])

@@ -10,24 +10,22 @@ import { saveImg } from "~/utils/saveImg";
 false && clickOutside
 
 type Props = {
-    onUpdate: (val: string) => Promise<void>
+    folder: string
+    id: string | number
 }
 
 export function ImageEditor(props: Props) {
     const cell = useCellContext<string | null>()
     const [edit, setEdit] = createSignal(false)
     const [loading, setLoading] = createSignal(true)
-    const [value, setValue] = createSignal(cell.getValue()) //local state to prevent table resorting on update
 
     const [file, setFile] = createSignal<File | null>(null)
     
     createEffect(on(file, async newFile => {
         if (!newFile) return;
         setLoading(true)
-        const filename = await saveImg(newFile);
-        if (filename) await props.onUpdate(filename);
+        await saveImg(newFile, props.folder, props.id);
         setLoading(false)
-        setValue(filename)
         setEdit(false)
     }))
 
@@ -54,7 +52,7 @@ export function ImageEditor(props: Props) {
                 when={edit()}
                 fallback={
                     <span>
-                        {value()}
+                        Double click
                     </span>
                 }
             >
@@ -73,7 +71,7 @@ export function ImageEditor(props: Props) {
                     >
                         <DropZone
                             setFile={setFile}
-                            image={value()}
+                            image={`${props.id}.webp`}
                         />
                     </div>
                 </Portal>
