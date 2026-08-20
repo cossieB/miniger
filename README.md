@@ -21,13 +21,9 @@ Miniger indexes the movies you already own, enriches them with metadata and thum
 
 ## Screenshots
 
-> _Screenshots coming soon._
-
-<!--
-![Library view](docs/screenshots/library.png)
-![Playlist editor](docs/screenshots/playlists.png)
-![Video conversion](docs/screenshots/convert.png)
--->
+![Library table view](docs/screenshots/libgrid.avif)
+![Library grid view](docs/screenshots/libtable.avif)
+![Player](docs/screenshots/play.avif)
 
 ## Tech Stack
 
@@ -102,7 +98,7 @@ npm run tauri build
 
 ## Roadmap
 
-- [ ] Bundle FFmpeg or add an in-app download option
+- [x] Bundle FFmpeg or add an in-app download option
 - [ ] Integration with an online movie database for automatic tagging
   - Requires users to supply their own API key
   - Keys are stored securely on-device using [`keyring-rs`](https://crates.io/crates/keyring) and never leave the user's machine
