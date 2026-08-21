@@ -31,3 +31,9 @@ export type MovieData = {
 }[]
 
 export type MovieTableData = NonNullable<MovieData>[number]
+
+export enum ImgSubfolder {
+    Actors = "actors",
+    Posters = "posters",
+    Thumbs = "thumbs"
+}

@@ -21,7 +21,7 @@ pub async fn generate_thumbnails(
             .path()
             .app_data_dir()
             .unwrap_or_log_fatal()
-            .join("thumbs"),
+            .join("images/thumbs"),
     );
 
     let concurrency = std::thread::available_parallelism()

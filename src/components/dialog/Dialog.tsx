@@ -17,9 +17,6 @@ export function Dialog() {
         <dialog 
         ref={ref} 
         class={styles.dialog}
-        onClose={e => {
-            state.dialog.close()
-        }}
         >
             <Switch>
                 <Match when={state.dialog.active?.type === "actor"}>
@@ -32,7 +29,7 @@ export function Dialog() {
                     <MovieForm dialog={ref} />
                 </Match>
                 <Match when={state.dialog.active?.type === "tagFilm"}>
-                    <TagFilm />
+                    <TagFilm dialogRef={ref} />
                 </Match>
             </Switch>
         </dialog>

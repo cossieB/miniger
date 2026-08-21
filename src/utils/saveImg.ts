@@ -1,10 +1,11 @@
 import { appDataDir, join } from "@tauri-apps/api/path";
 import { writeFile } from "@tauri-apps/plugin-fs";
 import { state } from "~/state";
+import type { ImgSubfolder } from "~/types";
 
-export async function saveImg(file: File, folder: string, id: string | number) {
+export async function saveImg(file: File, folder: ImgSubfolder, id: string | number) {
     const d = await appDataDir()
-    const path = await join(d, folder, `${id}.webp`)
+    const path = await join(d, "images", folder, `${id}.webp`)
     try {
         const webPFileImg = await convertToWebP(file)
         const buffer = await webPFileImg.arrayBuffer()

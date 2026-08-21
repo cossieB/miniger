@@ -1,6 +1,6 @@
 import { type Accessor, type Setter, Suspense } from "solid-js";
 import type { TActor } from "../../../datatypes";
-import { appDataDir, sep } from "@tauri-apps/api/path";
+import { appDataDir, join, sep } from "@tauri-apps/api/path";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import styles from "./ActorSelector.module.css"
 
@@ -14,8 +14,7 @@ type Props = {
     setRowActors?: undefined
 })
 
-const d = await appDataDir()
-const dir = d + sep() + "images" + sep()
+const dir = await join(await appDataDir(), "images", "actors")
 
 export function ActorItem(props: Props) {
     function handleClick() {
@@ -35,7 +34,7 @@ export function ActorItem(props: Props) {
             >
                 <div>
                     <img
-                        src={convertFileSrc(dir + props.actor.actorId + ".webp")}                        
+                        src={convertFileSrc(dir + sep() + props.actor.actorId + ".webp")}                        
                         loading="lazy"
                         alt=""
                         onerror={e => e.currentTarget.src = "/Question_Mark.svg"}

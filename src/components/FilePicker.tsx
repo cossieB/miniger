@@ -1,14 +1,15 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
-import { appDataDir, sep } from "@tauri-apps/api/path";
+import { appDataDir, join, sep } from "@tauri-apps/api/path";
 import { createSignal, onCleanup, Show, type Setter } from "solid-js";
+import { ImgSubfolder } from "~/types";
 
 type Props = {
     setFile: Setter<File | null>
     image?: string | null
+    subfolder: ImgSubfolder
 }
 
-const d = await appDataDir()
-const dir = d + sep() + "images" + sep()
+const dir = await join(await appDataDir(), "images")
 
 export function DropZone(props: Props) {
     let ref!: HTMLLabelElement
@@ -22,7 +23,7 @@ export function DropZone(props: Props) {
         if (errored())
             return undefined
         if (props.image)
-            return convertFileSrc(dir + props.image)
+            return convertFileSrc(dir + sep() + props.subfolder + sep() + props.image)
     }
 
     const handleFiles = (files: FileList | null | undefined) => {

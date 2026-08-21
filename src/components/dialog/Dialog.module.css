@@ -20,7 +20,6 @@
         &[open] {
             opacity: 1;
             transform: translateY(0);
-            display: grid;
 
             @starting-style {
                 opacity: 0;

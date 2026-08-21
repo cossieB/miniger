@@ -1,5 +1,6 @@
 import { countryList } from "~/countryList";
 import { type TActor } from "~/datatypes";
+import { ImgSubfolder } from "~/types";
 import { createAppColumnHelper } from "~/utils/createTable";
 
 const columnHelper = createAppColumnHelper<TActor & { appearances: number | bigint | string }>()
@@ -53,7 +54,7 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.accessor("image", {
         cell: props => <props.cell.ImageEditor
-            folder="images"
+            folder={ImgSubfolder.Actors}
             id={props.row.original.actorId}
         />
     }),

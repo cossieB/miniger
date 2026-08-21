@@ -6,11 +6,12 @@ import { Portal } from "solid-js/web";
 import clickOutside from "~/lib/clickOutside";
 import { DropZone } from "../FilePicker";
 import { saveImg } from "~/utils/saveImg";
+import { ImgSubfolder } from "~/types";
 
 false && clickOutside
 
 type Props = {
-    folder: string
+    folder: ImgSubfolder
     id: string | number
 }
 
@@ -72,6 +73,7 @@ export function ImageEditor(props: Props) {
                         <DropZone
                             setFile={setFile}
                             image={`${props.id}.webp`}
+                            subfolder={props.folder}
                         />
                     </div>
                 </Portal>

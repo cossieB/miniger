@@ -62,16 +62,17 @@ const TMDBCredits = z.object({
         name: z.string(),
         gender: z.number(),
         known_for_department: z.string().optional(),
-        profile_path: z.string().nullable().optional() 
+        profile_path: z.string().nullable().optional()
     }))
 });
 
-export type Actor = z.infer<typeof TMDBActor>;
-export type Movie = z.infer<typeof TMDBMovie>;
-export type Tv = z.infer<typeof TMDBTv>;
+export type TMDBActor = z.infer<typeof TMDBActor>;
+export type TMDBMovie = z.infer<typeof TMDBMovie>;
+export type TMDBTv = z.infer<typeof TMDBTv>;
+export type TMDBCredits = z.infer<typeof TMDBCredits>['cast'];
 
 export class TMDBClient {
-    constructor(private readonly apiKey: string) {}
+    constructor(private readonly apiKey: string) { }
 
     public async search(query: string, type: "movie"): Promise<z.infer<ReturnType<typeof SearchResponse<typeof SearchMovieSchema>>> | null>;
     public async search(query: string, type: "tv"): Promise<z.infer<ReturnType<typeof SearchResponse<typeof SearchTvSchema>>> | null>;
@@ -100,7 +101,7 @@ export class TMDBClient {
 
         const schema = type === "movie" ? SearchResponse(SearchMovieSchema)
             : type === "tv" ? SearchResponse(SearchTvSchema)
-            : SearchResponse(SearchPersonSchema);
+                : SearchResponse(SearchPersonSchema);
 
         const parsed = schema.safeParse(data);
 
@@ -112,10 +113,10 @@ export class TMDBClient {
         return parsed.data;
     }
 
-    public async detail(id: number, type: "movie"): Promise<Movie | null>;
-    public async detail(id: number, type: "tv"): Promise<Tv | null>;
-    public async detail(id: number, type: "person"): Promise<Actor | null>;
-    public async detail(id: number): Promise<Movie | null>;
+    public async detail(id: number, type: "movie"): Promise<TMDBMovie | null>;
+    public async detail(id: number, type: "tv"): Promise<TMDBTv | null>;
+    public async detail(id: number, type: "person"): Promise<TMDBActor | null>;
+    public async detail(id: number): Promise<TMDBMovie | null>;
     public async detail(
         id: number,
         type: "movie" | "tv" | "person" = "movie"
@@ -136,7 +137,7 @@ export class TMDBClient {
 
         const schema = type === "movie" ? TMDBMovie
             : type === "tv" ? TMDBTv
-            : TMDBActor;
+                : TMDBActor;
 
         const parsed = schema.safeParse(data);
 
@@ -148,8 +149,12 @@ export class TMDBClient {
         return parsed.data;
     }
 
-    public async movieCredits(id: number) {
-        const res = await fetch(`https://api.themoviedb.org/3/movie/${id}/credits`, {
+    public async getCredits(id: number, type: "movie" | "tv" = "movie") {
+        const endpoint = type === "movie"
+            ? `movie/${id}/credits`
+            : `tv/${id}/aggregate_credits`;
+
+        const res = await fetch(`https://api.themoviedb.org/3/${endpoint}`, {
             method: "GET",
             headers: {
                 accept: "application/json",
@@ -165,10 +170,12 @@ export class TMDBClient {
         const parsed = TMDBCredits.safeParse(data);
 
         if (!parsed.success) {
-            console.error(`TMDB Credits parsing error for movie (${id}):`, parsed.error);
+            console.error(`TMDB Credits parsing error for ${type} (${id}):`, parsed.error);
             return [];
         }
 
-        return parsed.data.cast.filter(x => x.known_for_department?.toLowerCase() === "acting").slice(0, 5);
+        return parsed.data.cast
+            .filter(x => x.known_for_department?.toLowerCase() === "acting")
+            .slice(0, 5);
     }
 }

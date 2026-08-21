@@ -8,6 +8,7 @@ import { DropZone } from "~/components/FilePicker";
 import type { ActorDialog } from "~/state/dialog";
 import { saveImg } from "~/utils/saveImg";
 import { DialogForm } from "~/components/dialog/DialogForm";
+import { ImgSubfolder } from "~/types";
 
 export function ActorForm() {
     const dialog = () => state.dialog.active
@@ -35,7 +36,7 @@ export function ActorForm() {
                     if (!d.data?.actorId) {
                         const { actorId } = await addAction(data)
                         if (file())
-                            await saveImg(file()!, "images", actorId) ?? undefined;
+                            await saveImg(file()!, ImgSubfolder.Actors, actorId) ?? undefined;
                     }
                     else
                         await editAction({ ...data, actorId: d.data.actorId })
@@ -83,6 +84,7 @@ export function ActorForm() {
                     <DropZone
                         setFile={setFile}
                         image={`${actor()?.actorId}.webp`}
+                        subfolder={ImgSubfolder.Actors}
                     />
                 </div>
             </DialogForm>

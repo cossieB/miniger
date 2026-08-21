@@ -1,7 +1,7 @@
 import { useNavigate } from '@solidjs/router';
 import { type VirtualItem } from '@tanstack/solid-virtual';
 import { convertFileSrc } from '@tauri-apps/api/core';
-import { appDataDir, sep } from '@tauri-apps/api/path';
+import { appDataDir, join, sep } from '@tauri-apps/api/path';
 import { FilmIcon } from 'lucide-solid';
 import { batch, createMemo, For, Show, type Accessor } from 'solid-js';
 import { BOTTOM_BAR_HEIGHT, CELL_WIDTH, TOP_BAR_HEIGHT } from '~/constants';
@@ -13,7 +13,7 @@ import styles from "./MovieGrid.module.css"
 import { Nothing } from '~/components/Nothing';
 import { useMovieDataContext } from '../hooks/useMovieDataContext';
 
-const dir = await appDataDir()
+const dir = await join(await appDataDir(), "images", "thumbs")
 
 export function MovieGrid() {
     const { addThumbnail, cacheBuster } = useGetThumbnails()
@@ -155,7 +155,7 @@ function Row(props: P) {
                         <div class={styles.imgWrapper}>
                             <FilmIcon />
                             <img
-                                src={convertFileSrc(`${dir}${sep()}thumbs${sep()}${film.filmId}.webp`) + `?=${props.cacheBuster()}`}
+                                src={convertFileSrc(`${dir}${sep()}${film.filmId}.webp`) + `?=${props.cacheBuster()}`}
                                 onerror={() => {
                                     props.addThumbnail({ filmId: film.filmId, path: film.path })
                                 }}
