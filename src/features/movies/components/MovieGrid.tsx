@@ -155,7 +155,7 @@ function Row(props: P) {
                         <div class={styles.imgWrapper}>
                             <FilmIcon />
                             <img
-                                src={convertFileSrc(`${dir}${sep()}${film.filmId}.webp`) + `?=${props.cacheBuster()}`}
+                                src={convertFileSrc(`${dir}${sep()}${film.filmId}.webp`) + `?n=${props.cacheBuster()}`}
                                 onerror={() => {
                                     props.addThumbnail({ filmId: film.filmId, path: film.path })
                                 }}

@@ -6,7 +6,10 @@
         align-items: center;
         position: relative;
     }
-
+    .previewImg {
+        height: 100%;
+        margin-inline: auto;
+    }
     .triggerButton {
         display: flex;
         min-width: 0;

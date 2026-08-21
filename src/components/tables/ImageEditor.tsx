@@ -7,6 +7,8 @@ import clickOutside from "~/lib/clickOutside";
 import { DropZone } from "../FilePicker";
 import { saveImg } from "~/utils/saveImg";
 import { ImgSubfolder } from "~/types";
+import { appDataDir, join, sep } from "@tauri-apps/api/path";
+import { convertFileSrc } from "@tauri-apps/api/core";
 
 false && clickOutside
 
@@ -14,6 +16,8 @@ type Props = {
     folder: ImgSubfolder
     id: string | number
 }
+
+const dir = await join(await appDataDir(), "images")
 
 export function ImageEditor(props: Props) {
     const cell = useCellContext<string | null>()
@@ -52,9 +56,9 @@ export function ImageEditor(props: Props) {
             <Show
                 when={edit()}
                 fallback={
-                    <span>
-                        Double click
-                    </span>
+                    <button title="Double click to edit" class={styles.triggerButton}>
+                        <img  class={styles.previewImg} src={convertFileSrc(dir + sep() + props.folder + sep() + `${props.id}.webp`) + `?n=${Date.now()}`} />
+                    </button>
                 }
             >
                 <Portal>

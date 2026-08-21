@@ -76,17 +76,6 @@ export class DatabaseBackupManager {
                 return false; // Live database doesn't exist to backup
             }
 
-            try {
-                // Check WAL file
-                const walInfo = await stat(`${this.config.liveDbPath}-wal`);
-                const walTime = walInfo.mtime?.getTime() || 0;
-                if (walTime > latestLiveChange) {
-                    latestLiveChange = walTime;
-                }
-            } catch {
-                // WAL file might not exist
-            }
-
             return latestLiveChange > (lastBackup.time + 1000);
 
         } catch (error) {

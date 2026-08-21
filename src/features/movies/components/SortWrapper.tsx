@@ -23,7 +23,7 @@ export function SortWrapper() {
             <input
                 value={search()}
                 onInput={e => {
-                    debouncedSearch(e.currentTarget.value)
+                    debouncedSearch(e.currentTarget.value.toLowerCase())
                 }}
                 placeholder='Title Search'
                 type="text"

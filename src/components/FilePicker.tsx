@@ -23,7 +23,7 @@ export function DropZone(props: Props) {
         if (errored())
             return undefined
         if (props.image)
-            return convertFileSrc(dir + sep() + props.subfolder + sep() + props.image)
+            return convertFileSrc(dir + sep() + props.subfolder + sep() + props.image) + `?n=${Date.now()}`
     }
 
     const handleFiles = (files: FileList | null | undefined) => {
@@ -70,10 +70,10 @@ export function DropZone(props: Props) {
                     });
 
                     if (hasImage) {
-                        ref.classList.remove('invalid'); 
+                        ref.classList.remove('invalid');
                         ref.classList.add('dragover');
                     }
-                     else {
+                    else {
                         ref.classList.remove('dragover');
                         ref.classList.add('invalid');
                     }
@@ -87,11 +87,11 @@ export function DropZone(props: Props) {
             <Show when={src()}
                 fallback={<span class="file-title">Drop actor photo, or click to browse</span>}
             >
-                <img 
-                    src={src()} 
-                    alt="" 
+                <img
+                    src={src()}
+                    alt=""
                     onerror={() => setErrored(true)}
-                    />
+                />
             </Show>
         </label>
     )

@@ -1,4 +1,4 @@
-import { Show, createEffect, createSignal } from "solid-js";
+import { Show, createSignal } from "solid-js";
 import type { MovieData } from "~/types";
 import { type RowSelectionState } from "@tanstack/solid-table";
 import { createVirtualizer } from "@tanstack/solid-virtual";
@@ -12,7 +12,6 @@ import MoviesContextMenu from "~/features/movies/components/MoviesContextMenu";
 import { TableBody } from "~/components/tables/TableBody";
 import { TableHeader } from "~/components/tables/TableHeader";
 import { editFilm } from "../../api";
-import type { SortCriterion } from "../../utils/sort";
 import { movieGridSort, setMovieGridSort } from "../../contexts/MovieDataContext";
 import { useMovieDataContext } from "../../hooks/useMovieDataContext";
 
@@ -61,10 +60,7 @@ export function MoviesTable() {
             updateFilm
         }
     });
-createEffect(() => {
-    const sorting = table.atoms.sorting.get();
-    setMovieGridSort(sorting as SortCriterion[])
-})
+
     const { contextMenu, setContextMenu } = useMoviesContextMenu()
     
     return (
