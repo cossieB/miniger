@@ -1,0 +1,81 @@
+@layer components {
+    .autotag {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        width: 100%;
+
+        label {
+            font-size: 0.8rem;
+        }
+        button[formmethod="dialog"]:hover {
+            color: var(--danger-500)
+        }
+        aside {
+            font-size: 0.75rem;
+            color: var(--smoke-300);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            button {
+                flex-shrink: 0;
+            }
+            span {
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        button {
+            display: flex;
+            justify-content: center;
+            cursor: pointer;
+
+            &:hover {
+                color: var(--volt-500);
+                border-color: var(--volt-fill-hover);
+            }
+        }
+
+        img {
+            height: 100%;
+            width: 5rem;
+            object-fit: contain;
+        }
+    }
+
+    .results {
+        display: grid;
+        grid-template-columns: auto auto auto auto;
+    }
+
+    .result {
+        display: grid;
+        grid-template-columns: subgrid;
+        grid-column: span 4;
+        height: 7.5rem;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+
+
+    .detail {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+    }
+
+    .inputs {
+        display: flex;
+        gap: 0.25rem;
+        width: 100%;
+        align-items: center;
+
+        input[type="text"] {
+            flex: 1;
+        }
+    }
+}

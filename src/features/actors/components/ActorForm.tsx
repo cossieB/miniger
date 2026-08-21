@@ -29,17 +29,18 @@ export function ActorForm() {
                     e.preventDefault()
                     const d = dialog()
                     if (d?.type !== "actor") throw new Error("Expected actor but received: " + String(d))
+                    let actorId = d?.data?.actorId
                     const fd = new FormData(e.currentTarget)
                     const data = Object.fromEntries(fd) as any
                     data.dob ||= null;
                     data.gender ||= null;
-                    if (!d.data?.actorId) {
-                        const { actorId } = await addAction(data)
-                        if (file())
-                            await saveImg(file()!, ImgSubfolder.Actors, actorId) ?? undefined;
+                    if (!actorId) {
+                        actorId = (await addAction(data)).actorId
                     }
                     else
-                        await editAction({ ...data, actorId: d.data.actorId })
+                        await editAction({ ...data, actorId: d.data!.actorId })
+                    if (file())
+                        await saveImg(file()!, ImgSubfolder.Actors, actorId) ?? undefined;
                     state.dialog.close()
                 }}
             >

@@ -1,17 +1,17 @@
 import { createAsync, query, revalidate } from "@solidjs/router"
-import { TMDBClient, type TMDBMovie, type TMDBTv } from "../api"
-import { cleanTitle } from "../utils/cleanTitle";
+import { TMDBClient, type TMDBMovie, type TMDBTv } from "../../tmdb/api"
+import { cleanTitle } from "../../tmdb/utils/cleanTitle";
 import { state } from "~/state";
 import type { TMDBFilmDialog } from "~/state/dialog";
 import { invoke } from "@tauri-apps/api/core";
-import { createSignal, For, Suspense, type Accessor, type Setter } from "solid-js";
-import styles from "./TMDB.module.css"
+import { createEffect, createSignal, For, on, Suspense, type Accessor, type Setter } from "solid-js";
+import styles from "./MovieTMDB.module.css"
 import { MyLoader } from "~/components/MyLoader";
 import { CheckIcon, XIcon } from "lucide-solid";
 import type { UnwrapPromise } from "~/lib/utilityTypes";
 import { db } from "~/kysely/database";
 import { sql } from "kysely";
-import { saveImg } from "~/utils/saveImg";
+import { downloadImage } from "~/utils/saveImg";
 import { TMDB_IMG_PATH } from "~/constants";
 import { getFilms } from "~/features/movies";
 import { getTags } from "~/features/tags/api";
@@ -28,11 +28,11 @@ const searchFilm = query(async (title: string, isTv = false) => {
     return tmdbCient.search(title, "movie")
 }, "tmdbFilmSearch")
 
-export function TagFilm(props: { dialogRef: HTMLDialogElement }) {
-    props.dialogRef.onclose = () => state.dialog.close()
+export function MovieTMDB() {
+    
     const dialog = () => state.dialog.active as TMDBFilmDialog
-
     const [searchTerm, setSearchTerm] = createSignal(cleanTitle(dialog().data.title));
+    createEffect(on(dialog, d => setSearchTerm(cleanTitle(d.data.title))))
     // const [isTv, setIsTv] = createSignal(false)
     const [isSaving, setIsSaving] = createSignal(false)
     const searchResult = createAsync(() => searchFilm(searchTerm()))
@@ -92,7 +92,12 @@ function SearchResult(props: Props) {
                 releaseDate: detail.first_air_date
             };
 
-
+            await db.deleteFrom("actorFilm")
+                .where("actorFilm.filmId", "=", dialog().data.filmId)
+                .execute()
+            await db.deleteFrom("filmTag")
+                .where("filmTag.filmId", "=", dialog().data.filmId)
+                .execute()
             if (credits.length > 0) {
                 const actors = await db.transaction().execute(async tx => {
                     const actors = await tx.insertInto("actor")
@@ -148,7 +153,7 @@ function SearchResult(props: Props) {
                     await downloadImage(`${TMDB_IMG_PATH}original${img}`, actor.actorId, ImgSubfolder.Actors)
                 }
             }
-            revalidate([getFilms.key, getTags.key, getActors.key]);
+            await revalidate([getFilms.key, getTags.key, getActors.key]);
             document.querySelector<HTMLButtonElement>('button[formmethod="dialog"')?.click();
         }
         catch (error) {
@@ -186,11 +191,3 @@ function SearchResult(props: Props) {
     )
 }
 
-async function downloadImage(url: string, id: number, folder: ImgSubfolder) {
-    const res = await fetch(url)
-    const blob = await res.blob();
-    const file = new File([blob], id.toString(), {
-        type: blob.type,
-    })
-    saveImg(file, folder, id)
-}

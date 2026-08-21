@@ -1,7 +1,7 @@
 import { createStore } from "solid-js/store";
 
 export const [dialog, setDialog] = createStore({
-    active: null as null | ActorDialog | StudioDialog | FilmDialog | TMDBFilmDialog,
+    active: null as null | ActorDialog | StudioDialog | FilmDialog | TMDBFilmDialog | TMDBActorDialog,
     openDialog: (active: NonNullable<typeof dialog['active']>) => setDialog({active}),
     close: () => setDialog({active: null})
 })
@@ -33,5 +33,13 @@ export type TMDBFilmDialog = {
         filmId: number,
         title: string,
         path: string
+    }
+}
+
+export type TMDBActorDialog = {
+    type: "tagActor",
+    data: {
+        actorId: number,
+        name: string
     }
 }

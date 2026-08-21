@@ -13,9 +13,10 @@ import { TableBody } from "~/components/tables/TableBody";
 import { TableHeader } from "~/components/tables/TableHeader";
 import { ContextMenu } from "~/components/context-menu/ContextMenu";
 import { confirm } from "@tauri-apps/plugin-dialog";
-import { DramaIcon, FilmIcon, PencilIcon, TrashIcon } from "lucide-solid";
+import { DramaIcon, FilmIcon, PencilIcon, SearchCodeIcon, TrashIcon } from "lucide-solid";
 import { state } from "~/state";
 import { useContextMenu } from "~/hooks/useContextMenu";
+import { invoke } from "@tauri-apps/api/core";
 
 export function ActorsTable() {
     let ref!: HTMLDivElement
@@ -61,10 +62,10 @@ export function ActorsTable() {
         table.toggleAllRowsSelected(false);
         contextMenu.close()
     }
-    const {contextMenu} = useContextMenu({
-            actorId: -1,
-            name: "",
-        })
+    const { contextMenu } = useContextMenu({
+        actorId: -1,
+        name: "",
+    })
 
     return (
         <div
@@ -105,7 +106,7 @@ export function ActorsTable() {
                         Go To Movies
                     </ContextMenu.Link>
                     <ContextMenu.Link
-                    icon={<DramaIcon />}
+                        icon={<DramaIcon />}
                         href={`/costars/${enc({ display: contextMenu.data.name, id: contextMenu.data.actorId })}`}
                     >
                         See Co-stars
@@ -114,10 +115,28 @@ export function ActorsTable() {
                         icon={<PencilIcon />}
                         onClick={() => {
                             contextMenu.close()
-                            state.dialog.openDialog({type: "actor", data: {actorId: contextMenu.data.actorId}})
+                            state.dialog.openDialog({ type: "actor", data: { actorId: contextMenu.data.actorId } })
                         }}
                     >
                         Edit
+                    </ContextMenu.Item>
+                    <ContextMenu.Item
+                        icon={<SearchCodeIcon />}
+                        onClick={async () => {
+                            const apiKey = await invoke<string | null>('get_password');
+                            if (!apiKey) {
+                                return await invoke("show_api_key_window")
+                            }
+                            contextMenu.close();
+                            state.dialog.openDialog({
+                                type: "tagActor",
+                                data: {
+                                    ...contextMenu.data!
+                                }
+                            })
+                        }}
+                    >
+                        Autotag
                     </ContextMenu.Item>
                     <ContextMenu.Divider />
                     <ContextMenu.Item

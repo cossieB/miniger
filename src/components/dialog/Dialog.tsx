@@ -4,7 +4,8 @@ import { state } from "~/state"
 import styles from "./Dialog.module.css"
 import { StudioForm } from "~/features/studios/components/StudioForm"
 import { MovieForm } from "~/features/movies/components/MovieForm"
-import { TagFilm } from "~/features/tmdb/components/TagFilm"
+import { MovieTMDB } from "~/features/movies/components/MovieTMDB"
+import { ActorTMDB } from "~/features/actors/components/ActorTMDB"
 
 export function Dialog() {
     let ref!: HTMLDialogElement
@@ -12,11 +13,11 @@ export function Dialog() {
         if (state.dialog.active) ref.showModal()
         else ref.close()
     })
-    
+
     return (
-        <dialog 
-        ref={ref} 
-        class={styles.dialog}
+        <dialog
+            ref={ref}
+            class={styles.dialog}
         >
             <Switch>
                 <Match when={state.dialog.active?.type === "actor"}>
@@ -29,7 +30,10 @@ export function Dialog() {
                     <MovieForm dialog={ref} />
                 </Match>
                 <Match when={state.dialog.active?.type === "tagFilm"}>
-                    <TagFilm dialogRef={ref} />
+                    <MovieTMDB />
+                </Match>
+                <Match when={state.dialog.active?.type === "tagActor"}>
+                    <ActorTMDB />
                 </Match>
             </Switch>
         </dialog>

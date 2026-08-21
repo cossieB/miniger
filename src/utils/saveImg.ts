@@ -19,6 +19,15 @@ export async function saveImg(file: File, folder: ImgSubfolder, id: string | num
     }
 }
 
+export async function downloadImage(url: string, id: number, folder: ImgSubfolder) {
+    const res = await fetch(url)
+    const blob = await res.blob();
+    const file = new File([blob], id.toString(), {
+        type: blob.type,
+    })
+    saveImg(file, folder, id)
+}
+
 function convertToWebP(file: File, quality: number = 0.8): Promise<File> {
     return new Promise((resolve, reject) => {
         if (!file.type.startsWith('image/')) {
