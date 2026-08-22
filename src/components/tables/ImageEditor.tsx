@@ -20,6 +20,7 @@ type Props = {
 const dir = await join(await appDataDir(), "images")
 
 export function ImageEditor(props: Props) {
+    const [cachebuster, setCachebuster] = createSignal(0)
     const cell = useCellContext<string | null>()
     const [edit, setEdit] = createSignal(false)
     const [loading, setLoading] = createSignal(true)
@@ -33,6 +34,8 @@ export function ImageEditor(props: Props) {
         setLoading(false)
         setEdit(false)
     }))
+
+    createEffect(on(edit, () => setCachebuster(prev => prev + 1)))
 
     const anchorName = "--img" + cell.id
 
@@ -57,7 +60,14 @@ export function ImageEditor(props: Props) {
                 when={edit()}
                 fallback={
                     <button title="Double click to edit" class={styles.triggerButton}>
-                        <img  class={styles.previewImg} src={convertFileSrc(dir + sep() + props.folder + sep() + `${props.id}.webp`) + `?n=${Date.now()}`} />
+                        <img 
+                        loading="lazy" 
+                        class={styles.previewImg} 
+                        src={convertFileSrc(dir + sep() + props.folder + sep() + `${props.id}.webp`) + `?n=${cachebuster()}`} 
+                        onerror={e => {
+                            e.currentTarget.src = "/Question_Mark.svg"
+                        }}
+                        />
                     </button>
                 }
             >

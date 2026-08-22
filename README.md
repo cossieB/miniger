@@ -18,6 +18,7 @@ Miniger indexes the movies you already own, enriches them with metadata and thum
 - **Playlist converter** — convert existing playlists between any of the supported formats
 - **Simple video conversion** — transcode files using FFmpeg directly from the app
 - **Built for large libraries** — virtualized lists keep the UI smooth even with huge collections
+- **Online lookup** - tag your movies using data from [https://www.themoviedb.org/](https://www.themoviedb.org/)
 
 ## Screenshots
 
@@ -99,7 +100,7 @@ npm run tauri build
 ## Roadmap
 
 - [x] Bundle FFmpeg or add an in-app download option
-- [ ] Integration with an online movie database for automatic tagging
+- [x] Integration with an online movie database for automatic tagging
   - Requires users to supply their own API key
   - Keys are stored securely on-device using [`keyring-rs`](https://crates.io/crates/keyring) and never leave the user's machine
 - [ ] Additional playlist format support

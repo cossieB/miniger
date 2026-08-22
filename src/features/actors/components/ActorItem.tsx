@@ -34,7 +34,7 @@ export function ActorItem(props: Props) {
             >
                 <div>
                     <img
-                        src={convertFileSrc(dir + sep() + props.actor.actorId + ".webp") + `?n=${Date.now()}`}                        
+                        src={convertFileSrc(dir + sep() + props.actor.actorId + ".webp")}                        
                         loading="lazy"
                         alt=""
                         onerror={e => e.currentTarget.src = "/Question_Mark.svg"}
