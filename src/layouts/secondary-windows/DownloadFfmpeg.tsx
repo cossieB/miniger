@@ -43,7 +43,7 @@ export function DownloadFfmpeg() {
         window.destroy()
     })
     return (
-        <div class={styles.dl}>
+        <div class={styles.dl} oncontextmenu={e => e.preventDefault()}>
             <Show when={state.ffmpeg || state.ffprobe}>
                 <h2>Versions</h2>
             </Show>

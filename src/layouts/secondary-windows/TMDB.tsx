@@ -76,7 +76,7 @@ export function TMDB() {
     return (
         <Suspense>
 
-            <div class={styles.tmdb}>
+            <div class={styles.tmdb} oncontextmenu={e => e.preventDefault()}>
                 <form onsubmit={handleSave}>
                     <label>
                         API Read Access Token &nbsp;

@@ -1,5 +1,6 @@
 @layer components {
     .tmdb {
+        height: 100vh;
         label {
             display: flex;
         }

@@ -26,7 +26,7 @@ export function Convert() {
     })
 
     return (
-        <div class={styles.convert}>
+        <div class={styles.convert} oncontextmenu={e => e.preventDefault()}>
             <div
                 class="grid grid-cols-[auto_1fr] gap-2 items-center"
             >

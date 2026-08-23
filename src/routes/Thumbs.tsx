@@ -1,7 +1,7 @@
 import { ReactiveSet } from "@solid-primitives/set"
 import { action, createAsync, json, useAction } from "@solidjs/router"
 import { convertFileSrc, invoke } from "@tauri-apps/api/core"
-import { appDataDir, sep } from "@tauri-apps/api/path"
+import { appDataDir, join, sep } from "@tauri-apps/api/path"
 import { confirm } from "@tauri-apps/plugin-dialog"
 import { FilmIcon, LoaderCircle } from "lucide-solid"
 import { createSignal, For, onCleanup, Show, Suspense } from "solid-js"
@@ -9,7 +9,8 @@ import styles from "~/layouts/secondary-windows/Windows.module.css"
 import { CELL_HEIGHT } from "~/constants"
 import { getFilms } from "~/features/movies/api"
 
-const dir = await appDataDir()
+const d = await appDataDir()
+const dir = await join(d, "images")
 
 type NewType = {
     path: string

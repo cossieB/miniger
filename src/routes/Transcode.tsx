@@ -46,7 +46,7 @@ export default function Transcode() {
         })
     })
     return (
-        <div class={styles.transcode}>
+        <div class={styles.transcode} oncontextmenu={e => e.preventDefault()}>
             <div >
                 <div >Source</div>
                 <div >Destination</div>

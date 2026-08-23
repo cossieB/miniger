@@ -26,6 +26,7 @@ export function DragDrop() {
 
     return (
         <div
+            oncontextmenu={e => e.preventDefault()}
             class={styles.dragdrop}
             tabIndex={0}
             onkeyup={e => {

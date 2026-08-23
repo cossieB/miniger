@@ -21,6 +21,7 @@ export function Settings() {
     const submissions = useSubmission(addFilesToDatabase)
     return (
         <div 
+            oncontextmenu={e => e.preventDefault()}
             class={styles.settings}            
         >
             <span>Folders</span>
