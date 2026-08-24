@@ -24,7 +24,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self' ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost blob:; media-src 'self' asset: http://asset.localhost; font-src 'self' data:; style-src 'self' ipc: http://ipc.localhost 'unsafe-inline';connect-src 'self' ipc: http://ipc.localhost https://api.themoviedb.org https://image.tmdb.org",
+      "csp": "default-src 'self' ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost blob: https://image.tmdb.org; media-src 'self' asset: http://asset.localhost; font-src 'self' data:; style-src 'self' ipc: http://ipc.localhost 'unsafe-inline';connect-src 'self' ipc: http://ipc.localhost https://api.themoviedb.org https://image.tmdb.org",
       "assetProtocol": {
         "enable": true,
         "scope": [
